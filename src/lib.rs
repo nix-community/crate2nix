@@ -25,10 +25,10 @@ use serde_json::to_string_pretty;
 use crate::target_cfg::Cfg;
 use crate::target_cfg::CfgExpr;
 
-mod target_cfg;
 pub mod nix_build;
 mod prefetch;
 pub mod render;
+mod target_cfg;
 mod util;
 
 /// The input for the default.nix.tera template.
@@ -163,7 +163,7 @@ impl Crate {
             )
         })?;
 
-        let dependency_packages: Vec<&Package> =
+        let mut dependency_packages: Vec<&Package> =
             node
                 .deps
                 .iter()
@@ -179,6 +179,7 @@ impl Crate {
                     })
                 })
                 .collect::<Result<_, Error>>()?;
+        dependency_packages.sort_by(|p1, p2| p1.id.cmp(&p2.id));
 
         let platform_dependencies: Vec<&Dependency> = package
             .dependencies
@@ -244,13 +245,17 @@ impl Crate {
             .targets
             .iter()
             .any(|t| t.kind.iter().any(|k| k == "bin"));
-        let config_directory = config.cargo_toml.canonicalize()?.parent().unwrap().to_path_buf();
+        let config_directory = config
+            .cargo_toml
+            .canonicalize()?
+            .parent()
+            .unwrap()
+            .to_path_buf();
 
         let relative_source = if package_path == config_directory {
             "./.".into()
         } else {
-            diff_paths(package_path, &config_directory)
-                .unwrap_or(package_path.to_path_buf())
+            diff_paths(package_path, &config_directory).unwrap_or(package_path.to_path_buf())
         };
 
         Ok(Crate {

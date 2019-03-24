@@ -49,7 +49,10 @@ pub fn prefetch_packages(
             &config.crate_hashes_json,
             serde_json::to_vec_pretty(&hashes)?,
         )?;
-        eprintln!("Wrote hashes to {}.", config.crate_hashes_json.to_string_lossy());
+        eprintln!(
+            "Wrote hashes to {}.",
+            config.crate_hashes_json.to_string_lossy()
+        );
     }
 
     Ok(hashes)
