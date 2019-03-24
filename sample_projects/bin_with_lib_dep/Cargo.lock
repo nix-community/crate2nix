@@ -1,0 +1,11 @@
+[[package]]
+name = "hello_world_lib"
+version = "0.1.0"
+
+[[package]]
+name = "hello_world_with_dep"
+version = "0.1.0"
+dependencies = [
+ "hello_world_lib 0.1.0",
+]
+

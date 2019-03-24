@@ -3,6 +3,21 @@ name = "cargo2nix"
 version = "0.1.0"
 authors = ["Peter Kolloch <info@eigenvalue.net>"]
 edition = "2018"
+license = "MIT OR Apache-2.0"
 
 [dependencies]
-cargo_metadata = "0.7.0"
+#cargo_metadata = "0.7.1"
+# Keep until bugfixes are merged
+cargo_metadata = { path="/home/peter/gdrive/projects/cargo_metadata" }
+failure = "0.1.5"
+indoc = "0.3"
+lazy_static = "1.3.0"
+pathdiff = "0.1.0"
+quicli = "0.4"
+structopt = "0.2"
+semver = "0.9.0"
+serde = "1.0"
+serde_derive = "1.0.89"
+serde_json = "1.0"
+tempdir = "0.3.7"
+tera = "1.0.0-beta.2"

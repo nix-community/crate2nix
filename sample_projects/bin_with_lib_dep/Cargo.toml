@@ -1,0 +1,13 @@
+[package]
+name = "hello_world_with_dep"
+version = "0.1.0"
+authors = ["Peter Kolloch <info@eigenvalue.net>"]
+edition = "2018"
+
+[dependencies]
+"hello_world_lib" = { path = "../lib"}
+
+# Doesn't make sense but reproduces bug that filters
+# this dev dependency by accident.
+[dev-dependencies]
+"hello_world_lib" = { path = "../lib"}

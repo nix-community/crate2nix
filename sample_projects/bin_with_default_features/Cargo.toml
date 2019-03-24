@@ -1,0 +1,13 @@
+[package]
+name = "bin_with_default_features"
+version = "0.1.0"
+authors = ["Peter Kolloch <info@eigenvalue.net>"]
+edition = "2018"
+
+[dependencies]
+"hello_world_lib" = { path = "../lib", optional = true}
+
+[features]
+default = ["use_lib"]
+use_lib = ["hello_world_lib"]
+do_not_activate = []
