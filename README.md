@@ -6,7 +6,7 @@ Simple example:
 
 ```bash
 # From the project directory.
-cargo2nix generate >default.nix
+cargo2nix generate
 ```
 
 More elaborate example that uses '<nixos-unstable>' as the default `nixpkgs` path:
@@ -15,7 +15,17 @@ More elaborate example that uses '<nixos-unstable>' as the default `nixpkgs` pat
 cargo2nix generate \
     -n '<nixos-unstable>' \
     -f /some/project/dir/Cargo.toml \
-    > /some/project/dir/cargo2nix.nix
+    -o /some/project/dir/cargo2nix.nix
+```
+
+## Installation
+
+For now, clone the repository and then
+
+```bash
+cd cargo2nix
+nix-shell
+# you are in a shell with cargo2nix
 ```
 
 ## Known Restrictions
@@ -25,19 +35,16 @@ cargo2nix generate \
 * Filters all dependencies for the hard-coded "Linux x86_64" target platform. Again, it should be quite easy to discover
   the current target via `rustc` at build generation time.
   
-The actual nix code is generated via `templates/default.nix.tera` so potentially you can fix the nix code without
+The actual nix code is generated via `templates/build.nix.tera` so potentially you can fix the nix code without
 knowing much rust.
 
 ## Runtime Dependencies
 
-cargo2nix use `cargo metadata` / `nix-prefetch-url` at runtime so they need to be in the PATH. 
+cargo2nix use `cargo metadata` / `nix-prefetch-url` at runtime so they need to be in the PATH. The default.nix
+adds the built-time nix/cargo binaries as fallback to the path.
 
-cargo2nix depends on fixes in
-
-* [cargo_metadata](https://github.com/oli-obk/cargo_metadata)
-* [nixpkgs](https://github.com/NixOS/nixpkgs): [#56808](https://github.com/NixOS/nixpkgs/issues/56808)
-
-We try to get these upstream.
+Currently, cargo2nix is only tested with nixos-unstable (the future 19.09) since it depends on some new features
+and bugfixes.
 
 ## Related Projects
 

@@ -3,7 +3,7 @@ name = "cargo2nix"
 version = "0.1.0"
 authors = ["Peter Kolloch <info@eigenvalue.net>"]
 edition = "2018"
-license = "MIT OR Apache-2.0"
+license = "Apache-2.0"
 
 [dependencies]
 cargo_metadata = "0.7.4"
