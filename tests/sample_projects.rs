@@ -7,6 +7,7 @@ use cargo2nix::nix_build::nix_build;
 use cargo2nix::nix_build::run_cmd;
 use cargo2nix::render;
 use cargo2nix::GenerateConfig;
+use fs_extra::dir::CopyOptions;
 
 #[test]
 fn build_and_run_bin() {
@@ -37,27 +38,28 @@ fn build_and_run_with_default_features() {
 }
 
 fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
+    let temp_dir = TempDir::new("sample_projects").expect("couldn't create temp dir");
+    let options = CopyOptions::new();
+    fs_extra::dir::copy("sample_projects", &temp_dir, &options).expect("while copying files");
+    let cargo_toml = temp_dir.path().join(cargo_toml);
+    let project_dir = cargo_toml.parent().expect("Cargo.toml needs a parent").to_path_buf();
+
     // Get metadata
     let metadata = default_nix(&GenerateConfig {
-        cargo_toml: cargo_toml.as_ref().to_path_buf(),
+        cargo_toml: cargo_toml.clone(),
         nixpkgs_path: "<nixos-unstable>".to_string(),
-        crate_hashes_json: cargo_toml
-            .as_ref()
-            .parent()
-            .expect("Cargo.toml needs a parent")
-            .to_path_buf()
-            .join("crate-hashes.json"),
+        crate_hashes_json: project_dir
+            .join("crate-hashes.json").to_path_buf(),
     })
     .unwrap();
     let default_nix_content = render::default_nix(&metadata).unwrap();
 
     // Generate nix file
-    let temp_dir = TempDir::new("hello_world").expect("couldn't create temp dir");
-    let file_path = temp_dir.path().join("default.nix");
+    let file_path = cargo_toml.parent().unwrap().join("default.nix");
     render::write_to_file(file_path, &default_nix_content).unwrap();
 
     // Build
-    nix_build(temp_dir.path()).unwrap();
+    nix_build(&project_dir).unwrap();
 
     // Run resulting binary
     let binary_name = metadata
@@ -67,8 +69,7 @@ fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
         .unwrap()
         .name
         .clone();
-    let bin_path = temp_dir
-        .path()
+    let bin_path = project_dir
         .join("result")
         .join("bin")
         .join(&binary_name);

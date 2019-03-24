@@ -22,10 +22,10 @@ use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use serde_json::to_string_pretty;
 
-use crate::cfg::Cfg;
-use crate::cfg::CfgExpr;
+use crate::target_cfg::Cfg;
+use crate::target_cfg::CfgExpr;
 
-mod cfg;
+mod target_cfg;
 pub mod nix_build;
 mod prefetch;
 pub mod render;
