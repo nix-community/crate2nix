@@ -37,26 +37,53 @@ fn build_and_run_with_default_features() {
     assert_eq!("Hello, bin_with_default_features!\n", &output);
 }
 
+#[test]
+fn build_and_run_with_tera() {
+    let output = build_and_run("sample_projects/with_tera/Cargo.toml");
+
+    assert_eq!("Hello, with_tera!\n", &output);
+}
+
 fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
+    let orig_project_dir = cargo_toml
+        .as_ref()
+        .parent()
+        .expect("Cargo.toml needs a parent")
+        .to_path_buf();
+
     let temp_dir = TempDir::new("sample_projects").expect("couldn't create temp dir");
-    let options = CopyOptions::new();
-    fs_extra::dir::copy("sample_projects", &temp_dir, &options).expect("while copying files");
+
+    fs_extra::dir::copy("sample_projects", &temp_dir, &CopyOptions::new())
+        .expect("while copying files");
     let cargo_toml = temp_dir.path().join(cargo_toml);
-    let project_dir = cargo_toml.parent().expect("Cargo.toml needs a parent").to_path_buf();
+    let project_dir = cargo_toml
+        .parent()
+        .expect("Cargo.toml needs a parent")
+        .to_path_buf();
 
     // Get metadata
     let metadata = default_nix(&GenerateConfig {
         cargo_toml: cargo_toml.clone(),
         nixpkgs_path: "<nixos-unstable>".to_string(),
-        crate_hashes_json: project_dir
-            .join("crate-hashes.json").to_path_buf(),
+        crate_hashes_json: project_dir.join("crate-hashes.json").to_path_buf(),
     })
     .unwrap();
     let default_nix_content = render::default_nix(&metadata).unwrap();
 
     // Generate nix file
-    let file_path = cargo_toml.parent().unwrap().join("default.nix");
-    render::write_to_file(file_path, &default_nix_content).unwrap();
+    let default_nix_path = cargo_toml.parent().unwrap().join("default.nix");
+    render::write_to_file(default_nix_path, &default_nix_content).unwrap();
+
+    // Copy lock files back to source to avoid expensive, repetitive work
+    fs_extra::copy_items(
+        &vec![project_dir.join("Cargo.lock"), project_dir.join("crate-hashes.json")],
+        orig_project_dir,
+        &CopyOptions {
+            overwrite: true,
+            ..CopyOptions::new()
+        },
+    )
+    .unwrap();
 
     // Build
     nix_build(&project_dir).unwrap();
@@ -69,11 +96,9 @@ fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
         .unwrap()
         .name
         .clone();
-    let bin_path = project_dir
-        .join("result")
-        .join("bin")
-        .join(&binary_name);
+    let bin_path = project_dir.join("result").join("bin").join(&binary_name);
     let output = run_cmd(bin_path).unwrap();
-    temp_dir.close().expect("couldn't remove temp dir");
+    std::mem::forget(temp_dir);
+//    temp_dir.close().expect("couldn't remove temp dir");
     output
 }
