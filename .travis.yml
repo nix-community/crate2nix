@@ -4,6 +4,4 @@ cache:
   directories:
     - /nix/store
 script:
-  - nix build --arg pkgs 'import <nixpkgs> {config = {}; }' -f default.nix
-  - nix optimise-store
-  - nix-collect-garbage
+  - nix build --arg pkgs 'import <nixpkgs> {config = {}; }' -f default.nix && nix-collect-garbage && nix optimise-store
