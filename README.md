@@ -2,6 +2,8 @@
 
 Generates nix build files from rust projects via `cargo metadata`.
 
+[![Build Status](https://travis-ci.org/kolloch/cargo2nix.svg?branch=master)](https://travis-ci.org/kolloch/cargo2nix)
+
 Simple example:
 
 ```bash
