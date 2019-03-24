@@ -1,4 +1,4 @@
 language: nix
 nix: 2.1.3
 script:
-  - nix build --arg pkgs 'import <nixos> {config = {}; }' -f default.nix
+  - nix build --arg pkgs 'import <nixpkgs> {config = {}; }' -f default.nix
