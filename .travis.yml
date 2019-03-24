@@ -1,2 +1,6 @@
 language: nix
-script: nix build -f default.nix
+nix: 2.1.3
+script:
+  - nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
+  - nix-channel --update
+  - nix build -f default.nix
