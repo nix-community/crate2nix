@@ -4,7 +4,7 @@ use std::io::Write;
 use std::process::Command;
 
 use crate::GenerateConfig;
-use cargo_metadata::{Package, PackageId};
+use cargo_metadata::{Package, PackageId, Source};
 use failure::bail;
 use failure::format_err;
 use failure::Error;
@@ -24,22 +24,22 @@ pub fn prefetch_packages<'a>(
     // Only copy used hashes over to the new map.
     let mut hashes: BTreeMap<PackageId, String> = BTreeMap::new();
 
-    for package in packages {
-        if package
-            .source
-            .as_ref()
-            .map(|s| !s.is_crates_io())
-            .unwrap_or(true)
-        {
-            // Skip none-registry packages
-            continue;
-        }
-
+    // Skip none-registry packages.
+    let packages_from_crates_io: Vec<&'a Package> = packages
+        .filter(|p| p.source.as_ref().map(Source::is_crates_io).unwrap_or(false))
+        .collect();
+    let without_hash_num = packages_from_crates_io
+        .iter()
+        .filter(|p| !old_hashes.contains_key(&p.id))
+        .count();
+    let mut without_hash_idx = 0;
+    for package in packages_from_crates_io {
         let existing_hash = old_hashes.get(&package.id);
         let hash = if let Some(hash) = existing_hash {
             hash.trim().to_string()
         } else {
-            crate::prefetch::nix_prefetch(package)?
+            without_hash_idx += 1;
+            crate::prefetch::nix_prefetch(package, without_hash_idx, without_hash_num)?
         };
 
         hashes.insert(package.id.clone(), hash);
@@ -60,13 +60,13 @@ pub fn prefetch_packages<'a>(
 }
 
 /// Invoke `nix-prefetch` for the given `package` and return the hash.
-pub fn nix_prefetch(package: &Package) -> Result<String, Error> {
+pub fn nix_prefetch(package: &Package, idx: usize, num_packages: usize) -> Result<String, Error> {
     let url = format!(
         "https://crates.io/api/v1/crates/{}/{}/download",
         package.name, package.version
     );
 
-    eprintln!("Prefetching {}", url);
+    eprintln!("Prefetching {:>4}/{}: {}", idx, num_packages, url);
     let cmd = "nix-prefetch-url";
     let args = [
         &url,

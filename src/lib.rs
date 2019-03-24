@@ -122,6 +122,7 @@ impl GenerateInfo {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct GenerateConfig {
     pub cargo_toml: PathBuf,
+    pub output: PathBuf,
     pub crate_hashes_json: PathBuf,
     pub nixpkgs_path: String,
 }

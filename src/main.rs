@@ -1,10 +1,13 @@
 use quicli::prelude::CliResult;
 use std::path::PathBuf;
 use structopt::StructOpt;
+use structopt::clap::Shell;
 
 use cargo2nix::render;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
+use std::str::FromStr;
+use failure::format_err;
 
 #[derive(Debug, StructOpt, Deserialize, Serialize)]
 #[structopt(
@@ -27,6 +30,14 @@ pub enum Opt {
         cargo_toml: PathBuf,
 
         #[structopt(
+        short = "o",
+        long = "output",
+        help = "The path of the output.nix file.",
+        default_value = "./default.nix"
+        )]
+        output: PathBuf,
+
+        #[structopt(
             short = "n",
             long = "nixpkgs-path",
             help = "The default path for the nixpkgs to use.",
@@ -42,6 +53,29 @@ pub enum Opt {
         )]
         crate_hashes: Option<PathBuf>,
     },
+
+    #[structopt(
+    name = "completions",
+    about = "Generate auto-completions for the shell."
+    )]
+    Completions {
+        #[structopt(
+        short = "s",
+        long = "shell",
+        parse(from_str),
+        help = "The shell to generate completions for. Specify 'invalid' to get a list of possibilities.",
+        default_value = "bash"
+        )]
+        shell: String,
+
+        #[structopt(
+        short = "o",
+        long = "output",
+        help = "The path of the output directory.",
+        default_value = "."
+        )]
+        output: PathBuf,
+    }
 }
 
 fn main() -> CliResult {
@@ -49,6 +83,7 @@ fn main() -> CliResult {
     match opt {
         Opt::Generate {
             cargo_toml,
+            output,
             nixpkgs_path,
             crate_hashes,
         } => {
@@ -61,12 +96,17 @@ fn main() -> CliResult {
 
             let generate_config = cargo2nix::GenerateConfig {
                 cargo_toml,
+                output: output.clone(),
                 nixpkgs_path,
                 crate_hashes_json,
             };
             let build_info = cargo2nix::BuildInfo::for_config(&generate_config)?;
-            println!("{}", render::render_build_file(&build_info)?);
-            eprintln!("Nix build written completely.");
+            let nix_string = render::render_build_file(&build_info)?;
+            render::write_to_file(&output, &nix_string)?;
+        },
+        Opt::Completions {shell, output} => {
+            let shell = FromStr::from_str(&shell).map_err(|s| format_err!("{}", s))?;
+            Opt::clap().gen_completions(env!("CARGO_PKG_NAME"), shell, output);
         }
     }
 
