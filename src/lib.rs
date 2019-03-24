@@ -1,6 +1,11 @@
-use std::collections::btree_map;
+//! # cargo2nix
+//!
+//! Internal library for the cargo2nix binary. This is not meant to be used separately, I just enjoy
+//! writing doc tests ;)
+
+//#![deny(missing_docs)]
+
 use std::collections::BTreeMap;
-use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::env;
 use std::fmt::Display;
@@ -29,7 +34,7 @@ pub mod nix_build;
 mod prefetch;
 pub mod render;
 mod target_cfg;
-mod util;
+pub mod util;
 
 /// The input for the default.nix.tera template.
 #[derive(Debug, Deserialize, Serialize)]
@@ -64,6 +69,7 @@ pub struct Crate {
     pub proc_macro: bool,
 }
 
+/// Some info about the cargo2nix invocation.
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct GenerateInfo {
     pub cargo2nix_version: String,
@@ -79,6 +85,7 @@ impl GenerateInfo {
     }
 }
 
+/// Configuration for the default.nix generation.
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct GenerateConfig {
     pub cargo_toml: PathBuf,
@@ -96,7 +103,7 @@ pub struct IndexedMetadata {
 }
 
 impl IndexedMetadata {
-    pub fn from(config: &GenerateConfig, metadata: Metadata) -> Result<IndexedMetadata, Error> {
+    pub fn new_from(config: &GenerateConfig, metadata: Metadata) -> Result<IndexedMetadata, Error> {
         let resolve = metadata
             .resolve
             .ok_or_else(|| format_err!("no root in metadata"))?;
@@ -159,7 +166,7 @@ impl Crate {
             format_err!(
                 "Could not find node for {}.\n-- Package\n{}",
                 &package.id,
-                to_string_pretty(&package).unwrap_or("ERROR".to_string())
+                to_string_pretty(&package).unwrap_or_else(|_| "ERROR".to_string())
             )
         })?;
 
@@ -173,8 +180,8 @@ impl Crate {
                             "No matching package for dependency with package id {} in {}.\n-- Package\n{}\n-- Node\n{}",
                             d.pkg,
                             package.id,
-                            to_string_pretty(&package).unwrap_or("ERROR".to_string()),
-                            to_string_pretty(&node).unwrap_or("ERROR".to_string()),
+                            to_string_pretty(&package).unwrap_or_else(|_| "ERROR".to_string()),
+                            to_string_pretty(&node).unwrap_or_else(|_| "ERROR".to_string()),
                         )
                     })
                 })
@@ -193,8 +200,8 @@ impl Crate {
             .collect();
 
         fn filter_dependencies(
-            dependency_packages: &Vec<&Package>,
-            dependencies: &Vec<&Dependency>,
+            dependency_packages: &[&Package],
+            dependencies: &[&Dependency],
             filter: impl Fn(&&&Dependency) -> bool,
         ) -> Vec<PackageId> {
             let names: HashSet<String> = dependencies
@@ -255,7 +262,8 @@ impl Crate {
         let relative_source = if package_path == config_directory {
             "./.".into()
         } else {
-            diff_paths(package_path, &config_directory).unwrap_or(package_path.to_path_buf())
+            diff_paths(package_path, &config_directory)
+                .unwrap_or_else(|| package_path.to_path_buf())
         };
 
         Ok(Crate {
@@ -264,7 +272,7 @@ impl Crate {
             authors: package.authors.clone(),
             derivation_name: package.id.clone(),
             version: package.version.clone(),
-            sha256: metadata.sha256_by_id.get(&package.id).map(|s| s.clone()),
+            sha256: metadata.sha256_by_id.get(&package.id).cloned(),
             source_directory: relative_source,
             features: node.features.clone(),
             dependencies,
@@ -307,7 +315,7 @@ pub fn cargo_metadata(config: &GenerateConfig) -> Result<IndexedMetadata, Error>
 
     cmd.exec()
         .map_err(|e| err_for_cargo_toml(&config.cargo_toml, e))
-        .and_then(|m| IndexedMetadata::from(config, m))
+        .and_then(|m| IndexedMetadata::new_from(config, m))
         .map_err(|e| err_for_cargo_toml(&config.cargo_toml, e))
 }
 

@@ -1,3 +1,4 @@
+//! "Render" files using tera templates.
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -60,9 +61,7 @@ pub fn escape_nix_string(raw_string: &str) -> String {
     ret.push('"');
     let mut peekable_chars = raw_string.chars().peekable();
     while let Some(c) = peekable_chars.next() {
-        if c == '\\' || c == '"' {
-            ret.push('\\');
-        } else if c == '$' && peekable_chars.peek() == Some(&'{') {
+        if c == '\\' || c == '"' || (c == '$' && peekable_chars.peek() == Some(&'{')) {
             ret.push('\\');
         }
         ret.push(c);

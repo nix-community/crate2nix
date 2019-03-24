@@ -1,3 +1,5 @@
+//! Code for invoking nix_build.
+
 use std::io::BufRead;
 use std::io::Write;
 use std::path::Path;
@@ -5,11 +7,11 @@ use std::path::PathBuf;
 use std::process::Command;
 use std::process::Stdio;
 
-use cargo_metadata::Package;
 use failure::bail;
 use failure::format_err;
 use failure::Error;
 
+/// Call `nix build` in the given directory on the `default.nix` in that directory.
 pub fn nix_build(project_dir: impl AsRef<Path>) -> Result<(), Error> {
     let project_dir = project_dir.as_ref().to_string_lossy().to_string();
     println!("Building {}.", project_dir);
@@ -35,16 +37,20 @@ pub fn nix_build(project_dir: impl AsRef<Path>) -> Result<(), Error> {
     Ok(())
 }
 
+/// Dump the content of the specified file with line numbers to stdout.
 pub fn dump_with_lines(file_path: impl AsRef<Path>) -> Result<(), Error> {
     let file_path = file_path.as_ref().to_string_lossy().to_string();
     let content = std::io::BufReader::new(std::fs::File::open(&file_path)?);
+    let stdout = std::io::stdout();
+    let mut handle = stdout.lock();
     for (idx, line) in content.lines().enumerate() {
-        println!("{:>5}: {}", idx + 1, line?);
+        writeln!(handle, "{:>5}: {}", idx + 1, line?)?;
     }
 
     Ok(())
 }
 
+/// Run the command at the given path without arguments and capture the output in the return value.
 pub fn run_cmd(cmd_path: impl AsRef<Path>) -> Result<String, Error> {
     let cmd_path = cmd_path.as_ref().to_string_lossy().to_string();
     let output = Command::new(&cmd_path)

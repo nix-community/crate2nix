@@ -1,9 +1,7 @@
-use std::io::BufRead;
+//! Utilities for calling `nix-prefetch` on packages.
+
 use std::io::Write;
-use std::path::Path;
-use std::path::PathBuf;
 use std::process::Command;
-use std::process::Stdio;
 
 use crate::GenerateConfig;
 use cargo_metadata::{Package, PackageId};
@@ -12,9 +10,12 @@ use failure::format_err;
 use failure::Error;
 use std::collections::BTreeMap;
 
+/// Uses `nix-prefetch` to get the hashes of the sources for the given packages if they come from crates.io.
+///
+/// Uses and updates the existing hashes in the `config.crate_hash_json` file.
 pub fn prefetch_packages(
     config: &GenerateConfig,
-    packages: &Vec<Package>,
+    packages: &[Package],
 ) -> Result<BTreeMap<PackageId, String>, Error> {
     let hashes_string: String =
         std::fs::read_to_string(&config.crate_hashes_json).unwrap_or_else(|_| "{}".to_string());
@@ -58,6 +59,7 @@ pub fn prefetch_packages(
     Ok(hashes)
 }
 
+/// Invoke `nix-prefetch` for the given `package` and return the hash.
 pub fn nix_prefetch(package: &Package) -> Result<String, Error> {
     let url = format!(
         "https://crates.io/api/v1/crates/{}/{}/download",

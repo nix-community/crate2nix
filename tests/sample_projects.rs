@@ -76,7 +76,10 @@ fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
 
     // Copy lock files back to source to avoid expensive, repetitive work
     fs_extra::copy_items(
-        &vec![project_dir.join("Cargo.lock"), project_dir.join("crate-hashes.json")],
+        &vec![
+            project_dir.join("Cargo.lock"),
+            project_dir.join("crate-hashes.json"),
+        ],
         orig_project_dir,
         &CopyOptions {
             overwrite: true,
@@ -98,7 +101,6 @@ fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
         .clone();
     let bin_path = project_dir.join("result").join("bin").join(&binary_name);
     let output = run_cmd(bin_path).unwrap();
-    std::mem::forget(temp_dir);
-//    temp_dir.close().expect("couldn't remove temp dir");
+    temp_dir.close().expect("couldn't remove temp dir");
     output
 }
