@@ -1,0 +1,2 @@
+language: nix
+script: nix build -f default.nix
