@@ -28,6 +28,20 @@ nix-shell
 # you are in a shell with cargo2nix
 ```
 
+This assumes that nixos-unstable points to, well, nixos-unstable.
+
+If that doesn't work for you, you can either add it to your nix channels:
+
+```bash
+nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
+```
+
+Or you override the pkgs argument, e.g.:
+
+```bash
+nix-shell --arg pkgs 'import <nixos> {config = {}; }'
+```
+
 ## Known Restrictions
 
 * Supports only default crate features. It should be easy to support a different feature set at build generation 
