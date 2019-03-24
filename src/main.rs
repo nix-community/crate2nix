@@ -64,8 +64,8 @@ fn main() -> CliResult {
                 nixpkgs_path,
                 crate_hashes_json,
             };
-            let default_nix = cargo2nix::default_nix(&generate_config)?;
-            println!("{}", render::default_nix(&default_nix)?);
+            let build_info = cargo2nix::BuildInfo::for_config(&generate_config)?;
+            println!("{}", render::render_build_file(&build_info)?);
             eprintln!("Nix build written completely.");
         }
     }

@@ -2,10 +2,9 @@ use std::path::Path;
 
 use tempdir::TempDir;
 
-use cargo2nix::default_nix;
 use cargo2nix::nix_build::nix_build;
 use cargo2nix::nix_build::run_cmd;
-use cargo2nix::render;
+use cargo2nix::{render, BuildInfo};
 use cargo2nix::GenerateConfig;
 use fs_extra::dir::CopyOptions;
 
@@ -62,13 +61,13 @@ fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
         .to_path_buf();
 
     // Get metadata
-    let metadata = default_nix(&GenerateConfig {
+    let metadata = BuildInfo::for_config(&GenerateConfig {
         cargo_toml: cargo_toml.clone(),
         nixpkgs_path: "<nixos-unstable>".to_string(),
         crate_hashes_json: project_dir.join("crate-hashes.json").to_path_buf(),
     })
     .unwrap();
-    let default_nix_content = render::default_nix(&metadata).unwrap();
+    let default_nix_content = render::render_build_file(&metadata).unwrap();
 
     // Generate nix file
     let default_nix_path = cargo_toml.parent().unwrap().join("default.nix");
@@ -95,7 +94,7 @@ fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
     let binary_name = metadata
         .indexed_metadata
         .pkgs_by_id
-        .get(&metadata.root_derivation_name.unwrap().clone())
+        .get(&metadata.root_package_id.unwrap().clone())
         .unwrap()
         .name
         .clone();

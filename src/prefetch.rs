@@ -13,9 +13,9 @@ use std::collections::BTreeMap;
 /// Uses `nix-prefetch` to get the hashes of the sources for the given packages if they come from crates.io.
 ///
 /// Uses and updates the existing hashes in the `config.crate_hash_json` file.
-pub fn prefetch_packages(
+pub fn prefetch_packages<'a>(
     config: &GenerateConfig,
-    packages: &[Package],
+    packages: impl Iterator<Item = &'a Package>,
 ) -> Result<BTreeMap<PackageId, String>, Error> {
     let hashes_string: String =
         std::fs::read_to_string(&config.crate_hashes_json).unwrap_or_else(|_| "{}".to_string());

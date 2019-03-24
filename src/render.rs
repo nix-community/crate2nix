@@ -8,18 +8,16 @@ use failure::Error;
 use lazy_static::lazy_static;
 use tera::Tera;
 
-use crate::DefaultNix;
+use crate::BuildInfo;
 
-pub fn default_nix(metadata: &DefaultNix) -> Result<String, Error> {
-    Ok(TERA
-        .render_value("default.nix.tera", metadata)
-        .map_err(|e| {
-            format_err!(
-                "while rendering default.nix: {:?}\nMetadata: {:?}",
-                e,
-                metadata
-            )
-        })?)
+pub fn render_build_file(metadata: &BuildInfo) -> Result<String, Error> {
+    Ok(TERA.render_value("build.nix.tera", metadata).map_err(|e| {
+        format_err!(
+            "while rendering default.nix: {:?}\nMetadata: {:?}",
+            e,
+            metadata
+        )
+    })?)
 }
 
 pub fn write_to_file(path: impl AsRef<Path>, contents: &str) -> Result<(), Error> {
@@ -36,8 +34,8 @@ lazy_static! {
     static ref TERA: Tera = {
         let mut tera = Tera::default();
         tera.add_raw_template(
-            "default.nix.tera",
-            include_str!("../templates/default.nix.tera"),
+            "build.nix.tera",
+            include_str!("../templates/build.nix.tera"),
         )
         .expect("while adding template");
         tera.autoescape_on(vec![".nix.tera", ".nix"]);
