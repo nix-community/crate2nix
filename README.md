@@ -1,6 +1,22 @@
 # cargo2nix
 
-Generates nix build files with `buildRustCrate` derivations from rust projects via `cargo metadata`.
+Generates [nix](https://nixos.org/nix/) build files for building [rust](https://www.rust-lang.org/) binaries from 
+[cargo](https://crates.io/) projects.
+
+**Same dependency tree as cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the dependency tree from cargo. Therefore,
+it will use the exact same library versions as cargo and respect any locked down version in `Cargo.lock`.
+
+**Smart caching**: It uses smart crate by crate caching so that nix rebuilds exactly the crates that need to be rebuilt. You can use all
+things that make the nix ecosystem great, e.g. deploy your binary as a service to the the cloud with 
+[NixOps](https://nixos.org/nixops/).
+
+**Out of the box support for libraries with non-rust dependencies**: It builds on top of the `buildRustCrate` 
+function from [NixOS](https://nixos.org/) so that native dependencies of
+many rust libraries are already correctly fetched when needed. If your library with native dependencies is not yet 
+supported, you can create an overlay to add the needed configuration to the `defaultCrateOverrides`.
+
+**Easy to understand nix template**: The actual nix code is generated via `templates/build.nix.tera` so you can 
+fix/improve the nix code without knowing rust if all the data is already there.
 
 [![Build Status](https://travis-ci.org/kolloch/cargo2nix.svg?branch=master)](https://travis-ci.org/kolloch/cargo2nix)
 
@@ -11,7 +27,8 @@ Simple example:
 cargo2nix generate
 ```
 
-More elaborate example that uses '<nixos-unstable>' as the default `nixpkgs` path:
+More elaborate example that uses `<nixos-unstable>` as the default `nixpkgs` path and specifies both the path
+to the `Cargo.toml` file (`-f`) and the output (`-o`) file explicitly.
 
 ```bash
 cargo2nix generate \
@@ -20,25 +37,30 @@ cargo2nix generate \
     -o /some/project/dir/cargo2nix.nix
 ```
 
+Use `cargo2nix help` to show all commands and options.
+
 ## Installation
 
 For now, clone the repository and then
 
 ```bash
+# Install nix if necessary: https://nixos.org/nix/
 cd cargo2nix
 nix-shell
 # you are in a shell with cargo2nix
 ```
 
-This assumes that nixos-unstable points to, well, nixos-unstable.
+This assumes that the `<nixos-unstable>` path points to, well, nixos-unstable.
 
-If that doesn't work for you, you can either add it to your nix channels:
+If that doesn't work for you, you can either 
+
+1. either add it to your nix channels:
 
 ```bash
 nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
 ```
 
-Or you override the pkgs argument, e.g.:
+2. or you override the `pkgs` argument, e.g.:
 
 ```bash
 nix-shell --arg pkgs 'import <nixos> {config = {}; }'
@@ -50,11 +72,9 @@ nix-shell --arg pkgs 'import <nixos> {config = {}; }'
   time since we can simply pass this set to `cargo metadata`. Feature selection during build time is out of scope for 
   now.
 * Filters all dependencies for the *hard-coded "Linux x86_64" target platform*. Again, it should be quite easy to 
-  discover the current target via `rustc` at build generation time.
+  support more platforms. To do so completely and at build time (vs build generation time) might be more involved.
 * Only *local sources* and *crates io* supported. Again, just requires some work to resolve.
   
-The actual nix code is generated via `templates/build.nix.tera` so potentially you can fix the nix code without
-knowing much rust.
 
 ## Runtime Dependencies
 
@@ -66,8 +86,9 @@ and bug fixes.
 
 ## Related Projects
 
-* [carnix](https://nest.pijul.com/pmeunier/carnix:master) is already widely used in nixos itself, yet it failed to
-  generate correct builds for my rust projects. That said, big kudos for all the work on buildRustCrate!
+* [carnix](https://nest.pijul.com/pmeunier/carnix:master) is already widely used in NixOS itself, yet it failed to
+  generate correct builds for my rust projects. After some attempts to fix that, I gave up. That said, big kudos for 
+  all the work on buildRustCrate and showing the way!
 * [cargo-raze](https://github.com/google/cargo-raze) generates `BUILD` files for bazel.
 
 ## Project Overview / Terminology
