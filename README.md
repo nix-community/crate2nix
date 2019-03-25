@@ -6,9 +6,10 @@ Generates [nix](https://nixos.org/nix/) build files for building [rust](https://
 **Same dependency tree as cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the dependency tree from cargo. Therefore,
 it will use the exact same library versions as cargo and respect any locked down version in `Cargo.lock`.
 
-**Smart caching**: It uses smart crate by crate caching so that nix rebuilds exactly the crates that need to be rebuilt. You can use all
-things that make the nix ecosystem great, e.g. deploy your binary as a service to the the cloud with 
-[NixOps](https://nixos.org/nixops/).
+**Smart caching**: It uses smart crate by crate caching so that nix rebuilds exactly the crates that need to be rebuilt.
+
+**Nix ecosystem goodness**: You can use all things that make the nix/NixOS ecosystem great, e.g. deploy your binary as 
+a service to the the cloud with [NixOps](https://nixos.org/nixops/).
 
 **Out of the box support for libraries with non-rust dependencies**: It builds on top of the `buildRustCrate` 
 function from [NixOS](https://nixos.org/) so that native dependencies of
@@ -40,6 +41,8 @@ crate2nix generate \
 Use `crate2nix help` to show all commands and options.
 
 ## Installation
+
+NOTE: It is Linux-only for now!
 
 For now, clone the repository and then
 
