@@ -6,7 +6,7 @@ cache:
 before_install:
   - sudo mkdir -p /etc/nix
   - echo 'sandbox = true' | sudo tee /etc/nix/nix.conf
-  - echo "substituters = file://$HOME/nix.store" https://cache.nixos.org/ | sudo tee -a /etc/nix/nix.conf
+  - echo "substituters = file://$HOME/nix.store https://cache.nixos.org/" | sudo tee -a /etc/nix/nix.conf
   - echo 'require-sigs = false' | sudo tee -a /etc/nix/nix.conf
 script:
   - nix build --arg pkgs 'import <nixpkgs> {config = {}; }' -f default.nix
