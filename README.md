@@ -20,14 +20,14 @@ fix/improve the nix code without knowing rust if all the data is already there.
 
 [![Build Status](https://travis-ci.org/kolloch/crate2nix.svg?branch=master)](https://travis-ci.org/kolloch/crate2nix)
 
-Simple example:
+Here is a simple example which uses all the defaults and will generate a `default.nix` file:
 
 ```bash
 # From the project directory.
 crate2nix generate
 ```
 
-More elaborate example that uses `<nixos-unstable>` as the default `nixpkgs` path and specifies both the path
+Here is a more elaborate example that uses `<nixos-unstable>` as the default `nixpkgs` path and specifies both the path
 to the `Cargo.toml` file (`-f`) and the output (`-o`) file explicitly.
 
 ```bash
@@ -52,7 +52,7 @@ nix-shell
 
 This assumes that the `<nixos-unstable>` path points to, well, nixos-unstable.
 
-If that doesn't work for you, you can either 
+If that doesn't work for you, you can 
 
 1. either add it to your nix channels:
 
