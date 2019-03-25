@@ -14,5 +14,5 @@ script:
 before_cache:
   - rm -rf $HOME/nix.store
   - mkdir -p $HOME/nix.store
-  - nix copy --to file://$HOME/nix.store -f Cargo.nix 'root_crate.buildInputs' || echo "skipped buildInputs"
-  - nix copy --to file://$HOME/nix.store -f default.nix || echo "skipped default.nix"
+  - nix copy --arg pkgs 'import <nixpkgs> {config = {}; }' --to file://$HOME/nix.store -f Cargo.nix 'root_crate.buildInputs' || echo "skipped buildInputs"
+  - nix copy --arg pkgs 'import <nixpkgs> {config = {}; }' --to file://$HOME/nix.store -f default.nix || echo "skipped default.nix"
