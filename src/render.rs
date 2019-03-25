@@ -47,7 +47,7 @@ lazy_static! {
 /// Escapes a string as a nix string.
 ///
 /// ```
-/// use cargo2nix::render::escape_nix_string;
+/// use crate2nix::render::escape_nix_string;
 /// assert_eq!("\"abc\"", escape_nix_string("abc"));
 /// assert_eq!("\"a\\\"bc\"", escape_nix_string("a\"bc"));
 /// assert_eq!("\"a$bc\"", escape_nix_string("a$bc"));

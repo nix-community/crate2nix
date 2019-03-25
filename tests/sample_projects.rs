@@ -2,10 +2,10 @@ use std::path::Path;
 
 use tempdir::TempDir;
 
-use cargo2nix::nix_build::nix_build;
-use cargo2nix::nix_build::run_cmd;
-use cargo2nix::{render, BuildInfo};
-use cargo2nix::GenerateConfig;
+use crate2nix::nix_build::nix_build;
+use crate2nix::nix_build::run_cmd;
+use crate2nix::{render, BuildInfo};
+use crate2nix::GenerateConfig;
 use fs_extra::dir::CopyOptions;
 
 #[test]

@@ -2,7 +2,7 @@ use std::collections::BTreeSet;
 
 /// Return all occurrences of each item after the first.
 /// ```
-/// use cargo2nix::util::find_duplicates;
+/// use crate2nix::util::find_duplicates;
 /// assert_eq!(find_duplicates(Vec::<&str>::new().iter()), Vec::<&&str>::new());
 /// assert_eq!(find_duplicates(vec!["a", "b"].iter()), Vec::<&&str>::new());
 /// assert_eq!(find_duplicates(vec!["a", "b", "a"].iter()), vec![&"a"]);

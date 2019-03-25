@@ -2,7 +2,7 @@ use quicli::prelude::CliResult;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-use cargo2nix::render;
+use crate2nix::render;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use std::str::FromStr;
@@ -10,7 +10,7 @@ use failure::format_err;
 
 #[derive(Debug, StructOpt, Deserialize, Serialize)]
 #[structopt(
-    name = "cargo2nix",
+    name = "crate2nix",
     about = "Nix build file generator for a cargo rust projects."
 )]
 pub enum Opt {
@@ -93,13 +93,13 @@ fn main() -> CliResult {
                     .join("crate_hashes.json")
             });
 
-            let generate_config = cargo2nix::GenerateConfig {
+            let generate_config = crate2nix::GenerateConfig {
                 cargo_toml,
                 output: output.clone(),
                 nixpkgs_path,
                 crate_hashes_json,
             };
-            let build_info = cargo2nix::BuildInfo::for_config(&generate_config)?;
+            let build_info = crate2nix::BuildInfo::for_config(&generate_config)?;
             let nix_string = render::render_build_file(&build_info)?;
             render::write_to_file(&output, &nix_string)?;
         },

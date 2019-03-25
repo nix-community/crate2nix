@@ -1,6 +1,6 @@
-//! # cargo2nix
+//! # crate2nix
 //!
-//! Internal library for the cargo2nix binary. This is not meant to be used separately, I just enjoy
+//! Internal library for the crate2nix binary. This is not meant to be used separately, I just enjoy
 //! writing doc tests ;)
 
 //#![deny(missing_docs)]
@@ -102,18 +102,18 @@ fn prefetch_and_fill_crates_sha256(
     Ok(())
 }
 
-/// Some info about the cargo2nix invocation.
+/// Some info about the crate2nix invocation.
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct GenerateInfo {
-    pub cargo2nix_version: String,
-    pub cargo2nix_arguments: Vec<String>,
+    pub crate2nix_version: String,
+    pub crate2nix_arguments: Vec<String>,
 }
 
 impl GenerateInfo {
     fn new() -> GenerateInfo {
         GenerateInfo {
-            cargo2nix_version: env!("CARGO_PKG_VERSION").to_string(),
-            cargo2nix_arguments: env::args().skip(1).collect(),
+            crate2nix_version: env!("CARGO_PKG_VERSION").to_string(),
+            crate2nix_arguments: env::args().skip(1).collect(),
         }
     }
 }

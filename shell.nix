@@ -1,18 +1,18 @@
 #
-# Crates a shell with cargo2nix installed.
+# Crates a shell with crate2nix installed.
 #
 
 { pkgs? import <nixos-unstable> { config = {}; }}:
 
-let cargo2nix = pkgs.callPackage ./default.nix {};
+let crate2nix = pkgs.callPackage ./default.nix {};
 in pkgs.stdenv.mkDerivation {
-   name = "shell-with-cargo2nix";
+   name = "shell-with-crate2nix";
    src = ./.;
 
-   buildInputs = [ cargo2nix ];
+   buildInputs = [ crate2nix ];
 
    shellHook = ''
-    source ${cargo2nix}/share/bash-completion/completions/cargo2nix.bash
-    cargo2nix help
+    source ${crate2nix}/share/bash-completion/completions/crate2nix.bash
+    crate2nix help
    '';
  }

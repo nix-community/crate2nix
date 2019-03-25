@@ -1,4 +1,4 @@
-# cargo2nix
+# crate2nix
 
 Generates [nix](https://nixos.org/nix/) build files for building [rust](https://www.rust-lang.org/) binaries from 
 [cargo](https://crates.io/) projects.
@@ -18,26 +18,26 @@ supported, you can create an overlay to add the needed configuration to the `def
 **Easy to understand nix template**: The actual nix code is generated via `templates/build.nix.tera` so you can 
 fix/improve the nix code without knowing rust if all the data is already there.
 
-[![Build Status](https://travis-ci.org/kolloch/cargo2nix.svg?branch=master)](https://travis-ci.org/kolloch/cargo2nix)
+[![Build Status](https://travis-ci.org/kolloch/crate2nix.svg?branch=master)](https://travis-ci.org/kolloch/crate2nix)
 
 Simple example:
 
 ```bash
 # From the project directory.
-cargo2nix generate
+crate2nix generate
 ```
 
 More elaborate example that uses `<nixos-unstable>` as the default `nixpkgs` path and specifies both the path
 to the `Cargo.toml` file (`-f`) and the output (`-o`) file explicitly.
 
 ```bash
-cargo2nix generate \
+crate2nix generate \
     -n '<nixos-unstable>' \
     -f /some/project/dir/Cargo.toml \
-    -o /some/project/dir/cargo2nix.nix
+    -o /some/project/dir/crate2nix.nix
 ```
 
-Use `cargo2nix help` to show all commands and options.
+Use `crate2nix help` to show all commands and options.
 
 ## Installation
 
@@ -45,9 +45,9 @@ For now, clone the repository and then
 
 ```bash
 # Install nix if necessary: https://nixos.org/nix/
-cd cargo2nix
+cd crate2nix
 nix-shell
-# you are in a shell with cargo2nix
+# you are in a shell with crate2nix
 ```
 
 This assumes that the `<nixos-unstable>` path points to, well, nixos-unstable.
@@ -78,10 +78,10 @@ nix-shell --arg pkgs 'import <nixos> {config = {}; }'
 
 ## Runtime Dependencies
 
-cargo2nix use `cargo metadata` / `nix-prefetch-url` at runtime so they need to be in the PATH. The default.nix
+crate2nix use `cargo metadata` / `nix-prefetch-url` at runtime so they need to be in the PATH. The default.nix
 adds the built-time nix/cargo binaries as fallback to the path.
 
-Currently, cargo2nix is only tested with nixos-unstable (the future 19.03) since it depends on some new features
+Currently, crate2nix is only tested with nixos-unstable (the future 19.03) since it depends on some new features
 and bug fixes.
 
 ## Related Projects
