@@ -6,10 +6,11 @@ cache:
 before_install:
   - sudo mkdir -p /etc/nix
   - echo 'sandbox = true' | sudo tee /etc/nix/nix.conf
+  - echo 'auto-optimise-store = true' | sudo tee /etc/nix/nix.conf
   - echo "substituters = https://cache.nixos.org/ file://$HOME/nix.store" | sudo tee -a /etc/nix/nix.conf
   - echo 'require-sigs = false' | sudo tee -a /etc/nix/nix.conf
 script:
-  - nix build --arg pkgs 'import <nixpkgs> {config = {}; }' -f default.nix && nix optimise-store
+  - nix build --arg pkgs 'import <nixpkgs> {config = {}; }' -f default.nix
 before_cache:
   - rm -rf $HOME/nix.store
   - mkdir -p $HOME/nix.store
