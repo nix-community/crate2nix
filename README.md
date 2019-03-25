@@ -88,6 +88,18 @@ adds the built-time nix/cargo binaries as fallback to the path.
 Currently, crate2nix is only tested with nixos-unstable (the future 19.03) since it depends on some new features
 and bug fixes.
 
+## Project Overview / Terminology
+
+If you want to hack on this, it is useful to know that build file generation is broken up into multiple phases:
+
+1. **cargo metadata**: Calling `cargo metadata` via the `cargo_metadata` crate.
+2. **indexing metadata**: Indexing the metadata by package ID to enable easy joining of "Node" and "Package" 
+  information, resulting in `metadata::IndexedMetadata`.
+3. **resolving**: Using the indexed metadata to actually resolve the dependencies and join all needed build information 
+  into `resolve::CrateDerivation`.
+4. **pre-fetching**: Pre-fetching crates.io packages to determine their sha256, see `prefetch` module.
+5. **rendering**: Rendering the data via the `build.nix.tera` template, see `render` module.
+
 ## Related Projects
 
 * [carnix](https://nest.pijul.com/pmeunier/carnix:master) is already widely used in NixOS itself, yet it failed to
@@ -95,22 +107,12 @@ and bug fixes.
   all the work on buildRustCrate and showing the way!
 * [cargo-raze](https://github.com/google/cargo-raze) generates `BUILD` files for bazel.
 
-## Project Overview / Terminology
-
-If you want to hack on this, it is useful to know that build file generation is broken up into multiple phases:
-
-* Calling `cargo metadata` via the `cargo_metadata` crate.
-* Indexing the metadata by package ID to enable easy joining of "Node" and "Package" information, resulting in 
-  `metadata::IndexedMetadata`.
-* Using the indexed metadata to actually resolve the dependencies and join all needed build information into 
-  `resolve::CrateDerivation`.
-* Pre-fetching crates.io packages to determine their sha256, see `prefetch` module.
-* Rendering the data via the `build.nix.tera` template, see `render` module.
-
 ## Contributions
 
 Contributions in the form of documentation and bug fixes are highly welcome. Please start a discussion with me before
 working on larger features.
+
+I'd really appreciate tests for all new features. Please run `cargo test` before submitting a pull request.
 
 Feature ideas are also welcome -- just know that this is a pure hobby side project and I will not allocate a lot of
 bandwidth to this. Therefore, important bug fixes are always prioritised.
