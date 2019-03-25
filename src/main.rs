@@ -1,7 +1,6 @@
 use quicli::prelude::CliResult;
 use std::path::PathBuf;
 use structopt::StructOpt;
-use structopt::clap::Shell;
 
 use cargo2nix::render;
 use serde_derive::Deserialize;
