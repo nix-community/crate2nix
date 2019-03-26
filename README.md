@@ -1,15 +1,16 @@
 # crate2nix
 
-Generates [nix](https://nixos.org/nix/) build files for building [rust](https://www.rust-lang.org/) binaries from 
-[cargo](https://crates.io/) projects.
+`crate2nix` generates [nix](https://nixos.org/nix/) build files for  
+[rust](https://www.rust-lang.org/) crates using [cargo](https://crates.io/).
 
-**Same dependency tree as cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the dependency tree from cargo. Therefore,
-it will use the exact same library versions as cargo and respect any locked down version in `Cargo.lock`.
+**Same dependency tree as cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the 
+dependency tree from cargo. Therefore, it will use the exact same library versions as cargo and respect any locked down
+version in `Cargo.lock`.
 
 **Smart caching**: It uses smart crate by crate caching so that nix rebuilds exactly the crates that need to be rebuilt.
 
-**Nix ecosystem goodness**: You can use all things that make the nix/NixOS ecosystem great, e.g. deploy your binary as 
-a service to the the cloud with [NixOps](https://nixos.org/nixops/).
+**Nix ecosystem goodness**: You can use all things that make the nix/NixOS ecosystem great, e.g. distributed/remote builds, 
+deploy your binary as a service to the the cloud with [NixOps](https://nixos.org/nixops/), ...
 
 **Out of the box support for libraries with non-rust dependencies**: It builds on top of the `buildRustCrate` 
 function from [NixOS](https://nixos.org/) so that native dependencies of
