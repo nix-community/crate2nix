@@ -4,8 +4,8 @@ use tempdir::TempDir;
 
 use crate2nix::nix_build::nix_build;
 use crate2nix::nix_build::run_cmd;
-use crate2nix::{render, BuildInfo};
 use crate2nix::GenerateConfig;
+use crate2nix::{render, BuildInfo};
 use fs_extra::dir::CopyOptions;
 
 #[test]
@@ -61,8 +61,10 @@ fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
         .to_path_buf();
 
     // Get metadata
+    let default_nix_path = cargo_toml.parent().unwrap().join("default.nix");
     let metadata = BuildInfo::for_config(&GenerateConfig {
         cargo_toml: cargo_toml.clone(),
+        output: default_nix_path.clone(),
         nixpkgs_path: "<nixos-unstable>".to_string(),
         crate_hashes_json: project_dir.join("crate-hashes.json").to_path_buf(),
     })
@@ -70,7 +72,6 @@ fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
     let default_nix_content = render::render_build_file(&metadata).unwrap();
 
     // Generate nix file
-    let default_nix_path = cargo_toml.parent().unwrap().join("default.nix");
     render::write_to_file(default_nix_path, &default_nix_content).unwrap();
 
     // Copy lock files back to source to avoid expensive, repetitive work
