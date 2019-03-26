@@ -44,7 +44,7 @@ Use `crate2nix help` to show all commands and options.
 
 ## Installation
 
-NOTE: It is Linux-only for now!
+NOTE: It is only tested on Linux for now!
 
 For now, clone the repository and then
 
@@ -81,6 +81,7 @@ nix-shell --arg pkgs 'import <nixos> {config = {}; }'
 * Only *local sources* and *crates io* supported. Again, just requires some work to resolve.
 * Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
   ID. They are not interpreted as paths but maybe you do not want to expose local paths in there...
+* *Workspaces* are currently unsupported.
 
 ## Runtime Dependencies
 
