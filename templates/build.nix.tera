@@ -13,7 +13,16 @@
   fetchurl? pkgs.fetchurl }:
 
 rec {
+    {%- if root_package_id %}
     root_crate = crates.{{root_package_id}};
+    {%- endif -%}
+    {%- if workspace_members %}
+    workspace_members = {
+    {%- for name, pkg_id in workspace_members %}
+        {{name}} = crates.{{pkg_id}};
+    {%- endfor %}
+    };
+    {%- endif %}
     crates = {
     {%- for crate in crates %}
         {{crate.package_id}}
@@ -22,7 +31,7 @@ rec {
                 version = {{crate.version}};
                 edition = {{crate.edition}};
 
-                {%- if crate.has_bin and crate.package_id != root_package_id %}
+                {%- if crate.has_bin and not crate.is_root_or_workspace_member %}
                 # Hack to suppress building binaries
                 crateBin = [{name = ","; path = ",";}];
                 {%- endif -%}

@@ -12,12 +12,12 @@ use failure::format_err;
 use failure::Error;
 
 /// Call `nix build` in the given directory on the `default.nix` in that directory.
-pub fn nix_build(project_dir: impl AsRef<Path>) -> Result<(), Error> {
+pub fn nix_build(project_dir: impl AsRef<Path>, nix_attr: &str) -> Result<(), Error> {
     let project_dir = project_dir.as_ref().to_string_lossy().to_string();
     println!("Building {}.", project_dir);
     let status = Command::new("nix")
         .current_dir(&project_dir)
-        .args(&["--show-trace", "build", "-f", "default.nix", "root_crate"])
+        .args(&["--show-trace", "build", "-f", "default.nix", nix_attr])
         .stdin(Stdio::null())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())

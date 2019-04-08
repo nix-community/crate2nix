@@ -10,51 +10,98 @@ use fs_extra::dir::CopyOptions;
 
 #[test]
 fn build_and_run_bin() {
-    let output = build_and_run("sample_projects/bin/Cargo.toml");
+    let output = build_and_run(
+        "sample_projects/bin/Cargo.toml",
+        "sample_projects/bin",
+        "root_crate",
+        "hello_world_bin",
+    );
 
     assert_eq!("Hello, world!\n", &output);
 }
 
 #[test]
 fn build_and_run_lib_and_bin() {
-    let output = build_and_run("sample_projects/lib_and_bin/Cargo.toml");
+    let output = build_and_run(
+        "sample_projects/lib_and_bin/Cargo.toml",
+        "sample_projects/lib_and_bin",
+        "root_crate",
+        "hello_world_lib_and_bin",
+    );
 
     assert_eq!("Hello, lib_and_bin!\n", &output);
 }
 
 #[test]
 fn build_and_run_bin_with_lib_dep() {
-    let output = build_and_run("sample_projects/bin_with_lib_dep/Cargo.toml");
+    let output = build_and_run(
+        "sample_projects/bin_with_lib_dep/Cargo.toml",
+        "sample_projects",
+        "root_crate",
+        "hello_world_with_dep",
+    );
 
     assert_eq!("Hello, bin_with_lib_dep!\n", &output);
 }
 
 #[test]
 fn build_and_run_with_default_features() {
-    let output = build_and_run("sample_projects/bin_with_default_features/Cargo.toml");
+    let output = build_and_run(
+        "sample_projects/bin_with_default_features/Cargo.toml",
+        "sample_projects",
+        "root_crate",
+        "bin_with_default_features",
+    );
 
     assert_eq!("Hello, bin_with_default_features!\n", &output);
 }
 
 #[test]
 fn build_and_run_with_tera() {
-    let output = build_and_run("sample_projects/with_tera/Cargo.toml");
+    let output = build_and_run(
+        "sample_projects/with_tera/Cargo.toml",
+        "sample_projects/with_tera",
+        "root_crate",
+        "with_tera",
+    );
 
     assert_eq!("Hello, with_tera!\n", &output);
 }
 
-fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
+#[test]
+fn build_and_run_workspace() {
+    let output = build_and_run(
+        "sample_workspace/Cargo.toml",
+        "sample_workspace",
+        "workspace_members.with_tera",
+        "with_tera",
+    );
+
+    assert_eq!("Hello, with_tera!\n", &output);
+}
+
+fn build_and_run(
+    cargo_toml: impl AsRef<Path>,
+    copy_dir: impl AsRef<Path>,
+    nix_attr: &str,
+    binary_name: &str,
+) -> String {
     let orig_project_dir = cargo_toml
         .as_ref()
         .parent()
         .expect("Cargo.toml needs a parent")
         .to_path_buf();
 
-    let temp_dir = TempDir::new("sample_projects").expect("couldn't create temp dir");
+    let temp_dir = TempDir::new(&copy_dir.as_ref().file_name().unwrap().to_string_lossy())
+        .expect("couldn't create temp dir");
 
-    fs_extra::dir::copy("sample_projects", &temp_dir, &CopyOptions::new())
+    fs_extra::dir::copy(copy_dir.as_ref(), &temp_dir, &CopyOptions::new())
         .expect("while copying files");
-    let cargo_toml = temp_dir.path().join(cargo_toml);
+    let relative_cargo_toml: &Path = cargo_toml
+        .as_ref()
+        .strip_prefix(copy_dir.as_ref().parent().unwrap())
+        .expect("prefix");
+    let cargo_toml = temp_dir.path().join(relative_cargo_toml);
     let project_dir = cargo_toml
         .parent()
         .expect("Cargo.toml needs a parent")
@@ -89,18 +136,13 @@ fn build_and_run(cargo_toml: impl AsRef<Path>) -> String {
     .unwrap();
 
     // Build
-    nix_build(&project_dir).unwrap();
+    nix_build(&project_dir, nix_attr).unwrap();
 
     // Run resulting binary
-    let binary_name = metadata
-        .indexed_metadata
-        .pkgs_by_id
-        .get(&metadata.root_package_id.unwrap().clone())
-        .unwrap()
-        .name
-        .clone();
-    let bin_path = project_dir.join("result").join("bin").join(&binary_name);
+    let bin_path = project_dir.join("result").join("bin").join(binary_name);
     let output = run_cmd(bin_path).unwrap();
+    // For debugging, keep temp directory around:
+    //    std::mem::forget(temp_dir);
     temp_dir.close().expect("couldn't remove temp dir");
     output
 }

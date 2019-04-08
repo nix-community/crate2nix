@@ -15,6 +15,7 @@ use serde_derive::Serialize;
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct IndexedMetadata {
     pub root: Option<PackageId>,
+    pub workspace_members: Vec<PackageId>,
     pub pkgs_by_id: BTreeMap<PackageId, Package>,
     pub nodes_by_id: BTreeMap<PackageId, Node>,
 }
@@ -23,6 +24,7 @@ impl IndexedMetadata {
     pub fn new_from(metadata: Metadata) -> Result<IndexedMetadata, Error> {
         let resolve = metadata
             .resolve
+            .as_ref()
             .ok_or_else(|| format_err!("no root in metadata"))?;
 
         let pkgs_by_id: BTreeMap<PackageId, Package> = metadata
@@ -55,7 +57,8 @@ impl IndexedMetadata {
         }
 
         Ok(IndexedMetadata {
-            root: resolve.root,
+            root: resolve.root.clone(),
+            workspace_members: metadata.workspace_members,
             pkgs_by_id,
             nodes_by_id,
         })

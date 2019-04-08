@@ -39,6 +39,8 @@ pub struct CrateDerivation {
     pub lib_path: Option<PathBuf>,
     pub has_bin: bool,
     pub proc_macro: bool,
+    // This derivation builds the root crate or a workspace member.
+    pub is_root_or_workspace_member: bool,
 }
 
 impl CrateDerivation {
@@ -93,9 +95,20 @@ impl CrateDerivation {
         let relative_source = if package_path == config_directory {
             "./.".into()
         } else {
-            diff_paths(package_path, &config_directory)
-                .unwrap_or_else(|| package_path.to_path_buf())
+            let path = diff_paths(package_path, &config_directory)
+                .unwrap_or_else(|| package_path.to_path_buf());
+            if path.starts_with("../") {
+                path
+            } else {
+                PathBuf::from("./").join(path)
+            }
         };
+
+        let is_root_or_workspace_member = metadata.root.iter().chain(
+            metadata
+            .workspace_members
+            .iter())
+            .any(|pkg_id| *pkg_id == package.id);
 
         Ok(CrateDerivation {
             crate_name: package.name.clone(),
@@ -113,6 +126,7 @@ impl CrateDerivation {
             lib_path,
             proc_macro,
             has_bin,
+            is_root_or_workspace_member,
         })
     }
 }

@@ -30,7 +30,11 @@ pub mod util;
 /// The resolved build info and the input for rendering the build.nix.tera template.
 #[derive(Debug, Deserialize, Serialize)]
 pub struct BuildInfo {
+    // The package ID of the root crate.
     pub root_package_id: Option<PackageId>,
+    // Workspaces member package IDs by package names.
+    pub workspace_members: BTreeMap<String, PackageId>,
+    // Build info for all crates needed for this build.
     pub crates: Vec<CrateDerivation>,
     // For convenience include the source for tests.
     pub indexed_metadata: IndexedMetadata,
@@ -61,6 +65,9 @@ impl BuildInfo {
     fn new(config: &GenerateConfig, metadata: IndexedMetadata) -> Result<BuildInfo, Error> {
         Ok(BuildInfo {
             root_package_id: metadata.root.clone(),
+            workspace_members: metadata.workspace_members.iter().flat_map(|pkg_id| {
+                metadata.pkgs_by_id.get(pkg_id).map(|pkg| (pkg.name.clone(), pkg_id.clone()))
+            }).collect(),
             crates: metadata
                 .pkgs_by_id
                 .values()

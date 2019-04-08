@@ -1,0 +1,9 @@
+[workspace]
+
+members = [
+    "bin",
+    "bin_with_default_features",
+    "lib_and_bin",
+    "bin_with_lib_dep",
+    "with_tera",
+]
