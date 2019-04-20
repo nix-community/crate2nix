@@ -55,17 +55,9 @@ nix-shell
 # you are in a shell with crate2nix
 ```
 
-This assumes that the `<nixos-unstable>` path points to, well, nixos-unstable.
+This uses git fetch to reference nixos-unstable because at the time of writing this, it contains a necessary fix.
 
-If that doesn't work for you, you can 
-
-1. either add it to your nix channels:
-
-```bash
-nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
-```
-
-2. or you override the `pkgs` argument, e.g.:
+If that doesn't work for you, you can override the `pkgs` argument, e.g.:
 
 ```bash
 nix-shell --arg pkgs 'import <nixos> {config = {}; }'

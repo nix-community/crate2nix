@@ -2,7 +2,11 @@
 # Crates a shell with crate2nix installed.
 #
 
-{ pkgs? import <nixos-unstable> { config = {}; }}:
+let nixpkgs = builtins.fetchGit { url = https://github.com/NixOS/nixpkgs-channels.git; ref = "nixos-unstable"; };
+
+in
+
+{ pkgs? import nixpkgs { config = {}; }}:
 
 let crate2nix = pkgs.callPackage ./default.nix {};
 in pkgs.stdenv.mkDerivation {
