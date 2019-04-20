@@ -3,6 +3,8 @@
 crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) crates 
 using [cargo](https://crates.io/).
 
+[![Build Status](https://travis-ci.org/kolloch/crate2nix.svg?branch=master)](https://travis-ci.org/kolloch/crate2nix)
+
 **Same dependency tree as cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the 
 dependency tree from cargo. Therefore, it will use the exact same library versions as cargo and respect any locked down
 version in `Cargo.lock`.
@@ -20,8 +22,6 @@ supported, you can create an overlay to add the needed configuration to the `def
 
 **Easy to understand nix template**: The actual nix code is generated via `templates/build.nix.tera` so you can 
 fix/improve the nix code without knowing rust if all the data is already there.
-
-[![Build Status](https://travis-ci.org/kolloch/crate2nix.svg?branch=master)](https://travis-ci.org/kolloch/crate2nix)
 
 Here is a simple example which uses all the defaults and will generate a `default.nix` file:
 
