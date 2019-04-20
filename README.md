@@ -81,6 +81,7 @@ nix-shell --arg pkgs 'import <nixos> {config = {}; }'
 * Only *local sources* and *crates io* supported. Again, just requires some work to resolve.
 * Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
   ID. They are not interpreted as paths but maybe you do not want to expose local paths in there...
+* Before 0.2.x: No support for workspaces.
 
 ## Runtime Dependencies
 

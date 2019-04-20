@@ -90,16 +90,17 @@ fn main() -> CliResult {
                 cargo_toml
                     .parent()
                     .expect("Cargo.toml has parent")
-                    .join("crate_hashes.json")
+                    .join("crate-hashes.json")
             });
 
+            let generate_info = crate2nix::GenerateInfo::new();
             let generate_config = crate2nix::GenerateConfig {
                 cargo_toml,
                 output: output.clone(),
                 nixpkgs_path,
                 crate_hashes_json,
             };
-            let build_info = crate2nix::BuildInfo::for_config(&generate_config)?;
+            let build_info = crate2nix::BuildInfo::for_config(&generate_info, &generate_config)?;
             let nix_string = render::render_build_file(&build_info)?;
             render::write_to_file(&output, &nix_string)?;
         },

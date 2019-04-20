@@ -46,7 +46,7 @@ pub struct BuildInfo {
 
 impl BuildInfo {
     /// Return the `NixBuildInfo` data ready for rendering the nix build file.
-    pub fn for_config(config: &GenerateConfig) -> Result<BuildInfo, Error> {
+    pub fn for_config(info: &GenerateInfo, config: &GenerateConfig) -> Result<BuildInfo, Error> {
         let metadata = cargo_metadata(config)?;
         let indexed_metadata = IndexedMetadata::new_from(metadata).map_err(|e| {
             format_err!(
@@ -55,14 +55,14 @@ impl BuildInfo {
                 e
             )
         })?;
-        let mut default_nix = BuildInfo::new(config, indexed_metadata)?;
+        let mut default_nix = BuildInfo::new(info, config, indexed_metadata)?;
 
         prefetch_and_fill_crates_sha256(config, &mut default_nix)?;
 
         Ok(default_nix)
     }
 
-    fn new(config: &GenerateConfig, metadata: IndexedMetadata) -> Result<BuildInfo, Error> {
+    fn new(info: &GenerateInfo, config: &GenerateConfig, metadata: IndexedMetadata) -> Result<BuildInfo, Error> {
         Ok(BuildInfo {
             root_package_id: metadata.root.clone(),
             workspace_members: metadata.workspace_members.iter().flat_map(|pkg_id| {
@@ -74,7 +74,7 @@ impl BuildInfo {
                 .map(|package| CrateDerivation::resolve(config, &metadata, package))
                 .collect::<Result<_, Error>>()?,
             indexed_metadata: metadata,
-            info: GenerateInfo::new(),
+            info: info.clone(),
             config: config.clone(),
         })
     }
@@ -117,7 +117,7 @@ pub struct GenerateInfo {
 }
 
 impl GenerateInfo {
-    fn new() -> GenerateInfo {
+    pub fn new() -> GenerateInfo {
         GenerateInfo {
             crate2nix_version: env!("CARGO_PKG_VERSION").to_string(),
             crate2nix_arguments: env::args().skip(1).collect(),
