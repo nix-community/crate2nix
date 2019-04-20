@@ -44,7 +44,7 @@ Use `crate2nix help` to show all commands and options.
 
 ## Installation
 
-NOTE: It is Linux-only for now!
+NOTE: It is only tested on Linux for now!
 
 For now, clone the repository and then
 
