@@ -13,9 +13,10 @@
 If `crate2nix` is applied to a workspace, the resulting nix-file will contain a top-level "workspace_members" attribute 
 set that refers the corresponding top-level crate derivations by name.
 
-## Pruning unreachable dependencies
+## Target-specific dependencies
 
-Unreachable dependencies are not included in "crates" anymore.
+"cfg(...)" expressions and target triplets such as "i686-pc-windows-gnu" are compiled into nix expressions. Support
+is incomplete because e.g. it does not work for processor features. Please let me know if this causes problems for you! 
 
 # 0.1.0
 

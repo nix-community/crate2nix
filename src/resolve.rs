@@ -7,18 +7,16 @@ use cargo_metadata::Package;
 use cargo_metadata::PackageId;
 use failure::format_err;
 use failure::Error;
-use lazy_static::lazy_static;
 use pathdiff::diff_paths;
 use semver::Version;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use serde_json::to_string_pretty;
-use std::collections::HashSet;
+use std::collections::HashMap;
 use std::convert::Into;
 use std::path::PathBuf;
 
 use crate::metadata::IndexedMetadata;
-use crate::target_cfg::{Cfg, CfgExpr};
 use crate::GenerateConfig;
 
 /// All data necessary for creating a derivation for a crate.
@@ -31,8 +29,8 @@ pub struct CrateDerivation {
     pub version: Version,
     pub source_directory: PathBuf,
     pub sha256: Option<String>,
-    pub dependencies: Vec<PackageId>,
-    pub build_dependencies: Vec<PackageId>,
+    pub dependencies: Vec<ResolvedDependency>,
+    pub build_dependencies: Vec<ResolvedDependency>,
     pub features: Vec<String>,
     /// The relative path to the build script.
     pub build: Option<PathBuf>,
@@ -137,8 +135,8 @@ struct ResolvedDependencies<'a> {
     node: &'a Node,
     /// The corresponding packages for the dependencies.
     packages: Vec<&'a Package>,
-    /// The dependencies filtered to the target platform.
-    platform_dependencies: Vec<&'a Dependency>,
+    /// The dependencies of the package/crate.
+    dependencies: Vec<&'a Dependency>,
 }
 
 impl<'a> ResolvedDependencies<'a> {
@@ -172,70 +170,49 @@ impl<'a> ResolvedDependencies<'a> {
                 .collect::<Result<_, Error>>()?;
         packages.sort_by(|p1, p2| p1.id.cmp(&p2.id));
 
-        let platform_dependencies: Vec<&Dependency> = package
-            .dependencies
-            .iter()
-            .filter(|d| {
-                d.target
-                    .as_ref()
-                    .map(|platform| CfgExpr::matches_key(&platform.to_string(), &PLATFORM))
-                    .unwrap_or(true)
-            })
-            .collect();
-
         Ok(ResolvedDependencies {
             node,
             packages,
-            platform_dependencies,
+            dependencies: package.dependencies.iter().collect(),
         })
     }
 
-    fn filtered_dependencies(&self, filter: impl Fn(&Dependency) -> bool) -> Vec<PackageId> {
+    fn filtered_dependencies(
+        &self,
+        filter: impl Fn(&Dependency) -> bool,
+    ) -> Vec<ResolvedDependency> {
         /// Normalize a package name such as cargo does.
         fn normalize_package_name(package_name: &str) -> String {
             package_name.replace('-', "_")
         }
 
-        let names: HashSet<String> = self
-            .platform_dependencies
+        let names: HashMap<String, &&Dependency> = self
+            .dependencies
             .iter()
             .filter(|d| filter(**d))
-            .map(|d| normalize_package_name(&d.name))
+            .map(|d| (normalize_package_name(&d.name), d))
             .collect();
         self.packages
             .iter()
-            .filter(|d| names.contains(&normalize_package_name(&d.name)))
-            .map(|d| d.id.clone())
+            .flat_map(|d| {
+                names
+                    .get(&normalize_package_name(&d.name))
+                    .map(|dependency| ResolvedDependency {
+                        package_id: d.id.clone(),
+                        target: dependency
+                            .target
+                            .as_ref()
+                            .map(|p| p.to_string()),
+                    })
+            })
             .collect()
     }
 }
 
-lazy_static! {
-    /// The platform configuration that we will evaluate dependency target expressions against.
-    ///
-    /// This basically means that it only works if the target is Linux x86_64.
-    ///
-    /// TODO(pkolloch): Remove this restriction
-    static ref PLATFORM: Vec<Cfg> = {
-        fn name(n: &str) -> Cfg {
-            Cfg::Name(n.to_string())
-        }
-        fn key_pair(k: &str, v: &str) -> Cfg {
-            Cfg::KeyPair(k.to_string(), v.to_string())
-        }
-
-        vec![
-            name("debug_assertions"),
-            name("unix"),
-            key_pair("target_endian", "little"),
-            key_pair("target_env", "gnu"),
-            key_pair("target_family", "unix"),
-            key_pair("target_feature", "fxsr"),
-            key_pair("target_feature", "sse"),
-            key_pair("target_feature", "sse2"),
-            key_pair("target_os", "linux"),
-            key_pair("target_pointer_width", "64"),
-            key_pair("target_vendor", "unknown"),
-        ]
-    };
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ResolvedDependency {
+    pub package_id: PackageId,
+    /// The cfg expression for conditionally enabling the dependency (if any).
+    /// Can also be a target "triplet".
+    pub target: Option<String>,
 }

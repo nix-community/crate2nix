@@ -82,7 +82,8 @@ impl BuildInfo {
                 indexed_crates
                     .get(next_package_id)
                     .iter()
-                    .flat_map(|c| c.dependencies.iter().chain(c.build_dependencies.iter())),
+                    .flat_map(|c| c.dependencies.iter().chain(c.build_dependencies.iter()))
+                    .map(|d| &d.package_id),
             );
         }
         self.crates.retain(|c| reachable.contains(&c.package_id));

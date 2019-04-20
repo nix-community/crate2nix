@@ -68,9 +68,10 @@ nix-shell --arg pkgs 'import <nixos> {config = {}; }'
 * Only *default crate features* are supported. It should be easy to support a different feature set at build generation 
   time since we can simply pass this set to `cargo metadata`. Feature selection during build time is out of scope for 
   now.
-* Filters all dependencies for the *hard-coded "Linux x86_64" target platform*. Again, it should be quite easy to 
+* Translates some target strings to nix expressions. The support might be incomplete - please let me know if you hit problems. 
+  Before 0.2.x: Filters all dependencies for the *hard-coded "Linux x86_64" target platform*. Again, it should be quite easy to 
   support more platforms. To do so completely and at build time (vs build generation time) might be more involved.
-* Only *local sources* and *crates io* supported. Again, just requires some work to resolve.
+* Only *local sources* and *crates io* supported. Again, just requires some work to resolve.-
 * Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
   ID. They are not interpreted as paths but maybe you do not want to expose local paths in there...
 * Before 0.2.x: No support for workspaces.

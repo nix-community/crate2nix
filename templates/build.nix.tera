@@ -63,17 +63,27 @@ rec {
                 {%- endif -%}
 
                 {%- if crate.dependencies|length > 0 %}
-                dependencies = [
+                dependencies = filterDeps [
                 {%- for dependency in crate.dependencies %}
-                    crates.{{dependency}}
+                    {%- if dependency.target %}
+                    # target = {{dependency.target}}
+                    (cfg {{dependency.target | safe | cfg_to_nix_expr}} {{dependency.package_id}})
+                    {%- else %}
+                    {{dependency.package_id}}
+                    {%- endif -%}
                 {%- endfor %}
                 ];
                 {%- endif -%}
 
                 {%- if crate.build_dependencies|length > 0 %}
-                buildDependencies = [
+                buildDependencies = filterDeps [
                 {%- for dependency in crate.build_dependencies %}
-                    crates.{{dependency}}
+                    {%- if dependency.target %}
+                    # target = {{dependency.target}}
+                    (cfg {{dependency.target | safe | cfg_to_nix_expr}} {{dependency.package_id}})
+                    {%- else %}
+                    {{dependency.package_id}}
+                    {%- endif -%}
                 {%- endfor %}
                 ];
                 {%- endif -%}
@@ -89,7 +99,36 @@ rec {
     {%- endfor %}
     };
 
+    # Target (platform) data for conditional dependencies.
+    # This corresponds to what buildRustCrate is setting.
+    target = {
+        unix = true;
+        windows = false;
+
+        # This doesn't appear to be officially documented anywhere yet.
+        # See https://github.com/rust-lang-nursery/rust-forge/issues/101.
+        os = if stdenv.hostPlatform.isDarwin
+          then "macos"
+          else stdenv.hostPlatform.parsed.kernel.name;
+        arch = stdenv.hostPlatform.parsed.cpu.name;
+        family = "unix";
+        env = "gnu";
+        endian = if stdenv.hostPlatform.parsed.cpu.significantByte.name == "littleEndian" then "little" else "big";
+        pointer_width = toString stdenv.hostPlatform.parsed.cpu.bits;
+        vendor = stdenv.hostPlatform.parsed.vendor.name;
+        debug_assertions = false;
+     };
+
     # Utility functions
+
+    # Filter null package_ids and map the IDs to crate derivations.
+    filterDeps = package_ids:
+        let without_null = builtins.filter (x: ! (isNull x)) package_ids;
+        in builtins.map (id: crates.${id}) without_null;
+
+    # Trivial function to make package dependencies read nicer
+    cfg = condition: package_id:
+        if condition then package_id else null;
 
     # sourceFilter: Filters common temp files and build files
     # TODO(pkolloch): Substitute with gitignore filter
