@@ -104,10 +104,10 @@ impl CrateDerivation {
             }
         };
 
-        let is_root_or_workspace_member = metadata.root.iter().chain(
-            metadata
-            .workspace_members
-            .iter())
+        let is_root_or_workspace_member = metadata
+            .root
+            .iter()
+            .chain(metadata.workspace_members.iter())
             .any(|pkg_id| *pkg_id == package.id);
 
         Ok(CrateDerivation {

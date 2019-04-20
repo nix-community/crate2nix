@@ -13,6 +13,10 @@
 If `crate2nix` is applied to a workspace, the resulting nix-file will contain a top-level "workspace_members" attribute 
 set that refers the corresponding top-level crate derivations by name.
 
+## Pruning unreachable dependencies
+
+Unreachable dependencies are not included in "crates" anymore.
+
 # 0.1.0
 
 Initial public release.

@@ -301,24 +301,6 @@ rec {
                     crates."structopt 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)"
                 ];
             };
-        "cloudabi 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "cloudabi";
-                version = "0.0.3";
-                edition = "2015";
-                sha256 = "1z9lby5sr6vslfd14d6igk03s7awf91mxpsfmsp3prxbxlk0x7h5";
-                libPath = "cloudabi.rs";
-                authors = [
-                    "Nuxi (https://nuxi.nl/) and contributors"
-                ];
-                dependencies = [
-                    crates."bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
-                ];
-                features = [
-                   "bitflags"
-                   "default"
-                ];
-            };
         "crate2nix 0.2.0-beta.0 (path+file:///home/peter/gdrive/projects/crate2nix)"
             = buildRustCrate {
                 crateName = "crate2nix";
@@ -605,43 +587,6 @@ rec {
                 libPath = "src/lib.rs";
                 authors = [
                     "Denis Kurilenko <webdesus@gmail.com>"
-                ];
-            };
-        "fuchsia-cprng 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "fuchsia-cprng";
-                version = "0.1.1";
-                edition = "2018";
-                sha256 = "07apwv9dj716yjlcj29p94vkqn5zmfh7hlrqvrjx3wzshphc95h9";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Erick Tryzelaar <etryzelaar@google.com>"
-                ];
-            };
-        "fuchsia-zircon 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "fuchsia-zircon";
-                version = "0.3.3";
-                edition = "2015";
-                sha256 = "0jrf4shb1699r4la8z358vri8318w4mdi6qzfqy30p2ymjlca4gk";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Raph Levien <raph@google.com>"
-                ];
-                dependencies = [
-                    crates."bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
-                    crates."fuchsia-zircon-sys 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)"
-                ];
-            };
-        "fuchsia-zircon-sys 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "fuchsia-zircon-sys";
-                version = "0.3.3";
-                edition = "2015";
-                sha256 = "08jp1zxrm9jbrr6l26bjal4dbm8bxfy57ickdgibsqxr1n9j3hf5";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Raph Levien <raph@google.com>"
                 ];
             };
         "generic-array 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
@@ -1416,49 +1361,6 @@ rec {
                     crates."num_cpus 1.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
                 ];
             };
-        "rdrand 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "rdrand";
-                version = "0.4.0";
-                edition = "2015";
-                sha256 = "15hrcasn0v876wpkwab1dwbk9kvqwrb3iv4y4dibb6yxnfvzwajk";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Simonas Kazlauskas <rdrand@kazlauskas.me>"
-                ];
-                dependencies = [
-                    crates."rand_core 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)"
-                ];
-                features = [
-                   "default"
-                   "std"
-                ];
-            };
-        "redox_syscall 0.1.50 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "redox_syscall";
-                version = "0.1.50";
-                edition = "2015";
-                sha256 = "0f7lpamlizfv9cbyyqwwzp9rbk66gppqdx5kw5vq24cfzy9dbpiw";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Jeremy Soller <jackpot51@gmail.com>"
-                ];
-            };
-        "redox_termios 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "redox_termios";
-                version = "0.1.1";
-                edition = "2015";
-                sha256 = "04s6yyzjca552hdaqlvqhp3vw0zqbc304md5czyd3axh56iry8wh";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Jeremy Soller <jackpot51@gmail.com>"
-                ];
-                dependencies = [
-                    crates."redox_syscall 0.1.50 (registry+https://github.com/rust-lang/crates.io-index)"
-                ];
-            };
         "regex 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
             = buildRustCrate {
                 crateName = "regex";
@@ -1866,22 +1768,6 @@ rec {
                     "Andrew Gallant <jamslam@gmail.com>"
                 ];
             };
-        "termion 1.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "termion";
-                version = "1.5.1";
-                edition = "2015";
-                sha256 = "02gq4vd8iws1f3gjrgrgpajsk2bk43nds5acbbb4s8dvrdvr8nf1";
-                libPath = "src/lib.rs";
-                authors = [
-                    "ticki <Ticki@users.noreply.github.com>"
-                    "gycos <alexandre.bury@gmail.com>"
-                    "IGI-111 <igi-111@protonmail.com>"
-                ];
-                dependencies = [
-                    crates."libc 0.2.47 (registry+https://github.com/rust-lang/crates.io-index)"
-                ];
-            };
         "textwrap 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)"
             = buildRustCrate {
                 crateName = "textwrap";
@@ -2286,90 +2172,6 @@ rec {
                 ];
                 dependencies = [
                     crates."same-file 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
-                ];
-            };
-        "winapi 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "winapi";
-                version = "0.3.6";
-                edition = "2015";
-                sha256 = "1d9jfp4cjd82sr1q4dgdlrkvm33zhhav9d7ihr0nivqbncr059m4";
-                build = "build.rs";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Peter Atashian <retep998@gmail.com>"
-                ];
-                features = [
-                   "consoleapi"
-                   "dbghelp"
-                   "errhandlingapi"
-                   "fileapi"
-                   "handleapi"
-                   "minwinbase"
-                   "minwindef"
-                   "ntdef"
-                   "ntsecapi"
-                   "ntstatus"
-                   "processenv"
-                   "processthreadsapi"
-                   "profileapi"
-                   "std"
-                   "sysinfoapi"
-                   "timezoneapi"
-                   "winbase"
-                   "wincon"
-                   "winerror"
-                   "winnt"
-                ];
-            };
-        "winapi-i686-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "winapi-i686-pc-windows-gnu";
-                version = "0.4.0";
-                edition = "2015";
-                sha256 = "05ihkij18r4gamjpxj4gra24514can762imjzlmak5wlzidplzrp";
-                build = "build.rs";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Peter Atashian <retep998@gmail.com>"
-                ];
-            };
-        "winapi-util 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "winapi-util";
-                version = "0.1.1";
-                edition = "2015";
-                sha256 = "10madanla73aagbklx6y73r2g2vwq9w8a0qcghbbbpn9vfr6a95f";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Andrew Gallant <jamslam@gmail.com>"
-                ];
-            };
-        "winapi-x86_64-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "winapi-x86_64-pc-windows-gnu";
-                version = "0.4.0";
-                edition = "2015";
-                sha256 = "0n1ylmlsb8yg1v583i4xy0qmqg42275flvbc51hdqjjfjcl9vlbj";
-                build = "build.rs";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Peter Atashian <retep998@gmail.com>"
-                ];
-            };
-        "wincolor 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "wincolor";
-                version = "1.0.1";
-                edition = "2015";
-                sha256 = "0gr7v4krmjba7yq16071rfacz42qbapas7mxk5nphjwb042a8gvz";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Andrew Gallant <jamslam@gmail.com>"
-                ];
-                dependencies = [
-                    crates."winapi 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)"
-                    crates."winapi-util 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
                 ];
             };
     };

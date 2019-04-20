@@ -5,7 +5,7 @@
 
 //#![deny(missing_docs)]
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet, VecDeque};
 use std::env;
 use std::path::PathBuf;
 
@@ -57,17 +57,54 @@ impl BuildInfo {
         })?;
         let mut default_nix = BuildInfo::new(info, config, indexed_metadata)?;
 
+        default_nix.prune_unneeded_crates();
+
         prefetch_and_fill_crates_sha256(config, &mut default_nix)?;
 
         Ok(default_nix)
     }
 
-    fn new(info: &GenerateInfo, config: &GenerateConfig, metadata: IndexedMetadata) -> Result<BuildInfo, Error> {
+    fn prune_unneeded_crates(&mut self) {
+        let mut queue: VecDeque<&PackageId> = self
+            .root_package_id
+            .iter()
+            .chain(self.workspace_members.values())
+            .collect();
+        let mut reachable = HashSet::new();
+        let indexed_crates: BTreeMap<_, _> =
+            self.crates.iter().map(|c| (&c.package_id, c)).collect();
+        while let Some(next_package_id) = queue.pop_back() {
+            if !reachable.insert(next_package_id.clone()) {
+                continue;
+            }
+
+            queue.extend(
+                indexed_crates
+                    .get(next_package_id)
+                    .iter()
+                    .flat_map(|c| c.dependencies.iter().chain(c.build_dependencies.iter())),
+            );
+        }
+        self.crates.retain(|c| reachable.contains(&c.package_id));
+    }
+
+    fn new(
+        info: &GenerateInfo,
+        config: &GenerateConfig,
+        metadata: IndexedMetadata,
+    ) -> Result<BuildInfo, Error> {
         Ok(BuildInfo {
             root_package_id: metadata.root.clone(),
-            workspace_members: metadata.workspace_members.iter().flat_map(|pkg_id| {
-                metadata.pkgs_by_id.get(pkg_id).map(|pkg| (pkg.name.clone(), pkg_id.clone()))
-            }).collect(),
+            workspace_members: metadata
+                .workspace_members
+                .iter()
+                .flat_map(|pkg_id| {
+                    metadata
+                        .pkgs_by_id
+                        .get(pkg_id)
+                        .map(|pkg| (pkg.name.clone(), pkg_id.clone()))
+                })
+                .collect(),
             crates: metadata
                 .pkgs_by_id
                 .values()
