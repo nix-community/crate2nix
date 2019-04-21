@@ -13,16 +13,27 @@
   fetchurl? pkgs.fetchurl }:
 
 rec {
+    #
+    # "public" attributes that we attempt to keep stable with new versions of crate2nix.
+    #
+
     {%- if root_package_id %}
+    # Use this attribute to refer to the derivation building your root crate.
     root_crate = crates.{{root_package_id}};
     {%- endif -%}
     {%- if workspace_members %}
+    # Refer your crate build derivation by name here.
     workspace_members = {
     {%- for name, pkg_id in workspace_members %}
         {{name}} = crates.{{pkg_id}};
     {%- endfor %}
     };
     {%- endif %}
+
+    #
+    # "private" attributes that may change in every new version of crate2nix.
+    #
+
     crates = {
     {%- for crate in crates %}
         {{crate.package_id}}
