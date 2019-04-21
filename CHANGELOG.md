@@ -1,4 +1,4 @@
-# 0.2.0.beta.0
+# 0.2.0
 
 ## Bugfixes
 
@@ -16,7 +16,8 @@ set that refers the corresponding top-level crate derivations by name.
 ## Target-specific dependencies
 
 "cfg(...)" expressions and target triplets such as "i686-pc-windows-gnu" are compiled into nix expressions. Support
-is incomplete because e.g. it does not work for processor features. Please let me know if this causes problems for you! 
+should be reasonable but incomplete because e.g. it does not work for processor features. Please let me know if this 
+causes problems for you! 
 
 # 0.1.0
 
