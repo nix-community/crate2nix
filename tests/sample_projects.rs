@@ -3,7 +3,7 @@ use std::path::Path;
 use tempdir::TempDir;
 
 use crate2nix::nix_build::nix_build;
-use crate2nix::nix_build::run_cmd;
+use crate2nix::nix_build::{dump_with_lines, run_cmd};
 use crate2nix::{render, BuildInfo};
 use crate2nix::{GenerateConfig, GenerateInfo};
 use fs_extra::dir::CopyOptions;
@@ -69,6 +69,18 @@ fn build_and_run_with_tera() {
 }
 
 #[test]
+fn build_and_run_bin_with_lib_git_dep() {
+    let output = build_and_run(
+        "sample_projects/bin_with_lib_git_dep/Cargo.toml",
+        "sample_projects/bin_with_lib_git_dep",
+        "root_crate",
+        "bin_with_lib_git_dep",
+    );
+
+    assert_eq!("Hello world from bin_with_lib_git_dep!\n", &output);
+}
+
+#[test]
 fn build_and_run_workspace() {
     let output = build_and_run(
         "sample_workspace/Cargo.toml",
@@ -94,6 +106,11 @@ fn build_and_run(
 
     let temp_dir = TempDir::new(&copy_dir.as_ref().file_name().unwrap().to_string_lossy())
         .expect("couldn't create temp dir");
+
+    eprintln!(
+        "Created temp_dir for test at {}",
+        temp_dir.path().to_string_lossy()
+    );
 
     fs_extra::dir::copy(copy_dir.as_ref(), &temp_dir, &CopyOptions::new())
         .expect("while copying files");
@@ -122,7 +139,15 @@ fn build_and_run(
     let default_nix_content = render::render_build_file(&metadata).unwrap();
 
     // Generate nix file
-    render::write_to_file(default_nix_path, &default_nix_content).unwrap();
+    render::write_to_file(&default_nix_path, &default_nix_content).unwrap();
+
+    if default_nix_content.contains(".cargo")
+        || default_nix_content.contains("registry/src/github.com")
+        || default_nix_content.contains("/home/")
+    {
+        dump_with_lines(&default_nix_path).unwrap();
+        panic!("Build file contained forbidden strings. Probably referencing .cargo directories.");
+    }
 
     // Copy lock files back to source to avoid expensive, repetitive work
     fs_extra::copy_items(
@@ -144,8 +169,6 @@ fn build_and_run(
     // Run resulting binary
     let bin_path = project_dir.join("result").join("bin").join(binary_name);
     let output = run_cmd(bin_path).unwrap();
-    // For debugging, keep temp directory around:
-    //    std::mem::forget(temp_dir);
     temp_dir.close().expect("couldn't remove temp dir");
     output
 }

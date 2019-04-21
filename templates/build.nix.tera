@@ -51,6 +51,11 @@ rec {
                 sha256 = {{crate.source.CratesIo.sha256}};
                 {%- elif crate.source.LocalDirectory.path %}
                 src = (builtins.filterSource sourceFilter {{crate.source.LocalDirectory.path | safe}});
+                {%- elif crate.source.Git %}
+                src = builtins.fetchGit {
+                    url = {{crate.source.Git.url}};
+                    rev = {{crate.source.Git.rev}};
+                };
                 {%- else %}
                 # ERROR: Could not resolve source: {{crate.source | safe | json_encode()}}
                 {%- endif -%}

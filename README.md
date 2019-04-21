@@ -72,7 +72,8 @@ nix-shell --arg pkgs 'import <nixos> {config = {}; }'
   let me know if you hit problems. ~~Before 0.2.x: Filters all dependencies for the *hard-coded "Linux x86_64" target 
   platform*. Again, it should be quite easy to support more platforms. To do so completely and at build time (vs build 
   generation time) might be more involved.~~
-* Only *local sources* and *crates io* supported. Again, just requires some work to resolve.
+* Git sources are now also supported. ~~Before 0.3.x: Only *local sources* and *crates io* supported. Again, just 
+  requires some work to resolve.~~ 
 * Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
   ID. They are not interpreted as paths but maybe you do not want to expose local paths in there...
 * ~~Before 0.2.x: No support for workspaces.~~

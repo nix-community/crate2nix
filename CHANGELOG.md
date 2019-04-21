@@ -1,3 +1,12 @@
+# 0.2.1 - 0.3.0
+
+* Support for dependencies with git sources, e.g.:
+
+```toml
+[dependencies]
+"crate2nix" = { git = "https://github.com/kolloch/crate2nix" }
+```
+
 # 0.2.0 - 0.2.1
 
 * Added comments to the generated nix build file to indicate which attributes are public and unlikely to change.

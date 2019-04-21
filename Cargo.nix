@@ -369,7 +369,7 @@ rec {
                 crateName = "crate2nix";
                 version = "0.3.0-beta.0";
                 edition = "2018";
-                src = (builtins.filterSource sourceFilter ./.);
+                src = (builtins.filterSource sourceFilter /home/peter/gdrive/projects/crate2nix);
                 libPath = "src/lib.rs";
                 authors = [
                     "Peter Kolloch <info@eigenvalue.net>"
@@ -386,6 +386,8 @@ rec {
                     "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)"
                     "structopt 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)"
                     "tera 1.0.0-beta.4 (registry+https://github.com/rust-lang/crates.io-index)"
+                    "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)"
+                    "url_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
                 ];
             };
         "crossbeam-channel 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)"
@@ -1866,6 +1868,21 @@ rec {
                     "idna 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
                     "matches 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)"
                     "percent-encoding 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
+                ];
+            };
+        "url_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
+            = buildRustCrate {
+                crateName = "url_serde";
+                version = "0.2.0";
+                edition = "2015";
+                sha256 = "07ry87rw0pi1da6b53f7s3f52wx3ihxbcgjd4ldspfv5xh6wipsg";
+                libPath = "src/lib.rs";
+                authors = [
+                    "The rust-url developers"
+                ];
+                dependencies = filterDeps [
+                    "serde 1.0.90 (registry+https://github.com/rust-lang/crates.io-index)"
+                    "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)"
                 ];
             };
         "utf8-ranges 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)"

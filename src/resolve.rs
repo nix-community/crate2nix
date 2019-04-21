@@ -1,10 +1,10 @@
 //! Resolve dependencies and other data for CrateDerivation.
 
-use cargo_metadata::Dependency;
 use cargo_metadata::DependencyKind;
 use cargo_metadata::Node;
 use cargo_metadata::Package;
 use cargo_metadata::PackageId;
+use cargo_metadata::{Dependency, Source};
 use failure::format_err;
 use failure::Error;
 use pathdiff::diff_paths;
@@ -18,6 +18,7 @@ use std::path::{Path, PathBuf};
 
 use crate::metadata::IndexedMetadata;
 use crate::GenerateConfig;
+use url::Url;
 
 /// All data necessary for creating a derivation for a crate.
 #[derive(Debug, Deserialize, Serialize)]
@@ -97,7 +98,7 @@ impl CrateDerivation {
             authors: package.authors.clone(),
             package_id: package.id.clone(),
             version: package.version.clone(),
-            source: ResolvedSource::new(&config, &package, &package_path),
+            source: ResolvedSource::new(&config, &package, &package_path)?,
             features: resolved_dependencies.node.features.clone(),
             dependencies,
             build_dependencies,
@@ -113,49 +114,119 @@ impl CrateDerivation {
 /// Specifies how to retrieve the source code.
 #[derive(Debug, Deserialize, Serialize)]
 pub enum ResolvedSource {
-    CratesIo { sha256: Option<String> },
-    LocalDirectory { path: PathBuf },
+    CratesIo {
+        sha256: Option<String>,
+    },
+    Git {
+        #[serde(with = "url_serde")]
+        url: Url,
+        rev: String,
+    },
+    LocalDirectory {
+        path: PathBuf,
+    },
 }
+
+const GIT_SOURCE_PREFIX: &str = "git+";
 
 impl ResolvedSource {
     pub fn new(
         config: &GenerateConfig,
         package: &Package,
         package_path: impl AsRef<Path>,
-    ) -> ResolvedSource {
+    ) -> Result<ResolvedSource, Error> {
         match package.source.as_ref() {
             Some(source) if source.is_crates_io() => {
                 // Will sha256 will be filled later by prefetch_and_fill_crates_sha256.
-                ResolvedSource::CratesIo { sha256: None }
+                Ok(ResolvedSource::CratesIo { sha256: None })
             }
-            //            Some(source) if source.to_string().starts_with("git+") => {
-            //            },
-            _ => {
-                // Use local directory. The cached cargo directory in the worst case.
-
-                let output_build_file_directory = config
-                    .output
-                    .parent()
-                    .expect("output file has no parent directory?")
-                    .canonicalize()
-                    .expect("Output directory cannot be canonicalized");
-
-                let relative_source = if package_path.as_ref() == output_build_file_directory {
-                    "./.".into()
-                } else {
-                    let path = diff_paths(package_path.as_ref(), &output_build_file_directory)
-                        .unwrap_or_else(|| package_path.as_ref().to_path_buf());
-                    if path.starts_with("../") {
-                        path
-                    } else {
-                        PathBuf::from("./").join(path)
-                    }
-                };
-                ResolvedSource::LocalDirectory {
-                    path: relative_source,
-                }
+            Some(source) => {
+                ResolvedSource::git_or_local_directory(config, package, &package_path, source)
             }
+            None => Ok(ResolvedSource::LocalDirectory {
+                path: ResolvedSource::relative_directory(config, package_path)?,
+            }),
         }
+    }
+
+    fn git_or_local_directory(
+        config: &GenerateConfig,
+        package: &Package,
+        package_path: &impl AsRef<Path>,
+        source: &Source,
+    ) -> Result<ResolvedSource, Error> {
+        let source_string = source.to_string();
+        if !source_string.starts_with(GIT_SOURCE_PREFIX) {
+            return ResolvedSource::fallback_to_local_directory(
+                config,
+                package,
+                package_path,
+                "No 'git+' prefix found.",
+            );
+        }
+        let mut url = url::Url::parse(&source_string[GIT_SOURCE_PREFIX.len()..])?;
+        let rev = if let Some((_, rev)) = url.query_pairs().find(|(k, _)| k == "rev") {
+            rev.to_string()
+        } else if let Some(rev) = url.fragment() {
+            rev.to_string()
+        } else {
+            return ResolvedSource::fallback_to_local_directory(
+                config,
+                package,
+                package_path,
+                "No git revision found.",
+            );
+        };
+        url.set_query(None);
+        url.set_fragment(None);
+        Ok(ResolvedSource::Git { url, rev })
+    }
+
+    fn fallback_to_local_directory(
+        config: &GenerateConfig,
+        package: &Package,
+        package_path: impl AsRef<Path>,
+        warning: &str,
+    ) -> Result<ResolvedSource, Error> {
+        let path = Self::relative_directory(config, package_path)?;
+        eprintln!(
+            "WARNING: {} Falling back to local directory for crate {} with source {}: {}",
+            warning,
+            package.id,
+            package
+                .source
+                .as_ref()
+                .map(|s| s.to_string())
+                .unwrap_or("N/A".to_string()),
+            &path.to_string_lossy()
+        );
+        return Ok(ResolvedSource::LocalDirectory { path });
+    }
+
+    fn relative_directory(
+        config: &GenerateConfig,
+        package_path: impl AsRef<Path>,
+    ) -> Result<PathBuf, Error> {
+        // Use local directory. This is the local cargo crate directory in the worst case.
+
+        let output_build_file_directory = config.output.parent().ok_or_else(|| {
+            format_err!(
+                "could not get parent of output file '{}'.",
+                config.output.to_string_lossy()
+            )
+        })?;
+
+        Ok(if package_path.as_ref() == output_build_file_directory {
+            "./.".into()
+        } else {
+            let path = diff_paths(package_path.as_ref(), &output_build_file_directory)
+                .unwrap_or_else(|| package_path.as_ref().to_path_buf());
+            if path.starts_with("../") {
+                path
+            } else {
+                PathBuf::from("./").join(path)
+            }
+        })
     }
 }
 

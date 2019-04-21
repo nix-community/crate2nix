@@ -1,3 +1,4 @@
 fn main() {
-    hello_world_lib::hello_world("bin_with_lib_dep");
+    crate2nix::GenerateInfo::new();
+    println!("Hello world from bin_with_lib_git_dep!");
 }

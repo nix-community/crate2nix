@@ -44,7 +44,11 @@ pub fn prefetch_from_crates_io<'a>(
             hash.trim().to_string()
         } else {
             without_hash_idx += 1;
-            crate::prefetch::nix_prefetch_from_crate_io(package, without_hash_idx, without_hash_num)?
+            crate::prefetch::nix_prefetch_from_crate_io(
+                package,
+                without_hash_idx,
+                without_hash_num,
+            )?
         };
 
         package.source = ResolvedSource::CratesIo {

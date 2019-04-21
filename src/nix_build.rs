@@ -23,6 +23,8 @@ pub fn nix_build(project_dir: impl AsRef<Path>, nix_attr: &str) -> Result<(), Er
         .stderr(Stdio::inherit())
         .status()
         .map_err(|e| format_err!("while spawning nix-build for {}: {}", project_dir, e))?;
+    //    let default_nix = PathBuf::from(&project_dir).join("default.nix");
+    //    dump_with_lines(&default_nix)?;
     if !status.success() {
         let default_nix = PathBuf::from(&project_dir).join("default.nix");
         dump_with_lines(&default_nix)?;
