@@ -14,6 +14,7 @@ rec {
     #
     # "public" attributes that we attempt to keep stable with new versions of crate2nix.
     #
+
     # Use this attribute to refer to the derivation building your root crate.
     root_crate = crates."crate2nix 0.2.1 (path+file:///home/peter/gdrive/projects/crate2nix)";
     # Refer your crate build derivation by name here.
