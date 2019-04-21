@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use tempdir::TempDir;
 
@@ -171,4 +171,34 @@ fn build_and_run(
     let output = run_cmd(bin_path).unwrap();
     temp_dir.close().expect("couldn't remove temp dir");
     output
+}
+
+#[test]
+fn clean_output_without_dot() {
+    generate("Cargo.nix");
+}
+
+fn generate(path: &str) {
+    let metadata = BuildInfo::for_config(
+        &GenerateInfo {
+            crate2nix_arguments: vec!["generate", "-n", "<nixos-unstable>", "-o", path]
+                .iter()
+                .map(|s| s.to_string())
+                .collect(),
+            ..GenerateInfo::new()
+        },
+        &GenerateConfig {
+            cargo_toml: PathBuf::from("./Cargo.toml"),
+            output: PathBuf::from(path),
+            nixpkgs_path: "<nixos-unstable>".to_string(),
+            crate_hashes_json: PathBuf::from("./crate-hashes.json"),
+        },
+    )
+        .unwrap();
+    let rerendered_default_nix = render::render_build_file(&metadata).unwrap();
+
+    if rerendered_default_nix.contains(" /home/") || rerendered_default_nix.contains(".cargo") {
+        dump_with_lines("./Cargo.nix").unwrap();
+        panic!("Build file contains forbidden strings.");
+    }
 }

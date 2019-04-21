@@ -216,14 +216,15 @@ impl ResolvedSource {
             )
         })?.to_path_buf();
 
-        if output_build_file_directory.ancestors().count() == 0 {
-            output_build_file_directory = ".".into();
+        if output_build_file_directory.is_relative() {
+            // Deal with "empty" path. E.g. the parent of "Cargo.nix" is "".
+            output_build_file_directory = Path::new(".").join(output_build_file_directory);
         }
 
         output_build_file_directory = output_build_file_directory.canonicalize().map_err(|e| {
             format_err!(
                 "could not canonicalize output file directory '{}': {}",
-                config.output.to_string_lossy(), e
+                output_build_file_directory.to_string_lossy(), e
             )
         })?;
 
