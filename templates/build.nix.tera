@@ -47,10 +47,12 @@ rec {
                 crateBin = [{name = ","; path = ",";}];
                 {%- endif -%}
 
-                {%- if crate.sha256 %}
-                sha256 = {{crate.sha256}};
+                {%- if crate.source.CratesIo.sha256 %}
+                sha256 = {{crate.source.CratesIo.sha256}};
+                {%- elif crate.source.LocalDirectory.path %}
+                src = (builtins.filterSource sourceFilter {{crate.source.LocalDirectory.path | safe}});
                 {%- else %}
-                src = (builtins.filterSource sourceFilter {{crate.source_directory | safe}});
+                # ERROR: Could not resolve source: {{crate.source | safe | json_encode()}}
                 {%- endif -%}
 
                 {%- if crate.proc_macro %}

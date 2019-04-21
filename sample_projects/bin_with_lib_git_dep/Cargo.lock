@@ -1,0 +1,14 @@
+[[package]]
+name = "hello_world_lib"
+version = "0.1.0"
+source = "git+https://github.com/kolloch/crate2nix#01d0cf970ec9424de4abf341164bae59921c5f4f"
+
+[[package]]
+name = "hello_world_with_dep"
+version = "0.1.0"
+dependencies = [
+ "hello_world_lib 0.1.0 (git+https://github.com/kolloch/crate2nix)",
+]
+
+[metadata]
+"checksum hello_world_lib 0.1.0 (git+https://github.com/kolloch/crate2nix)" = "<none>"

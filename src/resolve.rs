@@ -14,7 +14,7 @@ use serde_derive::Serialize;
 use serde_json::to_string_pretty;
 use std::collections::HashMap;
 use std::convert::Into;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use crate::metadata::IndexedMetadata;
 use crate::GenerateConfig;
@@ -27,8 +27,7 @@ pub struct CrateDerivation {
     pub edition: String,
     pub authors: Vec<String>,
     pub version: Version,
-    pub source_directory: PathBuf,
-    pub sha256: Option<String>,
+    pub source: ResolvedSource,
     pub dependencies: Vec<ResolvedDependency>,
     pub build_dependencies: Vec<ResolvedDependency>,
     pub features: Vec<String>,
@@ -58,20 +57,22 @@ impl CrateDerivation {
         let package_path = package
             .manifest_path
             .parent()
-            .expect("WUUT? No parent directory of manifest?");
+            .expect("WUUT? No parent directory of manifest?")
+            .canonicalize()
+            .expect("Cannot canonicalize package path");
 
         let lib_path = package
             .targets
             .iter()
             .find(|t| t.kind.iter().any(|k| k == "lib"))
-            .and_then(|target| target.src_path.strip_prefix(package_path).ok())
+            .and_then(|target| target.src_path.strip_prefix(&package_path).ok())
             .map(|path| path.to_path_buf());
 
         let build = package
             .targets
             .iter()
             .find(|t| t.kind.iter().any(|k| k == "custom-build"))
-            .and_then(|target| target.src_path.strip_prefix(package_path).ok())
+            .and_then(|target| target.src_path.strip_prefix(&package_path).ok())
             .map(|path| path.to_path_buf());
 
         let proc_macro = package
@@ -83,24 +84,6 @@ impl CrateDerivation {
             .targets
             .iter()
             .any(|t| t.kind.iter().any(|k| k == "bin"));
-        let config_directory = config
-            .cargo_toml
-            .canonicalize()?
-            .parent()
-            .unwrap()
-            .to_path_buf();
-
-        let relative_source = if package_path == config_directory {
-            "./.".into()
-        } else {
-            let path = diff_paths(package_path, &config_directory)
-                .unwrap_or_else(|| package_path.to_path_buf());
-            if path.starts_with("../") {
-                path
-            } else {
-                PathBuf::from("./").join(path)
-            }
-        };
 
         let is_root_or_workspace_member = metadata
             .root
@@ -114,9 +97,7 @@ impl CrateDerivation {
             authors: package.authors.clone(),
             package_id: package.id.clone(),
             version: package.version.clone(),
-            // Will be filled later by prefetch_and_fill_crates_sha256.
-            sha256: None,
-            source_directory: relative_source,
+            source: ResolvedSource::new(&config, &package, &package_path),
             features: resolved_dependencies.node.features.clone(),
             dependencies,
             build_dependencies,
@@ -126,6 +107,55 @@ impl CrateDerivation {
             has_bin,
             is_root_or_workspace_member,
         })
+    }
+}
+
+/// Specifies how to retrieve the source code.
+#[derive(Debug, Deserialize, Serialize)]
+pub enum ResolvedSource {
+    CratesIo { sha256: Option<String> },
+    LocalDirectory { path: PathBuf },
+}
+
+impl ResolvedSource {
+    pub fn new(
+        config: &GenerateConfig,
+        package: &Package,
+        package_path: impl AsRef<Path>,
+    ) -> ResolvedSource {
+        match package.source.as_ref() {
+            Some(source) if source.is_crates_io() => {
+                // Will sha256 will be filled later by prefetch_and_fill_crates_sha256.
+                ResolvedSource::CratesIo { sha256: None }
+            }
+            //            Some(source) if source.to_string().starts_with("git+") => {
+            //            },
+            _ => {
+                // Use local directory. The cached cargo directory in the worst case.
+
+                let output_build_file_directory = config
+                    .output
+                    .parent()
+                    .expect("output file has no parent directory?")
+                    .canonicalize()
+                    .expect("Output directory cannot be canonicalized");
+
+                let relative_source = if package_path.as_ref() == output_build_file_directory {
+                    "./.".into()
+                } else {
+                    let path = diff_paths(package_path.as_ref(), &output_build_file_directory)
+                        .unwrap_or_else(|| package_path.as_ref().to_path_buf());
+                    if path.starts_with("../") {
+                        path
+                    } else {
+                        PathBuf::from("./").join(path)
+                    }
+                };
+                ResolvedSource::LocalDirectory {
+                    path: relative_source,
+                }
+            }
+        }
     }
 }
 
@@ -199,10 +229,7 @@ impl<'a> ResolvedDependencies<'a> {
                     .get(&normalize_package_name(&d.name))
                     .map(|dependency| ResolvedDependency {
                         package_id: d.id.clone(),
-                        target: dependency
-                            .target
-                            .as_ref()
-                            .map(|p| p.to_string()),
+                        target: dependency.target.as_ref().map(|p| p.to_string()),
                     })
             })
             .collect()

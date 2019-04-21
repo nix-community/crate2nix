@@ -1,0 +1,8 @@
+[package]
+name = "hello_world_with_dep"
+version = "0.1.0"
+authors = ["Peter Kolloch <info@eigenvalue.net>"]
+edition = "2018"
+
+[dependencies]
+"hello_world_lib" = { git = "https://github.com/kolloch/crate2nix" }

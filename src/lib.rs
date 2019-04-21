@@ -136,14 +136,8 @@ fn prefetch_and_fill_crates_sha256(
     config: &GenerateConfig,
     default_nix: &mut BuildInfo,
 ) -> Result<(), Error> {
-    let sha256_by_id: BTreeMap<PackageId, String> = crate::prefetch::prefetch_packages(
-        config,
-        default_nix.indexed_metadata.pkgs_by_id.values(),
-    )
-    .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
-    for some_crate in default_nix.crates.iter_mut() {
-        some_crate.sha256 = sha256_by_id.get(&some_crate.package_id).cloned();
-    }
+    crate::prefetch::prefetch_packages(config, &mut default_nix.crates)
+        .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
     Ok(())
 }
 

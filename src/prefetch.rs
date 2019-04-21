@@ -3,8 +3,9 @@
 use std::io::Write;
 use std::process::Command;
 
+use crate::resolve::{CrateDerivation, ResolvedSource};
 use crate::GenerateConfig;
-use cargo_metadata::{Package, PackageId, Source};
+use cargo_metadata::PackageId;
 use failure::bail;
 use failure::format_err;
 use failure::Error;
@@ -15,7 +16,7 @@ use std::collections::BTreeMap;
 /// Uses and updates the existing hashes in the `config.crate_hash_json` file.
 pub fn prefetch_packages<'a>(
     config: &GenerateConfig,
-    packages: impl Iterator<Item = &'a Package>,
+    crate_derivations: &mut [CrateDerivation],
 ) -> Result<BTreeMap<PackageId, String>, Error> {
     let hashes_string: String =
         std::fs::read_to_string(&config.crate_hashes_json).unwrap_or_else(|_| "{}".to_string());
@@ -25,24 +26,31 @@ pub fn prefetch_packages<'a>(
     let mut hashes: BTreeMap<PackageId, String> = BTreeMap::new();
 
     // Skip none-registry packages.
-    let packages_from_crates_io: Vec<&'a Package> = packages
-        .filter(|p| p.source.as_ref().map(Source::is_crates_io).unwrap_or(false))
+    let mut packages_from_crates_io: Vec<&mut CrateDerivation> = crate_derivations
+        .iter_mut()
+        .filter(|c| match c.source {
+            crate::resolve::ResolvedSource::CratesIo { .. } => true,
+            _ => false,
+        })
         .collect();
     let without_hash_num = packages_from_crates_io
         .iter()
-        .filter(|p| !old_hashes.contains_key(&p.id))
+        .filter(|p| !old_hashes.contains_key(&p.package_id))
         .count();
     let mut without_hash_idx = 0;
-    for package in packages_from_crates_io {
-        let existing_hash = old_hashes.get(&package.id);
-        let hash = if let Some(hash) = existing_hash {
+    for package in &mut packages_from_crates_io {
+        let existing_hash = old_hashes.get(&package.package_id);
+        let sha256 = if let Some(hash) = existing_hash {
             hash.trim().to_string()
         } else {
             without_hash_idx += 1;
             crate::prefetch::nix_prefetch(package, without_hash_idx, without_hash_num)?
         };
 
-        hashes.insert(package.id.clone(), hash);
+        package.source = ResolvedSource::CratesIo {
+            sha256: Some(sha256.clone()),
+        };
+        hashes.insert(package.package_id.clone(), sha256);
     }
 
     if hashes != old_hashes {
@@ -60,10 +68,14 @@ pub fn prefetch_packages<'a>(
 }
 
 /// Invoke `nix-prefetch` for the given `package` and return the hash.
-pub fn nix_prefetch(package: &Package, idx: usize, num_packages: usize) -> Result<String, Error> {
+pub fn nix_prefetch(
+    crate_derivation: &CrateDerivation,
+    idx: usize,
+    num_packages: usize,
+) -> Result<String, Error> {
     let url = format!(
         "https://crates.io/api/v1/crates/{}/{}/download",
-        package.name, package.version
+        crate_derivation.crate_name, crate_derivation.version
     );
 
     eprintln!("Prefetching {:>4}/{}: {}", idx, num_packages, url);
@@ -72,7 +84,10 @@ pub fn nix_prefetch(package: &Package, idx: usize, num_packages: usize) -> Resul
         &url,
         "--unpack",
         "--name",
-        &format!("{}-{}", package.name, package.version),
+        &format!(
+            "{}-{}",
+            crate_derivation.crate_name, crate_derivation.version
+        ),
     ];
     let output = Command::new(cmd)
         .args(&args)

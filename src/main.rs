@@ -3,10 +3,10 @@ use std::path::PathBuf;
 use structopt::StructOpt;
 
 use crate2nix::render;
+use failure::format_err;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use std::str::FromStr;
-use failure::format_err;
 
 #[derive(Debug, StructOpt, Deserialize, Serialize)]
 #[structopt(
@@ -29,10 +29,10 @@ pub enum Opt {
         cargo_toml: PathBuf,
 
         #[structopt(
-        short = "o",
-        long = "output",
-        help = "The path of the output.nix file.",
-        default_value = "./default.nix"
+            short = "o",
+            long = "output",
+            help = "The path of the output.nix file.",
+            default_value = "./default.nix"
         )]
         output: PathBuf,
 
@@ -54,27 +54,27 @@ pub enum Opt {
     },
 
     #[structopt(
-    name = "completions",
-    about = "Generate auto-completions for the shell."
+        name = "completions",
+        about = "Generate auto-completions for the shell."
     )]
     Completions {
         #[structopt(
-        short = "s",
-        long = "shell",
-        parse(from_str),
-        help = "The shell to generate completions for. Specify 'invalid' to get a list of possibilities.",
-        default_value = "bash"
+            short = "s",
+            long = "shell",
+            parse(from_str),
+            help = "The shell to generate completions for. Specify 'invalid' to get a list of possibilities.",
+            default_value = "bash"
         )]
         shell: String,
 
         #[structopt(
-        short = "o",
-        long = "output",
-        help = "The path of the output directory.",
-        default_value = "."
+            short = "o",
+            long = "output",
+            help = "The path of the output directory.",
+            default_value = "."
         )]
         output: PathBuf,
-    }
+    },
 }
 
 fn main() -> CliResult {
@@ -103,8 +103,8 @@ fn main() -> CliResult {
             let build_info = crate2nix::BuildInfo::for_config(&generate_info, &generate_config)?;
             let nix_string = render::render_build_file(&build_info)?;
             render::write_to_file(&output, &nix_string)?;
-        },
-        Opt::Completions {shell, output} => {
+        }
+        Opt::Completions { shell, output } => {
             let shell = FromStr::from_str(&shell).map_err(|s| format_err!("{}", s))?;
             Opt::clap().gen_completions(env!("CARGO_PKG_NAME"), shell, output);
         }

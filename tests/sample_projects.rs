@@ -4,8 +4,8 @@ use tempdir::TempDir;
 
 use crate2nix::nix_build::nix_build;
 use crate2nix::nix_build::run_cmd;
-use crate2nix::{GenerateConfig, GenerateInfo};
 use crate2nix::{render, BuildInfo};
+use crate2nix::{GenerateConfig, GenerateInfo};
 use fs_extra::dir::CopyOptions;
 
 #[test]
@@ -112,11 +112,12 @@ fn build_and_run(
     let metadata = BuildInfo::for_config(
         &GenerateInfo::new(),
         &GenerateConfig {
-        cargo_toml: cargo_toml.clone(),
-        output: default_nix_path.clone(),
-        nixpkgs_path: "<nixos-unstable>".to_string(),
-        crate_hashes_json: project_dir.join("crate-hashes.json").to_path_buf(),
-    })
+            cargo_toml: cargo_toml.clone(),
+            output: default_nix_path.clone(),
+            nixpkgs_path: "<nixos-unstable>".to_string(),
+            crate_hashes_json: project_dir.join("crate-hashes.json").to_path_buf(),
+        },
+    )
     .unwrap();
     let default_nix_content = render::render_build_file(&metadata).unwrap();
 
