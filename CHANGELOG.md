@@ -1,4 +1,4 @@
-# 0.2.1 - 0.3.0
+# 0.2.1 - 0.3.0 (beta)
 
 * Support for dependencies with git sources, e.g.:
 
