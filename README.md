@@ -63,19 +63,74 @@ If that doesn't work for you, you can override the `pkgs` argument, e.g.:
 nix-shell --arg pkgs 'import <nixos> {config = {}; }'
 ```
 
+## Generating build files
+
+The `crate2nix generate` command generates a nix file. You can specify the output file with `-o`. E.g.
+
+```bash
+crate2nix generate -o Cargo.nix
+```
+
+generates Cargo.nix from the Cargo.lock in the current directory.
+
+Look at the [./Cargo.nix](./Cargo.nix) file of this project for a non-trivial example. (How meta!)
+
+## Using build files (single binaries)
+
+If your `Cargo.nix` was generated for a single binary crate (i.e. workspace) then the derivation that builds your binary
+can be accessed via the `root_crate` attribute. Use this command to build it and make the result available in the result 
+directory: 
+
+```bash
+your_crate_name="super_duper"
+nix build -f Cargo.nix root_crate
+./result/bin/${your_crate_name}
+```  
+
+Within a nix file (e.g. your `default.nix`), you can access the 
+derivation like this: 
+
+```nix
+let cargo_nix = callPackage ./Cargo.nix {};
+in cargo_nix.root_crate
+```
+
+## Using build files (workspaces)
+
+If your `Cargo.nix` was generated for a workspace (i.e. not a single binary) then the derivation that builds your binary
+CANNOT be accessed via the `root_crate` attribute. There is no single root_crate.
+
+Instead, you can conveniently access the derivations of all your workspace members through the `workspace_member` 
+attribute. Use this command to build one of the workspace members and make the result available in the result 
+directory: 
+
+```bash
+your_crate_name="super_duper"
+nix build -f Cargo.nix workspace_members.${your_crate_name}
+./result/bin/${your_crate_name}
+```  
+
+Within a nix file (e.g. your `default.nix`), you can access the 
+derivation like this: 
+
+```nix
+let cargo_nix = callPackage ./Cargo.nix {};
+in cargo_nix.workspace_members.super_duper
+```
+
 ## Known Restrictions
 
 * Only *default crate features* are supported. It should be easy to support a different feature set at build generation 
   time since we can simply pass this set to `cargo metadata`. Feature selection during build time is out of scope for 
   now.
-* Translates some target strings to nix expressions. The support should be reasonable but probably not complete - please 
+* Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
+  ID. They are not interpreted as paths but maybe you do not want to expose local paths in there...
+* It does translates target strings to nix expressions. The support should be reasonable but probably not complete - please 
   let me know if you hit problems. ~~Before 0.2.x: Filters all dependencies for the *hard-coded "Linux x86_64" target 
   platform*. Again, it should be quite easy to support more platforms. To do so completely and at build time (vs build 
   generation time) might be more involved.~~
 * Git sources are now also supported. ~~Before 0.3.x: Only *local sources* and *crates io* supported. Again, just 
   requires some work to resolve.~~ 
-* Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
-  ID. They are not interpreted as paths but maybe you do not want to expose local paths in there...
 * ~~Before 0.2.x: No support for workspaces.~~
 
 ## Runtime Dependencies
