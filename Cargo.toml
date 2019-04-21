@@ -8,7 +8,6 @@ license = "Apache-2.0"
 [dependencies]
 cargo_metadata = "0.7.4"
 failure = "0.1"
-fs_extra = "1.1"
 lazy_static = "1.3"
 pathdiff = "0.1"
 quicli = "0.4"
@@ -17,5 +16,8 @@ semver = "0.9"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
-tempdir = "0.3"
 tera = "1.0.0-beta.3"
+
+[dev-dependencies]
+fs_extra = "1.1"
+tempdir = "0.3"

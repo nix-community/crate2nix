@@ -377,7 +377,6 @@ rec {
                 dependencies = filterDeps [
                     "cargo_metadata 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)"
                     "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
-                    "fs_extra 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
                     "lazy_static 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)"
                     "pathdiff 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
                     "quicli 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
@@ -386,7 +385,6 @@ rec {
                     "serde_derive 1.0.90 (registry+https://github.com/rust-lang/crates.io-index)"
                     "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)"
                     "structopt 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)"
-                    "tempdir 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)"
                     "tera 1.0.0-beta.4 (registry+https://github.com/rust-lang/crates.io-index)"
                 ];
             };
@@ -642,28 +640,6 @@ rec {
                 libPath = "lib.rs";
                 authors = [
                     "Alex Crichton <alex@alexcrichton.com>"
-                ];
-            };
-        "fs_extra 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "fs_extra";
-                version = "1.1.0";
-                edition = "2015";
-                sha256 = "0zp4q7k4s8kwwkylj13ccpdh7mc64wcc092nia6ilpyk9ppgl3d9";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Denis Kurilenko <webdesus@gmail.com>"
-                ];
-            };
-        "fuchsia-cprng 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "fuchsia-cprng";
-                version = "0.1.1";
-                edition = "2018";
-                sha256 = "07apwv9dj716yjlcj29p94vkqn5zmfh7hlrqvrjx3wzshphc95h9";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Erick Tryzelaar <etryzelaar@google.com>"
                 ];
             };
         "generic-array 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)"
@@ -1173,61 +1149,6 @@ rec {
                    "proc-macro2"
                 ];
             };
-        "rand 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "rand";
-                version = "0.4.6";
-                edition = "2015";
-                sha256 = "0c3rmg5q7d6qdi7cbmg5py9alm70wd3xsg0mmcawrnl35qv37zfs";
-                libPath = "src/lib.rs";
-                authors = [
-                    "The Rust Project Developers"
-                ];
-                dependencies = filterDeps [
-                    # target = "cfg(target_os = \"fuchsia\")"
-                    (cfg (target."os" == "fuchsia") "fuchsia-cprng 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)")
-                    # target = "cfg(unix)"
-                    (cfg target."unix" "libc 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)")
-                    # target = "cfg(target_env = \"sgx\")"
-                    (cfg (target."env" == "sgx") "rand_core 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)")
-                    # target = "cfg(target_env = \"sgx\")"
-                    (cfg (target."env" == "sgx") "rdrand 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)")
-                    # target = "cfg(windows)"
-                    (cfg target."windows" "winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)")
-                ];
-                features = [
-                   "default"
-                   "libc"
-                   "std"
-                ];
-            };
-        "rand_core 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "rand_core";
-                version = "0.3.1";
-                edition = "2015";
-                sha256 = "0q0ssgpj9x5a6fda83nhmfydy7a6c0wvxm0jhncsmjx8qp8gw91m";
-                libPath = "src/lib.rs";
-                authors = [
-                    "The Rand Project Developers"
-                    "The Rust Project Developers"
-                ];
-                dependencies = filterDeps [
-                    "rand_core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
-                ];
-            };
-        "rand_core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "rand_core";
-                version = "0.4.0";
-                edition = "2015";
-                sha256 = "0wb5iwhffibj0pnpznhv1g3i7h1fnhz64s3nz74fz6vsm3q6q3br";
-                libPath = "src/lib.rs";
-                authors = [
-                    "The Rand Project Developers"
-                    "The Rust Project Developers"
-                ];
-            };
         "rayon 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)"
             = buildRustCrate {
                 crateName = "rayon";
@@ -1263,24 +1184,6 @@ rec {
                     "lazy_static 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)"
                     "libc 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)"
                     "num_cpus 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)"
-                ];
-            };
-        "rdrand 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "rdrand";
-                version = "0.4.0";
-                edition = "2015";
-                sha256 = "15hrcasn0v876wpkwab1dwbk9kvqwrb3iv4y4dibb6yxnfvzwajk";
-                libPath = "src/lib.rs";
-                authors = [
-                    "Simonas Kazlauskas <rdrand@kazlauskas.me>"
-                ];
-                dependencies = filterDeps [
-                    "rand_core 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
-                ];
-                features = [
-                   "default"
-                   "std"
                 ];
             };
         "redox_syscall 0.1.54 (registry+https://github.com/rust-lang/crates.io-index)"
@@ -1640,21 +1543,6 @@ rec {
                     "quote 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)"
                     "syn 0.15.32 (registry+https://github.com/rust-lang/crates.io-index)"
                     "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
-                ];
-            };
-        "tempdir 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)"
-            = buildRustCrate {
-                crateName = "tempdir";
-                version = "0.3.7";
-                edition = "2015";
-                sha256 = "0y53sxybyljrr7lh0x0ysrsa7p7cljmwv9v80acy3rc6n97g67vy";
-                libPath = "src/lib.rs";
-                authors = [
-                    "The Rust Project Developers"
-                ];
-                dependencies = filterDeps [
-                    "rand 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)"
-                    "remove_dir_all 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
                 ];
             };
         "tera 1.0.0-beta.4 (registry+https://github.com/rust-lang/crates.io-index)"
