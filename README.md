@@ -123,6 +123,7 @@ in cargo_nix.workspace_members.super_duper
 * Only *default crate features* are supported. It should be easy to support a different feature set at build generation 
   time since we can simply pass this set to `cargo metadata`. Feature selection during build time is out of scope for 
   now.
+* No support for building and running tests, see [nixpkgs, issue 59177](https://github.com/NixOS/nixpkgs/issues/59177).
 * Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
   ID. They are not interpreted as paths but maybe you do not want to expose local paths in there...
 * It does translates target strings to nix expressions. The support should be reasonable but probably not complete - please 
