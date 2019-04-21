@@ -1,4 +1,4 @@
-use crate2nix::{render, BuildInfo, GenerateConfig, GenerateInfo};
+use crate2nix::{render, BuildInfo, GenerateConfig, GenerateInfo, nix_build::dump_with_lines};
 use std::path::PathBuf;
 
 #[test]
@@ -22,4 +22,9 @@ fn up_to_date() {
     let rerendered_default_nix = render::render_build_file(&metadata).unwrap();
     let actual_default_nix = std::fs::read_to_string("./Cargo.nix").unwrap();
     assert_eq!(actual_default_nix, rerendered_default_nix);
+
+    if rerendered_default_nix.contains("/home/") || rerendered_default_nix.contains(".cargo") {
+        dump_with_lines("./Cargo.nix").unwrap();
+        panic!("Build file contains forbidden strings.");
+    }
 }

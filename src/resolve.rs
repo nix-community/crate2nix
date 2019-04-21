@@ -209,10 +209,21 @@ impl ResolvedSource {
     ) -> Result<PathBuf, Error> {
         // Use local directory. This is the local cargo crate directory in the worst case.
 
-        let output_build_file_directory = config.output.parent().ok_or_else(|| {
+        let mut output_build_file_directory = config.output.parent().ok_or_else(|| {
             format_err!(
                 "could not get parent of output file '{}'.",
                 config.output.to_string_lossy()
+            )
+        })?.to_path_buf();
+
+        if output_build_file_directory.ancestors().count() == 0 {
+            output_build_file_directory = ".".into();
+        }
+
+        output_build_file_directory = output_build_file_directory.canonicalize().map_err(|e| {
+            format_err!(
+                "could not canonicalize output file directory '{}': {}",
+                config.output.to_string_lossy(), e
             )
         })?;
 
