@@ -14,7 +14,7 @@ use std::collections::BTreeMap;
 /// Uses `nix-prefetch` to get the hashes of the sources for the given packages if they come from crates.io.
 ///
 /// Uses and updates the existing hashes in the `config.crate_hash_json` file.
-pub fn prefetch_packages<'a>(
+pub fn prefetch_from_crates_io<'a>(
     config: &GenerateConfig,
     crate_derivations: &mut [CrateDerivation],
 ) -> Result<BTreeMap<PackageId, String>, Error> {
@@ -44,7 +44,7 @@ pub fn prefetch_packages<'a>(
             hash.trim().to_string()
         } else {
             without_hash_idx += 1;
-            crate::prefetch::nix_prefetch(package, without_hash_idx, without_hash_num)?
+            crate::prefetch::nix_prefetch_from_crate_io(package, without_hash_idx, without_hash_num)?
         };
 
         package.source = ResolvedSource::CratesIo {
@@ -68,7 +68,7 @@ pub fn prefetch_packages<'a>(
 }
 
 /// Invoke `nix-prefetch` for the given `package` and return the hash.
-pub fn nix_prefetch(
+pub fn nix_prefetch_from_crate_io(
     crate_derivation: &CrateDerivation,
     idx: usize,
     num_packages: usize,
