@@ -1,10 +1,10 @@
 //! Resolve dependencies and other data for CrateDerivation.
 
-use cargo_metadata::{DependencyKind, Target};
 use cargo_metadata::Node;
 use cargo_metadata::Package;
 use cargo_metadata::PackageId;
 use cargo_metadata::{Dependency, Source};
+use cargo_metadata::{DependencyKind, Target};
 use failure::format_err;
 use failure::Error;
 use pathdiff::diff_paths;
@@ -226,12 +226,16 @@ impl ResolvedSource {
     ) -> Result<PathBuf, Error> {
         // Use local directory. This is the local cargo crate directory in the worst case.
 
-        let mut output_build_file_directory = config.output.parent().ok_or_else(|| {
-            format_err!(
-                "could not get parent of output file '{}'.",
-                config.output.to_string_lossy()
-            )
-        })?.to_path_buf();
+        let mut output_build_file_directory = config
+            .output
+            .parent()
+            .ok_or_else(|| {
+                format_err!(
+                    "could not get parent of output file '{}'.",
+                    config.output.to_string_lossy()
+                )
+            })?
+            .to_path_buf();
 
         if output_build_file_directory.is_relative() {
             // Deal with "empty" path. E.g. the parent of "Cargo.nix" is "".
@@ -241,7 +245,8 @@ impl ResolvedSource {
         output_build_file_directory = output_build_file_directory.canonicalize().map_err(|e| {
             format_err!(
                 "could not canonicalize output file directory '{}': {}",
-                output_build_file_directory.to_string_lossy(), e
+                output_build_file_directory.to_string_lossy(),
+                e
             )
         })?;
 

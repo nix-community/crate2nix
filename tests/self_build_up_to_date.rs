@@ -1,4 +1,4 @@
-use crate2nix::{render, BuildInfo, GenerateConfig, GenerateInfo, nix_build::dump_with_lines};
+use crate2nix::{nix_build::dump_with_lines, render, BuildInfo, GenerateConfig, GenerateInfo};
 use std::path::PathBuf;
 
 #[test]

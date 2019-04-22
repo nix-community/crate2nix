@@ -194,7 +194,7 @@ fn generate(path: &str) {
             crate_hashes_json: PathBuf::from("./crate-hashes.json"),
         },
     )
-        .unwrap();
+    .unwrap();
     let rerendered_default_nix = render::render_build_file(&metadata).unwrap();
 
     if rerendered_default_nix.contains(" /home/") || rerendered_default_nix.contains(".cargo") {
