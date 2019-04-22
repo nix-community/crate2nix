@@ -1,13 +1,17 @@
-# 0.2.1 - 0.3.0 (beta)
+# 0.2.1 - 0.3.0
 
-* Support for dependencies with git sources, e.g.:
+## Bugfixes
+
+* Issue [#4](https://github.com/kolloch/crate2nix/issues/4): Support for `libName` != `crateName`.
+
+## Support for dependencies with git sources
+
+Example:
 
 ```toml
 [dependencies]
 "crate2nix" = { git = "https://github.com/kolloch/crate2nix" }
 ```
-
-* Support for `libName` != `crateName`. Fixes #4.
 
 # 0.2.0 - 0.2.1
 
