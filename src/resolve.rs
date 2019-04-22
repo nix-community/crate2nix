@@ -213,11 +213,11 @@ impl ResolvedSource {
             package
                 .source
                 .as_ref()
-                .map(|s| s.to_string())
-                .unwrap_or("N/A".to_string()),
+                .map(std::string::ToString::to_string)
+                .unwrap_or_else(|| "N/A".to_string()),
             &path.to_string_lossy()
         );
-        return Ok(ResolvedSource::LocalDirectory { path });
+        Ok(ResolvedSource::LocalDirectory { path })
     }
 
     fn relative_directory(

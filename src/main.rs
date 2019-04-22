@@ -93,7 +93,7 @@ fn main() -> CliResult {
                     .join("crate-hashes.json")
             });
 
-            let generate_info = crate2nix::GenerateInfo::new();
+            let generate_info = crate2nix::GenerateInfo::default();
             let generate_config = crate2nix::GenerateConfig {
                 cargo_toml,
                 output: output.clone(),

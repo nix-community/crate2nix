@@ -127,7 +127,7 @@ fn build_and_run(
     // Get metadata
     let default_nix_path = cargo_toml.parent().unwrap().join("default.nix");
     let metadata = BuildInfo::for_config(
-        &GenerateInfo::new(),
+        &GenerateInfo::default(),
         &GenerateConfig {
             cargo_toml: cargo_toml.clone(),
             output: default_nix_path.clone(),
@@ -183,9 +183,9 @@ fn generate(path: &str) {
         &GenerateInfo {
             crate2nix_arguments: vec!["generate", "-n", "<nixos-unstable>", "-o", path]
                 .iter()
-                .map(|s| s.to_string())
+                .map(std::string::ToString::to_string)
                 .collect(),
-            ..GenerateInfo::new()
+            ..GenerateInfo::default()
         },
         &GenerateConfig {
             cargo_toml: PathBuf::from("./Cargo.toml"),

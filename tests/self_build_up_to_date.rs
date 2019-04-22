@@ -9,7 +9,7 @@ fn up_to_date() {
                 .iter()
                 .map(|s| s.to_string())
                 .collect(),
-            ..GenerateInfo::new()
+            ..GenerateInfo::default()
         },
         &GenerateConfig {
             cargo_toml: PathBuf::from("./Cargo.toml"),

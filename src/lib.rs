@@ -148,8 +148,8 @@ pub struct GenerateInfo {
     pub crate2nix_arguments: Vec<String>,
 }
 
-impl GenerateInfo {
-    pub fn new() -> GenerateInfo {
+impl Default for GenerateInfo {
+    fn default() -> GenerateInfo {
         GenerateInfo {
             crate2nix_version: env!("CARGO_PKG_VERSION").to_string(),
             crate2nix_arguments: env::args().skip(1).collect(),
