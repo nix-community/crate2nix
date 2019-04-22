@@ -1,4 +1,4 @@
-{ pkgs? import <nixos-unstable> { config = {}; },
+{ pkgs? import ./nixpkgs.nix,
   lib? pkgs.lib,
   cargo? pkgs.cargo,
   nix? pkgs.nix,
