@@ -55,7 +55,7 @@ nix-shell
 # you are in a shell with crate2nix
 ```
 
-This uses git fetch to reference nixos-unstable because at the time of writing this, it contains a necessary fix.
+This uses a pinned version nixos-unstable because at the time of writing this, it contains a necessary fix.
 
 If that doesn't work for you, you can override the `pkgs` argument, e.g.:
 

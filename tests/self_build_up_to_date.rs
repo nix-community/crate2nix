@@ -5,7 +5,7 @@ use std::path::PathBuf;
 fn up_to_date() {
     let metadata = BuildInfo::for_config(
         &GenerateInfo {
-            crate2nix_arguments: vec!["generate", "-n", "<nixos-unstable>", "-o", "./Cargo.nix"]
+            crate2nix_arguments: vec!["generate", "-n", "./nixpkgs.nix", "-o", "./Cargo.nix"]
                 .iter()
                 .map(|s| s.to_string())
                 .collect(),
@@ -14,7 +14,7 @@ fn up_to_date() {
         &GenerateConfig {
             cargo_toml: PathBuf::from("./Cargo.toml"),
             output: PathBuf::from("./Cargo.nix"),
-            nixpkgs_path: "<nixos-unstable>".to_string(),
+            nixpkgs_path: "./nixpkgs.nix".to_string(),
             crate_hashes_json: PathBuf::from("./crate-hashes.json"),
         },
     )

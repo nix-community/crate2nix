@@ -4,4 +4,4 @@ let nixpkgs = builtins.fetchTarball {
     sha256 = "10agvpj4d62yvwxwflgxbg1dxp654r4cwirpbsrmfikp0wsvijsv";
 };
 
-in import nixpkgs { config = {}; }
+in import nixpkgs

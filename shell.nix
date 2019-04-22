@@ -5,7 +5,7 @@
 # Use pinned version of nixos-unstable by default to make sure this works.
 # Override with e.g.
 #    nix-shell --arg pkgs 'import <nixos> {config = {}; }'
-{pkgs? import ./nixpkgs.nix}:
+{pkgs? import ./nixpkgs.nix { config = {}; }}:
 
 let crate2nix = pkgs.callPackage ./default.nix {};
 in pkgs.stdenv.mkDerivation {

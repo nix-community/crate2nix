@@ -123,6 +123,8 @@ fn build_and_run(
         .parent()
         .expect("Cargo.toml needs a parent")
         .to_path_buf();
+    fs_extra::copy_items(&vec!["./nixpkgs.nix"], &project_dir, &CopyOptions::new())
+        .expect("while copying nixpkgs.nix");
 
     // Get metadata
     let default_nix_path = cargo_toml.parent().unwrap().join("default.nix");
@@ -131,7 +133,7 @@ fn build_and_run(
         &GenerateConfig {
             cargo_toml: cargo_toml.clone(),
             output: default_nix_path.clone(),
-            nixpkgs_path: "<nixos-unstable>".to_string(),
+            nixpkgs_path: "./nixpkgs.nix".to_string(),
             crate_hashes_json: project_dir.join("crate-hashes.json").to_path_buf(),
         },
     )
@@ -181,7 +183,7 @@ fn clean_output_without_dot() {
 fn generate(path: &str) {
     let metadata = BuildInfo::for_config(
         &GenerateInfo {
-            crate2nix_arguments: vec!["generate", "-n", "<nixos-unstable>", "-o", path]
+            crate2nix_arguments: vec!["generate", "-n", "./nixpkgs.nix", "-o", path]
                 .iter()
                 .map(std::string::ToString::to_string)
                 .collect(),
@@ -190,7 +192,7 @@ fn generate(path: &str) {
         &GenerateConfig {
             cargo_toml: PathBuf::from("./Cargo.toml"),
             output: PathBuf::from(path),
-            nixpkgs_path: "<nixos-unstable>".to_string(),
+            nixpkgs_path: "./nixpkgs.nix".to_string(),
             crate_hashes_json: PathBuf::from("./crate-hashes.json"),
         },
     )
