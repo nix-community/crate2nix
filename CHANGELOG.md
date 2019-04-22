@@ -7,6 +7,8 @@
 "crate2nix" = { git = "https://github.com/kolloch/crate2nix" }
 ```
 
+* Support for `libName` != `crateName`. Fixes #4.
+
 # 0.2.0 - 0.2.1
 
 * Added comments to the generated nix build file to indicate which attributes are public and unlikely to change.

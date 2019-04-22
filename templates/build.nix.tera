@@ -10,7 +10,8 @@
   callPackage? pkgs.callPackage,
   stdenv? pkgs.stdenv,
   buildRustCrate? pkgs.buildRustCrate,
-  fetchurl? pkgs.fetchurl }:
+  fetchurl? pkgs.fetchurl,
+  fetchCrate? pkgs.fetchCrate }:
 
 rec {
     #
@@ -37,7 +38,7 @@ rec {
     crates = {
     {%- for crate in crates %}
         {{crate.package_id}}
-            = buildRustCrate {
+            = buildRustCrate rec {
                 crateName = {{crate.crate_name}};
                 version = {{crate.version}};
                 edition = {{crate.edition}};
@@ -64,12 +65,19 @@ rec {
                 procMacro = true;
                 {%- endif -%}
 
-                {%- if crate.build %}
-                build = {{crate.build}};
+                {%- if crate.build.src_path and crate.build.src_path != "build.rs" -%}
+                {#- This defaults to "build.rs". #}
+                build = {{crate.build.src_path}};
                 {%- endif -%}
 
-                {%- if crate.lib_path %}
-                libPath = {{crate.lib_path}};
+                {%- if crate.lib and crate.lib.name and crate.lib.name != crate.crate_name -%}
+                {#- This defaults to crateName. #}
+                libName = {{crate.lib.name}};
+                {%- endif -%}
+
+                {%- if crate.lib and crate.lib.src_path and crate.lib.src_path != "src/lib.rs" -%}
+                {#- This defaults to empty which triggers some auto-probing. #}
+                libPath = {{crate.lib.src_path}};
                 {%- endif -%}
 
                 {%- if crate.authors|length > 0 %}

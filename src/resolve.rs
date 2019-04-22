@@ -1,6 +1,6 @@
 //! Resolve dependencies and other data for CrateDerivation.
 
-use cargo_metadata::DependencyKind;
+use cargo_metadata::{DependencyKind, Target};
 use cargo_metadata::Node;
 use cargo_metadata::Package;
 use cargo_metadata::PackageId;
@@ -32,9 +32,10 @@ pub struct CrateDerivation {
     pub dependencies: Vec<ResolvedDependency>,
     pub build_dependencies: Vec<ResolvedDependency>,
     pub features: Vec<String>,
-    /// The relative path to the build script.
-    pub build: Option<PathBuf>,
-    pub lib_path: Option<PathBuf>,
+    /// The build target for the custom build script.
+    pub build: Option<BuildTarget>,
+    /// The build target for the library.
+    pub lib: Option<BuildTarget>,
     pub has_bin: bool,
     pub proc_macro: bool,
     // This derivation builds the root crate or a workspace member.
@@ -62,19 +63,17 @@ impl CrateDerivation {
             .canonicalize()
             .expect("Cannot canonicalize package path");
 
-        let lib_path = package
+        let lib = package
             .targets
             .iter()
             .find(|t| t.kind.iter().any(|k| k == "lib"))
-            .and_then(|target| target.src_path.strip_prefix(&package_path).ok())
-            .map(|path| path.to_path_buf());
+            .and_then(|target| BuildTarget::new(&target, &package_path).ok());
 
         let build = package
             .targets
             .iter()
             .find(|t| t.kind.iter().any(|k| k == "custom-build"))
-            .and_then(|target| target.src_path.strip_prefix(&package_path).ok())
-            .map(|path| path.to_path_buf());
+            .and_then(|target| BuildTarget::new(&target, &package_path).ok());
 
         let proc_macro = package
             .targets
@@ -103,10 +102,28 @@ impl CrateDerivation {
             dependencies,
             build_dependencies,
             build,
-            lib_path,
+            lib,
             proc_macro,
             has_bin,
             is_root_or_workspace_member,
+        })
+    }
+}
+
+/// A build target of a crate.
+#[derive(Debug, Deserialize, Serialize)]
+pub struct BuildTarget {
+    /// The name of the build target.
+    pub name: String,
+    /// The relative path of the target source file.
+    pub src_path: PathBuf,
+}
+
+impl BuildTarget {
+    pub fn new(target: &Target, package_path: impl AsRef<Path>) -> Result<BuildTarget, Error> {
+        Ok(BuildTarget {
+            name: target.name.clone(),
+            src_path: target.src_path.strip_prefix(&package_path)?.to_path_buf(),
         })
     }
 }

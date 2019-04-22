@@ -1,8 +1,10 @@
 [package]
-name = "with_tera"
+name = "with_problematic_crates"
 version = "0.1.0"
 authors = ["Peter Kolloch <info@eigenvalue.net>"]
 edition = "2018"
 
 [dependencies]
 tera = "1.0.0-beta.2"
+# Regression test for issue #4
+html5ever = "0.22.5"

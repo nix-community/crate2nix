@@ -4,4 +4,8 @@ version = "0.1.0"
 authors = ["Peter Kolloch <info@eigenvalue.net>"]
 edition = "2018"
 
+[lib]
+# Regression test for issue #4
+name = "renamed_hello_world_lib"
+
 [dependencies]

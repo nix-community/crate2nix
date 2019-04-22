@@ -57,15 +57,15 @@ fn build_and_run_with_default_features() {
 }
 
 #[test]
-fn build_and_run_with_tera() {
+fn build_and_run_with_problematic_crates() {
     let output = build_and_run(
-        "sample_projects/with_tera/Cargo.toml",
-        "sample_projects/with_tera",
+        "sample_projects/with_problematic_crates/Cargo.toml",
+        "sample_projects/with_problematic_crates",
         "root_crate",
-        "with_tera",
+        "with_problematic_crates",
     );
 
-    assert_eq!("Hello, with_tera!\n", &output);
+    assert_eq!("Hello, with_problematic_crates!\n", &output);
 }
 
 #[test]
