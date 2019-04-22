@@ -1,3 +1,9 @@
+# 0.3.0 - 0.3.1
+
+## Bugfixes
+
+* Issue [#4](https://github.com/kolloch/crate2nix/issues/5): Support `libPath` for proc-macro crates.
+
 # 0.2.1 - 0.3.0
 
 ## Bugfixes
