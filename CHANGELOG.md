@@ -4,11 +4,15 @@
 
 * Issue [#5](https://github.com/kolloch/crate2nix/issues/5): Support `libPath` for proc-macro crates.
 
+Thank you @nuxeh for reporting this bug! Again :)
+
 # 0.2.1 - 0.3.0
 
 ## Bugfixes
 
 * Issue [#4](https://github.com/kolloch/crate2nix/issues/4): Support for `libName` != `crateName`.
+
+Thank you @nuxeh for reporting this bug!
 
 ## Support for dependencies with git sources
 
