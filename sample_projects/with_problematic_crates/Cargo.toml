@@ -10,6 +10,7 @@ tera = "*"
 
 # Regression test for issue #4
 html5ever = "0.22.5"
+cssparser = "0.25.3"
 
 # Other popular application creates
 actix-web ="*"

@@ -66,7 +66,7 @@ impl CrateDerivation {
         let lib = package
             .targets
             .iter()
-            .find(|t| t.kind.iter().any(|k| k == "lib"))
+            .find(|t| t.kind.iter().any(|k| k == "lib" || k == "proc-macro"))
             .and_then(|target| BuildTarget::new(&target, &package_path).ok());
 
         let build = package
