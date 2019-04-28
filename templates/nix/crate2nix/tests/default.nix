@@ -9,4 +9,4 @@ let pkgs = import ../../../../nixpkgs.nix {};
     all = builtins.filter (r: r.failures != []) (builtins.map runTest tests);
 in if all == []
    then "OK"
-   else throw (builtins.toJSON all)
+   else all

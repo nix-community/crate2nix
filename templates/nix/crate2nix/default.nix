@@ -51,7 +51,7 @@ rec {
             dependencies;
         depDerivation = dependencyName: dependency:
           let packageId = if builtins.isString dependency then dependency else dependency.package_id;
-          in crateDerivations.${packageId}.override {
+          in crateDerivations.${packageId} {
             features = dependencyFeatures features dependencyName dependency;
           };
         derivations = builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);

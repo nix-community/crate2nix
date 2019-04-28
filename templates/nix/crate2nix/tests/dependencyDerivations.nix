@@ -1,6 +1,6 @@
 {lib, crate2nix}:
 
-let buildRustCrateFake = lib.makeOverridable lib.id;
+let buildRustCrateFake = args: {features}: args // {inherit features;};
     fakeCrates = {
       "pkg_id1" = buildRustCrateFake {
         crateName = "id1";
