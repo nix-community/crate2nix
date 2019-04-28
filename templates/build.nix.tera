@@ -11,7 +11,9 @@
   stdenv? pkgs.stdenv,
   buildRustCrate? pkgs.buildRustCrate,
   fetchurl? pkgs.fetchurl,
-  fetchCrate? pkgs.fetchCrate }:
+  fetchCrate? pkgs.fetchCrate,
+  # The features to enable for the root_crate or the workspace_members.
+  rootFeatures? ["default"]}:
 
 rec {
   #
@@ -20,13 +22,13 @@ rec {
 
   {% if root_package_id -%}
   # Use this attribute to refer to the derivation building your root crate.
-  root_crate = crates.{{root_package_id}};
+  root_crate = crates.{{root_package_id}} { features = rootFeatures; };
   {%- endif -%}
   {% if workspace_members %}
   # Refer your crate build derivation by name here.
   workspace_members = {
   {%- for name, pkg_id in workspace_members %}
-    {{name}} = crates.{{pkg_id}};
+    {{name}} = crates.{{pkg_id}} { features = rootFeatures; };
   {%- endfor %}
   };
   {%- endif %}
@@ -38,7 +40,7 @@ rec {
   crates = {
   {%- for crate in crates %}
     {{crate.package_id}}
-      = buildRustCrate rec {
+      = buildRustCrateWithFeatures rec {
         crateName = {{crate.crate_name}};
         version = {{crate.version}};
         edition = {{crate.edition}};
@@ -89,38 +91,64 @@ rec {
         {%- endif -%}
 
         {%- if crate.dependencies|length > 0 %}
-        dependencies = filterDeps [
+        dependencies = {
         {%- for dependency in crate.dependencies %}
-          {%- if dependency.target %}
-          # target = {{dependency.target}}
-          (cfg {{dependency.target | safe | cfg_to_nix_expr}} {{dependency.package_id}})
+          {%- if dependency.target or dependency.optional or not dependency.uses_default_features or dependency.features %}
+          {{dependency.name}} = {
+            package_id = {{dependency.package_id}};
+            {%- if dependency.optional %}
+            optional = true;
+            {%- endif -%}
+            {%- if not dependency.uses_default_features %}
+            uses_default_features = false;
+            {%- endif -%}
+            {%- if dependency.target %}
+            target = {{dependency.target | safe | cfg_to_nix_expr}};
+            {%- endif %}
+            {%- if dependency.features %}
+            features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
+            {%- endif %}
+          };
           {%- else %}
-          {{dependency.package_id}}
+          {{dependency.name}} = {{dependency.package_id}};
           {%- endif -%}
         {%- endfor %}
-        ];
+        };
         {%- endif -%}
 
         {%- if crate.build_dependencies|length > 0 %}
-        buildDependencies = filterDeps [
+        buildDependencies = {
         {%- for dependency in crate.build_dependencies %}
-          {%- if dependency.target %}
-          # target = {{dependency.target}}
-          (cfg {{dependency.target | safe | cfg_to_nix_expr}} {{dependency.package_id}})
+          {%- if dependency.target or dependency.optional or not dependency.uses_default_features or dependency.features %}
+          {{dependency.name}} = {
+            package_id = {{dependency.package_id}};
+            {%- if dependency.optional %}
+            optional = true;
+            {%- endif -%}
+            {%- if not dependency.uses_default_features %}
+            uses_default_features = false;
+            {%- endif -%}
+            {%- if dependency.target %}
+            target = {{dependency.target | safe | cfg_to_nix_expr}};
+            {%- endif %}
+            {%- if dependency.features %}
+            features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
+            {%- endif %}
+          };
           {%- else %}
-          {{dependency.package_id}}
+          {{dependency.name}} = {{dependency.package_id}};
           {%- endif -%}
         {%- endfor %}
-        ];
+        };
         {%- endif -%}
-
-        {%- if crate.features|length > 0 %}
-        features = [
-        {%- for feature in crate.features %}
-         {{feature}}
+        {#- #}
+        features = {
+        {%- for feature, features in crate.features -%}
+          {%- if features | length > 0 %}
+          {{feature}} = [ {% for feature in features %}{{feature}} {% endfor %}];
+          {%- endif -%}
         {%- endfor %}
-        ];
-        {%- endif %}
+        };
       };
   {%- endfor %}
   };
@@ -143,55 +171,7 @@ rec {
       pointer_width = toString stdenv.hostPlatform.parsed.cpu.bits;
       vendor = stdenv.hostPlatform.parsed.vendor.name;
       debug_assertions = false;
-   };
+  };
 
-  # Utility functions
-
-  # Filter null package_ids and map the IDs to crate derivations.
-  filterDeps = package_ids:
-    let without_null = builtins.filter (x: ! (isNull x)) package_ids;
-    in builtins.map (id: crates.${id}) without_null;
-
-  # Trivial function to make package dependencies read nicer
-  cfg = condition: package_id:
-    if condition then package_id else null;
-
-  # sourceFilter: Filters common temp files and build files
-  # TODO(pkolloch): Substitute with gitignore filter
-  sourceFilter = name: type:
-    let baseName = builtins.baseNameOf (builtins.toString name);
-    in ! (
-      # Filter out git
-      baseName == ".gitignore" ||
-      (type == "directory" && baseName == ".git" ) ||
-
-      # Filter out build results
-      (type == "directory" && (
-        baseName == "target" ||
-        baseName == "_site" ||
-        baseName == ".sass-cache" ||
-        baseName == ".jekyll-metadata" ||
-        baseName == "build-artifacts"
-        )) ||
-
-      # Filter out nix-build result symlinks
-      (type == "symlink" && lib.hasPrefix "result" baseName) ||
-
-      # Filter out IDE config
-      (type == "directory" && (
-        baseName == ".idea" ||
-        baseName == ".vscode"
-        )) ||
-      lib.hasSuffix ".iml" baseName ||
-
-      # Filter out nix build files
-      lib.hasSuffix ".nix" baseName ||
-
-      # Filter out editor backup / swap files.
-      lib.hasSuffix "~" baseName ||
-      builtins.match "^\\.sw[a-z]$" baseName != null ||
-      builtins.match "^\\..*\\.sw[a-z]$" baseName != null ||
-      lib.hasSuffix ".tmp" baseName ||
-      lib.hasSuffix ".bak" baseName
-    );
+  {% include "nix/crate2nix/default.nix" %}
 }

@@ -18,6 +18,7 @@ use std::path::{Path, PathBuf};
 
 use crate::metadata::IndexedMetadata;
 use crate::GenerateConfig;
+use std::collections::btree_map::BTreeMap;
 use url::Url;
 
 /// All data necessary for creating a derivation for a crate.
@@ -31,7 +32,8 @@ pub struct CrateDerivation {
     pub source: ResolvedSource,
     pub dependencies: Vec<ResolvedDependency>,
     pub build_dependencies: Vec<ResolvedDependency>,
-    pub features: Vec<String>,
+    /// Feature rules. Which feature (key) enables which other features (values).
+    pub features: BTreeMap<String, Vec<String>>,
     /// The build target for the custom build script.
     pub build: Option<BuildTarget>,
     /// The build target for the library.
@@ -98,7 +100,11 @@ impl CrateDerivation {
             package_id: package.id.clone(),
             version: package.version.clone(),
             source: ResolvedSource::new(&config, &package, &package_path)?,
-            features: resolved_dependencies.node.features.clone(),
+            features: package
+                .features
+                .iter()
+                .map(|(name, feature_list)| (name.clone(), feature_list.clone()))
+                .collect(),
             dependencies,
             build_dependencies,
             build,
@@ -266,8 +272,6 @@ impl ResolvedSource {
 
 /// The resolved dependencies of one package/crate.
 struct ResolvedDependencies<'a> {
-    /// The node corresponding to the package.
-    node: &'a Node,
     /// The corresponding packages for the dependencies.
     packages: Vec<&'a Package>,
     /// The dependencies of the package/crate.
@@ -306,7 +310,6 @@ impl<'a> ResolvedDependencies<'a> {
         packages.sort_by(|p1, p2| p1.id.cmp(&p2.id));
 
         Ok(ResolvedDependencies {
-            node,
             packages,
             dependencies: package.dependencies.iter().collect(),
         })
@@ -330,11 +333,19 @@ impl<'a> ResolvedDependencies<'a> {
         self.packages
             .iter()
             .flat_map(|d| {
+                let normalized_package_name = normalize_package_name(&d.name);
                 names
-                    .get(&normalize_package_name(&d.name))
+                    .get(&normalized_package_name)
                     .map(|dependency| ResolvedDependency {
+                        name: dependency.name.clone(),
                         package_id: d.id.clone(),
-                        target: dependency.target.as_ref().map(|p| p.to_string()),
+                        target: dependency
+                            .target
+                            .as_ref()
+                            .map(std::string::ToString::to_string),
+                        optional: dependency.optional,
+                        uses_default_features: dependency.uses_default_features,
+                        features: dependency.features.clone(),
                     })
             })
             .collect()
@@ -343,8 +354,15 @@ impl<'a> ResolvedDependencies<'a> {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ResolvedDependency {
+    pub name: String,
     pub package_id: PackageId,
     /// The cfg expression for conditionally enabling the dependency (if any).
     /// Can also be a target "triplet".
     pub target: Option<String>,
+    /// Whether this dependency is optional and thus needs to be enabled via a feature.
+    pub optional: bool,
+    /// Whether the crate uses this dependency with default features enabled.
+    pub uses_default_features: bool,
+    /// Extra-enabled features.
+    pub features: Vec<String>,
 }

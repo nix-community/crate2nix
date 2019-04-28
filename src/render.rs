@@ -36,10 +36,16 @@ pub fn write_to_file(path: impl AsRef<Path>, contents: &str) -> Result<(), Error
 lazy_static! {
     static ref TERA: Tera = {
         let mut tera = Tera::default();
-        tera.add_raw_template(
-            "build.nix.tera",
-            include_str!("../templates/build.nix.tera"),
-        )
+        tera.add_raw_templates(vec![
+            (
+                "build.nix.tera",
+                include_str!("../templates/build.nix.tera"),
+            ),
+            (
+                "nix/crate2nix/default.nix",
+                include_str!("../templates/nix/crate2nix/default.nix"),
+            ),
+        ])
         .expect("while adding template");
         tera.autoescape_on(vec![".nix.tera", ".nix"]);
         tera.set_escape_fn(escape_nix_string);
