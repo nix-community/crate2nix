@@ -1,9 +1,12 @@
 # Throws an error if any of our lib tests fail.
 let pkgs = import ../../../../nixpkgs.nix {};
     crate2nix = pkgs.callPackage ../default.nix {};
-    tests = [ "dependencyFeatures" "expandFeatures" ];
-    runTest = f: (pkgs.callPackage (./. + "/${f}.nix")) { inherit crate2nix; };
-    all = builtins.concatLists (map runTest tests);
+    tests = [ "dependencyDerivations" "dependencyFeatures" "expandFeatures" ];
+    runTest = f: {
+      "00testName" = f;
+      failures = (pkgs.callPackage (./. + "/${f}.nix")) { inherit crate2nix; };
+    };
+    all = builtins.filter (r: r.failures != []) (builtins.map runTest tests);
 in if all == []
    then "OK"
    else throw (builtins.toJSON all)

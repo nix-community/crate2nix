@@ -24,7 +24,7 @@ rec {
     assert (builtins.isString dependencyName);
     assert (builtins.isAttrs dependency || builtins.isString dependency);
 
-    let defaultOrNil = if builtins.isString dependency || dependency.with_default or true
+    let defaultOrNil = if builtins.isString dependency || dependency.uses_default_features or true
                        then ["default"]
                        else [];
         additionalDependencyFeatures =
@@ -43,18 +43,18 @@ rec {
     assert (builtins.isList features);
 
     let enabledDependencies =
-          builtins.filter
-            (dep:
+          lib.filterAttrs
+            (depName: dep:
               builtins.isString dep
               || dep.target_cfg or true
-              && (!(dep.optional or false) || builtins.elem dep features))
+              && (!(dep.optional or false) || builtins.elem depName features))
             dependencies;
         depDerivation = dependencyName: dependency:
           let packageId = if builtins.isString dependency then dependency else dependency.package_id;
           in crateDerivations.${packageId}.override {
             features = dependencyFeatures features dependencyName dependency;
           };
-
+        derivations = builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
     in
-      lib.mapAttrs depDerivation enabledDependencies;
+      lib.sort (a: b: a.crateName < b.crateName) derivations;
 }

@@ -29,7 +29,7 @@ in lib.runTests {
     expr = crate2nix.dependencyFeatures
              []
              "my_dep"
-             { with_default = true; };
+             { uses_default_features = true; };
     expected = ["default"];
   };
 
@@ -37,7 +37,7 @@ in lib.runTests {
     expr = crate2nix.dependencyFeatures
              []
              "my_dep"
-             { with_default = false; };
+             { uses_default_features = false; };
     expected = [];
   };
 
@@ -57,14 +57,14 @@ in lib.runTests {
   testDependencyFeatures2 = {
     expr = crate2nix.dependencyFeatures
       [ "irrelevant" "my_dep/feature1" "my_dep/feature2" "my_dep3/irrelevant2" ]
-      "my_dep" { with_default = true; };
+      "my_dep" { uses_default_features = true; };
     expected = [ "default" "feature1" "feature2" ];
   };
 
   testDependencyFeaturesWithoutDefault = {
     expr = crate2nix.dependencyFeatures
       [ "irrelevant" "my_dep/feature1" "my_dep/feature2" "my_dep3/irrelevant2" ]
-      "my_dep" { with_default = false; };
+      "my_dep" { uses_default_features = false; };
     expected = [ "feature1" "feature2" ];
   };
 }
