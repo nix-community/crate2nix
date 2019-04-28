@@ -81,6 +81,19 @@ fn build_and_run_bin_with_lib_git_dep() {
 }
 
 #[test]
+#[ignore]
+fn build_and_run_bin_with_rerenamed_lib_dep() {
+    let output = build_and_run(
+        "sample_projects/bin_with_rerenamed_lib_dep/Cargo.toml",
+        "sample_projects",
+        "root_crate",
+        "bin_with_rerenamed_lib_dep",
+    );
+
+    assert_eq!("Hello world from bin_with_rerenamed_lib_dep!\n", &output);
+}
+
+#[test]
 fn build_and_run_workspace() {
     let output = build_and_run(
         "sample_workspace/Cargo.toml",

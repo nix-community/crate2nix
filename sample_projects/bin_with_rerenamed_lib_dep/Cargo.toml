@@ -1,0 +1,8 @@
+[package]
+name = "bin_with_rerenamed_lib_dep"
+version = "0.1.0"
+authors = ["Peter Kolloch <info@eigenvalue.net>"]
+edition = "2018"
+
+[dependencies]
+"new_name_hello_world_lib" = { package = "hello_world_lib", path = "../lib"}
