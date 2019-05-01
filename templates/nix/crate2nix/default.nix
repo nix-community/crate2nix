@@ -34,24 +34,100 @@ rec {
       lib.hasSuffix ".iml" baseName ||
 
       # Filter out nix build files
-      lib.hasSuffix ".nix" baseName ||
+      # lib.hasSuffix ".nix" baseName ||
 
       # Filter out editor backup / swap files.
       lib.hasSuffix "~" baseName ||
-      builtins.match "^\\.sw[a-z]$" baseName != null ||
-      builtins.match "^\\..*\\.sw[a-z]$" baseName != null ||
+      builtins.match "^\\.sw[a-z]$$" baseName != null ||
+      builtins.match "^\\..*\\.sw[a-z]$$" baseName != null ||
       lib.hasSuffix ".tmp" baseName ||
       lib.hasSuffix ".bak" baseName
     );
 
-  /* Returns a buildRustCrate derivation based on the given config and features. */
-  buildRustCrateWithFeatures = config: {features}:
-    assert (builtins.isAttrs config);
+  /* Returns a buildRustCrate derivation for the given packageId and features. */
+  buildRustCrateWithFeatures = { crateConfigs? crates, packageId, features } @ args:
+    assert (builtins.isAttrs crateConfigs);
+    assert (builtins.isString packageId);
     assert (builtins.isList features);
-    let expandedFeatures = expandFeatures config.features features; # compare to features calculated by cargo?
-        dependencies = dependencyDerivations crates expandedFeatures (config.dependencies or {});
-        buildDependencies = dependencyDerivations crates expandedFeatures (config.buildDependencies or {});
-    in buildRustCrate (config // { features = expandedFeatures; inherit dependencies buildDependencies; });
+
+    let mergedFeatures = mergePackageFeatures args;
+        buildByPackageId = packageId:
+          let features = mergedFeatures."${packageId}" or [];
+              crateConfig = crateConfigs."${packageId}";
+              dependencies =
+                dependencyDerivations buildByPackageId features (crateConfig.dependencies or {});
+              buildDependencies =
+                dependencyDerivations buildByPackageId features (crateConfig.buildDependencies or {});
+          in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies; });
+    in buildByPackageId packageId;
+
+  /* Returns the actual derivations for the given dependencies.
+  */
+  dependencyDerivations = buildByPackageId: features: dependencies:
+    assert (builtins.isFunction buildByPackageId);
+    assert (builtins.isList features);
+    assert (builtins.isAttrs dependencies);
+
+    let enabledDependencies =
+          lib.filterAttrs
+            (depName: dep:
+              builtins.isString dep
+              || dep.target or true
+              && (!(dep.optional or false) || builtins.elem depName features))
+            dependencies;
+        depDerivation = dependencyName: dependency:
+          buildByPackageId (dependencyPackageId dependency);
+    in builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
+
+  /* Returns the feature configuration by package id for the given input crate. */
+  mergePackageFeatures = {crateConfigs ? crates, packageId, features} @ args:
+    assert (builtins.isAttrs crateConfigs);
+    assert (builtins.isString packageId);
+    assert (builtins.isList features);
+
+    let packageFeatures = listOfPackageFeatures args;
+        byPackageId = {packageId, features}: { "${packageId}" = features; };
+        allByPackageId = builtins.map byPackageId packageFeatures;
+    in assert (builtins.isList allByPackageId);
+      lib.foldAttrs (f1: f2: (sortedUnique (f1 ++ f2))) [] allByPackageId;
+
+  listOfPackageFeatures = {crateConfigs ? crates, packageId, features} @ args:
+    assert (builtins.isAttrs crateConfigs);
+    assert (builtins.isString packageId);
+    assert (builtins.isList features);
+
+    let
+        crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
+        expandedFeatures = expandFeatures (crateConfig.features or {}) features;
+        depWithResolvedFeatures = dependencyName: dependency:
+          let packageId = dependencyPackageId dependency;
+          in { inherit packageId; features = dependencyFeatures expandedFeatures dependencyName dependency; };
+        resolveDependencies = dependencies:
+          assert (builtins.isAttrs dependencies);
+          let directDependencies =
+            builtins.attrValues
+              (lib.mapAttrs depWithResolvedFeatures (filterEnabledDependencies dependencies expandedFeatures));
+          in builtins.concatMap
+            ({packageId, features}: listOfPackageFeatures { inherit crateConfigs packageId features; })
+            directDependencies;
+        resolvedDependencies = lib.concatMap
+          resolveDependencies
+          [
+            (crateConfig.dependencies or {})
+            (crateConfig.buildDependencies or {})
+          ];
+    in [{inherit packageId; features = expandedFeatures;}] ++ resolvedDependencies;
+
+  filterEnabledDependencies = dependencies: features:
+    assert (builtins.isAttrs dependencies);
+    assert (builtins.isList features);
+
+    lib.filterAttrs
+      (depName: dep:
+        builtins.isString dep
+        || dep.target or true
+        && (!(dep.optional or false) || builtins.elem depName features))
+      dependencies;
 
   /* Returns the expanded features for the given inputFeatures by applying the rules in featureMap.
 
@@ -64,36 +140,16 @@ rec {
 
     let expandFeature = feature:
           assert (builtins.isString feature);
-          [feature] ++ (expandFeatures featureMap (featureMap.${feature} or []));
+          [feature] ++ (expandFeatures featureMap (featureMap."${feature}" or []));
         outFeatures = builtins.concatMap expandFeature inputFeatures;
-        outFeaturesSet = lib.foldl (set: feature: set // {${feature} = 1;} ) {} outFeatures;
+    in sortedUnique outFeatures;
+
+  sortedUnique = features:
+    let outFeaturesSet = lib.foldl (set: feature: set // {"${feature}" = 1;} ) {} features;
         outFeaturesUnique = builtins.attrNames outFeaturesSet;
     in builtins.sort (a: b: a < b) outFeaturesUnique;
 
-  /* Returns the actual derivations for the given enabled features and dependencies.
-
-     `crateDerivations` is expected to map `package IDs` to `buildRustCrate` derivations.
-  */
-  dependencyDerivations = crateDerivations: features: dependencies:
-    assert (builtins.isAttrs crateDerivations);
-    assert (builtins.isAttrs dependencies);
-    assert (builtins.isList features);
-
-    let enabledDependencies =
-          lib.filterAttrs
-            (depName: dep:
-              builtins.isString dep
-              || dep.target or true
-              && (!(dep.optional or false) || builtins.elem depName features))
-            dependencies;
-        depDerivation = dependencyName: dependency:
-          let packageId = if builtins.isString dependency then dependency else dependency.package_id;
-          in crateDerivations.${packageId} {
-            features = dependencyFeatures features dependencyName dependency;
-          };
-        derivations = builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
-    in
-      lib.sort (a: b: a.crateName < b.crateName) derivations;
+  dependencyPackageId = dependency: if builtins.isString dependency then dependency else dependency.package_id;
 
   /* Returns the actual dependencies for the given dependency. */
   dependencyFeatures = features: dependencyName: dependency:

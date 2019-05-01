@@ -22,13 +22,19 @@ rec {
 
   {% if root_package_id -%}
   # Use this attribute to refer to the derivation building your root crate.
-  root_crate = crates.{{root_package_id}} { features = rootFeatures; };
+  root_crate = buildRustCrateWithFeatures {
+    packageId = {{root_package_id}};
+    features = rootFeatures;
+  };
   {%- endif -%}
   {% if workspace_members %}
   # Refer your crate build derivation by name here.
   workspace_members = {
   {%- for name, pkg_id in workspace_members %}
-    {{name}} = crates.{{pkg_id}} { features = rootFeatures; };
+    {{name}} = buildRustCrateWithFeatures {
+      packageId = {{pkg_id}};
+      features = rootFeatures;
+    };
   {%- endfor %}
   };
   {%- endif %}
@@ -40,7 +46,7 @@ rec {
   crates = {
   {%- for crate in crates %}
     {{crate.package_id}}
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = {{crate.crate_name}};
         version = {{crate.version}};
         edition = {{crate.edition}};

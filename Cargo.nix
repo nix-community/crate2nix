@@ -19,10 +19,16 @@ rec {
   #
 
   # Use this attribute to refer to the derivation building your root crate.
-  root_crate = crates."crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)" { features = rootFeatures; };
+  root_crate = buildRustCrateWithFeatures {
+    packageId = "crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)";
+    features = rootFeatures;
+  };
   # Refer your crate build derivation by name here.
   workspace_members = {
-    "crate2nix" = crates."crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)" { features = rootFeatures; };
+    "crate2nix" = buildRustCrateWithFeatures {
+      packageId = "crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)";
+      features = rootFeatures;
+    };
   };
 
   #
@@ -31,7 +37,7 @@ rec {
 
   crates = {
     "aho-corasick 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "aho-corasick";
         version = "0.7.3";
         edition = "2015";
@@ -52,7 +58,7 @@ rec {
         };
       };
     "ansi_term 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "ansi_term";
         version = "0.11.0";
         edition = "2015";
@@ -73,7 +79,7 @@ rec {
         };
       };
     "arrayvec 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "arrayvec";
         version = "0.4.10";
         edition = "2015";
@@ -93,7 +99,7 @@ rec {
         };
       };
     "atty 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "atty";
         version = "0.2.11";
         edition = "2015";
@@ -121,7 +127,7 @@ rec {
         };
       };
     "autocfg 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "autocfg";
         version = "0.1.2";
         edition = "2015";
@@ -133,7 +139,7 @@ rec {
         };
       };
     "backtrace 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "backtrace";
         version = "0.3.15";
         edition = "2015";
@@ -173,7 +179,7 @@ rec {
         };
       };
     "backtrace-sys 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "backtrace-sys";
         version = "0.1.28";
         edition = "2015";
@@ -194,7 +200,7 @@ rec {
         };
       };
     "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "bitflags";
         version = "1.0.4";
         edition = "2015";
@@ -206,7 +212,7 @@ rec {
         };
       };
     "block-buffer 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "block-buffer";
         version = "0.7.3";
         edition = "2015";
@@ -227,7 +233,7 @@ rec {
         };
       };
     "block-padding 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "block-padding";
         version = "0.1.3";
         edition = "2015";
@@ -242,7 +248,7 @@ rec {
         };
       };
     "bstr 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "bstr";
         version = "0.1.2";
         edition = "2015";
@@ -265,7 +271,7 @@ rec {
         };
       };
     "byte-tools 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "byte-tools";
         version = "0.3.1";
         edition = "2015";
@@ -277,7 +283,7 @@ rec {
         };
       };
     "byteorder 1.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "byteorder";
         version = "1.3.1";
         edition = "2015";
@@ -290,7 +296,7 @@ rec {
         };
       };
     "cargo_metadata 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "cargo_metadata";
         version = "0.7.4";
         edition = "2015";
@@ -317,7 +323,7 @@ rec {
         };
       };
     "cc 1.0.35 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "cc";
         version = "1.0.35";
         edition = "2015";
@@ -332,7 +338,7 @@ rec {
         };
       };
     "cfg-if 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "cfg-if";
         version = "0.1.7";
         edition = "2015";
@@ -344,7 +350,7 @@ rec {
         };
       };
     "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "chrono";
         version = "0.4.6";
         edition = "2015";
@@ -373,7 +379,7 @@ rec {
         };
       };
     "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "clap";
         version = "2.33.0";
         edition = "2015";
@@ -414,7 +420,7 @@ rec {
         };
       };
     "clap-verbosity-flag 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "clap-verbosity-flag";
         version = "0.2.0";
         edition = "2015";
@@ -432,7 +438,7 @@ rec {
         };
       };
     "crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "crate2nix";
         version = "0.4.0-beta.0";
         edition = "2018";
@@ -459,7 +465,7 @@ rec {
         };
       };
     "crossbeam-channel 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "crossbeam-channel";
         version = "0.3.8";
         edition = "2015";
@@ -475,7 +481,7 @@ rec {
         };
       };
     "crossbeam-deque 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "crossbeam-deque";
         version = "0.2.0";
         edition = "2015";
@@ -491,7 +497,7 @@ rec {
         };
       };
     "crossbeam-epoch 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "crossbeam-epoch";
         version = "0.3.1";
         edition = "2015";
@@ -530,7 +536,7 @@ rec {
         };
       };
     "crossbeam-utils 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "crossbeam-utils";
         version = "0.2.2";
         edition = "2015";
@@ -546,7 +552,7 @@ rec {
         };
       };
     "crossbeam-utils 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "crossbeam-utils";
         version = "0.6.5";
         edition = "2015";
@@ -567,7 +573,7 @@ rec {
         };
       };
     "deunicode 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "deunicode";
         version = "0.4.3";
         edition = "2015";
@@ -580,7 +586,7 @@ rec {
         };
       };
     "digest 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "digest";
         version = "0.8.0";
         edition = "2015";
@@ -596,7 +602,7 @@ rec {
         };
       };
     "either 1.5.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "either";
         version = "1.5.2";
         edition = "2015";
@@ -609,7 +615,7 @@ rec {
         };
       };
     "env_logger 0.5.13 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "env_logger";
         version = "0.5.13";
         edition = "2015";
@@ -635,7 +641,7 @@ rec {
         };
       };
     "error-chain 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "error-chain";
         version = "0.12.0";
         edition = "2015";
@@ -659,7 +665,7 @@ rec {
         };
       };
     "exitfailure 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "exitfailure";
         version = "0.5.1";
         edition = "2015";
@@ -674,7 +680,7 @@ rec {
         };
       };
     "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "failure";
         version = "0.1.5";
         edition = "2015";
@@ -699,7 +705,7 @@ rec {
         };
       };
     "failure_derive 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "failure_derive";
         version = "0.1.5";
         edition = "2015";
@@ -718,7 +724,7 @@ rec {
         };
       };
     "fake-simd 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "fake-simd";
         version = "0.1.2";
         edition = "2015";
@@ -730,7 +736,7 @@ rec {
         };
       };
     "fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "fnv";
         version = "1.0.6";
         edition = "2015";
@@ -743,7 +749,7 @@ rec {
         };
       };
     "generic-array 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "generic-array";
         version = "0.12.0";
         edition = "2015";
@@ -760,7 +766,7 @@ rec {
         };
       };
     "globset 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "globset";
         version = "0.4.3";
         edition = "2015";
@@ -783,7 +789,7 @@ rec {
         };
       };
     "globwalk 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "globwalk";
         version = "0.3.1";
         edition = "2015";
@@ -799,7 +805,7 @@ rec {
         };
       };
     "globwalk 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "globwalk";
         version = "0.7.0";
         edition = "2015";
@@ -815,7 +821,7 @@ rec {
         };
       };
     "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "heck";
         version = "0.3.1";
         edition = "2015";
@@ -830,7 +836,7 @@ rec {
         };
       };
     "humansize 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "humansize";
         version = "1.1.0";
         edition = "2015";
@@ -842,7 +848,7 @@ rec {
         };
       };
     "humantime 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "humantime";
         version = "1.2.0";
         edition = "2015";
@@ -857,7 +863,7 @@ rec {
         };
       };
     "idna 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "idna";
         version = "0.1.5";
         edition = "2015";
@@ -874,7 +880,7 @@ rec {
         };
       };
     "ignore 0.4.7 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "ignore";
         version = "0.4.7";
         edition = "2015";
@@ -902,7 +908,7 @@ rec {
         };
       };
     "itoa 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "itoa";
         version = "0.4.3";
         edition = "2015";
@@ -915,7 +921,7 @@ rec {
         };
       };
     "lazy_static 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "lazy_static";
         version = "1.3.0";
         edition = "2015";
@@ -928,7 +934,7 @@ rec {
         };
       };
     "libc 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "libc";
         version = "0.2.51";
         edition = "2015";
@@ -942,7 +948,7 @@ rec {
         };
       };
     "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "log";
         version = "0.4.6";
         edition = "2015";
@@ -957,7 +963,7 @@ rec {
         };
       };
     "maplit 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "maplit";
         version = "1.0.1";
         edition = "2015";
@@ -969,7 +975,7 @@ rec {
         };
       };
     "matches 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "matches";
         version = "0.1.8";
         edition = "2015";
@@ -982,7 +988,7 @@ rec {
         };
       };
     "memchr 2.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "memchr";
         version = "2.2.0";
         edition = "2015";
@@ -996,7 +1002,7 @@ rec {
         };
       };
     "memoffset 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "memoffset";
         version = "0.2.1";
         edition = "2015";
@@ -1008,7 +1014,7 @@ rec {
         };
       };
     "nodrop 0.1.13 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "nodrop";
         version = "0.1.13";
         edition = "2015";
@@ -1022,7 +1028,7 @@ rec {
         };
       };
     "nom 4.2.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "nom";
         version = "4.2.3";
         edition = "2015";
@@ -1048,7 +1054,7 @@ rec {
         };
       };
     "num-integer 0.1.39 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "num-integer";
         version = "0.1.39";
         edition = "2015";
@@ -1069,7 +1075,7 @@ rec {
         };
       };
     "num-traits 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "num-traits";
         version = "0.2.6";
         edition = "2015";
@@ -1082,7 +1088,7 @@ rec {
         };
       };
     "num_cpus 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "num_cpus";
         version = "1.10.0";
         edition = "2015";
@@ -1097,7 +1103,7 @@ rec {
         };
       };
     "opaque-debug 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "opaque-debug";
         version = "0.2.2";
         edition = "2015";
@@ -1109,7 +1115,7 @@ rec {
         };
       };
     "pathdiff 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "pathdiff";
         version = "0.1.0";
         edition = "2015";
@@ -1121,7 +1127,7 @@ rec {
         };
       };
     "percent-encoding 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "percent-encoding";
         version = "1.0.1";
         edition = "2015";
@@ -1134,7 +1140,7 @@ rec {
         };
       };
     "pest 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "pest";
         version = "2.1.1";
         edition = "2015";
@@ -1150,7 +1156,7 @@ rec {
         };
       };
     "pest_derive 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "pest_derive";
         version = "2.1.0";
         edition = "2015";
@@ -1167,7 +1173,7 @@ rec {
         };
       };
     "pest_generator 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "pest_generator";
         version = "2.1.0";
         edition = "2015";
@@ -1186,7 +1192,7 @@ rec {
         };
       };
     "pest_meta 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "pest_meta";
         version = "2.1.1";
         edition = "2015";
@@ -1205,7 +1211,7 @@ rec {
         };
       };
     "proc-macro2 0.4.27 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "proc-macro2";
         version = "0.4.27";
         edition = "2015";
@@ -1221,7 +1227,7 @@ rec {
         };
       };
     "quick-error 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "quick-error";
         version = "1.2.2";
         edition = "2015";
@@ -1234,7 +1240,7 @@ rec {
         };
       };
     "quicli 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "quicli";
         version = "0.4.0";
         edition = "2018";
@@ -1275,7 +1281,7 @@ rec {
         };
       };
     "quote 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "quote";
         version = "0.6.12";
         edition = "2015";
@@ -1295,7 +1301,7 @@ rec {
         };
       };
     "rayon 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "rayon";
         version = "1.0.3";
         edition = "2015";
@@ -1316,7 +1322,7 @@ rec {
         };
       };
     "rayon-core 1.4.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "rayon-core";
         version = "1.4.1";
         edition = "2015";
@@ -1335,7 +1341,7 @@ rec {
         };
       };
     "redox_syscall 0.1.54 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "redox_syscall";
         version = "0.1.54";
         edition = "2015";
@@ -1348,7 +1354,7 @@ rec {
         };
       };
     "redox_termios 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "redox_termios";
         version = "0.1.1";
         edition = "2015";
@@ -1363,7 +1369,7 @@ rec {
         };
       };
     "regex 1.1.6 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "regex";
         version = "1.1.6";
         edition = "2015";
@@ -1384,7 +1390,7 @@ rec {
         };
       };
     "regex-syntax 0.6.6 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "regex-syntax";
         version = "0.6.6";
         edition = "2015";
@@ -1399,7 +1405,7 @@ rec {
         };
       };
     "remove_dir_all 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "remove_dir_all";
         version = "0.5.1";
         edition = "2015";
@@ -1418,7 +1424,7 @@ rec {
         };
       };
     "rustc-demangle 0.1.14 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "rustc-demangle";
         version = "0.1.14";
         edition = "2015";
@@ -1431,7 +1437,7 @@ rec {
         };
       };
     "ryu 0.2.7 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "ryu";
         version = "0.2.7";
         edition = "2015";
@@ -1443,7 +1449,7 @@ rec {
         };
       };
     "same-file 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "same-file";
         version = "1.0.4";
         edition = "2015";
@@ -1461,7 +1467,7 @@ rec {
         };
       };
     "scopeguard 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "scopeguard";
         version = "0.3.3";
         edition = "2015";
@@ -1474,7 +1480,7 @@ rec {
         };
       };
     "semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "semver";
         version = "0.9.0";
         edition = "2015";
@@ -1495,7 +1501,7 @@ rec {
         };
       };
     "semver-parser 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "semver-parser";
         version = "0.7.0";
         edition = "2015";
@@ -1507,7 +1513,7 @@ rec {
         };
       };
     "serde 1.0.90 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "serde";
         version = "1.0.90";
         edition = "2015";
@@ -1523,7 +1529,7 @@ rec {
         };
       };
     "serde_derive 1.0.90 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "serde_derive";
         version = "1.0.90";
         edition = "2015";
@@ -1545,7 +1551,7 @@ rec {
         };
       };
     "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "serde_json";
         version = "1.0.39";
         edition = "2015";
@@ -1564,7 +1570,7 @@ rec {
         };
       };
     "sha-1 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "sha-1";
         version = "0.8.1";
         edition = "2015";
@@ -1586,7 +1592,7 @@ rec {
         };
       };
     "slug 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "slug";
         version = "0.1.4";
         edition = "2015";
@@ -1601,7 +1607,7 @@ rec {
         };
       };
     "smallvec 0.6.9 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "smallvec";
         version = "0.6.9";
         edition = "2015";
@@ -1615,7 +1621,7 @@ rec {
         };
       };
     "strsim 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "strsim";
         version = "0.8.0";
         edition = "2015";
@@ -1627,7 +1633,7 @@ rec {
         };
       };
     "structopt 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "structopt";
         version = "0.2.15";
         edition = "2015";
@@ -1657,7 +1663,7 @@ rec {
         };
       };
     "structopt-derive 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "structopt-derive";
         version = "0.2.15";
         edition = "2015";
@@ -1677,7 +1683,7 @@ rec {
         };
       };
     "syn 0.15.32 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "syn";
         version = "0.15.32";
         edition = "2015";
@@ -1704,7 +1710,7 @@ rec {
         };
       };
     "synstructure 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "synstructure";
         version = "0.10.1";
         edition = "2015";
@@ -1725,7 +1731,7 @@ rec {
         };
       };
     "tera 1.0.0-beta.4 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "tera";
         version = "1.0.0-beta.4";
         edition = "2018";
@@ -1753,7 +1759,7 @@ rec {
         };
       };
     "termcolor 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "termcolor";
         version = "1.0.4";
         edition = "2015";
@@ -1771,7 +1777,7 @@ rec {
         };
       };
     "termion 1.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "termion";
         version = "1.5.1";
         edition = "2015";
@@ -1799,7 +1805,7 @@ rec {
         };
       };
     "textwrap 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "textwrap";
         version = "0.11.0";
         edition = "2015";
@@ -1814,7 +1820,7 @@ rec {
         };
       };
     "thread_local 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "thread_local";
         version = "0.3.6";
         edition = "2015";
@@ -1829,7 +1835,7 @@ rec {
         };
       };
     "time 0.1.42 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "time";
         version = "0.1.42";
         edition = "2015";
@@ -1853,7 +1859,7 @@ rec {
         };
       };
     "typenum 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "typenum";
         version = "1.10.0";
         edition = "2015";
@@ -1867,7 +1873,7 @@ rec {
         };
       };
     "ucd-trie 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "ucd-trie";
         version = "0.1.1";
         edition = "2015";
@@ -1880,7 +1886,7 @@ rec {
         };
       };
     "ucd-util 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "ucd-util";
         version = "0.1.3";
         edition = "2015";
@@ -1892,7 +1898,7 @@ rec {
         };
       };
     "unic-char-property 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unic-char-property";
         version = "0.9.0";
         edition = "2018";
@@ -1907,7 +1913,7 @@ rec {
         };
       };
     "unic-char-range 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unic-char-range";
         version = "0.9.0";
         edition = "2018";
@@ -1920,7 +1926,7 @@ rec {
         };
       };
     "unic-common 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unic-common";
         version = "0.9.0";
         edition = "2018";
@@ -1932,7 +1938,7 @@ rec {
         };
       };
     "unic-segment 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unic-segment";
         version = "0.9.0";
         edition = "2018";
@@ -1947,7 +1953,7 @@ rec {
         };
       };
     "unic-ucd-segment 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unic-ucd-segment";
         version = "0.9.0";
         edition = "2018";
@@ -1964,7 +1970,7 @@ rec {
         };
       };
     "unic-ucd-version 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unic-ucd-version";
         version = "0.9.0";
         edition = "2018";
@@ -1979,7 +1985,7 @@ rec {
         };
       };
     "unicode-bidi 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unicode-bidi";
         version = "0.3.4";
         edition = "2015";
@@ -1997,7 +2003,7 @@ rec {
         };
       };
     "unicode-normalization 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unicode-normalization";
         version = "0.1.8";
         edition = "2015";
@@ -2012,7 +2018,7 @@ rec {
         };
       };
     "unicode-segmentation 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unicode-segmentation";
         version = "1.2.1";
         edition = "2015";
@@ -2024,7 +2030,7 @@ rec {
         };
       };
     "unicode-width 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unicode-width";
         version = "0.1.5";
         edition = "2015";
@@ -2036,7 +2042,7 @@ rec {
         };
       };
     "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "unicode-xid";
         version = "0.1.0";
         edition = "2015";
@@ -2049,7 +2055,7 @@ rec {
         };
       };
     "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "url";
         version = "1.7.2";
         edition = "2015";
@@ -2068,7 +2074,7 @@ rec {
         };
       };
     "url_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "url_serde";
         version = "0.2.0";
         edition = "2015";
@@ -2084,7 +2090,7 @@ rec {
         };
       };
     "utf8-ranges 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "utf8-ranges";
         version = "1.0.2";
         edition = "2015";
@@ -2096,7 +2102,7 @@ rec {
         };
       };
     "v_escape 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "v_escape";
         version = "0.7.2";
         edition = "2018";
@@ -2115,7 +2121,7 @@ rec {
         };
       };
     "v_escape_derive 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "v_escape_derive";
         version = "0.5.3";
         edition = "2018";
@@ -2134,7 +2140,7 @@ rec {
         };
       };
     "v_htmlescape 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "v_htmlescape";
         version = "0.4.3";
         edition = "2018";
@@ -2153,7 +2159,7 @@ rec {
         };
       };
     "vec_map 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "vec_map";
         version = "0.8.1";
         edition = "2015";
@@ -2191,7 +2197,7 @@ rec {
         };
       };
     "version_check 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "version_check";
         version = "0.1.5";
         edition = "2015";
@@ -2203,7 +2209,7 @@ rec {
         };
       };
     "walkdir 2.2.7 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "walkdir";
         version = "2.2.7";
         edition = "2015";
@@ -2227,7 +2233,7 @@ rec {
         };
       };
     "winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "winapi";
         version = "0.3.7";
         edition = "2015";
@@ -2250,7 +2256,7 @@ rec {
         };
       };
     "winapi-i686-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "winapi-i686-pc-windows-gnu";
         version = "0.4.0";
         edition = "2015";
@@ -2262,7 +2268,7 @@ rec {
         };
       };
     "winapi-util 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "winapi-util";
         version = "0.1.2";
         edition = "2015";
@@ -2281,7 +2287,7 @@ rec {
         };
       };
     "winapi-x86_64-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "winapi-x86_64-pc-windows-gnu";
         version = "0.4.0";
         edition = "2015";
@@ -2293,7 +2299,7 @@ rec {
         };
       };
     "wincolor 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
-      = buildRustCrateWithFeatures rec {
+      = rec {
         crateName = "wincolor";
         version = "1.0.1";
         edition = "2015";
@@ -2366,24 +2372,100 @@ rec {
       lib.hasSuffix ".iml" baseName ||
 
       # Filter out nix build files
-      lib.hasSuffix ".nix" baseName ||
+      # lib.hasSuffix ".nix" baseName ||
 
       # Filter out editor backup / swap files.
       lib.hasSuffix "~" baseName ||
-      builtins.match "^\\.sw[a-z]$" baseName != null ||
-      builtins.match "^\\..*\\.sw[a-z]$" baseName != null ||
+      builtins.match "^\\.sw[a-z]$$" baseName != null ||
+      builtins.match "^\\..*\\.sw[a-z]$$" baseName != null ||
       lib.hasSuffix ".tmp" baseName ||
       lib.hasSuffix ".bak" baseName
     );
 
-  /* Returns a buildRustCrate derivation based on the given config and features. */
-  buildRustCrateWithFeatures = config: {features}:
-    assert (builtins.isAttrs config);
+  /* Returns a buildRustCrate derivation for the given packageId and features. */
+  buildRustCrateWithFeatures = { crateConfigs? crates, packageId, features } @ args:
+    assert (builtins.isAttrs crateConfigs);
+    assert (builtins.isString packageId);
     assert (builtins.isList features);
-    let expandedFeatures = expandFeatures config.features features; # compare to features calculated by cargo?
-        dependencies = dependencyDerivations crates expandedFeatures (config.dependencies or {});
-        buildDependencies = dependencyDerivations crates expandedFeatures (config.buildDependencies or {});
-    in buildRustCrate (config // { features = expandedFeatures; inherit dependencies buildDependencies; });
+
+    let mergedFeatures = mergePackageFeatures args;
+        buildByPackageId = packageId:
+          let features = mergedFeatures."${packageId}" or [];
+              crateConfig = crateConfigs."${packageId}";
+              dependencies =
+                dependencyDerivations buildByPackageId features (crateConfig.dependencies or {});
+              buildDependencies =
+                dependencyDerivations buildByPackageId features (crateConfig.buildDependencies or {});
+          in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies; });
+    in buildByPackageId packageId;
+
+  /* Returns the actual derivations for the given dependencies.
+  */
+  dependencyDerivations = buildByPackageId: features: dependencies:
+    assert (builtins.isFunction buildByPackageId);
+    assert (builtins.isList features);
+    assert (builtins.isAttrs dependencies);
+
+    let enabledDependencies =
+          lib.filterAttrs
+            (depName: dep:
+              builtins.isString dep
+              || dep.target or true
+              && (!(dep.optional or false) || builtins.elem depName features))
+            dependencies;
+        depDerivation = dependencyName: dependency:
+          buildByPackageId (dependencyPackageId dependency);
+    in builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
+
+  /* Returns the feature configuration by package id for the given input crate. */
+  mergePackageFeatures = {crateConfigs ? crates, packageId, features} @ args:
+    assert (builtins.isAttrs crateConfigs);
+    assert (builtins.isString packageId);
+    assert (builtins.isList features);
+
+    let packageFeatures = listOfPackageFeatures args;
+        byPackageId = {packageId, features}: { "${packageId}" = features; };
+        allByPackageId = builtins.map byPackageId packageFeatures;
+    in assert (builtins.isList allByPackageId);
+      lib.foldAttrs (f1: f2: (sortedUnique (f1 ++ f2))) [] allByPackageId;
+
+  listOfPackageFeatures = {crateConfigs ? crates, packageId, features} @ args:
+    assert (builtins.isAttrs crateConfigs);
+    assert (builtins.isString packageId);
+    assert (builtins.isList features);
+
+    let
+        crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
+        expandedFeatures = expandFeatures (crateConfig.features or {}) features;
+        depWithResolvedFeatures = dependencyName: dependency:
+          let packageId = dependencyPackageId dependency;
+          in { inherit packageId; features = dependencyFeatures expandedFeatures dependencyName dependency; };
+        resolveDependencies = dependencies:
+          assert (builtins.isAttrs dependencies);
+          let directDependencies =
+            builtins.attrValues
+              (lib.mapAttrs depWithResolvedFeatures (filterEnabledDependencies dependencies expandedFeatures));
+          in builtins.concatMap
+            ({packageId, features}: listOfPackageFeatures { inherit crateConfigs packageId features; })
+            directDependencies;
+        resolvedDependencies = lib.concatMap
+          resolveDependencies
+          [
+            (crateConfig.dependencies or {})
+            (crateConfig.buildDependencies or {})
+          ];
+    in [{inherit packageId; features = expandedFeatures;}] ++ resolvedDependencies;
+
+  filterEnabledDependencies = dependencies: features:
+    assert (builtins.isAttrs dependencies);
+    assert (builtins.isList features);
+
+    lib.filterAttrs
+      (depName: dep:
+        builtins.isString dep
+        || dep.target or true
+        && (!(dep.optional or false) || builtins.elem depName features))
+      dependencies;
 
   /* Returns the expanded features for the given inputFeatures by applying the rules in featureMap.
 
@@ -2396,36 +2478,16 @@ rec {
 
     let expandFeature = feature:
           assert (builtins.isString feature);
-          [feature] ++ (expandFeatures featureMap (featureMap.${feature} or []));
+          [feature] ++ (expandFeatures featureMap (featureMap."${feature}" or []));
         outFeatures = builtins.concatMap expandFeature inputFeatures;
-        outFeaturesSet = lib.foldl (set: feature: set // {${feature} = 1;} ) {} outFeatures;
+    in sortedUnique outFeatures;
+
+  sortedUnique = features:
+    let outFeaturesSet = lib.foldl (set: feature: set // {"${feature}" = 1;} ) {} features;
         outFeaturesUnique = builtins.attrNames outFeaturesSet;
     in builtins.sort (a: b: a < b) outFeaturesUnique;
 
-  /* Returns the actual derivations for the given enabled features and dependencies.
-
-     `crateDerivations` is expected to map `package IDs` to `buildRustCrate` derivations.
-  */
-  dependencyDerivations = crateDerivations: features: dependencies:
-    assert (builtins.isAttrs crateDerivations);
-    assert (builtins.isAttrs dependencies);
-    assert (builtins.isList features);
-
-    let enabledDependencies =
-          lib.filterAttrs
-            (depName: dep:
-              builtins.isString dep
-              || dep.target or true
-              && (!(dep.optional or false) || builtins.elem depName features))
-            dependencies;
-        depDerivation = dependencyName: dependency:
-          let packageId = if builtins.isString dependency then dependency else dependency.package_id;
-          in crateDerivations.${packageId} {
-            features = dependencyFeatures features dependencyName dependency;
-          };
-        derivations = builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
-    in
-      lib.sort (a: b: a.crateName < b.crateName) derivations;
+  dependencyPackageId = dependency: if builtins.isString dependency then dependency else dependency.package_id;
 
   /* Returns the actual dependencies for the given dependency. */
   dependencyFeatures = features: dependencyName: dependency:
