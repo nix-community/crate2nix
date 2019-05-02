@@ -9,7 +9,7 @@ before_install:
   - echo "substituters = file://$HOME/nix.store https://cache.nixos.org/" | sudo tee -a /etc/nix/nix.conf
   - echo 'require-sigs = false' | sudo tee -a /etc/nix/nix.conf
 script:
-  - nix build --arg pkgs 'import <nixpkgs> {config = {}; }' -f default.nix
+  - nix build --arg pkgs 'import <nixpkgs> {config = {}; }' -f default.nix --show-trace
 before_cache:
   - rm -rf $HOME/nix.store
   - mkdir -p $HOME/nix.store
