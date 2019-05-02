@@ -155,6 +155,10 @@ rec {
           {%- endif -%}
         {%- endfor %}
         };
+        {%- if crate.resolved_default_features|length > 0 %}
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ {% for feature in crate.resolved_default_features %}{{feature}} {% endfor %}];
+        {%- endif -%}
       };
   {%- endfor %}
   };

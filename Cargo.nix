@@ -56,7 +56,8 @@ rec {
           "default" = [ "std" ];
           "std" = [ "memchr/use_std" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "memchr" "std" ];};
     "ansi_term 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "ansi_term";
@@ -76,8 +77,7 @@ rec {
           };
         };
         features = {
-        };
-      };
+        };};
     "arrayvec 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "arrayvec";
@@ -96,8 +96,7 @@ rec {
         features = {
           "default" = [ "std" ];
           "serde-1" = [ "serde" ];
-        };
-      };
+        };};
     "atty 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "atty";
@@ -124,8 +123,7 @@ rec {
           };
         };
         features = {
-        };
-      };
+        };};
     "autocfg 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "autocfg";
@@ -136,8 +134,7 @@ rec {
           "Josh Stone <cuviper@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "backtrace 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "backtrace";
@@ -177,7 +174,8 @@ rec {
           "serialize-rustc" = [ "rustc-serialize" ];
           "serialize-serde" = [ "serde" "serde_derive" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "backtrace-sys" "coresymbolication" "dbghelp" "default" "dladdr" "libbacktrace" "libunwind" "std" ];};
     "backtrace-sys 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "backtrace-sys";
@@ -197,8 +195,7 @@ rec {
           "cc" = "cc 1.0.35 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "bitflags";
@@ -210,7 +207,8 @@ rec {
         ];
         features = {
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" ];};
     "block-buffer 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "block-buffer";
@@ -230,8 +228,7 @@ rec {
           "generic-array" = "generic-array 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "block-padding 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "block-padding";
@@ -245,8 +242,7 @@ rec {
           "byte-tools" = "byte-tools 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "bstr 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "bstr";
@@ -269,7 +265,8 @@ rec {
           "std" = [ "memchr/use_std" ];
           "unicode" = [ "lazy_static" "regex-automata" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "memchr" "std" ];};
     "byte-tools 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "byte-tools";
@@ -280,8 +277,7 @@ rec {
           "RustCrypto Developers"
         ];
         features = {
-        };
-      };
+        };};
     "byteorder 1.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "byteorder";
@@ -293,8 +289,7 @@ rec {
         ];
         features = {
           "default" = [ "std" ];
-        };
-      };
+        };};
     "cargo_metadata 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "cargo_metadata";
@@ -321,7 +316,8 @@ rec {
           "backtrace" = [ "error-chain/backtrace" ];
           "default" = [ "backtrace" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "backtrace" "default" "error-chain" ];};
     "cc 1.0.35 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "cc";
@@ -335,8 +331,7 @@ rec {
         ];
         features = {
           "parallel" = [ "rayon" ];
-        };
-      };
+        };};
     "cfg-if 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "cfg-if";
@@ -347,8 +342,7 @@ rec {
           "Alex Crichton <alex@alexcrichton.com>"
         ];
         features = {
-        };
-      };
+        };};
     "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "chrono";
@@ -377,7 +371,8 @@ rec {
           "clock" = [ "time" ];
           "default" = [ "clock" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "clock" "default" "time" ];};
     "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "clap";
@@ -418,7 +413,8 @@ rec {
           "wrap_help" = [ "term_size" "textwrap/term_size" ];
           "yaml" = [ "yaml-rust" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "ansi_term" "atty" "color" "default" "strsim" "suggestions" "vec_map" ];};
     "clap-verbosity-flag 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "clap-verbosity-flag";
@@ -435,8 +431,7 @@ rec {
           "structopt" = "structopt 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)"
       = rec {
         crateName = "crate2nix";
@@ -462,8 +457,7 @@ rec {
           "url_serde" = "url_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "crossbeam-channel 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "crossbeam-channel";
@@ -478,8 +472,7 @@ rec {
           "smallvec" = "smallvec 0.6.9 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "crossbeam-deque 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "crossbeam-deque";
@@ -494,8 +487,7 @@ rec {
           "crossbeam-utils" = "crossbeam-utils 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "crossbeam-epoch 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "crossbeam-epoch";
@@ -534,7 +526,8 @@ rec {
           "nightly" = [ "arrayvec/use_union" ];
           "use_std" = [ "lazy_static" "crossbeam-utils/use_std" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "crossbeam-utils" "default" "lazy_static" "use_std" ];};
     "crossbeam-utils 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "crossbeam-utils";
@@ -550,7 +543,8 @@ rec {
         features = {
           "default" = [ "use_std" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "use_std" ];};
     "crossbeam-utils 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "crossbeam-utils";
@@ -571,7 +565,8 @@ rec {
           "default" = [ "std" ];
           "std" = [ "lazy_static" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "lazy_static" "std" ];};
     "deunicode 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "deunicode";
@@ -583,8 +578,7 @@ rec {
           "Amit Chowdhury <amitc97@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "digest 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "digest";
@@ -600,7 +594,8 @@ rec {
         features = {
           "dev" = [ "blobby" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "std" ];};
     "either 1.5.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "either";
@@ -612,8 +607,7 @@ rec {
         ];
         features = {
           "default" = [ "use_std" ];
-        };
-      };
+        };};
     "env_logger 0.5.13 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "env_logger";
@@ -639,7 +633,8 @@ rec {
         features = {
           "default" = [ "regex" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "regex" ];};
     "error-chain 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "error-chain";
@@ -663,7 +658,8 @@ rec {
         features = {
           "default" = [ "backtrace" "example_generated" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "backtrace" ];};
     "exitfailure 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "exitfailure";
@@ -677,8 +673,7 @@ rec {
           "failure" = "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "failure";
@@ -703,7 +698,8 @@ rec {
           "derive" = [ "failure_derive" ];
           "std" = [ "backtrace" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "backtrace" "default" "derive" "failure_derive" "std" ];};
     "failure_derive 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "failure_derive";
@@ -721,8 +717,7 @@ rec {
           "synstructure" = "synstructure 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "fake-simd 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "fake-simd";
@@ -733,8 +728,7 @@ rec {
           "The Rust-Crypto Project Developers"
         ];
         features = {
-        };
-      };
+        };};
     "fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "fnv";
@@ -746,8 +740,7 @@ rec {
           "Alex Crichton <alex@alexcrichton.com>"
         ];
         features = {
-        };
-      };
+        };};
     "generic-array 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "generic-array";
@@ -763,8 +756,7 @@ rec {
           "typenum" = "typenum 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "globset 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "globset";
@@ -786,8 +778,7 @@ rec {
           "regex" = "regex 1.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "globwalk 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "globwalk";
@@ -802,8 +793,7 @@ rec {
           "walkdir" = "walkdir 2.2.7 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "globwalk 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "globwalk";
@@ -818,8 +808,7 @@ rec {
           "walkdir" = "walkdir 2.2.7 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "heck";
@@ -833,8 +822,7 @@ rec {
           "unicode-segmentation" = "unicode-segmentation 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "humansize 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "humansize";
@@ -845,8 +833,7 @@ rec {
           "Leopold Arkham <leopold.arkham@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "humantime 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "humantime";
@@ -860,8 +847,7 @@ rec {
           "quick-error" = "quick-error 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "idna 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "idna";
@@ -877,8 +863,7 @@ rec {
           "unicode-normalization" = "unicode-normalization 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "ignore 0.4.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "ignore";
@@ -905,8 +890,7 @@ rec {
         };
         features = {
           "simd-accel" = [ "globset/simd-accel" ];
-        };
-      };
+        };};
     "itoa 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "itoa";
@@ -919,7 +903,8 @@ rec {
         features = {
           "default" = [ "std" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "std" ];};
     "lazy_static 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "lazy_static";
@@ -931,8 +916,7 @@ rec {
         ];
         features = {
           "spin_no_std" = [ "spin" ];
-        };
-      };
+        };};
     "libc 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "libc";
@@ -946,7 +930,8 @@ rec {
           "default" = [ "use_std" ];
           "rustc-dep-of-std" = [ "align" "rustc-std-workspace-core" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "use_std" ];};
     "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "log";
@@ -961,7 +946,8 @@ rec {
         };
         features = {
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "std" ];};
     "maplit 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "maplit";
@@ -972,8 +958,7 @@ rec {
           "bluss"
         ];
         features = {
-        };
-      };
+        };};
     "matches 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "matches";
@@ -985,8 +970,7 @@ rec {
           "Simon Sapin <simon.sapin@exyr.org>"
         ];
         features = {
-        };
-      };
+        };};
     "memchr 2.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "memchr";
@@ -1000,7 +984,8 @@ rec {
         features = {
           "default" = [ "use_std" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "use_std" ];};
     "memoffset 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "memoffset";
@@ -1011,8 +996,7 @@ rec {
           "Gilad Naaman <gilad.naaman@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "nodrop 0.1.13 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "nodrop";
@@ -1025,8 +1009,7 @@ rec {
         features = {
           "default" = [ "std" ];
           "use_union" = [ "nodrop-union" ];
-        };
-      };
+        };};
     "nom 4.2.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "nom";
@@ -1052,7 +1035,8 @@ rec {
           "std" = [ "alloc" "memchr/use_std" ];
           "verbose-errors" = [ "alloc" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "alloc" "default" "memchr" "std" ];};
     "num-integer 0.1.39 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "num-integer";
@@ -1072,8 +1056,7 @@ rec {
           "default" = [ "std" ];
           "i128" = [ "num-traits/i128" ];
           "std" = [ "num-traits/std" ];
-        };
-      };
+        };};
     "num-traits 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "num-traits";
@@ -1085,8 +1068,7 @@ rec {
         ];
         features = {
           "default" = [ "std" ];
-        };
-      };
+        };};
     "num_cpus 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "num_cpus";
@@ -1100,8 +1082,7 @@ rec {
           "libc" = "libc 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "opaque-debug 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "opaque-debug";
@@ -1112,8 +1093,7 @@ rec {
           "RustCrypto Developers"
         ];
         features = {
-        };
-      };
+        };};
     "pathdiff 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "pathdiff";
@@ -1124,8 +1104,7 @@ rec {
           "Manish Goregaokar <manishsmail@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "percent-encoding 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "percent-encoding";
@@ -1137,8 +1116,7 @@ rec {
           "The rust-url developers"
         ];
         features = {
-        };
-      };
+        };};
     "pest 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "pest";
@@ -1153,8 +1131,7 @@ rec {
         };
         features = {
           "pretty-print" = [ "serde" "serde_json" ];
-        };
-      };
+        };};
     "pest_derive 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "pest_derive";
@@ -1170,8 +1147,7 @@ rec {
           "pest_generator" = "pest_generator 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "pest_generator 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "pest_generator";
@@ -1189,8 +1165,7 @@ rec {
           "syn" = "syn 0.15.32 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "pest_meta 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "pest_meta";
@@ -1208,8 +1183,7 @@ rec {
           "sha-1" = "sha-1 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "proc-macro2 0.4.27 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "proc-macro2";
@@ -1225,7 +1199,8 @@ rec {
         features = {
           "default" = [ "proc-macro" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "proc-macro" ];};
     "quick-error 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "quick-error";
@@ -1237,8 +1212,7 @@ rec {
           "Colin Kiegel <kiegel@gmx.de>"
         ];
         features = {
-        };
-      };
+        };};
     "quicli 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "quicli";
@@ -1279,7 +1253,8 @@ rec {
           "default" = [ "full-throttle" ];
           "full-throttle" = [ "serde" "serde_derive" "globwalk" "rayon" "remove_dir_all" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "full-throttle" "globwalk" "rayon" "remove_dir_all" "serde" "serde_derive" ];};
     "quote 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "quote";
@@ -1299,7 +1274,8 @@ rec {
           "default" = [ "proc-macro" ];
           "proc-macro" = [ "proc-macro2/proc-macro" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "proc-macro" "proc-macro2" ];};
     "rayon 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "rayon";
@@ -1319,8 +1295,7 @@ rec {
           "rayon-core" = "rayon-core 1.4.1 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "rayon-core 1.4.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "rayon-core";
@@ -1338,8 +1313,7 @@ rec {
           "num_cpus" = "num_cpus 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "redox_syscall 0.1.54 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "redox_syscall";
@@ -1351,8 +1325,7 @@ rec {
           "Jeremy Soller <jackpot51@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "redox_termios 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "redox_termios";
@@ -1366,8 +1339,7 @@ rec {
           "redox_syscall" = "redox_syscall 0.1.54 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "regex 1.1.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "regex";
@@ -1388,7 +1360,8 @@ rec {
           "default" = [ "use_std" ];
           "unstable" = [ "pattern" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "use_std" ];};
     "regex-syntax 0.6.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "regex-syntax";
@@ -1402,8 +1375,7 @@ rec {
           "ucd-util" = "ucd-util 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "remove_dir_all 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "remove_dir_all";
@@ -1421,8 +1393,7 @@ rec {
           };
         };
         features = {
-        };
-      };
+        };};
     "rustc-demangle 0.1.14 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "rustc-demangle";
@@ -1434,8 +1405,7 @@ rec {
         ];
         features = {
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
-        };
-      };
+        };};
     "ryu 0.2.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "ryu";
@@ -1446,8 +1416,7 @@ rec {
           "David Tolnay <dtolnay@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "same-file 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "same-file";
@@ -1464,8 +1433,7 @@ rec {
           };
         };
         features = {
-        };
-      };
+        };};
     "scopeguard 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "scopeguard";
@@ -1477,8 +1445,7 @@ rec {
         ];
         features = {
           "default" = [ "use_std" ];
-        };
-      };
+        };};
     "semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "semver";
@@ -1499,7 +1466,8 @@ rec {
         features = {
           "ci" = [ "serde" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "serde" ];};
     "semver-parser 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "semver-parser";
@@ -1510,8 +1478,7 @@ rec {
           "Steve Klabnik <steve@steveklabnik.com>"
         ];
         features = {
-        };
-      };
+        };};
     "serde 1.0.90 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "serde";
@@ -1527,7 +1494,8 @@ rec {
           "default" = [ "std" ];
           "derive" = [ "serde_derive" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "std" ];};
     "serde_derive 1.0.90 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "serde_derive";
@@ -1549,7 +1517,8 @@ rec {
         };
         features = {
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" ];};
     "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "serde_json";
@@ -1568,7 +1537,8 @@ rec {
         features = {
           "preserve_order" = [ "indexmap" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" ];};
     "sha-1 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "sha-1";
@@ -1590,7 +1560,8 @@ rec {
           "default" = [ "std" ];
           "std" = [ "digest/std" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "digest" "std" ];};
     "slug 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "slug";
@@ -1604,8 +1575,7 @@ rec {
           "deunicode" = "deunicode 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "smallvec 0.6.9 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "smallvec";
@@ -1619,7 +1589,8 @@ rec {
         features = {
           "default" = [ "std" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "std" ];};
     "strsim 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "strsim";
@@ -1630,8 +1601,7 @@ rec {
           "Danny Guo <dannyguo91@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "structopt 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "structopt";
@@ -1661,7 +1631,8 @@ rec {
           "wrap_help" = [ "clap/wrap_help" ];
           "yaml" = [ "clap/yaml" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "clap" "default" ];};
     "structopt-derive 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "structopt-derive";
@@ -1680,8 +1651,7 @@ rec {
         };
         features = {
           "nightly" = [ "proc-macro2/nightly" ];
-        };
-      };
+        };};
     "syn 0.15.32 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "syn";
@@ -1708,7 +1678,8 @@ rec {
           "printing" = [ "quote" ];
           "proc-macro" = [ "proc-macro2/proc-macro" "quote/proc-macro" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "clone-impls" "default" "derive" "extra-traits" "parsing" "printing" "proc-macro" "proc-macro2" "quote" "visit" ];};
     "synstructure 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "synstructure";
@@ -1728,8 +1699,7 @@ rec {
           "unicode-xid" = "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "tera 1.0.0-beta.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "tera";
@@ -1757,7 +1727,8 @@ rec {
         features = {
           "preserve_order" = [ "serde_json/preserve_order" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" ];};
     "termcolor 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "termcolor";
@@ -1774,8 +1745,7 @@ rec {
           };
         };
         features = {
-        };
-      };
+        };};
     "termion 1.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "termion";
@@ -1802,8 +1772,7 @@ rec {
           };
         };
         features = {
-        };
-      };
+        };};
     "textwrap 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "textwrap";
@@ -1817,8 +1786,7 @@ rec {
           "unicode-width" = "unicode-width 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "thread_local 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "thread_local";
@@ -1832,8 +1800,7 @@ rec {
           "lazy_static" = "lazy_static 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "time 0.1.42 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "time";
@@ -1856,8 +1823,7 @@ rec {
           };
         };
         features = {
-        };
-      };
+        };};
     "typenum 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "typenum";
@@ -1870,8 +1836,7 @@ rec {
           "Andre Bogus <bogusandre@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "ucd-trie 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "ucd-trie";
@@ -1884,7 +1849,8 @@ rec {
         features = {
           "default" = [ "std" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" "std" ];};
     "ucd-util 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "ucd-util";
@@ -1895,8 +1861,7 @@ rec {
           "Andrew Gallant <jamslam@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "unic-char-property 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unic-char-property";
@@ -1910,8 +1875,7 @@ rec {
           "unic-char-range" = "unic-char-range 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "unic-char-range 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unic-char-range";
@@ -1924,7 +1888,8 @@ rec {
         features = {
           "unstable" = [ "exact-size-is-empty" "fused" "trusted-len" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" ];};
     "unic-common 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unic-common";
@@ -1936,7 +1901,8 @@ rec {
         ];
         features = {
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" ];};
     "unic-segment 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unic-segment";
@@ -1950,8 +1916,7 @@ rec {
           "unic-ucd-segment" = "unic-ucd-segment 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "unic-ucd-segment 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unic-ucd-segment";
@@ -1967,8 +1932,7 @@ rec {
           "unic-ucd-version" = "unic-ucd-version 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "unic-ucd-version 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unic-ucd-version";
@@ -1982,8 +1946,7 @@ rec {
           "unic-common" = "unic-common 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "unicode-bidi 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unicode-bidi";
@@ -2001,7 +1964,8 @@ rec {
           "flame_it" = [ "flame" "flamer" ];
           "with_serde" = [ "serde" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" ];};
     "unicode-normalization 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unicode-normalization";
@@ -2015,8 +1979,7 @@ rec {
           "smallvec" = "smallvec 0.6.9 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "unicode-segmentation 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unicode-segmentation";
@@ -2027,8 +1990,7 @@ rec {
           "kwantam <kwantam@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "unicode-width 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unicode-width";
@@ -2040,7 +2002,8 @@ rec {
         ];
         features = {
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" ];};
     "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "unicode-xid";
@@ -2053,7 +2016,8 @@ rec {
         ];
         features = {
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "default" ];};
     "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "url";
@@ -2071,8 +2035,7 @@ rec {
         features = {
           "heap_size" = [ "heapsize" ];
           "query_encoding" = [ "encoding" ];
-        };
-      };
+        };};
     "url_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "url_serde";
@@ -2087,8 +2050,7 @@ rec {
           "url" = "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "utf8-ranges 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "utf8-ranges";
@@ -2099,8 +2061,7 @@ rec {
           "Andrew Gallant <jamslam@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "v_escape 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "v_escape";
@@ -2118,8 +2079,7 @@ rec {
           "version_check" = "version_check 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "v_escape_derive 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "v_escape_derive";
@@ -2137,8 +2097,7 @@ rec {
           "syn" = "syn 0.15.32 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "v_htmlescape 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "v_htmlescape";
@@ -2156,8 +2115,7 @@ rec {
           "v_escape" = "v_escape 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
     "vec_map 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "vec_map";
@@ -2194,8 +2152,7 @@ rec {
         ];
         features = {
           "eders" = [ "serde" ];
-        };
-      };
+        };};
     "version_check 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "version_check";
@@ -2206,8 +2163,7 @@ rec {
           "Sergio Benitez <sb@sergio.bz>"
         ];
         features = {
-        };
-      };
+        };};
     "walkdir 2.2.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "walkdir";
@@ -2230,8 +2186,7 @@ rec {
           };
         };
         features = {
-        };
-      };
+        };};
     "winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "winapi";
@@ -2254,7 +2209,8 @@ rec {
         features = {
           "debug" = [ "impl-debug" ];
         };
-      };
+        # The features that cargo resolved for the default build for debugging.
+        resolvedDefaultFeatures = [ "consoleapi" "dbghelp" "errhandlingapi" "fileapi" "minwinbase" "minwindef" "ntdef" "ntsecapi" "processenv" "processthreadsapi" "profileapi" "std" "sysinfoapi" "timezoneapi" "winbase" "wincon" "winerror" "winnt" ];};
     "winapi-i686-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "winapi-i686-pc-windows-gnu";
@@ -2265,8 +2221,7 @@ rec {
           "Peter Atashian <retep998@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "winapi-util 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "winapi-util";
@@ -2284,8 +2239,7 @@ rec {
           };
         };
         features = {
-        };
-      };
+        };};
     "winapi-x86_64-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "winapi-x86_64-pc-windows-gnu";
@@ -2296,8 +2250,7 @@ rec {
           "Peter Atashian <retep998@gmail.com>"
         ];
         features = {
-        };
-      };
+        };};
     "wincolor 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "wincolor";
@@ -2315,8 +2268,7 @@ rec {
           "winapi-util" = "winapi-util 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)";
         };
         features = {
-        };
-      };
+        };};
   };
 
   # Target (platform) data for conditional dependencies.
@@ -2391,7 +2343,7 @@ rec {
     let mergedFeatures = mergePackageFeatures args;
         buildByPackageId = packageId:
           let features = mergedFeatures."${packageId}" or [];
-              crateConfig = crateConfigs."${packageId}";
+              crateConfig = lib.filterAttrs (n: v: n != "resolvedDefaultFeatures") crateConfigs."${packageId}";
               dependencies =
                 dependencyDerivations buildByPackageId features (crateConfig.dependencies or {});
               buildDependencies =
@@ -2399,23 +2351,31 @@ rec {
           in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies; });
     in buildByPackageId packageId;
 
-  /* Returns the actual derivations for the given dependencies.
-  */
+  /* Returns the actual derivations for the given dependencies. */
   dependencyDerivations = buildByPackageId: features: dependencies:
     assert (builtins.isFunction buildByPackageId);
     assert (builtins.isList features);
     assert (builtins.isAttrs dependencies);
 
-    let enabledDependencies =
-          lib.filterAttrs
-            (depName: dep:
-              builtins.isString dep
-              || dep.target or true
-              && (!(dep.optional or false) || builtins.elem depName features))
-            dependencies;
+    let enabledDependencies = filterEnabledDependencies dependencies features;
         depDerivation = dependencyName: dependency:
-          buildByPackageId (dependencyPackageId dependency);
+        buildByPackageId (dependencyPackageId dependency);
     in builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
+
+  /* Traces differences between cargo default features and crate2nix default features. */
+  diffDefaultPackageFeatures = {crateConfigs ? crates, rootCrate}:
+    assert (builtins.isAttrs crateConfigs);
+
+    let prefixValues = prefix: lib.mapAttrs (n: v: { "${prefix}" = v; });
+        mergedFeatures = prefixValues "crate2nix" (mergePackageFeatures {inherit crateConfigs; packageId = rootCrate; features = ["default"]; });
+        configs = prefixValues "cargo" crateConfigs;
+        combined = lib.foldAttrs (a: b: a // b) {} [ mergedFeatures configs ];
+        onlyInCargo = builtins.attrNames (lib.filterAttrs (n: v: !(v ? "crate2nix" ) && (v ? "cargo"))) combined;
+        onlyInCrate2Nix = builtins.attrNames (lib.filterAttrs (n: v: (v ? "crate2nix" ) && !(v ? "cargo"))) combined;
+        differentFeatures = lib.filterAttrs
+          (n: v: (v ? "crate2nix" ) && (v ? "cargo") && (v.crate2nix.features or []) != (v."cargo".resolved_default_features or []))
+          combined;
+    in builtins.toJSON { inherit onlyInCargo onlyInCrate2Nix differentFeatures; };
 
   /* Returns the feature configuration by package id for the given input crate. */
   mergePackageFeatures = {crateConfigs ? crates, packageId, features} @ args:
@@ -2424,12 +2384,16 @@ rec {
     assert (builtins.isList features);
 
     let packageFeatures = listOfPackageFeatures args;
-        byPackageId = {packageId, features}: { "${packageId}" = features; };
-        allByPackageId = builtins.map byPackageId packageFeatures;
-    in assert (builtins.isList allByPackageId);
-      lib.foldAttrs (f1: f2: (sortedUnique (f1 ++ f2))) [] allByPackageId;
+        grouped = lib.groupBy (x: x.packageId) packageFeatures;
+    in lib.mapAttrs (n: v: sortedUnique (builtins.concatLists (builtins.map (v: v.features) v))) grouped;
 
-  listOfPackageFeatures = {crateConfigs ? crates, packageId, features} @ args:
+  /* Returns a { packageId, features } attribute set for every package needed for building the
+     package for the given packageId with the given features.
+
+     Returns multiple, potentially conflicting attribute sets for dependencies that are reachable
+     by multiple paths in the dependency tree.
+  */
+  listOfPackageFeatures = {crateConfigs ? crates, packageId, features, dependencyPath? [packageId]} @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
@@ -2437,25 +2401,34 @@ rec {
     let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
         expandedFeatures = expandFeatures (crateConfig.features or {}) features;
+
         depWithResolvedFeatures = dependencyName: dependency:
           let packageId = dependencyPackageId dependency;
-          in { inherit packageId; features = dependencyFeatures expandedFeatures dependencyName dependency; };
-        resolveDependencies = dependencies:
+              features = dependencyFeatures expandedFeatures dependencyName dependency;
+          in { inherit packageId features; };
+
+        resolveDependencies = path: dependencies:
           assert (builtins.isAttrs dependencies);
-          let directDependencies =
-            builtins.attrValues
-              (lib.mapAttrs depWithResolvedFeatures (filterEnabledDependencies dependencies expandedFeatures));
+
+          let enabledDependencies = filterEnabledDependencies dependencies expandedFeatures;
+              directDependencies =
+                builtins.attrValues (lib.mapAttrs depWithResolvedFeatures enabledDependencies);
           in builtins.concatMap
-            ({packageId, features}: listOfPackageFeatures { inherit crateConfigs packageId features; })
-            directDependencies;
-        resolvedDependencies = lib.concatMap
-          resolveDependencies
+            ({packageId, features}: listOfPackageFeatures {
+              dependencyPath = dependencyPath ++ [path packageId];
+              inherit crateConfigs packageId features;
+            })
+             directDependencies;
+
+        resolvedDependencies = builtins.concatLists
           [
-            (crateConfig.dependencies or {})
-            (crateConfig.buildDependencies or {})
+            (resolveDependencies "dependencies" (crateConfig.dependencies or {}))
+            (resolveDependencies "buildDependencies" (crateConfig.buildDependencies or {}))
           ];
+
     in [{inherit packageId; features = expandedFeatures;}] ++ resolvedDependencies;
 
+  /* Returns the enabled dependencies given the enabled features. */
   filterEnabledDependencies = dependencies: features:
     assert (builtins.isAttrs dependencies);
     assert (builtins.isList features);
@@ -2482,11 +2455,7 @@ rec {
         outFeatures = builtins.concatMap expandFeature inputFeatures;
     in sortedUnique outFeatures;
 
-  sortedUnique = features:
-    let outFeaturesSet = lib.foldl (set: feature: set // {"${feature}" = 1;} ) {} features;
-        outFeaturesUnique = builtins.attrNames outFeaturesSet;
-    in builtins.sort (a: b: a < b) outFeaturesUnique;
-
+  /* The package ID of the given dependency. */
   dependencyPackageId = dependency: if builtins.isString dependency then dependency else dependency.package_id;
 
   /* Returns the actual dependencies for the given dependency. */
@@ -2504,6 +2473,15 @@ rec {
           in builtins.map builtins.baseNameOf dependencyFeatures;
     in
       defaultOrNil ++ explicitFeatures ++ additionalDependencyFeatures;
+
+  /* Sorts and removes duplicates from a list of strings. */
+  sortedUnique = features:
+    assert (builtins.isList features);
+    assert (builtins.all builtins.isString features);
+
+    let outFeaturesSet = lib.foldl (set: feature: set // {"${feature}" = 1;} ) {} features;
+        outFeaturesUnique = builtins.attrNames outFeaturesSet;
+    in builtins.sort (a: b: a < b) outFeaturesUnique;
 
   #
   # crate2nix/default.nix (excerpt end)

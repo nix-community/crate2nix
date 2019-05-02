@@ -53,7 +53,7 @@ rec {
     let mergedFeatures = mergePackageFeatures args;
         buildByPackageId = packageId:
           let features = mergedFeatures."${packageId}" or [];
-              crateConfig = crateConfigs."${packageId}";
+              crateConfig = lib.filterAttrs (n: v: n != "resolvedDefaultFeatures") crateConfigs."${packageId}";
               dependencies =
                 dependencyDerivations buildByPackageId features (crateConfig.dependencies or {});
               buildDependencies =
@@ -61,23 +61,31 @@ rec {
           in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies; });
     in buildByPackageId packageId;
 
-  /* Returns the actual derivations for the given dependencies.
-  */
+  /* Returns the actual derivations for the given dependencies. */
   dependencyDerivations = buildByPackageId: features: dependencies:
     assert (builtins.isFunction buildByPackageId);
     assert (builtins.isList features);
     assert (builtins.isAttrs dependencies);
 
-    let enabledDependencies =
-          lib.filterAttrs
-            (depName: dep:
-              builtins.isString dep
-              || dep.target or true
-              && (!(dep.optional or false) || builtins.elem depName features))
-            dependencies;
+    let enabledDependencies = filterEnabledDependencies dependencies features;
         depDerivation = dependencyName: dependency:
-          buildByPackageId (dependencyPackageId dependency);
+        buildByPackageId (dependencyPackageId dependency);
     in builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
+
+  /* Traces differences between cargo default features and crate2nix default features. */
+  diffDefaultPackageFeatures = {crateConfigs ? crates, packageId}:
+    assert (builtins.isAttrs crateConfigs);
+
+    let prefixValues = prefix: lib.mapAttrs (n: v: { "${prefix}" = v; });
+        mergedFeatures = prefixValues "crate2nix" (mergePackageFeatures {inherit crateConfigs packageId; features = ["default"]; });
+        configs = prefixValues "cargo" crateConfigs;
+        combined = lib.foldAttrs (a: b: a // b) {} [ mergedFeatures configs ];
+        onlyInCargo = builtins.attrNames (lib.filterAttrs (n: v: !(v ? "crate2nix" ) && (v ? "cargo")) combined);
+        onlyInCrate2Nix = builtins.attrNames (lib.filterAttrs (n: v: (v ? "crate2nix" ) && !(v ? "cargo")) combined);
+        differentFeatures = lib.filterAttrs
+          (n: v: (v ? "crate2nix" ) && (v ? "cargo") && (v.crate2nix.features or []) != (v."cargo".resolved_default_features or []))
+          combined;
+    in builtins.toJSON { inherit onlyInCargo onlyInCrate2Nix differentFeatures; };
 
   /* Returns the feature configuration by package id for the given input crate. */
   mergePackageFeatures = {crateConfigs ? crates, packageId, features} @ args:
@@ -86,12 +94,16 @@ rec {
     assert (builtins.isList features);
 
     let packageFeatures = listOfPackageFeatures args;
-        byPackageId = {packageId, features}: { "${packageId}" = features; };
-        allByPackageId = builtins.map byPackageId packageFeatures;
-    in assert (builtins.isList allByPackageId);
-      lib.foldAttrs (f1: f2: (sortedUnique (f1 ++ f2))) [] allByPackageId;
+        grouped = lib.groupBy (x: x.packageId) packageFeatures;
+    in lib.mapAttrs (n: v: sortedUnique (builtins.concatLists (builtins.map (v: v.features) v))) grouped;
 
-  listOfPackageFeatures = {crateConfigs ? crates, packageId, features} @ args:
+  /* Returns a { packageId, features } attribute set for every package needed for building the
+     package for the given packageId with the given features.
+
+     Returns multiple, potentially conflicting attribute sets for dependencies that are reachable
+     by multiple paths in the dependency tree.
+  */
+  listOfPackageFeatures = {crateConfigs ? crates, packageId, features, dependencyPath? [packageId]} @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
@@ -99,25 +111,34 @@ rec {
     let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
         expandedFeatures = expandFeatures (crateConfig.features or {}) features;
+
         depWithResolvedFeatures = dependencyName: dependency:
           let packageId = dependencyPackageId dependency;
-          in { inherit packageId; features = dependencyFeatures expandedFeatures dependencyName dependency; };
-        resolveDependencies = dependencies:
+              features = dependencyFeatures expandedFeatures dependencyName dependency;
+          in { inherit packageId features; };
+
+        resolveDependencies = path: dependencies:
           assert (builtins.isAttrs dependencies);
-          let directDependencies =
-            builtins.attrValues
-              (lib.mapAttrs depWithResolvedFeatures (filterEnabledDependencies dependencies expandedFeatures));
+
+          let enabledDependencies = filterEnabledDependencies dependencies expandedFeatures;
+              directDependencies =
+                builtins.attrValues (lib.mapAttrs depWithResolvedFeatures enabledDependencies);
           in builtins.concatMap
-            ({packageId, features}: listOfPackageFeatures { inherit crateConfigs packageId features; })
-            directDependencies;
-        resolvedDependencies = lib.concatMap
-          resolveDependencies
+            ({packageId, features}: listOfPackageFeatures {
+              dependencyPath = dependencyPath ++ [path packageId];
+              inherit crateConfigs packageId features;
+            })
+             directDependencies;
+
+        resolvedDependencies = builtins.concatLists
           [
-            (crateConfig.dependencies or {})
-            (crateConfig.buildDependencies or {})
+            (resolveDependencies "dependencies" (crateConfig.dependencies or {}))
+            (resolveDependencies "buildDependencies" (crateConfig.buildDependencies or {}))
           ];
+
     in [{inherit packageId; features = expandedFeatures;}] ++ resolvedDependencies;
 
+  /* Returns the enabled dependencies given the enabled features. */
   filterEnabledDependencies = dependencies: features:
     assert (builtins.isAttrs dependencies);
     assert (builtins.isList features);
@@ -144,11 +165,7 @@ rec {
         outFeatures = builtins.concatMap expandFeature inputFeatures;
     in sortedUnique outFeatures;
 
-  sortedUnique = features:
-    let outFeaturesSet = lib.foldl (set: feature: set // {"${feature}" = 1;} ) {} features;
-        outFeaturesUnique = builtins.attrNames outFeaturesSet;
-    in builtins.sort (a: b: a < b) outFeaturesUnique;
-
+  /* The package ID of the given dependency. */
   dependencyPackageId = dependency: if builtins.isString dependency then dependency else dependency.package_id;
 
   /* Returns the actual dependencies for the given dependency. */
@@ -166,6 +183,15 @@ rec {
           in builtins.map builtins.baseNameOf dependencyFeatures;
     in
       defaultOrNil ++ explicitFeatures ++ additionalDependencyFeatures;
+
+  /* Sorts and removes duplicates from a list of strings. */
+  sortedUnique = features:
+    assert (builtins.isList features);
+    assert (builtins.all builtins.isString features);
+
+    let outFeaturesSet = lib.foldl (set: feature: set // {"${feature}" = 1;} ) {} features;
+        outFeaturesUnique = builtins.attrNames outFeaturesSet;
+    in builtins.sort (a: b: a < b) outFeaturesUnique;
 
   #
   # crate2nix/default.nix (excerpt end)

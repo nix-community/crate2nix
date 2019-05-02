@@ -34,6 +34,8 @@ pub struct CrateDerivation {
     pub build_dependencies: Vec<ResolvedDependency>,
     /// Feature rules. Which feature (key) enables which other features (values).
     pub features: BTreeMap<String, Vec<String>>,
+    /// The resolved features for this crate for a default build as returned by cargo.
+    pub resolved_default_features: Vec<String>,
     /// The build target for the custom build script.
     pub build: Option<BuildTarget>,
     /// The build target for the library.
@@ -105,6 +107,11 @@ impl CrateDerivation {
                 .iter()
                 .map(|(name, feature_list)| (name.clone(), feature_list.clone()))
                 .collect(),
+            resolved_default_features: metadata
+                .nodes_by_id
+                .get(&package.id)
+                .map(|n| n.features.clone())
+                .unwrap_or_else(|| Vec::new()),
             dependencies,
             build_dependencies,
             build,
