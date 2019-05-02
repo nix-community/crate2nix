@@ -72,18 +72,27 @@ rec {
         buildByPackageId (dependencyPackageId dependency);
     in builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
 
-  /* Traces differences between cargo default features and crate2nix default features. */
+  /* Returns differences between cargo default features and crate2nix default features.
+   *
+   * This is useful for verifying the feature resolution in crate2nix.
+   */
   diffDefaultPackageFeatures = {crateConfigs ? crates, packageId}:
     assert (builtins.isAttrs crateConfigs);
 
     let prefixValues = prefix: lib.mapAttrs (n: v: { "${prefix}" = v; });
-        mergedFeatures = prefixValues "crate2nix" (mergePackageFeatures {inherit crateConfigs packageId; features = ["default"]; });
+        mergedFeatures =
+          prefixValues
+            "crate2nix"
+            (mergePackageFeatures {inherit crateConfigs packageId; features = ["default"]; });
         configs = prefixValues "cargo" crateConfigs;
         combined = lib.foldAttrs (a: b: a // b) {} [ mergedFeatures configs ];
         onlyInCargo = builtins.attrNames (lib.filterAttrs (n: v: !(v ? "crate2nix" ) && (v ? "cargo")) combined);
         onlyInCrate2Nix = builtins.attrNames (lib.filterAttrs (n: v: (v ? "crate2nix" ) && !(v ? "cargo")) combined);
         differentFeatures = lib.filterAttrs
-          (n: v: (v ? "crate2nix" ) && (v ? "cargo") && (v.crate2nix.features or []) != (v."cargo".resolved_default_features or []))
+          (n: v:
+          (v ? "crate2nix" )
+          && (v ? "cargo")
+          && (v.crate2nix.features or []) != (v."cargo".resolved_default_features or []))
           combined;
     in builtins.toJSON { inherit onlyInCargo onlyInCrate2Nix differentFeatures; };
 
@@ -125,6 +134,7 @@ rec {
                 builtins.attrValues (lib.mapAttrs depWithResolvedFeatures enabledDependencies);
           in builtins.concatMap
             ({packageId, features}: listOfPackageFeatures {
+              # This is purely for debugging.
               dependencyPath = dependencyPath ++ [path packageId];
               inherit crateConfigs packageId features;
             })
