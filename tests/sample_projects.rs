@@ -13,8 +13,9 @@ fn build_and_run_bin() {
     let output = build_and_run(
         "sample_projects/bin/Cargo.toml",
         "sample_projects/bin",
-        "root_crate",
+        "rootCrate",
         "hello_world_bin",
+        &["default"],
     );
 
     assert_eq!("Hello, world!\n", &output);
@@ -25,8 +26,9 @@ fn build_and_run_lib_and_bin() {
     let output = build_and_run(
         "sample_projects/lib_and_bin/Cargo.toml",
         "sample_projects/lib_and_bin",
-        "root_crate",
+        "rootCrate",
         "hello_world_lib_and_bin",
+        &["default"],
     );
 
     assert_eq!("Hello, lib_and_bin!\n", &output);
@@ -37,8 +39,9 @@ fn build_and_run_bin_with_lib_dep() {
     let output = build_and_run(
         "sample_projects/bin_with_lib_dep/Cargo.toml",
         "sample_projects",
-        "root_crate",
+        "rootCrate",
         "hello_world_with_dep",
+        &["default"],
     );
 
     assert_eq!("Hello, bin_with_lib_dep!\n", &output);
@@ -49,11 +52,28 @@ fn build_and_run_with_default_features() {
     let output = build_and_run(
         "sample_projects/bin_with_default_features/Cargo.toml",
         "sample_projects",
-        "root_crate",
+        "rootCrate",
         "bin_with_default_features",
+        &["default"],
     );
 
     assert_eq!("Hello, bin_with_default_features!\n", &output);
+}
+
+#[test]
+fn build_and_run_with_non_default_features() {
+    let output = build_and_run(
+        "sample_projects/bin_with_default_features/Cargo.toml",
+        "sample_projects",
+        "rootCrate",
+        "bin_with_default_features",
+        &["default", "do_not_activate"],
+    );
+
+    assert_eq!(
+        "Hello, bin_with_default_features!\nCOMPILED with do_not_activate\n",
+        &output
+    );
 }
 
 #[test]
@@ -61,8 +81,9 @@ fn build_and_run_with_problematic_crates() {
     let output = build_and_run(
         "sample_projects/with_problematic_crates/Cargo.toml",
         "sample_projects/with_problematic_crates",
-        "root_crate",
+        "rootCrate",
         "with_problematic_crates",
+        &["default"],
     );
 
     assert_eq!("Hello, with_problematic_crates!\n", &output);
@@ -73,8 +94,9 @@ fn build_and_run_bin_with_lib_git_dep() {
     let output = build_and_run(
         "sample_projects/bin_with_lib_git_dep/Cargo.toml",
         "sample_projects/bin_with_lib_git_dep",
-        "root_crate",
+        "rootCrate",
         "bin_with_lib_git_dep",
+        &["default"],
     );
 
     assert_eq!("Hello world from bin_with_lib_git_dep!\n", &output);
@@ -86,8 +108,9 @@ fn build_and_run_bin_with_rerenamed_lib_dep() {
     let output = build_and_run(
         "sample_projects/bin_with_rerenamed_lib_dep/Cargo.toml",
         "sample_projects",
-        "root_crate",
+        "rootCrate",
         "bin_with_rerenamed_lib_dep",
+        &["default"],
     );
 
     assert_eq!("Hello world from bin_with_rerenamed_lib_dep!\n", &output);
@@ -98,8 +121,9 @@ fn build_and_run_workspace() {
     let output = build_and_run(
         "sample_workspace/Cargo.toml",
         "sample_workspace",
-        "workspace_members.with_tera",
+        "workspaceMembers.with_tera",
         "with_tera",
+        &["default"],
     );
 
     assert_eq!("Hello, with_tera!\n", &output);
@@ -110,6 +134,7 @@ fn build_and_run(
     copy_dir: impl AsRef<Path>,
     nix_attr: &str,
     binary_name: &str,
+    features: &[&str],
 ) -> String {
     let orig_project_dir = cargo_toml
         .as_ref()
@@ -179,7 +204,7 @@ fn build_and_run(
     .unwrap();
 
     // Build
-    nix_build(&project_dir, nix_attr).unwrap();
+    nix_build(&project_dir, nix_attr, features).unwrap();
 
     // Run resulting binary
     let bin_path = project_dir.join("result").join("bin").join(binary_name);

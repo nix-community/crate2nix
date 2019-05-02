@@ -118,11 +118,32 @@ let cargo_nix = callPackage ./Cargo.nix {};
 in cargo_nix.workspace_members.super_duper
 ```
 
+## Dynamic feature resolution
+
+The enabled features for a crate are resolved at build time. That means you can easily override them:
+
+1. There is a "rootFeatures" argument to the generated build file which you can override when calling
+   it from the command line:
+   
+      nix build -f ....nix --arg rootFeatures '["default" "other"]' rootCrate 
+      
+2. Or when importing the build file with "callPackage":
+
+      let cargo_nix = callPackage ./Cargo.nix { features = ["default" "other"]; };
+          crate2nix = cargo_nix.rootCrate;
+      in ...;
+        
+3. Or by overriding them on the rootCrate or workspaceMembers:
+
+      let cargo_nix = callPackage ./Cargo.nix {};
+          crate2nix = cargo_nix.rootCrate.override { features = ["default" "other"]; };
+      in ...;
+
 ## Known Restrictions
 
-* Only *default crate features* are supported. It should be easy to support a different feature set at build generation 
-  time since we can simply pass this set to `cargo metadata`. Feature selection during build time is out of scope for 
-  now.
+* ~~Before 0.4.x: Only *default crate features* are supported. It should be easy to support a different feature set at 
+  build generation time since we can simply pass this set to `cargo metadata`. Feature selection during build time is 
+  out of scope for now.~~
 * No support for building and running tests, see [nixpkgs, issue 59177](https://github.com/NixOS/nixpkgs/issues/59177).
 * Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
   ID. They are not interpreted as paths but maybe you do not want to expose local paths in there...

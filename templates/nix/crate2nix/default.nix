@@ -1,9 +1,29 @@
 #
   # crate2nix/default.nix (excerpt start)
   # {#
-{lib, buildRustCrate, crates? {}}:
+{lib, stdenv, buildRustCrate, crates? {}}:
 rec {
   # #}
+
+  # Target (platform) data for conditional dependencies.
+  # This corresponds to what buildRustCrate is setting.
+  target = {
+      unix = true;
+      windows = false;
+
+      # This doesn't appear to be officially documented anywhere yet.
+      # See https://github.com/rust-lang-nursery/rust-forge/issues/101.
+      os = if stdenv.hostPlatform.isDarwin
+        then "macos"
+        else stdenv.hostPlatform.parsed.kernel.name;
+      arch = stdenv.hostPlatform.parsed.cpu.name;
+      family = "unix";
+      env = "gnu";
+      endian = if stdenv.hostPlatform.parsed.cpu.significantByte.name == "littleEndian" then "little" else "big";
+      pointer_width = toString stdenv.hostPlatform.parsed.cpu.bits;
+      vendor = stdenv.hostPlatform.parsed.vendor.name;
+      debug_assertions = false;
+  };
 
   /* Filters common temp files and build files */
   # TODO(pkolloch): Substitute with gitignore filter
@@ -44,8 +64,14 @@ rec {
       lib.hasSuffix ".bak" baseName
     );
 
+  /* A restricted overridable version of  buildRustCrateWithFeaturesImpl. */
+  buildRustCrateWithFeatures = {packageId, features}:
+    lib.makeOverridable
+      ({features}: buildRustCrateWithFeaturesImpl {inherit packageId features;})
+      { inherit features; };
+
   /* Returns a buildRustCrate derivation for the given packageId and features. */
-  buildRustCrateWithFeatures = { crateConfigs? crates, packageId, features } @ args:
+  buildRustCrateWithFeaturesImpl = { crateConfigs? crates, packageId, features } @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);

@@ -22,14 +22,19 @@ rec {
 
   {% if root_package_id -%}
   # Use this attribute to refer to the derivation building your root crate.
-  root_crate = buildRustCrateWithFeatures {
+  # You can override the features with rootCrate.override { features = [ "default" "feature1" ... ]; }.
+  rootCrate = buildRustCrateWithFeatures {
     packageId = {{root_package_id}};
     features = rootFeatures;
   };
+  root_crate =
+    builtins.trace "root_crate is deprecated since crate2nix 0.4. Please use rootCrate instead." rootCrate;
   {%- endif -%}
   {% if workspace_members %}
   # Refer your crate build derivation by name here.
-  workspace_members = {
+  # You can override the features with
+  # workspaceMembers."${crateName}".override { features = [ "default" "feature1" ... ]; }.
+  workspaceMembers = {
   {%- for name, pkg_id in workspace_members %}
     {{name}} = buildRustCrateWithFeatures {
       packageId = {{pkg_id}};
@@ -37,6 +42,10 @@ rec {
     };
   {%- endfor %}
   };
+  workspace_members =
+    builtins.trace
+      "workspace_members is deprecated in crate2nix 0.4. Please use workspaceMembers instead."
+      workspaceMembers;
   {%- endif %}
 
   #
@@ -161,26 +170,6 @@ rec {
         {%- endif -%}
       };
   {%- endfor %}
-  };
-
-  # Target (platform) data for conditional dependencies.
-  # This corresponds to what buildRustCrate is setting.
-  target = {
-      unix = true;
-      windows = false;
-
-      # This doesn't appear to be officially documented anywhere yet.
-      # See https://github.com/rust-lang-nursery/rust-forge/issues/101.
-      os = if stdenv.hostPlatform.isDarwin
-        then "macos"
-        else stdenv.hostPlatform.parsed.kernel.name;
-      arch = stdenv.hostPlatform.parsed.cpu.name;
-      family = "unix";
-      env = "gnu";
-      endian = if stdenv.hostPlatform.parsed.cpu.significantByte.name == "littleEndian" then "little" else "big";
-      pointer_width = toString stdenv.hostPlatform.parsed.cpu.bits;
-      vendor = stdenv.hostPlatform.parsed.vendor.name;
-      debug_assertions = false;
   };
 
   {% include "nix/crate2nix/default.nix" %}

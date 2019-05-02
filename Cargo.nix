@@ -19,17 +19,26 @@ rec {
   #
 
   # Use this attribute to refer to the derivation building your root crate.
-  root_crate = buildRustCrateWithFeatures {
+  # You can override the features with rootCrate.override { features = [ "default" "feature1" ... ]; }.
+  rootCrate = buildRustCrateWithFeatures {
     packageId = "crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)";
     features = rootFeatures;
   };
+  root_crate =
+    builtins.trace "root_crate is deprecated since crate2nix 0.4. Please use rootCrate instead." rootCrate;
   # Refer your crate build derivation by name here.
-  workspace_members = {
+  # You can override the features with
+  # workspaceMembers."${crateName}".override { features = [ "default" "feature1" ... ]; }.
+  workspaceMembers = {
     "crate2nix" = buildRustCrateWithFeatures {
       packageId = "crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)";
       features = rootFeatures;
     };
   };
+  workspace_members =
+    builtins.trace
+      "workspace_members is deprecated in crate2nix 0.4. Please use workspaceMembers instead."
+      workspaceMembers;
 
   #
   # "private" attributes that may change in every new version of crate2nix.
@@ -2271,6 +2280,10 @@ rec {
         };};
   };
 
+  #
+  # crate2nix/default.nix (excerpt start)
+  # 
+
   # Target (platform) data for conditional dependencies.
   # This corresponds to what buildRustCrate is setting.
   target = {
@@ -2290,10 +2303,6 @@ rec {
       vendor = stdenv.hostPlatform.parsed.vendor.name;
       debug_assertions = false;
   };
-
-  #
-  # crate2nix/default.nix (excerpt start)
-  # 
 
   /* Filters common temp files and build files */
   # TODO(pkolloch): Substitute with gitignore filter
@@ -2334,8 +2343,14 @@ rec {
       lib.hasSuffix ".bak" baseName
     );
 
+  /* A restricted overridable version of  buildRustCrateWithFeaturesImpl. */
+  buildRustCrateWithFeatures = {packageId, features}:
+    lib.makeOverridable
+      ({features}: buildRustCrateWithFeaturesImpl {inherit packageId features;})
+      { inherit features; };
+
   /* Returns a buildRustCrate derivation for the given packageId and features. */
-  buildRustCrateWithFeatures = { crateConfigs? crates, packageId, features } @ args:
+  buildRustCrateWithFeaturesImpl = { crateConfigs? crates, packageId, features } @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
@@ -2362,18 +2377,27 @@ rec {
         buildByPackageId (dependencyPackageId dependency);
     in builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
 
-  /* Traces differences between cargo default features and crate2nix default features. */
-  diffDefaultPackageFeatures = {crateConfigs ? crates, rootCrate}:
+  /* Returns differences between cargo default features and crate2nix default features.
+   *
+   * This is useful for verifying the feature resolution in crate2nix.
+   */
+  diffDefaultPackageFeatures = {crateConfigs ? crates, packageId}:
     assert (builtins.isAttrs crateConfigs);
 
     let prefixValues = prefix: lib.mapAttrs (n: v: { "${prefix}" = v; });
-        mergedFeatures = prefixValues "crate2nix" (mergePackageFeatures {inherit crateConfigs; packageId = rootCrate; features = ["default"]; });
+        mergedFeatures =
+          prefixValues
+            "crate2nix"
+            (mergePackageFeatures {inherit crateConfigs packageId; features = ["default"]; });
         configs = prefixValues "cargo" crateConfigs;
         combined = lib.foldAttrs (a: b: a // b) {} [ mergedFeatures configs ];
-        onlyInCargo = builtins.attrNames (lib.filterAttrs (n: v: !(v ? "crate2nix" ) && (v ? "cargo"))) combined;
-        onlyInCrate2Nix = builtins.attrNames (lib.filterAttrs (n: v: (v ? "crate2nix" ) && !(v ? "cargo"))) combined;
+        onlyInCargo = builtins.attrNames (lib.filterAttrs (n: v: !(v ? "crate2nix" ) && (v ? "cargo")) combined);
+        onlyInCrate2Nix = builtins.attrNames (lib.filterAttrs (n: v: (v ? "crate2nix" ) && !(v ? "cargo")) combined);
         differentFeatures = lib.filterAttrs
-          (n: v: (v ? "crate2nix" ) && (v ? "cargo") && (v.crate2nix.features or []) != (v."cargo".resolved_default_features or []))
+          (n: v:
+          (v ? "crate2nix" )
+          && (v ? "cargo")
+          && (v.crate2nix.features or []) != (v."cargo".resolved_default_features or []))
           combined;
     in builtins.toJSON { inherit onlyInCargo onlyInCrate2Nix differentFeatures; };
 
@@ -2415,6 +2439,7 @@ rec {
                 builtins.attrValues (lib.mapAttrs depWithResolvedFeatures enabledDependencies);
           in builtins.concatMap
             ({packageId, features}: listOfPackageFeatures {
+              # This is purely for debugging.
               dependencyPath = dependencyPath ++ [path packageId];
               inherit crateConfigs packageId features;
             })

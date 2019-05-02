@@ -1,3 +1,31 @@
+# 0.3.1 - 0.4.0
+
+## Upgrading
+
+Please change references to `root_crate` to `rootCrate` and references to `workspace_members` to `workspaceMembers`. The
+old aliases still work but are deprecated. 
+
+## Dynamic feature resolution
+
+The enabled features for a crate are now resolved at build time. That means you can easily override them:
+
+1. There is a "rootFeatures" argument to the generated build file which you can override when calling
+   it from the command line:
+   
+      nix build -f ....nix --arg rootFeatures '["default" "other"]' rootCrate 
+      
+2. Or when importing the build file with "callPackage":
+
+      let cargo_nix = callPackage ./Cargo.nix { features = ["default" "other"]; };
+          crate2nix = cargo_nix.rootCrate;
+      in ...;
+        
+3. Or by overriding them on the rootCrate or workspaceMembers:
+
+      let cargo_nix = callPackage ./Cargo.nix {};
+          crate2nix = cargo_nix.rootCrate.override { features = ["default" "other"]; };
+      in ...;
+
 # 0.3.0 - 0.3.1
 
 ## Bugfixes
