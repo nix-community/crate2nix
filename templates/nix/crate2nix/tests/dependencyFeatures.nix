@@ -7,7 +7,7 @@ let dependencies = {
         target_cfg = true;
         optional = false;
         with_defaults = false;
-        package_id = "pkgid_target";
+        packageId = "pkgid_target";
       };
     };
 in lib.runTests {
@@ -29,7 +29,7 @@ in lib.runTests {
     expr = crate2nix.dependencyFeatures
              []
              "my_dep"
-             { uses_default_features = true; };
+             { usesDefaultFeatures = true; };
     expected = ["default"];
   };
 
@@ -37,7 +37,7 @@ in lib.runTests {
     expr = crate2nix.dependencyFeatures
              []
              "my_dep"
-             { uses_default_features = false; };
+             { usesDefaultFeatures = false; };
     expected = [];
   };
 
@@ -57,14 +57,14 @@ in lib.runTests {
   testDependencyFeatures2 = {
     expr = crate2nix.dependencyFeatures
       [ "irrelevant" "my_dep/feature1" "my_dep/feature2" "my_dep3/irrelevant2" ]
-      "my_dep" { uses_default_features = true; };
+      "my_dep" { usesDefaultFeatures = true; };
     expected = [ "default" "feature1" "feature2" ];
   };
 
   testDependencyFeaturesWithoutDefault = {
     expr = crate2nix.dependencyFeatures
       [ "irrelevant" "my_dep/feature1" "my_dep/feature2" "my_dep3/irrelevant2" ]
-      "my_dep" { uses_default_features = false; };
+      "my_dep" { usesDefaultFeatures = false; };
     expected = [ "feature1" "feature2" ];
   };
 }

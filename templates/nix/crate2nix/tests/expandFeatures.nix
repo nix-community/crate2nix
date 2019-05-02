@@ -13,7 +13,7 @@ let featureMap = {
         target_cfg = true;
         optional = false;
         with_defaults = false;
-        package_id = "pkgid_target";
+        packageId = "pkgid_target";
       };
     };
 in lib.runTests {

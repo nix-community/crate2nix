@@ -110,12 +110,12 @@ rec {
         {%- for dependency in crate.dependencies %}
           {%- if dependency.target or dependency.optional or not dependency.uses_default_features or dependency.features %}
           {{dependency.name}} = {
-            package_id = {{dependency.package_id}};
+            packageId = {{dependency.package_id}};
             {%- if dependency.optional %}
             optional = true;
             {%- endif -%}
             {%- if not dependency.uses_default_features %}
-            uses_default_features = false;
+            usesDefaultFeatures = false;
             {%- endif -%}
             {%- if dependency.target %}
             target = {{dependency.target | safe | cfg_to_nix_expr}};
@@ -136,12 +136,12 @@ rec {
         {%- for dependency in crate.build_dependencies %}
           {%- if dependency.target or dependency.optional or not dependency.uses_default_features or dependency.features %}
           {{dependency.name}} = {
-            package_id = {{dependency.package_id}};
+            packageId = {{dependency.package_id}};
             {%- if dependency.optional %}
             optional = true;
             {%- endif -%}
             {%- if not dependency.uses_default_features %}
-            uses_default_features = false;
+            usesDefaultFeatures = false;
             {%- endif -%}
             {%- if dependency.target %}
             target = {{dependency.target | safe | cfg_to_nix_expr}};

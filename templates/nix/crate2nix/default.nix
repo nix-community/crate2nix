@@ -202,7 +202,7 @@ rec {
     in sortedUnique outFeatures;
 
   /* The package ID of the given dependency. */
-  dependencyPackageId = dependency: if builtins.isString dependency then dependency else dependency.package_id;
+  dependencyPackageId = dependency: if builtins.isString dependency then dependency else dependency.packageId;
 
   /* Returns the actual dependencies for the given dependency. */
   dependencyFeatures = features: dependencyName: dependency:
@@ -210,7 +210,7 @@ rec {
     assert (builtins.isString dependencyName);
     assert (builtins.isAttrs dependency || builtins.isString dependency);
 
-    let defaultOrNil = if builtins.isString dependency || dependency.uses_default_features or true
+    let defaultOrNil = if builtins.isString dependency || dependency.usesDefaultFeatures or true
                        then ["default"]
                        else [];
         explicitFeatures = if builtins.isString dependency then [] else dependency.features or [];

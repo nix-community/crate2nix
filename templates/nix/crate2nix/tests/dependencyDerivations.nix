@@ -4,12 +4,12 @@ let buildRustCrateFake = lib.id;
     fakeDependencies = {
       "id1" = "pkg_id1";
       "optional_id2" = {
-        package_id = "pkg_id2";
+        packageId = "pkg_id2";
         optional = true;
       };
       "id3" = {
-        package_id = "pkg_id3";
-        uses_default_features = false;
+        packageId = "pkg_id3";
+        usesDefaultFeatures = false;
       };
     };
     dependencyDerivations = features: dependencies:
