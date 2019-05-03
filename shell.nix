@@ -10,7 +10,6 @@
 let crate2nix = pkgs.callPackage ./default.nix {};
 in pkgs.stdenv.mkDerivation {
    name = "shell-with-crate2nix";
-   src = ./.;
 
    buildInputs = [ crate2nix ];
 
