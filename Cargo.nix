@@ -2494,8 +2494,11 @@ rec {
                        else [];
         explicitFeatures = if builtins.isString dependency then [] else dependency.features or [];
         additionalDependencyFeatures =
-          let dependencyFeatures = builtins.filter (f: builtins.dirOf f == dependencyName) features;
-          in builtins.map builtins.baseNameOf dependencyFeatures;
+
+          let dependencyPrefix = dependencyName+"/";
+              dependencyFeatures =
+                builtins.filter (f: lib.hasPrefix dependencyPrefix f) features;
+          in builtins.map (lib.removePrefix dependencyPrefix) dependencyFeatures;
     in
       defaultOrNil ++ explicitFeatures ++ additionalDependencyFeatures;
 
