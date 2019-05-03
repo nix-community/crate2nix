@@ -22,6 +22,19 @@ fn build_and_run_bin() {
 }
 
 #[test]
+fn build_and_run_bin_with_deprecated_alias() {
+    let output = build_and_run(
+        "sample_projects/bin/Cargo.toml",
+        "sample_projects/bin",
+        "root_crate",
+        "hello_world_bin",
+        &["default"],
+    );
+
+    assert_eq!("Hello, world!\n", &output);
+}
+
+#[test]
 fn build_and_run_lib_and_bin() {
     let output = build_and_run(
         "sample_projects/lib_and_bin/Cargo.toml",
@@ -108,7 +121,7 @@ fn build_and_run_bin_with_rerenamed_lib_dep() {
     let output = build_and_run(
         "sample_projects/bin_with_rerenamed_lib_dep/Cargo.toml",
         "sample_projects",
-        "rootCrate",
+        "rootCrate.build",
         "bin_with_rerenamed_lib_dep",
         &["default"],
     );
@@ -121,7 +134,20 @@ fn build_and_run_workspace() {
     let output = build_and_run(
         "sample_workspace/Cargo.toml",
         "sample_workspace",
-        "workspaceMembers.with_tera",
+        "workspaceMembers.with_tera.build",
+        "with_tera",
+        &["default"],
+    );
+
+    assert_eq!("Hello, with_tera!\n", &output);
+}
+
+#[test]
+fn build_and_run_workspace_with_deprecated_alias() {
+    let output = build_and_run(
+        "sample_workspace/Cargo.toml",
+        "sample_workspace",
+        "workspace_members.with_tera",
         "with_tera",
         &["default"],
     );

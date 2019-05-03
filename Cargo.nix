@@ -18,27 +18,31 @@ rec {
   # "public" attributes that we attempt to keep stable with new versions of crate2nix.
   #
 
-  # Use this attribute to refer to the derivation building your root crate.
-  # You can override the features with rootCrate.override { features = [ "default" "feature1" ... ]; }.
-  rootCrate = buildRustCrateWithFeatures {
-    packageId = "crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)";
-    features = rootFeatures;
-  };
-  root_crate =
-    builtins.trace "root_crate is deprecated since crate2nix 0.4. Please use rootCrate instead." rootCrate;
-  # Refer your crate build derivation by name here.
-  # You can override the features with
-  # workspaceMembers."${crateName}".override { features = [ "default" "feature1" ... ]; }.
-  workspaceMembers = {
-    "crate2nix" = buildRustCrateWithFeatures {
+  rootCrate = {
+    # Use this attribute to refer to the derivation building your root crate package.
+    # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
+    build = buildRustCrateWithFeatures {
       packageId = "crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)";
       features = rootFeatures;
+    };
+  };
+  root_crate =
+    builtins.trace "root_crate is deprecated since crate2nix 0.4. Please use rootCrate instead." rootCrate.build;
+  # Refer your crate build derivation by name here.
+  # You can override the features with
+  # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
+  workspaceMembers = {
+    "crate2nix" = {
+      build = buildRustCrateWithFeatures {
+        packageId = "crate2nix 0.4.0-beta.0 (path+file:///home/peter/projects/crate2nix)";
+        features = rootFeatures;
+      };
     };
   };
   workspace_members =
     builtins.trace
       "workspace_members is deprecated in crate2nix 0.4. Please use workspaceMembers instead."
-      workspaceMembers;
+      lib.mapAttrs (n: v: v.build) workspaceMembers;
 
   #
   # "private" attributes that may change in every new version of crate2nix.

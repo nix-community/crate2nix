@@ -6,7 +6,7 @@
   callPackage? pkgs.callPackage}:
 
 let cargo_nix = callPackage ./Cargo.nix {};
-    crate2nix = cargo_nix.rootCrate;
+    crate2nix = cargo_nix.rootCrate.build;
 
 in pkgs.symlinkJoin {
   name = crate2nix.name;

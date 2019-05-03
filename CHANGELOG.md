@@ -2,29 +2,42 @@
 
 ## Upgrading
 
-Please change references to `root_crate` to `rootCrate` and references to `workspace_members` to `workspaceMembers`. The
-old aliases still work but are deprecated. 
+Please change references to `root_crate` to `rootCrate.build` and references to `workspace_members.${crateName}` 
+to `workspaceMembers.${crateName}.build`. The camel case attribute names are in line with the nixos style guide.
+The `.build` suffix allows future versions of `crate2nix` to add other convenient features such as source tarball 
+packages, docker image derivations, ... The old aliases still work but are deprecated. 
 
 ## Dynamic feature resolution
 
-The enabled features for a crate are now resolved at build time. That means you can easily override them:
+The enabled features for a crate now are resolved at build time! That means you can easily override them:
 
 1. There is a "rootFeatures" argument to the generated build file which you can override when calling
    it from the command line:
    
-      nix build -f ....nix --arg rootFeatures '["default" "other"]' rootCrate 
+      nix build -f ....nix --arg rootFeatures '["default" "other"]' rootCrate.build 
       
 2. Or when importing the build file with "callPackage":
 
-      let cargo_nix = callPackage ./Cargo.nix { features = ["default" "other"]; };
-          crate2nix = cargo_nix.rootCrate;
+      let cargo_nix = callPackage ./Cargo.nix { rootFeatures = ["default" "other"]; };
+          crate2nix = cargo_nix.rootCrate.build;
       in ...;
         
 3. Or by overriding them on the rootCrate or workspaceMembers:
 
       let cargo_nix = callPackage ./Cargo.nix {};
-          crate2nix = cargo_nix.rootCrate.override { features = ["default" "other"]; };
+          crate2nix = cargo_nix.rootCrate.build.override { features = ["default" "other"]; };
       in ...;
+      
+## Internal: nix test runner
+
+For this release, I needed substantial amount of nix code so I created some nix unit tests. They are invoked by
+`cargo test` like all other tests and live in the [./templates/nix/crate2nix/tests](./templates/nix/crate2nix/tests) 
+directory.
+
+## Feedback: What is needed for a 1.0 release?
+
+I would really appreciate your thoughts. Please add comments to issue 
+[#8](https://github.com/kolloch/crate2nix/issues/8).
 
 # 0.3.0 - 0.3.1
 

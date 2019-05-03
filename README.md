@@ -112,12 +112,12 @@ Look at the [./Cargo.nix](./Cargo.nix) file of this project for a non-trivial ex
 ## Using build files (single binaries)
 
 If your `Cargo.nix` was generated for a single binary crate (i.e. workspace) then the derivation that builds your binary
-can be accessed via the `root_crate` attribute. Use this command to build it and make the result available in the result 
+can be accessed via the `rootCrate.binary` attribute. Use this command to build it and make the result available in the result 
 directory: 
 
 ```bash
 your_crate_name="super_duper"
-nix build -f Cargo.nix root_crate
+nix build -f Cargo.nix rootCrate.binary
 ./result/bin/${your_crate_name}
 ```  
 
@@ -126,21 +126,21 @@ derivation like this:
 
 ```nix
 let cargo_nix = callPackage ./Cargo.nix {};
-in cargo_nix.root_crate
+in cargo_nix.rootCrate.binary
 ```
 
 ## Using build files (workspaces)
 
 If your `Cargo.nix` was generated for a workspace (i.e. not a single binary) then the derivation that builds your binary
-CANNOT be accessed via the `root_crate` attribute. There is no single root_crate.
+CANNOT be accessed via the `rootCrate` attribute. There is no single root_crate.
 
-Instead, you can conveniently access the derivations of all your workspace members through the `workspace_member` 
+Instead, you can conveniently access the derivations of all your workspace members through the `workspaceMembers` 
 attribute. Use this command to build one of the workspace members and make the result available in the result 
 directory: 
 
 ```bash
 your_crate_name="super_duper"
-nix build -f Cargo.nix workspace_members.${your_crate_name}
+nix build -f Cargo.nix workspaceMembers.${your_crate_name}.binary
 ./result/bin/${your_crate_name}
 ```  
 
@@ -149,7 +149,7 @@ derivation like this:
 
 ```nix
 let cargo_nix = callPackage ./Cargo.nix {};
-in cargo_nix.workspace_members.super_duper
+in cargo_nix.workspaceMembers."${your_crate_name}".binary
 ```
 
 ## Dynamic feature resolution
@@ -159,18 +159,18 @@ The enabled features for a crate are resolved at build time. That means you can 
 1. There is a "rootFeatures" argument to the generated build file which you can override when calling
    it from the command line:
    
-      nix build -f ....nix --arg rootFeatures '["default" "other"]' rootCrate 
+      nix build -f ....nix --arg rootFeatures '["default" "other"]' rootCrate.build 
       
 2. Or when importing the build file with "callPackage":
 
-      let cargo_nix = callPackage ./Cargo.nix { features = ["default" "other"]; };
-          crate2nix = cargo_nix.rootCrate;
+      let cargo_nix = callPackage ./Cargo.nix { rootFeatures = ["default" "other"]; };
+          crate2nix = cargo_nix.rootCrate.build;
       in ...;
         
 3. Or by overriding them on the rootCrate or workspaceMembers:
 
       let cargo_nix = callPackage ./Cargo.nix {};
-          crate2nix = cargo_nix.rootCrate.override { features = ["default" "other"]; };
+          crate2nix = cargo_nix.rootCrate.build.override { features = ["default" "other"]; };
       in ...;
 
 ## Known Restrictions
@@ -190,6 +190,11 @@ The enabled features for a crate are resolved at build time. That means you can 
 * Git sources are now also supported. ~~Before 0.3.x: Only *local sources* and *crates io* supported. Again, just 
   requires some work to resolve.~~ 
 * ~~Before 0.2.x: No support for workspaces.~~
+
+## Feedback: What is needed for a 1.0 release?
+
+I would really appreciate your thoughts. Please add comments to issue 
+[#8](https://github.com/kolloch/crate2nix/issues/8).
 
 ## Runtime Dependencies
 
