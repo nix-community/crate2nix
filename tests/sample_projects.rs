@@ -1,4 +1,5 @@
 use std::path::{Path, PathBuf};
+use std::time::Instant;
 
 use tempdir::TempDir;
 
@@ -191,6 +192,9 @@ fn build_and_run(
         .expect("while copying nixpkgs.nix");
 
     // Get metadata
+    eprintln!("Generating build file:");
+    let before_build = Instant::now();
+
     let default_nix_path = cargo_toml.parent().unwrap().join("default.nix");
     let metadata = BuildInfo::for_config(
         &GenerateInfo::default(),
@@ -203,6 +207,13 @@ fn build_and_run(
     )
     .unwrap();
     let default_nix_content = render::render_build_file(&metadata).unwrap();
+
+    eprintln!(
+        "Generating build file: done, took {} ms.",
+        before_build.elapsed().as_millis()
+    );
+
+    eprintln!("Copy changed Cargo.lock/crate-hashes.json back to source: ");
 
     // Generate nix file
     render::write_to_file(&default_nix_path, &default_nix_content).unwrap();
@@ -229,12 +240,17 @@ fn build_and_run(
     )
     .unwrap();
 
-    // Build
-    nix_build(&project_dir, nix_attr, features).unwrap();
+    eprintln!("Copy changed Cargo.lock/crate-hashes.json back to source: done.");
 
-    // Run resulting binary
+    eprintln!("Calling nix build: ");
+    nix_build(&project_dir, nix_attr, features).unwrap();
+    eprintln!("Calling nix build: done.");
+
+    eprintln!("Executing resulting binary: ");
     let bin_path = project_dir.join("result").join("bin").join(binary_name);
     let output = run_cmd(bin_path).unwrap();
+    eprintln!("Executing resulting binary: done.");
+
     temp_dir.close().expect("couldn't remove temp dir");
     output
 }
