@@ -46,14 +46,48 @@ Use `crate2nix help` to show all commands and options.
 
 NOTE: It is only tested on Linux for now!
 
-For now, clone the repository and then
+If you are not running, install a recent version of nix by runnin `curl https://nixos.org/nix/install | sh` or following
+the instructions on [https://nixos.org/nix/](https://nixos.org/nix/).
+
+Then either
 
 ```bash
-# Install nix if necessary: https://nixos.org/nix/
+# Install the stable version to your user env (with shell completions):
+nix-env -i -f https://github.com/kolloch/crate2nix/tarball/0.4.0
+```
+
+or
+
+```bash
+# Start a shell with it (without shell completions):
+nix-shell -f https://github.com/kolloch/crate2nix/tarball/0.4.0
+```
+
+### Development Version (master)
+
+Similarly, you can either
+
+```bash
+# Install the stable version to your user env (with shell completions):
+nix-env -i -f https://github.com/kolloch/crate2nix/tarball/master
+```
+
+or
+
+```bash
+# Start a shell with it (without shell completions):
+nix-shell -f https://github.com/kolloch/crate2nix/tarball/master
+```
+
+If you want to tweak crate2nix, clone the repository and then
+
+```bash
 cd crate2nix
 nix-shell
 # you are in a shell with crate2nix
 ```
+
+### Nixpkgs Version
 
 This uses a pinned version nixos-unstable because at the time of writing this, it contains a necessary fix.
 
