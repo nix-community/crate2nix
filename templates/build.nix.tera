@@ -56,6 +56,15 @@ rec {
   # "private" attributes that may change in every new version of crate2nix.
   #
 
+  # Build and dependency information for crates.
+  # Many of the fields are passed one-to-one to buildRustCrate.
+  #
+  # Noteworthy:
+  # * `crateBin = [{name = ","; path = ",";}];`: a hack to disable building the binary.
+  # * `dependencies`/`buildDependencies`: similar to the corresponding fields for buildRustCrate.
+  #   but with additional information which is used during dependency/feature resolution.
+  # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.
+
   crates = {
   {%- for crate in crates %}
     {{crate.package_id}}
@@ -169,9 +178,8 @@ rec {
         {%- endfor %}
         };
         {%- if crate.resolved_default_features|length > 0 %}
-        # The features that cargo resolved for the default build for debugging.
         resolvedDefaultFeatures = [ {% for feature in crate.resolved_default_features %}{{feature}} {% endfor %}];
-        {%- endif -%}
+        {%- endif %}
       };
   {%- endfor %}
   };
