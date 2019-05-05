@@ -487,6 +487,7 @@ rec {
           "serde_json" = "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)";
           "structopt" = "structopt 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)";
           "tera" = "tera 1.0.0-beta.4 (registry+https://github.com/rust-lang/crates.io-index)";
+          "toml" = "toml 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)";
           "url" = "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)";
           "url_serde" = "url_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
         };
@@ -1928,6 +1929,23 @@ rec {
         };
         features = {
         };
+      };
+    "toml 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "toml";
+        version = "0.5.0";
+        edition = "2015";
+        sha256 = "0l2lqzbn5g9l376k01isq1nhb14inkr4c50qbjbdzh5qysz7dyk5";
+        authors = [
+          "Alex Crichton <alex@alexcrichton.com>"
+        ];
+        dependencies = {
+          "serde" = "serde 1.0.90 (registry+https://github.com/rust-lang/crates.io-index)";
+        };
+        features = {
+          "preserve_order" = [ "linked-hash-map" ];
+        };
+        resolvedDefaultFeatures = [ "default" ];
       };
     "typenum 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {

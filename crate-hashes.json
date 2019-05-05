@@ -97,6 +97,7 @@
   "textwrap 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)": "0s25qh49n7kjayrdj4q3v0jk0jc6vy88rdw0bvgfxqlscpqpxi7d",
   "thread_local 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)": "02rksdwjmz2pw9bmgbb4c0bgkbq5z6nvg510sq1s6y2j1gam0c7i",
   "time 0.1.42 (registry+https://github.com/rust-lang/crates.io-index)": "1ny809kmdjwd4b478ipc33dz7q6nq7rxk766x8cnrg6zygcksmmx",
+  "toml 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)": "0l2lqzbn5g9l376k01isq1nhb14inkr4c50qbjbdzh5qysz7dyk5",
   "typenum 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)": "1v2cgg0mlzkg5prs7swysckgk2ay6bpda8m83c2sn3z77dcsx3bc",
   "ucd-trie 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)": "12awmddm5d31whgd1q309gz1q8qa4i1h9fwf1h71k1d4ivxss68m",
   "ucd-util 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)": "1n1qi3jywq5syq90z9qd8qzbn58pcjgv1sx4sdmipm4jf9zanz15",
