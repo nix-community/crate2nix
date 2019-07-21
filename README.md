@@ -60,7 +60,7 @@ or
 
 ```bash
 # Start a shell with it (without shell completions):
-nix-shell -f https://github.com/kolloch/crate2nix/tarball/0.4.0
+nix-shell https://github.com/kolloch/crate2nix/tarball/0.4.0
 ```
 
 ### Development Version (master)
@@ -76,7 +76,7 @@ or
 
 ```bash
 # Start a shell with it (without shell completions):
-nix-shell -f https://github.com/kolloch/crate2nix/tarball/master
+nix-shell https://github.com/kolloch/crate2nix/tarball/master
 ```
 
 If you want to tweak crate2nix, clone the repository and then
