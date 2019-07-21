@@ -1,3 +1,7 @@
+# 0.4.0 - 0.5.x (unreleased)
+
+* Fix #10 - Changing default for `-n`/`--nixpkgs-path` to `"<nixpkgs/nixos>"` so that it works by default on Mac OS.
+
 # 0.3.1 - 0.4.0
 
 ## Upgrading
