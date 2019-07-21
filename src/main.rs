@@ -40,7 +40,7 @@ pub enum Opt {
             short = "n",
             long = "nixpkgs-path",
             help = "The default path for the nixpkgs to use.",
-            default_value = "<nixpkgs/nixos>"
+            default_value = "<nixpkgs>"
         )]
         nixpkgs_path: String,
 
