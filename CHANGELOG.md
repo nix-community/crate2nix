@@ -1,8 +1,14 @@
-# 0.4.0 - 0.5.x (unreleased)
+# 0.4.0 - 0.5.0
+
+## Upgrading
+
+* The default output file changed to "./Cargo.toml". Specify "-o ./default.nix" explicitly to retain the old default.
+
+## Resolved issues
 
 * Issue #10 - Changing default for `-n`/`--nixpkgs-path` to `"<nixpkgs>"` so that it works by default on NixOS AND Mac OS.
 * Issue #11 - Adding optional dependencies if any of their features is enabled.
-* Issue #14 - Only overwrite `default.nix` if explicitly specified as output file.
+* Issue #14 - Only overwrite output if explicitly specified as output file.
 
 # 0.3.1 - 0.4.0
 

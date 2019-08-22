@@ -1,5 +1,5 @@
 use quicli::prelude::CliResult;
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 use structopt::StructOpt;
 
 use crate2nix::render;
@@ -8,6 +8,8 @@ use failure::Error;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use std::str::FromStr;
+
+const DEFAULT_OUTPUT: &str = "./Cargo.toml";
 
 #[derive(Debug, StructOpt, Deserialize, Serialize)]
 #[structopt(
@@ -32,7 +34,7 @@ pub enum Opt {
         #[structopt(
             short = "o",
             long = "output",
-            help = "The path of the output.nix file. Uses ./default.nix by default."
+            help = "The path of the output.nix file. Uses ./Cargo.nix by default."
         )]
         output: Option<PathBuf>,
 
@@ -94,12 +96,18 @@ fn main() -> CliResult {
             });
 
             let generate_info = crate2nix::GenerateInfo::default();
-            let output : PathBuf = opt_output.map(|v| Ok(v) as Result<_, Error>).unwrap_or_else(|| {
-                if Path::new("./default.nix").exists() {
-                    return Err(format_err!("No explicit output given and ./default.nix already exists.").into());
-                }
-                Ok("./default.nix".into())
-            })?;
+            let output: PathBuf = opt_output
+                .map(|v| Ok(v) as Result<_, Error>)
+                .unwrap_or_else(|| {
+                    if Path::new("DEFAULT_OUTPUT").exists() {
+                        return Err(format_err!(
+                            "No explicit output given and {} already exists.",
+                            DEFAULT_OUTPUT
+                        )
+                        .into());
+                    }
+                    Ok(DEFAULT_OUTPUT.into())
+                })?;
             let generate_config = crate2nix::GenerateConfig {
                 cargo_toml,
                 output: output.clone(),

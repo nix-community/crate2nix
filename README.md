@@ -23,7 +23,7 @@ supported, you can create an overlay to add the needed configuration to the `def
 **Easy to understand nix template**: The actual nix code is generated via `templates/build.nix.tera` so you can 
 fix/improve the nix code without knowing rust if all the data is already there.
 
-Here is a simple example which uses all the defaults and will generate a `default.nix` file:
+Here is a simple example which uses all the defaults and will generate a `Cargo.nix` file:
 
 ```bash
 # From the project directory.
@@ -53,14 +53,14 @@ Then either
 
 ```bash
 # Install the stable version to your user env (with shell completions):
-nix-env -i -f https://github.com/kolloch/crate2nix/tarball/0.4.0
+nix-env -i -f https://github.com/kolloch/crate2nix/tarball/0.5.0
 ```
 
 or
 
 ```bash
 # Start a shell with it (without shell completions):
-nix-shell https://github.com/kolloch/crate2nix/tarball/0.4.0
+nix-shell https://github.com/kolloch/crate2nix/tarball/0.5.0
 ```
 
 ### Development Version (master)
@@ -121,7 +121,7 @@ nix build -f Cargo.nix rootCrate.binary
 ./result/bin/${your_crate_name}
 ```  
 
-Within a nix file (e.g. your `default.nix`), you can access the 
+Within a nix file (e.g. your manually written `default.nix`), you can access the 
 derivation like this: 
 
 ```nix
@@ -144,7 +144,7 @@ nix build -f Cargo.nix workspaceMembers.${your_crate_name}.binary
 ./result/bin/${your_crate_name}
 ```  
 
-Within a nix file (e.g. your `default.nix`), you can access the 
+Within a nix file (e.g. your manually written `default.nix`), you can access the 
 derivation like this: 
 
 ```nix
