@@ -1,9 +1,10 @@
 use quicli::prelude::CliResult;
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 use structopt::StructOpt;
 
 use crate2nix::render;
 use failure::format_err;
+use failure::Error;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use std::str::FromStr;
@@ -31,10 +32,9 @@ pub enum Opt {
         #[structopt(
             short = "o",
             long = "output",
-            help = "The path of the output.nix file.",
-            default_value = "./default.nix"
+            help = "The path of the output.nix file. Uses ./default.nix by default."
         )]
-        output: PathBuf,
+        output: Option<PathBuf>,
 
         #[structopt(
             short = "n",
@@ -82,7 +82,7 @@ fn main() -> CliResult {
     match opt {
         Opt::Generate {
             cargo_toml,
-            output,
+            output: opt_output,
             nixpkgs_path,
             crate_hashes,
         } => {
@@ -94,6 +94,12 @@ fn main() -> CliResult {
             });
 
             let generate_info = crate2nix::GenerateInfo::default();
+            let output : PathBuf = opt_output.map(|v| Ok(v) as Result<_, Error>).unwrap_or_else(|| {
+                if Path::new("./default.nix").exists() {
+                    return Err(format_err!("No explicit output given and ./default.nix already exists.").into());
+                }
+                Ok("./default.nix".into())
+            })?;
             let generate_config = crate2nix::GenerateConfig {
                 cargo_toml,
                 output: output.clone(),

@@ -1,7 +1,8 @@
 # 0.4.0 - 0.5.x (unreleased)
 
-* Fix #10 - Changing default for `-n`/`--nixpkgs-path` to `"<nixpkgs>"` so that it works by default on NixOS AND Mac OS.
-* Fix #11 - Adding optional dependencies if any of their features is enabled.
+* Issue #10 - Changing default for `-n`/`--nixpkgs-path` to `"<nixpkgs>"` so that it works by default on NixOS AND Mac OS.
+* Issue #11 - Adding optional dependencies if any of their features is enabled.
+* Issue #14 - Only overwrite `default.nix` if explicitly specified as output file.
 
 # 0.3.1 - 0.4.0
 
