@@ -104,6 +104,19 @@ fn build_and_run_with_problematic_crates() {
 }
 
 #[test]
+fn build_and_run_numtest() {
+    let output = build_and_run(
+        "sample_projects/numtest/Cargo.toml",
+        "sample_projects/numtest",
+        "rootCrate",
+        "numtest",
+        &["default"],
+    );
+
+    assert_eq!("Hello from numtest, world!\n", &output);
+}
+
+#[test]
 fn build_and_run_bin_with_lib_git_dep() {
     let output = build_and_run(
         "sample_projects/bin_with_lib_git_dep/Cargo.toml",

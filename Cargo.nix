@@ -19,6 +19,8 @@ rec {
   #
 
   rootCrate = {
+    packageId = "crate2nix 0.5.0-alpha.0 (path+file:///home/peter/projects/crate2nix)";
+
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
     build = buildRustCrateWithFeatures {
@@ -33,6 +35,7 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "crate2nix" = {
+      packageId = "crate2nix 0.5.0-alpha.0 (path+file:///home/peter/projects/crate2nix)";
       build = buildRustCrateWithFeatures {
         packageId = "crate2nix 0.5.0-alpha.0 (path+file:///home/peter/projects/crate2nix)";
         features = rootFeatures;
@@ -2597,8 +2600,15 @@ rec {
       (depName: dep:
         builtins.isString dep
         || dep.target or true
-        && (!(dep.optional or false) || builtins.elem depName features))
+        && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency depName) features))
       dependencies;
+
+  /* Returns whether the given feature should enable the given dependency. */
+  doesFeatureEnableDependency = depName: feature:
+    let prefix = "${depName}/";
+        len = builtins.stringLength prefix;
+        startsWithPrefix = builtins.substring 0 len feature == prefix;
+    in feature == depName || startsWithPrefix;
 
   /* Returns the expanded features for the given inputFeatures by applying the rules in featureMap.
 

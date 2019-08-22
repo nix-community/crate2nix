@@ -22,6 +22,8 @@ rec {
 
   {% if root_package_id -%}
   rootCrate = {
+    packageId = {{root_package_id}};
+
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
     build = buildRustCrateWithFeatures {
@@ -39,6 +41,7 @@ rec {
   workspaceMembers = {
   {%- for name, pkg_id in workspace_members %}
     {{name}} = {
+      packageId = {{pkg_id}};
       build = buildRustCrateWithFeatures {
         packageId = {{pkg_id}};
         features = rootFeatures;

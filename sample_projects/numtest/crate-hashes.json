@@ -1,0 +1,10 @@
+{
+  "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)": "1f3bj604fyr4xh08r357hs3hpdzapiqgccvmj1jpi953ffqrp09a",
+  "num 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)": "0kkql31mc46lghl2qyirk5vl6l0ij24cb5q9d23zm7bkfm05rmzx",
+  "num-bigint 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)": "0alza0afrwvhiilqvjazkxv94sir14jqfi50cpv40rgjl1rk7xf6",
+  "num-complex 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)": "1l8gwn4cqhx77wzhzslwxhryrr5h4vsv19ys8wr5xb1g332805m9",
+  "num-integer 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)": "1y45nh9xlp2dra9svb1wfsy65fysm3k1w4m8jynywccq645yixid",
+  "num-iter 0.1.39 (registry+https://github.com/rust-lang/crates.io-index)": "003j2hysdrkia435vxn38s1qs8cllrgk04l4aapb8hd0wci109mj",
+  "num-rational 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)": "0igg7jnhsxffy3qdvq30pv5h58a9a20h43s4qpxviyzi5zmzqsx2",
+  "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)": "1mnlmy35n734n9xlq0qkfbgzz33x09a1s4rfj30p1976p09b862v"
+}

@@ -43,12 +43,68 @@ let crateConfigs = {
         crateName = "id3";
         features = {};
       };
+
+      "pkg_numtest" = {
+        crateName = "numtest";
+        dependencies = {
+            "num" = "pkg_num";
+        };
+      };
+
+      "pkg_num_bigint" = {
+        crateName = "num-bigint";
+      };
+
+      "pkg_num" = {
+        crateName = "num";
+        dependencies = {
+            "num-bigint" = {
+                packageId = "pkg_num_bigint";
+                usesDefaultFeatures = false;
+                optional = true;
+            };
+        };
+        features = {
+            "default" = [ "std" ];
+            "std" = [ "num-bigint/std" ];
+        };
+      };
     };
     packageFeatures = packageId: features: {
         list = crate2nix.listOfPackageFeatures {inherit crateConfigs packageId features;};
         merged = crate2nix.mergePackageFeatures {inherit crateConfigs packageId features;};
       };
 in lib.runTests {
+  testNumDependencies = {
+    expr = packageFeatures "pkg_num" ["default"];
+    expected = {
+      list = [
+        { packageId = "pkg_num"; features = ["default" "num-bigint/std" "std"]; }
+        { packageId = "pkg_num_bigint"; features = ["std"]; }
+      ];
+      merged = {
+        "pkg_num" = ["default" "num-bigint/std" "std"];
+        "pkg_num_bigint" = ["std"];
+      };
+    };
+  };
+
+  testNumTestDependencies = {
+    expr = packageFeatures "pkg_numtest" ["default"];
+    expected = {
+      list = [
+        { packageId = "pkg_numtest"; features = ["default"]; }
+        { packageId = "pkg_num"; features = ["default" "num-bigint/std" "std"]; }
+        { packageId = "pkg_num_bigint"; features = ["std"]; }
+      ];
+      merged = {
+        "pkg_numtest" = ["default"];
+        "pkg_num" = ["default" "num-bigint/std" "std"];
+        "pkg_num_bigint" = ["std"];
+      };
+    };
+  };
+
   testTerminalPackageDependency = {
     expr = packageFeatures "pkg_id1" [];
     expected = {
