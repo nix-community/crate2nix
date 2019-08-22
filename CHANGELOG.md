@@ -1,6 +1,7 @@
 # 0.4.0 - 0.5.x (unreleased)
 
 * Fix #10 - Changing default for `-n`/`--nixpkgs-path` to `"<nixpkgs>"` so that it works by default on NixOS AND Mac OS.
+* Fix #11 - Adding optional dependencies if any of their features is enabled.
 
 # 0.3.1 - 0.4.0
 
