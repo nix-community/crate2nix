@@ -9,7 +9,7 @@ use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use std::str::FromStr;
 
-const DEFAULT_OUTPUT: &str = "./Cargo.toml";
+const DEFAULT_OUTPUT: &str = "./Cargo.nix";
 
 #[derive(Debug, StructOpt, Deserialize, Serialize)]
 #[structopt(
