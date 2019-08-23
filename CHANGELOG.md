@@ -1,4 +1,8 @@
-# 0.4.0 - 0.5.0
+# 0.5.0 - 0.5.1
+
+Don't use ´Cargo.toml´ but ´Cargo.nix´ as default output! Thank you, @tilpner!
+ 
+ # 0.4.0 - 0.5.0
 
 ## Upgrading
 
