@@ -1,26 +1,26 @@
 # crate2nix
 
-crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) crates 
+crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) crates
 using [cargo](https://crates.io/).
 
 [![Build Status](https://travis-ci.org/kolloch/crate2nix.svg?branch=master)](https://travis-ci.org/kolloch/crate2nix)
 
-**Same dependency tree as cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the 
+**Same dependency tree as cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the
 dependency tree from cargo. Therefore, it will use the exact same library versions as cargo and respect any locked down
 version in `Cargo.lock`.
 
 **Smart caching**: It uses smart crate by crate caching so that nix rebuilds exactly the crates that need to be rebuilt.
 Compare that to docker layers...
 
-**Nix ecosystem goodness**: You can use all things that make the nix/NixOS ecosystem great, e.g. distributed/remote builds, 
+**Nix ecosystem goodness**: You can use all things that make the nix/NixOS ecosystem great, e.g. distributed/remote builds,
 build minimal docker images, deploy your binary as a service to the the cloud with [NixOps](https://nixos.org/nixops/), ...
 
-**Out of the box support for libraries with non-rust dependencies**: It builds on top of the `buildRustCrate` 
+**Out of the box support for libraries with non-rust dependencies**: It builds on top of the `buildRustCrate`
 function from [NixOS](https://nixos.org/) so that native dependencies of
-many rust libraries are already correctly fetched when needed. If your library with native dependencies is not yet 
+many rust libraries are already correctly fetched when needed. If your library with native dependencies is not yet
 supported, you can create an overlay to add the needed configuration to the `defaultCrateOverrides`.
 
-**Easy to understand nix template**: The actual nix code is generated via `templates/build.nix.tera` so you can 
+**Easy to understand nix template**: The actual nix code is generated via `templates/build.nix.tera` so you can
 fix/improve the nix code without knowing rust if all the data is already there.
 
 Here is a simple example which uses all the defaults and will generate a `Cargo.nix` file:
@@ -46,7 +46,7 @@ Use `crate2nix help` to show all commands and options.
 
 NOTE: It is only tested on Linux for now!
 
-If you are not running, install a recent version of nix by runnin `curl https://nixos.org/nix/install | sh` or following
+If you are not running, install a recent version of nix by running `curl https://nixos.org/nix/install | sh` or following
 the instructions on [https://nixos.org/nix/](https://nixos.org/nix/).
 
 Then either
@@ -112,44 +112,44 @@ Look at the [./Cargo.nix](./Cargo.nix) file of this project for a non-trivial ex
 ## Using build files (single binaries)
 
 If your `Cargo.nix` was generated for a single binary crate (i.e. workspace) then the derivation that builds your binary
-can be accessed via the `rootCrate.binary` attribute. Use this command to build it and make the result available in the result 
-directory: 
+can be accessed via the `rootCrate.build` attribute. Use this command to build it and make the result available in the result
+directory:
 
 ```bash
 your_crate_name="super_duper"
-nix build -f Cargo.nix rootCrate.binary
+nix build -f Cargo.nix rootCrate.build
 ./result/bin/${your_crate_name}
-```  
+```
 
-Within a nix file (e.g. your manually written `default.nix`), you can access the 
-derivation like this: 
+Within a nix file (e.g. your manually written `default.nix`), you can access the
+derivation like this:
 
 ```nix
 let cargo_nix = callPackage ./Cargo.nix {};
-in cargo_nix.rootCrate.binary
+in cargo_nix.rootCrate.build
 ```
 
 ## Using build files (workspaces)
 
 If your `Cargo.nix` was generated for a workspace (i.e. not a single binary) then the derivation that builds your binary
-CANNOT be accessed via the `rootCrate` attribute. There is no single root_crate.
+CANNOT be accessed via the `rootCrate` attribute. There is no single root crate.
 
-Instead, you can conveniently access the derivations of all your workspace members through the `workspaceMembers` 
-attribute. Use this command to build one of the workspace members and make the result available in the result 
-directory: 
+Instead, you can conveniently access the derivations of all your workspace members through the `workspaceMembers`
+attribute. Use this command to build one of the workspace members and make the result available in the result
+directory:
 
 ```bash
 your_crate_name="super_duper"
-nix build -f Cargo.nix workspaceMembers.${your_crate_name}.binary
+nix build -f Cargo.nix workspaceMembers.${your_crate_name}.build
 ./result/bin/${your_crate_name}
-```  
+```
 
-Within a nix file (e.g. your manually written `default.nix`), you can access the 
-derivation like this: 
+Within a nix file (e.g. your manually written `default.nix`), you can access the
+derivation like this:
 
 ```nix
 let cargo_nix = callPackage ./Cargo.nix {};
-in cargo_nix.workspaceMembers."${your_crate_name}".binary
+in cargo_nix.workspaceMembers."${your_crate_name}".build
 ```
 
 ## Dynamic feature resolution
@@ -158,11 +158,11 @@ The enabled features for a crate now are resolved at build time! That means you 
 
 1. There is a "rootFeatures" argument to the generated build file which you can override when calling
    it from the command line:
-   
+
       ```bash
-      nix build -f ....nix --arg rootFeatures '["default" "other"]' rootCrate.build 
+      nix build -f ....nix --arg rootFeatures '["default" "other"]' rootCrate.build
       ```
-      
+
 2. Or when importing the build file with "callPackage":
 
       ```nix
@@ -170,7 +170,7 @@ The enabled features for a crate now are resolved at build time! That means you 
           crate2nix = cargo_nix.rootCrate.build;
       in ...;
       ```
-        
+
 3. Or by overriding them on the rootCrate or workspaceMembers:
 
       ```nix
@@ -180,25 +180,25 @@ The enabled features for a crate now are resolved at build time! That means you 
       ```
 ## Known Restrictions
 
-* ~~Before 0.4.x: Only *default crate features* are supported. It should be easy to support a different feature set at 
-  build generation time since we can simply pass this set to `cargo metadata`. Feature selection during build time is 
+* ~~Before 0.4.x: Only *default crate features* are supported. It should be easy to support a different feature set at
+  build generation time since we can simply pass this set to `cargo metadata`. Feature selection during build time is
   out of scope for now.~~
 * No support for building and running tests, see [nixpkgs, issue 59177](https://github.com/NixOS/nixpkgs/issues/59177).
-* [Renamed crates](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml) 
+* [Renamed crates](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml)
   with an explicit `package` name don't work yet.
 * Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
   ID. They are not interpreted as paths but maybe you do not want to expose local paths in there...
-* It does translates target strings to nix expressions. The support should be reasonable but probably not complete - please 
-  let me know if you hit problems. ~~Before 0.2.x: Filters all dependencies for the *hard-coded "Linux x86_64" target 
-  platform*. Again, it should be quite easy to support more platforms. To do so completely and at build time (vs build 
+* It does translates target strings to nix expressions. The support should be reasonable but probably not complete - please
+  let me know if you hit problems. ~~Before 0.2.x: Filters all dependencies for the *hard-coded "Linux x86_64" target
+  platform*. Again, it should be quite easy to support more platforms. To do so completely and at build time (vs build
   generation time) might be more involved.~~
-* Git sources are now also supported. ~~Before 0.3.x: Only *local sources* and *crates io* supported. Again, just 
-  requires some work to resolve.~~ 
+* Git sources are now also supported. ~~Before 0.3.x: Only *local sources* and *crates io* supported. Again, just
+  requires some work to resolve.~~
 * ~~Before 0.2.x: No support for workspaces.~~
 
 ## Feedback: What is needed for a 1.0 release?
 
-I would really appreciate your thoughts. Please add comments to issue 
+I would really appreciate your thoughts. Please add comments to issue
 [#8](https://github.com/kolloch/crate2nix/issues/8).
 
 ## Runtime Dependencies
@@ -214,9 +214,9 @@ and bug fixes.
 If you want to hack on this, it is useful to know that build file generation is broken up into multiple phases:
 
 1. **cargo metadata**: Calling `cargo metadata` via the `cargo_metadata` crate.
-2. **indexing metadata**: Indexing the metadata by package ID to enable easy joining of "Node" and "Package" 
+2. **indexing metadata**: Indexing the metadata by package ID to enable easy joining of "Node" and "Package"
   information, resulting in `metadata::IndexedMetadata`.
-3. **resolving**: Using the indexed metadata to actually resolve the dependencies and join all needed build information 
+3. **resolving**: Using the indexed metadata to actually resolve the dependencies and join all needed build information
   into `resolve::CrateDerivation`.
 4. **pre-fetching**: Pre-fetching crates.io packages to determine their sha256, see `prefetch` module.
 5. **rendering**: Rendering the data via the `build.nix.tera` template, see `render` module.
@@ -224,7 +224,7 @@ If you want to hack on this, it is useful to know that build file generation is 
 ## Related Projects
 
 * [carnix](https://nest.pijul.com/pmeunier/carnix:master) is already widely used in NixOS itself, yet it failed to
-  generate correct builds for my rust projects. After some attempts to fix that, I gave up. That said, big kudos for 
+  generate correct builds for my rust projects. After some attempts to fix that, I gave up. That said, big kudos for
   all the work on buildRustCrate and showing the way!
 * [cargo-raze](https://github.com/google/cargo-raze) generates `BUILD` files for bazel.
 
