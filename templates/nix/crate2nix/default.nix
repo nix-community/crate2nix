@@ -84,7 +84,12 @@ rec {
                 dependencyDerivations buildByPackageId features (crateConfig.dependencies or {});
               buildDependencies =
                 dependencyDerivations buildByPackageId features (crateConfig.buildDependencies or {});
-          in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies; });
+              dependenciesWithRenames =
+                lib.filterAttrs (n: v: v ? "rename")
+                  (crateConfig.buildDependencies or {} // crateConfig.dependencies or {});
+              crateRenames =
+                lib.mapAttrs (name: value: value.rename or name) dependenciesWithRenames;
+          in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies crateRenames; });
     in buildByPackageId packageId;
 
   /* Returns the actual derivations for the given dependencies. */

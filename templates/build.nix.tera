@@ -124,9 +124,13 @@ rec {
         {%- if crate.dependencies|length > 0 %}
         dependencies = {
         {%- for dependency in crate.dependencies %}
-          {%- if dependency.target or dependency.optional or not dependency.uses_default_features or dependency.features %}
+          {%- if dependency.target or dependency.optional or not dependency.uses_default_features or
+            dependency.features or dependency.rename %}
           {{dependency.name}} = {
             packageId = {{dependency.package_id}};
+            {%- if dependency.rename %}
+            rename = {{dependency.rename}};
+            {%- endif %}
             {%- if dependency.optional %}
             optional = true;
             {%- endif -%}

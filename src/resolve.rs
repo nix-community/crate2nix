@@ -345,6 +345,7 @@ impl<'a> ResolvedDependencies<'a> {
                     .get(&normalized_package_name)
                     .map(|dependency| ResolvedDependency {
                         name: dependency.name.clone(),
+                        rename: dependency.rename.clone(),
                         package_id: d.id.clone(),
                         target: dependency
                             .target
@@ -362,6 +363,8 @@ impl<'a> ResolvedDependencies<'a> {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ResolvedDependency {
     pub name: String,
+    /// New name for the dependency if it is renamed.
+    pub rename: Option<String>,
     pub package_id: PackageId,
     /// The cfg expression for conditionally enabling the dependency (if any).
     /// Can also be a target "triplet".

@@ -130,7 +130,6 @@ fn build_and_run_bin_with_lib_git_dep() {
 }
 
 #[test]
-#[ignore]
 fn build_and_run_bin_with_rerenamed_lib_dep() {
     let output = build_and_run(
         "sample_projects/bin_with_rerenamed_lib_dep/Cargo.toml",
@@ -140,7 +139,7 @@ fn build_and_run_bin_with_rerenamed_lib_dep() {
         &["default"],
     );
 
-    assert_eq!("Hello world from bin_with_rerenamed_lib_dep!\n", &output);
+    assert_eq!("Hello, bin_with_rerenamed_lib_dep!\n", &output);
 }
 
 #[test]

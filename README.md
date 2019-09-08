@@ -184,8 +184,8 @@ The enabled features for a crate now are resolved at build time! That means you 
   build generation time since we can simply pass this set to `cargo metadata`. Feature selection during build time is
   out of scope for now.~~
 * No support for building and running tests, see [nixpkgs, issue 59177](https://github.com/NixOS/nixpkgs/issues/59177).
-* [Renamed crates](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml)
-  with an explicit `package` name don't work yet.
+* ~~Before 0.6.x: [Renamed crates](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml)
+  with an explicit `package` name don't work yet.~~
 * Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
   ID. They are not interpreted as paths but maybe you do not want to expose local paths in there...
 * It does translates target strings to nix expressions. The support should be reasonable but probably not complete - please
