@@ -121,7 +121,8 @@ impl BuildInfo {
 /// Call `cargo metadata` and return result.
 fn cargo_metadata(config: &GenerateConfig) -> Result<Metadata, Error> {
     let mut cmd = cargo_metadata::MetadataCommand::new();
-    cmd.manifest_path(&config.cargo_toml);
+    cmd.manifest_path(&config.cargo_toml)
+        .other_options(&["--locked".into()]);
     cmd.exec().map_err(|e| {
         format_err!(
             "while retrieving metadata about {}: {}",

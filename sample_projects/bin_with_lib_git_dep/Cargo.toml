@@ -5,4 +5,4 @@ authors = ["Peter Kolloch <info@eigenvalue.net>"]
 edition = "2018"
 
 [dependencies]
-"crate2nix" = { git = "https://github.com/kolloch/crate2nix" }
+"crate2nix" = { git = "https://github.com/kolloch/crate2nix", rev="de2caabc7fece3d7d6cf04e8b2226a7638c9b721" }

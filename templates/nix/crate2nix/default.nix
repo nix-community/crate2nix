@@ -61,7 +61,8 @@ rec {
       builtins.match "^\\.sw[a-z]$$" baseName != null ||
       builtins.match "^\\..*\\.sw[a-z]$$" baseName != null ||
       lib.hasSuffix ".tmp" baseName ||
-      lib.hasSuffix ".bak" baseName
+      lib.hasSuffix ".bak" baseName ||
+      baseName == "tests.nix"
     );
 
   /* A restricted overridable version of  buildRustCrateWithFeaturesImpl. */
