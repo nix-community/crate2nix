@@ -1,3 +1,11 @@
+# 0.5.1 - 0.6.0
+
+* Issue #22 - Support renamed crates. Fixed in `buildRustCrate` in nixpkgs and in 
+  `crate2nix` by PR #24 @danieldk, thanks a lot!
+  This is especially awesome because the popular `rand` crate recently made
+  use of the "renamed crates" feature and therefore could not be build by 
+  `buildRustCrate`/`crate2nix` anymore.
+
 # 0.5.0 - 0.5.1
 
 Don't use ´Cargo.toml´ but ´Cargo.nix´ as default output! Thank you, @tilpner!
