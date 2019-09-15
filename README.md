@@ -180,6 +180,9 @@ The enabled features for a crate now are resolved at build time! That means you 
       ```
 ## Known Restrictions
 
+If you feel limited by these restrictions, please do not hesitate to file an issue! That 
+gives me a feeling of what is worth working on.
+
 * ~~Before 0.4.x: Only *default crate features* are supported. It should be easy to support a different feature set at
   build generation time since we can simply pass this set to `cargo metadata`. Feature selection during build time is
   out of scope for now.~~
