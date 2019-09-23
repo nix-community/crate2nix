@@ -268,7 +268,10 @@ impl ResolvedSource {
         } else {
             let path = diff_paths(package_path.as_ref(), &output_build_file_directory)
                 .unwrap_or_else(|| package_path.as_ref().to_path_buf());
-            if path.starts_with("../") {
+            if path == PathBuf::from("../") {
+                path.join(PathBuf::from("."))
+            }
+            else if path.starts_with("../") {
                 path
             } else {
                 PathBuf::from("./").join(path)
