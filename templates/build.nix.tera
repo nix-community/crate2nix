@@ -187,6 +187,10 @@ rec {
         {%- if crate.resolved_default_features|length > 0 %}
         resolvedDefaultFeatures = [ {% for feature in crate.resolved_default_features %}{{feature}} {% endfor %}];
         {%- endif %}
+
+        {%- if crate.types|length > 0 %}
+        type = [ {% for build_type in crate.types %}{{build_type}} {% endfor %}];
+        {%- endif %}
       };
   {%- endfor %}
   };

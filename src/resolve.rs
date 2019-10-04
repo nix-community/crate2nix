@@ -44,6 +44,9 @@ pub struct CrateDerivation {
     pub proc_macro: bool,
     // This derivation builds the root crate or a workspace member.
     pub is_root_or_workspace_member: bool,
+    // The types of targets that should be built. These types are from the following set:
+    // [bin, lib, rlib, dylib, cdylib, staticlib, proc-macro]
+    pub types: Vec<String>,
 }
 
 impl CrateDerivation {
@@ -95,6 +98,28 @@ impl CrateDerivation {
             .chain(metadata.workspace_members.iter())
             .any(|pkg_id| *pkg_id == package.id);
 
+        let crate_type = package
+            .targets
+            .iter()
+            .fold(Vec::<String>::new(), |types_vec, target| {
+                target
+                    .crate_types
+                    .iter()
+                    .fold(types_vec, |mut types_vec, build_type| {
+                        if (build_type == "dylib"
+                            || build_type == "staticlib"
+                            || build_type == "cdylib"
+                            || build_type == "lib")
+                            && !types_vec.contains(build_type)
+                        {
+                            types_vec.push(build_type.clone());
+                        }
+                        types_vec
+                    })
+            });
+
+        // list.iter().any(|v| v == &x)
+
         Ok(CrateDerivation {
             crate_name: package.name.clone(),
             edition: package.edition.clone(),
@@ -119,6 +144,7 @@ impl CrateDerivation {
             proc_macro,
             has_bin,
             is_root_or_workspace_member,
+            types: crate_type,
         })
     }
 }
