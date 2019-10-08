@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-cargo run -- "generate" "-n" "./nixpkgs.nix" "-o" "./Cargo.nix"
+echo "================ Regenerating ./Cargo.nix =================="
 
-set -x
+cargo run -- "generate" "-n" "./nixpkgs.nix" "-o" "./Cargo.nix"
 
 nix eval --json -f ./tests.nix buildTestConfigs |\
  jq -r .[].pregeneratedBuild |\
@@ -13,5 +13,8 @@ nix eval --json -f ./tests.nix buildTestConfigs |\
 
    dir=$(dirname "$cargo_nix")
 
-   cargo run -- "generate" -f "$dir/Cargo.toml" -o "$cargo_nix"
+   echo "=============== Regenerating ${cargo_nix} ================"
+
+   cargo run -- "generate" -f "$dir/Cargo.toml" -o "$cargo_nix" ||\
+     { echo "Regeneration of ${cargo_nix} failed." >&2 ; exit 1; }
  done

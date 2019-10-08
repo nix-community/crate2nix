@@ -36,28 +36,6 @@ let crate2nix = pkgs.callPackage ./default.nix {};
               }
             '';
           };
-     unimplemented = {
-          sample_project_bin_with_rerenamed_lib_dep = buildTest {
-             name = "sample_project_bin_with_rerenamed_lib_dep";
-             src = ./sample_projects/bin_with_rerenamed_lib_dep;
-             expectedOutput = "Hello, bin_with_default_features, do_not_activate!";
-          };
-
-          sample_project_numtest = buildTest {
-            name = "sample_project_numtest";
-            src = ./sample_projects/numtest;
-            expectedOutput = "Hello, bin_with_default_features, do_not_activate!";
-          };
-     };
-
-     # Don't work in sandbox
-     ignored = {
-         sample_project_with_problematic_crates = buildTest {
-            name = "sample_project_with_problematic_crates";
-            src = ./sample_projects/with_problematic_crates;
-            expectedOutput = "Hello, bin_with_default_features, do_not_activate!";
-         };
-     };
 
      buildTestConfigs = [
          {
@@ -102,13 +80,42 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
 
          {
+            name = "bin_with_git_branch_dep";
+            src = ./sample_projects/bin_with_git_branch_dep;
+            expectedOutput = "Hello world from bin_with_git_branch_dep!";
+            pregeneratedBuild = "sample_projects/bin_with_git_branch_dep/Cargo.nix";
+         }
+
+         {
+            name = "bin_with_rerenamed_lib_dep";
+            src = ./sample_projects/bin_with_rerenamed_lib_dep;
+            expectedOutput = "Hello, bin_with_rerenamed_lib_dep!";
+            pregeneratedBuild = "sample_projects/bin_with_rerenamed_lib_dep/Cargo.nix";
+         }
+
+         {
             name = "sample_workspace";
             src = ./sample_workspace;
             expectedOutput = "Hello, with_tera!";
             pregeneratedBuild = "sample_workspace/Cargo.nix";
             derivationAttrPath = [ "workspaceMembers" "with_tera" ];
          }
+
+         {
+            name = "sample_project_numtest";
+            src = ./sample_projects/numtest;
+            pregeneratedBuild = "sample_projects/numtest/Cargo.nix";
+            expectedOutput = "Hello from numtest, world!";
+         }
+
+         {
+            name = "sample_project_with_problematic_crates";
+            src = ./sample_projects/with_problematic_crates;
+            pregeneratedBuild = "sample_projects/with_problematic_crates/Cargo.nix";
+            expectedOutput = "Hello, with_problematic_crates!";
+         }
      ];
+
    buildTestDerivationAttrSet = let buildTestDerivations =
                    builtins.map
                        (c: {name = c.name;  value = buildTest c;})
@@ -155,10 +162,27 @@ in {
         '';
       };
 
+     sample_workspace_with_deprecated_alias =
+        let bin_build = (pkgs.callPackage ./sample_workspace/Cargo.nix {})
+            .workspace_members.with_tera;
+        in pkgs.stdenv.mkDerivation {
+            name = "test_sample_workspace_bin_with_deprecated_alias";
+            phases = [ "buildPhase" ];
+            buildInputs = [ bin_build ];
+            buildPhase = ''
+              mkdir -p $out
+              with_tera >$out/test.log
+              echo grepping
+              grep 'Hello, with_tera!' $out/test.log || {
+                echo "Unexpected output: "
+                cat $out/test.log
+                exit 1
+              }
+        '';
+      };
+
     inherit buildTestConfigs;
     # TODO: File bug for cargo that it does an index fetch if fetching git package
     # even when lock file already exists
-    # TODO: Easy way to regenerate all pregenerated builds.
-    # TODO: Expand pregeneration test to cover those.
     # TODO: Make cargo proposal for modular builds.
 } // buildTestDerivationAttrSet

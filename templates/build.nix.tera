@@ -90,7 +90,7 @@ rec {
           url = {{crate.source.Git.url}};
           rev = {{crate.source.Git.rev}};
           {%- if crate.source.Git.ref %}
-          ref = {{ crate.source.Git.ref }}
+          ref = {{ crate.source.Git.ref }};
           {%- endif %}
         };
         {%- else %}
