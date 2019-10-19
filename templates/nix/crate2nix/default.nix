@@ -68,7 +68,9 @@ rec {
   /* A restricted overridable version of  buildRustCrateWithFeaturesImpl. */
   buildRustCrateWithFeatures = {packageId, features}:
     lib.makeOverridable
-      ({features}: buildRustCrateWithFeaturesImpl {inherit packageId features;})
+      (args@{features, ...}:
+        let buildRustCrateArgs = lib.filterAttrs (n: _: n != "features") args;
+        in (buildRustCrateWithFeaturesImpl {inherit packageId features;}).override buildRustCrateArgs)
       { inherit features; };
 
   /* Returns a buildRustCrate derivation for the given packageId and features. */
