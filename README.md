@@ -218,6 +218,8 @@ If you change `crate2nix` such that it will produce a different output, you may 
 Cargo.toml files. Not all `Cargo.toml` files can be generated during test time because crate2nix does not
 work in sandboxes in some cases where cargo needs to write to lock files (I should file bugs for this).
 
+The `regenerate_cargo_nix.sh` should do what you want. Additional diffs in packageIds are, unfortunately, expected.
+
 ## Project Overview / Terminology
 
 If you want to hack on this, it is useful to know that build file generation is broken up into multiple phases:
