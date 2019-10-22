@@ -2,7 +2,8 @@
 
 echo "================ Regenerating ./Cargo.nix =================="
 
-cargo run -- "generate" "-n" "./nixpkgs.nix" "-o" "./Cargo.nix"
+nix-shell --run 'crate2nix "generate" "-n" "./nixpkgs.nix" "-o" "./Cargo.nix"'  ||\
+     { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
 nix eval --json -f ./tests.nix buildTestConfigs |\
  jq -r .[].pregeneratedBuild |\
@@ -15,6 +16,6 @@ nix eval --json -f ./tests.nix buildTestConfigs |\
 
    echo "=============== Regenerating ${cargo_nix} ================"
 
-   cargo run -- "generate" -f "$dir/Cargo.toml" -o "$cargo_nix" ||\
+   nix-shell --run "crate2nix generate -f \"$dir/Cargo.toml\" -o \"$cargo_nix\"" ||\
      { echo "Regeneration of ${cargo_nix} failed." >&2 ; exit 1; }
  done
