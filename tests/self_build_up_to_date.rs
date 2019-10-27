@@ -1,12 +1,12 @@
+use colored_diff::PrettyDifference;
 use crate2nix::{nix_build::dump_with_lines, render, BuildInfo, GenerateConfig, GenerateInfo};
-use std::path::{PathBuf, Path};
-use std::process::Command;
-use failure::{Error, format_err, bail};
+use failure::{bail, format_err, Error};
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use std::io::Write;
+use std::path::{Path, PathBuf};
+use std::process::Command;
 use std::str::FromStr;
-use colored_diff::PrettyDifference;
 
 #[test]
 fn self_up_to_date() {
@@ -25,7 +25,7 @@ fn self_up_to_date() {
             crate_hashes_json: PathBuf::from("./crate-hashes.json"),
         },
     )
-        .unwrap();
+    .unwrap();
     let rerendered_default_nix = render::render_build_file(&metadata).unwrap();
     let actual_default_nix = std::fs::read_to_string("./Cargo.nix").unwrap();
     assert_eq!(actual_default_nix, rerendered_default_nix);
@@ -43,8 +43,8 @@ fn pregenerated_up_to_date() {
     for test_config in test_configs {
         match test_config.pregenerated_build {
             Some(pregenerated_build) => {
-                let cargo_nix =
-                    PathBuf::from_str(&pregenerated_build).expect("pregeneratedBuild must be valid path");
+                let cargo_nix = PathBuf::from_str(&pregenerated_build)
+                    .expect("pregeneratedBuild must be valid path");
                 assert_up_to_date(&cargo_nix.parent().expect("Cargo.nix must be in directory"));
             }
             None => println!("Skipping not pregenerated {}", test_config.name),
@@ -66,28 +66,33 @@ fn assert_up_to_date(project_dir: &Path) {
     };
     let metadata = BuildInfo::for_config(
         &GenerateInfo {
-            crate2nix_arguments:
-            vec!["generate",
-                 "-f", config.cargo_toml.to_str().unwrap(),
-                 "-o", output.to_str().unwrap()]
-                .iter()
-                .map(|s| s.to_string())
-                .collect(),
+            crate2nix_arguments: vec![
+                "generate",
+                "-f",
+                config.cargo_toml.to_str().unwrap(),
+                "-o",
+                output.to_str().unwrap(),
+            ]
+            .iter()
+            .map(|s| s.to_string())
+            .collect(),
             ..GenerateInfo::default()
         },
         &config,
     )
-        .unwrap();
+    .unwrap();
     let rerendered_default_nix = render::render_build_file(&metadata).unwrap();
     let actual_default_nix = std::fs::read_to_string(&config.output).unwrap();
 
-    assert_eq!(actual_default_nix,
-               rerendered_default_nix,
-               "Pregenerated build files differ, please rerun ./regenerate_cargo_nix.sh.\n{}",
-               PrettyDifference {
-                   actual: &actual_default_nix,
-                   expected: &rerendered_default_nix
-               });
+    assert_eq!(
+        actual_default_nix,
+        rerendered_default_nix,
+        "Pregenerated build files differ, please rerun ./regenerate_cargo_nix.sh.\n{}",
+        PrettyDifference {
+            actual: &actual_default_nix,
+            expected: &rerendered_default_nix
+        }
+    );
 
     if rerendered_default_nix.contains(" /home/") || rerendered_default_nix.contains(".cargo") {
         dump_with_lines("./Cargo.nix").unwrap();
@@ -104,13 +109,7 @@ struct TestConfig {
 
 fn get_test_configs() -> Result<Vec<TestConfig>, Error> {
     let output = Command::new("nix")
-        .args(&[
-            "eval",
-            "--json",
-            "-f",
-            "./tests.nix",
-            "buildTestConfigs",
-        ])
+        .args(&["eval", "--json", "-f", "./tests.nix", "buildTestConfigs"])
         .output()
         .map_err(|e| format_err!("while spawning nix: {}", e))?;
     if !output.status.success() {
