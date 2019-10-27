@@ -70,12 +70,13 @@ rec {
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
-        dependencies = {
-          "hello_world_lib" = {
+        dependencies = [
+          {
+            name = "hello_world_lib";
             packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib)";
             rename = "new_name_hello_world_lib";
-          };
-        };
+          }
+        ];
         features = {
         };
       };
@@ -175,14 +176,14 @@ rec {
           let features = mergedFeatures."${packageId}" or [];
               crateConfig = lib.filterAttrs (n: v: n != "resolvedDefaultFeatures") crateConfigs."${packageId}";
               dependencies =
-                dependencyDerivations buildByPackageId features (crateConfig.dependencies or {});
+                dependencyDerivations buildByPackageId features (crateConfig.dependencies or []);
               buildDependencies =
-                dependencyDerivations buildByPackageId features (crateConfig.buildDependencies or {});
+                dependencyDerivations buildByPackageId features (crateConfig.buildDependencies or []);
               dependenciesWithRenames =
-                lib.filterAttrs (n: v: v ? "rename")
-                  (crateConfig.buildDependencies or {} // crateConfig.dependencies or {});
+                lib.filter (d: d ? "rename")
+                  (crateConfig.buildDependencies or [] ++ crateConfig.dependencies or []);
               crateRenames =
-                lib.mapAttrs (name: value: value.rename or name) dependenciesWithRenames;
+                builtins.listToAttrs (map (d: { name = d.name; value = d.rename; }) dependenciesWithRenames);
           in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies crateRenames; });
     in buildByPackageId packageId;
 
@@ -190,12 +191,12 @@ rec {
   dependencyDerivations = buildByPackageId: features: dependencies:
     assert (builtins.isFunction buildByPackageId);
     assert (builtins.isList features);
-    assert (builtins.isAttrs dependencies);
+    assert (builtins.isList dependencies);
 
     let enabledDependencies = filterEnabledDependencies dependencies features;
-        depDerivation = dependencyName: dependency:
+        depDerivation = dependency:
         buildByPackageId (dependencyPackageId dependency);
-    in builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
+    in map depDerivation enabledDependencies;
 
   /* Returns differences between cargo default features and crate2nix default features.
    *
@@ -246,17 +247,16 @@ rec {
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
         expandedFeatures = expandFeatures (crateConfig.features or {}) features;
 
-        depWithResolvedFeatures = dependencyName: dependency:
+        depWithResolvedFeatures = dependency:
           let packageId = dependencyPackageId dependency;
-              features = dependencyFeatures expandedFeatures dependencyName dependency;
+              features = dependencyFeatures expandedFeatures dependency.name dependency;
           in { inherit packageId features; };
 
         resolveDependencies = path: dependencies:
-          assert (builtins.isAttrs dependencies);
+          assert (builtins.isList dependencies);
 
           let enabledDependencies = filterEnabledDependencies dependencies expandedFeatures;
-              directDependencies =
-                builtins.attrValues (lib.mapAttrs depWithResolvedFeatures enabledDependencies);
+              directDependencies = map depWithResolvedFeatures enabledDependencies;
           in builtins.concatMap
             ({packageId, features}: listOfPackageFeatures {
               # This is purely for debugging.
@@ -267,22 +267,22 @@ rec {
 
         resolvedDependencies = builtins.concatLists
           [
-            (resolveDependencies "dependencies" (crateConfig.dependencies or {}))
-            (resolveDependencies "buildDependencies" (crateConfig.buildDependencies or {}))
+            (resolveDependencies "dependencies" (crateConfig.dependencies or []))
+            (resolveDependencies "buildDependencies" (crateConfig.buildDependencies or []))
           ];
 
     in [{inherit packageId; features = expandedFeatures;}] ++ resolvedDependencies;
 
   /* Returns the enabled dependencies given the enabled features. */
   filterEnabledDependencies = dependencies: features:
-    assert (builtins.isAttrs dependencies);
+    assert (builtins.isList dependencies);
     assert (builtins.isList features);
 
-    lib.filterAttrs
-      (depName: dep:
+    lib.filter
+      (dep:
         builtins.isString dep
         || dep.target or true
-        && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency depName) features))
+        && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep.name) features))
       dependencies;
 
   /* Returns whether the given feature should enable the given dependency. */
