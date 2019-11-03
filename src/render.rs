@@ -59,23 +59,39 @@ fn cfg_to_nix_expr_filter(
     _args: &HashMap<String, tera::Value>,
 ) -> tera::Result<tera::Value> {
     match value {
-        tera::Value::String(key) => {
-            if key.starts_with("cfg(") && key.ends_with(')') {
-                let cfg = &key[4..key.len() - 1];
+        tera::Value::Array(keys) => {
+            let mut expressions = Vec::new();
+            for key in keys {
+                if let tera::Value::String(key) = key {
+                    if key.starts_with("cfg(") && key.ends_with(')') {
+                        let cfg = &key[4..key.len() - 1];
 
-                let expr = CfgExpr::from_str(&cfg).map_err(|e| {
-                    tera::Error::msg(format!(
-                        "cfg_to_nix_expr_filter: Could not parse '{}': {}",
-                        cfg, e
-                    ))
-                })?;
-                Ok(tera::Value::String(cfg_to_nix_expr(&expr)))
-            } else {
-                // It is hopefully a target "triplet".
-                let condition =
-                    format!("(stdenv.hostPlatform.config == {})", escape_nix_string(key));
-                Ok(tera::Value::String(condition))
+                        let expr = CfgExpr::from_str(&cfg).map_err(|e| {
+                            tera::Error::msg(format!(
+                                "cfg_to_nix_expr_filter: Could not parse '{}': {}",
+                                cfg, e
+                            ))
+                        })?;
+                        expressions.push(expr);
+                    } else {
+                        // It is hopefully a target "triplet".
+                        let condition =
+                            format!("(stdenv.hostPlatform.config == {})", escape_nix_string(key));
+                        return Ok(tera::Value::String(condition))
+                    }
+                }
+                else {
+                    return Err(tera::Error::msg(format!("cfg_to_nix_expr_filter: Expected string, got {:?}", value)));
+                }
             }
+
+            // Avoid parentheses around single expressions
+            if expressions.len() == 1 {
+                Ok(tera::Value::String(cfg_to_nix_expr(&expressions[0])))
+            } else {
+                Ok(tera::Value::String(cfg_to_nix_expr(&CfgExpr::Any(expressions))))
+            }
+
         }
         _ => Err(tera::Error::msg(format!(
             "cfg_to_nix_expr_filter: Expected string, got {:?}",

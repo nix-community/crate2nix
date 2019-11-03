@@ -127,7 +127,7 @@ rec {
         {%- if crate.dependencies|length > 0 %}
         dependencies = {
         {%- for dependency in crate.dependencies %}
-          {%- if dependency.target or dependency.optional or not dependency.uses_default_features or
+          {%- if dependency.targets|length > 0 or dependency.optional or not dependency.uses_default_features or
             dependency.features or dependency.rename %}
           {{dependency.name}} = {
             packageId = {{dependency.package_id}};
@@ -140,8 +140,8 @@ rec {
             {%- if not dependency.uses_default_features %}
             usesDefaultFeatures = false;
             {%- endif -%}
-            {%- if dependency.target %}
-            target = {{dependency.target | safe | cfg_to_nix_expr}};
+            {%- if dependency.targets|length > 0 %}
+            target = {{dependency.targets | safe | cfg_to_nix_expr}};
             {%- endif %}
             {%- if dependency.features %}
             features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];

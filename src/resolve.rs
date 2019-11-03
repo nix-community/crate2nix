@@ -342,29 +342,36 @@ impl<'a> ResolvedDependencies<'a> {
             package_name.replace('-', "_")
         }
 
-        let names: HashMap<String, &&Dependency> = self
-            .dependencies
-            .iter()
-            .filter(|d| filter(**d))
-            .map(|d| (normalize_package_name(&d.name), d))
-            .collect();
+
+        let mut names: HashMap<String, Vec<&&Dependency>> = HashMap::new();
+        for d in self.dependencies.iter().filter(|d| filter(d)) {
+            let normalized_name = normalize_package_name(&d.name);
+            names.entry(normalized_name)
+                .and_modify(|ds| ds.push(&d))
+                .or_insert_with(|| vec![&d]);
+        }
+
         self.packages
             .iter()
             .flat_map(|d| {
                 let normalized_package_name = normalize_package_name(&d.name);
                 names
                     .get(&normalized_package_name)
-                    .map(|dependency| ResolvedDependency {
-                        name: dependency.name.clone(),
-                        rename: dependency.rename.clone(),
-                        package_id: d.id.clone(),
-                        target: dependency
-                            .target
-                            .as_ref()
-                            .map(std::string::ToString::to_string),
-                        optional: dependency.optional,
-                        uses_default_features: dependency.uses_default_features,
-                        features: dependency.features.clone(),
+                    .map(|ds| {
+                        let dependency = ds[0];
+                        let targets = ds.iter()
+                                .filter(|d| d.target.is_some())
+                                .map(|d| d.target.as_ref().unwrap().to_string())
+                                .collect::<Vec<String>>();
+                        ResolvedDependency {
+                            name: dependency.name.clone(),
+                            rename: dependency.rename.clone(),
+                            package_id: d.id.clone(),
+                            targets,
+                            optional: dependency.optional,
+                            uses_default_features: dependency.uses_default_features,
+                            features: dependency.features.clone(),
+                        }
                     })
             })
             .collect()
@@ -377,9 +384,9 @@ pub struct ResolvedDependency {
     /// New name for the dependency if it is renamed.
     pub rename: Option<String>,
     pub package_id: PackageId,
-    /// The cfg expression for conditionally enabling the dependency (if any).
+    /// The cfg expressions for conditionally enabling the dependency (if any).
     /// Can also be a target "triplet".
-    pub target: Option<String>,
+    pub targets: Vec<String>,
     /// Whether this dependency is optional and thus needs to be enabled via a feature.
     pub optional: bool,
     /// Whether the crate uses this dependency with default features enabled.
