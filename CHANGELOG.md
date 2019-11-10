@@ -23,7 +23,7 @@
    Many thanks to @Profpatsch for pointing to the problem and analyzing it.
 * Issue #43 - Support conditional dependencies using "test" configuration:
 
-  ```nix
+  ```toml
   [target.'cfg(test)'.dependencies]
   tracing = { version = "0.1.5", features = ["log"] }
   ```
