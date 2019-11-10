@@ -22,5 +22,17 @@
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs-channels/archive/7827d3f4497ed722fedca57fd4d5ca1a65c38256.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs-mozilla": {
+        "branch": "master",
+        "description": "mozilla related nixpkgs (extends nixos/nixpkgs repo)",
+        "homepage": null,
+        "owner": "mozilla",
+        "repo": "nixpkgs-mozilla",
+        "rev": "d46240e8755d91bc36c0c38621af72bf5c489e13",
+        "sha256": "0icws1cbdscic8s8lx292chvh3fkkbjp571j89lmmha7vl2n71jg",
+        "type": "tarball",
+        "url": "https://github.com/mozilla/nixpkgs-mozilla/archive/d46240e8755d91bc36c0c38621af72bf5c489e13.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
