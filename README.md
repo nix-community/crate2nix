@@ -53,14 +53,14 @@ Then either
 
 ```bash
 # Install the stable version to your user env (with shell completions):
-nix-env -i -f https://github.com/kolloch/crate2nix/tarball/0.5.1
+nix-env -i -f https://github.com/kolloch/crate2nix/tarball/0.6.0
 ```
 
 or
 
 ```bash
 # Start a shell with it (without shell completions):
-nix-shell https://github.com/kolloch/crate2nix/tarball/0.5.1
+nix-shell https://github.com/kolloch/crate2nix/tarball/0.6.0
 ```
 
 ### Development Version (master)
