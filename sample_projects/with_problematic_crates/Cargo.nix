@@ -10,6 +10,7 @@
   buildRustCrate? pkgs.buildRustCrate,
   fetchurl? pkgs.fetchurl,
   fetchCrate? pkgs.fetchCrate,
+  defaultCrateOverrides? pkgs.defaultCrateOverrides,
   # The features to enable for the root_crate or the workspace_members.
   rootFeatures? ["default"]}:
 
@@ -4999,13 +5000,13 @@ rec {
     );
 
   /* A restricted overridable version of  buildRustCrateWithFeaturesImpl. */
-  buildRustCrateWithFeatures = {packageId, features}:
+  buildRustCrateWithFeatures = {packageId, features, crateOverrides ? defaultCrateOverrides}:
     lib.makeOverridable
-      ({features}: buildRustCrateWithFeaturesImpl {inherit packageId features;})
-      { inherit features; };
+      ({features, crateOverrides}: buildRustCrateWithFeaturesImpl {inherit packageId features crateOverrides;})
+      { inherit features crateOverrides; };
 
   /* Returns a buildRustCrate derivation for the given packageId and features. */
-  buildRustCrateWithFeaturesImpl = { crateConfigs? crates, packageId, features } @ args:
+  buildRustCrateWithFeaturesImpl = { crateConfigs? crates, packageId, features, crateOverrides } @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
@@ -5062,7 +5063,7 @@ rec {
     in builtins.toJSON { inherit onlyInCargo onlyInCrate2Nix differentFeatures; };
 
   /* Returns the feature configuration by package id for the given input crate. */
-  mergePackageFeatures = {crateConfigs ? crates, packageId, features} @ args:
+  mergePackageFeatures = {crateConfigs ? crates, packageId, features, ...} @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
@@ -5077,7 +5078,7 @@ rec {
      Returns multiple, potentially conflicting attribute sets for dependencies that are reachable
      by multiple paths in the dependency tree.
   */
-  listOfPackageFeatures = {crateConfigs ? crates, packageId, features, dependencyPath? [packageId]} @ args:
+  listOfPackageFeatures = {crateConfigs ? crates, packageId, features, dependencyPath? [packageId], ...} @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
