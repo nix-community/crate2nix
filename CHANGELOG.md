@@ -5,6 +5,22 @@
   This is especially awesome because the popular `rand` crate recently made
   use of the "renamed crates" feature and therefore could not be build by 
   `buildRustCrate`/`crate2nix` anymore.
+* Issue #15 - Support "overrideCrates" argument for modifying the derivation for
+  a crate by name. Common use case, adding additional buildInputs. NixOS comes
+  with `[defaultCrateOverrides](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/rust/default-crate-overrides.nix)`
+  for some common packages already. This is what I use in `default.nix` of `crate2nix`
+  to add a conditional dependency under Mac OS:
+
+  ```nix
+     cargo_nix.rootCrate.build.override {
+        crateOverrides = defaultCrateOverrides // {
+          cssparser-macros = attrs: { 
+            buildInputs = stdenv.lib.optionals stdenv.isDarwin [darwin.apple_sdk.frameworks.Security]; };
+        };
+      };
+   ```
+
+   Many thanks to @Profpatsch for pointing to the problem and analyzing it.
 
 Infrastructure:
 

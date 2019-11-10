@@ -178,6 +178,42 @@ The enabled features for a crate now are resolved at build time! That means you 
           crate2nix = cargo_nix.rootCrate.build.override { features = ["default" "other"]; };
       in ...;
       ```
+
+## Patching crate derivations with `crateOverride`
+
+NixOS comes
+with `[defaultCrateOverrides](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/rust/default-crate-overrides.nix)`
+which specifies mostly some additional native `buildInputs` for various popular crates. If you are using a rust crate with
+native dependencies which is not yet covered, you can add additional `buildInputs` with the `crateOverride` parameter 
+(similar to `features`):
+
+```nix
+let myCrateBase = callPackage ./crate2nix/Cargo.nix {};
+    myCrate = myCrateBase.rootCrate.build.override {
+      crateOverrides = defaultCrateOverrides // {
+        funky-things = attrs: { 
+          buildInputs = [openssl]; };
+      };
+    };
+```
+
+Or obviously you can use the power of nix to add a dependency conditionally:
+
+```nix
+let myCrateBase = callPackage ./crate2nix/Cargo.nix {};
+    myCrate = myCrateBase.rootCrate.build.override {
+      crateOverrides = defaultCrateOverrides // {
+        cssparser-macros = attrs: { 
+          buildInputs = stdenv.lib.optionals stdenv.isDarwin [darwin.apple_sdk.frameworks.Security]; };
+      };
+    };
+```
+
+`crateOverrides` are not restricted to buildInputs however. You should also be able to add patches and 
+the like! (I didn't try that, though.)
+
+`crateOverrides` are a feature of the underlying `buildRustCrate` support in NixOS that crate2nix uses.
+
 ## Known Restrictions
 
 If you feel limited by these restrictions, please do not hesitate to file an issue! That 
