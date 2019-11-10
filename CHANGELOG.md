@@ -21,6 +21,16 @@
    ```
 
    Many thanks to @Profpatsch for pointing to the problem and analyzing it.
+* Issue #43 - Support conditional dependencies using "test" configuration:
+
+  ```nix
+  [target.'cfg(test)'.dependencies]
+  tracing = { version = "0.1.5", features = ["log"] }
+  ```
+
+  When building with `crate2nix`, dependencies will not lead to an error anymore and
+  will simply be ignored (since we do not have test support yet). Thanks to
+  @andir for the nice minimal example!
 
 Infrastructure:
 
