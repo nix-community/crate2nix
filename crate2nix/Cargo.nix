@@ -10,6 +10,7 @@
   buildRustCrate? pkgs.buildRustCrate,
   fetchurl? pkgs.fetchurl,
   fetchCrate? pkgs.fetchCrate,
+  defaultCrateOverrides? pkgs.defaultCrateOverrides,
   # The features to enable for the root_crate or the workspace_members.
   rootFeatures? ["default"]}:
 
@@ -19,12 +20,12 @@ rec {
   #
 
   rootCrate = {
-    packageId = "crate2nix 0.6.0 (path+file:///home/peter/projects/crate2nix/crate2nix)";
+    packageId = "crate2nix 0.6.0 (path+file:///Users/peter/crate2nix/crate2nix)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
     build = buildRustCrateWithFeatures {
-      packageId = "crate2nix 0.6.0 (path+file:///home/peter/projects/crate2nix/crate2nix)";
+      packageId = "crate2nix 0.6.0 (path+file:///Users/peter/crate2nix/crate2nix)";
       features = rootFeatures;
     };
   };
@@ -35,9 +36,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "crate2nix" = {
-      packageId = "crate2nix 0.6.0 (path+file:///home/peter/projects/crate2nix/crate2nix)";
+      packageId = "crate2nix 0.6.0 (path+file:///Users/peter/crate2nix/crate2nix)";
       build = buildRustCrateWithFeatures {
-        packageId = "crate2nix 0.6.0 (path+file:///home/peter/projects/crate2nix/crate2nix)";
+        packageId = "crate2nix 0.6.0 (path+file:///Users/peter/crate2nix/crate2nix)";
         features = rootFeatures;
       };
     };
@@ -81,7 +82,7 @@ rec {
           "default" = [ "std" ];
           "std" = [ "memchr/use_std" ];
         };
-        resolvedDefaultFeatures = [ "default" "std" ];
+        resolvedDefaultFeatures = [ "default" "memchr" "std" ];
       };
     "ansi_term 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -265,7 +266,7 @@ rec {
           "std" = [ "memchr/use_std" ];
           "unicode" = [ "lazy_static" "regex-automata" ];
         };
-        resolvedDefaultFeatures = [ "std" ];
+        resolvedDefaultFeatures = [ "memchr" "std" ];
       };
     "byte-tools 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -318,7 +319,7 @@ rec {
           "backtrace" = [ "error-chain/backtrace" ];
           "default" = [ "backtrace" ];
         };
-        resolvedDefaultFeatures = [ "backtrace" "default" ];
+        resolvedDefaultFeatures = [ "backtrace" "default" "error-chain" ];
       };
     "cc 1.0.47 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -464,7 +465,7 @@ rec {
         features = {
         };
       };
-    "crate2nix 0.6.0 (path+file:///home/peter/projects/crate2nix/crate2nix)"
+    "crate2nix 0.6.0 (path+file:///Users/peter/crate2nix/crate2nix)"
       = rec {
         crateName = "crate2nix";
         version = "0.6.0";
@@ -557,7 +558,7 @@ rec {
           "nightly" = [ "crossbeam-utils/nightly" ];
           "std" = [ "crossbeam-utils/std" "lazy_static" ];
         };
-        resolvedDefaultFeatures = [ "default" "lazy_static" "std" ];
+        resolvedDefaultFeatures = [ "crossbeam-utils" "default" "lazy_static" "std" ];
       };
     "crossbeam-queue 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1416,7 +1417,7 @@ rec {
           "default" = [ "proc-macro" ];
           "proc-macro" = [ "proc-macro2/proc-macro" ];
         };
-        resolvedDefaultFeatures = [ "default" "proc-macro" ];
+        resolvedDefaultFeatures = [ "default" "proc-macro" "proc-macro2" ];
       };
     "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1437,7 +1438,7 @@ rec {
           "default" = [ "proc-macro" ];
           "proc-macro" = [ "proc-macro2/proc-macro" ];
         };
-        resolvedDefaultFeatures = [ "default" "proc-macro" ];
+        resolvedDefaultFeatures = [ "default" "proc-macro" "proc-macro2" ];
       };
     "rayon 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1536,7 +1537,7 @@ rec {
           "unstable" = [ "pattern" ];
           "use_std" = [ "std" ];
         };
-        resolvedDefaultFeatures = [ "aho-corasick" "default" "memchr" "perf" "perf-cache" "perf-dfa" "perf-inline" "perf-literal" "std" "thread_local" "unicode" "unicode-age" "unicode-bool" "unicode-case" "unicode-gencat" "unicode-perl" "unicode-script" "unicode-segment" ];
+        resolvedDefaultFeatures = [ "aho-corasick" "default" "memchr" "perf" "perf-cache" "perf-dfa" "perf-inline" "perf-literal" "regex-syntax" "std" "thread_local" "unicode" "unicode-age" "unicode-bool" "unicode-case" "unicode-gencat" "unicode-perl" "unicode-script" "unicode-segment" ];
       };
     "regex-syntax 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1833,7 +1834,7 @@ rec {
           "wrap_help" = [ "clap/wrap_help" ];
           "yaml" = [ "clap/yaml" ];
         };
-        resolvedDefaultFeatures = [ "default" ];
+        resolvedDefaultFeatures = [ "clap" "default" ];
       };
     "structopt-derive 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1881,7 +1882,7 @@ rec {
           "printing" = [ "quote" ];
           "proc-macro" = [ "proc-macro2/proc-macro" "quote/proc-macro" ];
         };
-        resolvedDefaultFeatures = [ "clone-impls" "default" "derive" "parsing" "printing" "proc-macro" "quote" ];
+        resolvedDefaultFeatures = [ "clone-impls" "default" "derive" "parsing" "printing" "proc-macro" "proc-macro2" "quote" ];
       };
     "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1909,7 +1910,7 @@ rec {
           "printing" = [ "quote" ];
           "proc-macro" = [ "proc-macro2/proc-macro" "quote/proc-macro" ];
         };
-        resolvedDefaultFeatures = [ "clone-impls" "default" "derive" "extra-traits" "parsing" "printing" "proc-macro" "quote" "visit" ];
+        resolvedDefaultFeatures = [ "clone-impls" "default" "derive" "extra-traits" "parsing" "printing" "proc-macro" "proc-macro2" "quote" "visit" ];
       };
     "synstructure 0.12.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2538,13 +2539,13 @@ rec {
     );
 
   /* A restricted overridable version of  buildRustCrateWithFeaturesImpl. */
-  buildRustCrateWithFeatures = {packageId, features}:
+  buildRustCrateWithFeatures = {packageId, features, crateOverrides ? defaultCrateOverrides}:
     lib.makeOverridable
-      ({features}: buildRustCrateWithFeaturesImpl {inherit packageId features;})
-      { inherit features; };
+      ({features, crateOverrides}: buildRustCrateWithFeaturesImpl {inherit packageId features crateOverrides;})
+      { inherit features crateOverrides; };
 
   /* Returns a buildRustCrate derivation for the given packageId and features. */
-  buildRustCrateWithFeaturesImpl = { crateConfigs? crates, packageId, features } @ args:
+  buildRustCrateWithFeaturesImpl = { crateConfigs? crates, packageId, features, crateOverrides } @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
@@ -2601,7 +2602,7 @@ rec {
     in builtins.toJSON { inherit onlyInCargo onlyInCrate2Nix differentFeatures; };
 
   /* Returns the feature configuration by package id for the given input crate. */
-  mergePackageFeatures = {crateConfigs ? crates, packageId, features} @ args:
+  mergePackageFeatures = {crateConfigs ? crates, packageId, features, ...} @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
@@ -2616,7 +2617,7 @@ rec {
      Returns multiple, potentially conflicting attribute sets for dependencies that are reachable
      by multiple paths in the dependency tree.
   */
-  listOfPackageFeatures = {crateConfigs ? crates, packageId, features, dependencyPath? [packageId]} @ args:
+  listOfPackageFeatures = {crateConfigs ? crates, packageId, features, dependencyPath? [packageId], ...} @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);

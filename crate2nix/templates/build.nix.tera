@@ -12,6 +12,7 @@
   buildRustCrate? pkgs.buildRustCrate,
   fetchurl? pkgs.fetchurl,
   fetchCrate? pkgs.fetchCrate,
+  defaultCrateOverrides? pkgs.defaultCrateOverrides,
   # The features to enable for the root_crate or the workspace_members.
   rootFeatures? ["default"]}:
 

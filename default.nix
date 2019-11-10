@@ -3,10 +3,18 @@
   cargo? pkgs.cargo,
   nix? pkgs.nix,
   makeWrapper? pkgs.makeWrapper,
-  callPackage? pkgs.callPackage}:
+  callPackage? pkgs.callPackage,
+  darwin? pkgs.darwin,
+  stdenv? pkgs.stdenv,
+  defaultCrateOverrides? pkgs.defaultCrateOverrides}:
 
 let cargo_nix = callPackage ./crate2nix/Cargo.nix {};
-    crate2nix = cargo_nix.rootCrate.build;
+    crate2nix = cargo_nix.rootCrate.build.override {
+      crateOverrides = defaultCrateOverrides // {
+        cssparser-macros = attrs: { 
+          buildInputs = stdenv.lib.optionals stdenv.isDarwin [darwin.apple_sdk.frameworks.Security]; };
+      };
+    };
 
 in pkgs.symlinkJoin {
   name = crate2nix.name;
