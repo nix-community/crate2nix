@@ -147,7 +147,7 @@ in {
 
      sample_project_bin_with_deprecated_alias =
         let bin_build = (tools.generated {
-            name = "sample_project_bin";
+            name = "sample_project_bin_with_deprecated_alias";
             src = ./sample_projects/bin;
         }).root_crate;
         in pkgs.stdenv.mkDerivation {

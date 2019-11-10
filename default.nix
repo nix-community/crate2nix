@@ -5,7 +5,7 @@
   makeWrapper? pkgs.makeWrapper,
   callPackage? pkgs.callPackage}:
 
-let cargo_nix = callPackage ./Cargo.nix {};
+let cargo_nix = callPackage ./crate2nix/Cargo.nix {};
     crate2nix = cargo_nix.rootCrate.build;
 
 in pkgs.symlinkJoin {

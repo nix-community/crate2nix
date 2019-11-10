@@ -3,4 +3,5 @@ target
 .idea
 *.iml
 /result*
+crate2nix/result*
 

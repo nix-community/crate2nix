@@ -50,7 +50,7 @@ fn run_integration_tests() -> Result<(), Error> {
         .args(&[
             "build",
             "-f",
-            "./tests.nix",
+            "../tests.nix",
             "--show-trace",
         ])
         .stdin(Stdio::null())

@@ -2,7 +2,8 @@
 
 echo "================ Regenerating ./Cargo.nix =================="
 
-nix-shell --run 'crate2nix "generate" "-n" "./nixpkgs.nix" "-o" "./Cargo.nix"'  ||\
+nix-shell --run 'crate2nix "generate" "-n" "./nixpkgs.nix" \
+  "-f" "./crate2nix/Cargo.toml" "-o" "./crate2nix/Cargo.nix"'  ||\
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
 nix eval --json -f ./tests.nix buildTestConfigs |\

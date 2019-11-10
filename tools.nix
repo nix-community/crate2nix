@@ -7,7 +7,7 @@
 
 { pkgs? import ./nixpkgs.nix { config = {}; }}:
 
-let cargo_nix = pkgs.callPackage ./Cargo.nix {};
+let cargo_nix = pkgs.callPackage ./crate2nix/Cargo.nix {};
     crate2nix = cargo_nix.rootCrate.build;
     generate = {name, src, cargoToml}: pkgs.stdenv.mkDerivation ({
       name = "${name}-crate2nix";
@@ -22,7 +22,8 @@ let cargo_nix = pkgs.callPackage ./Cargo.nix {};
 
           # If we need to write the lock file, we make
           # a copy.
-          cargo metadata -q --locked >/dev/null || {
+          cargo metadata --manifest-path ${src}/${cargoToml} \
+              -q --locked >/dev/null || {
             echo Copying sources to make Cargo.lock writeable.
             cp -apR "${src}" "$out/src"
             src="$out/src"
