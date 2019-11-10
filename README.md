@@ -3,7 +3,7 @@
 crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) crates
 using [cargo](https://crates.io/).
 
-[![BuildStatus](https://github.com/kolloch/crate2nix/workflows/test-nix/badge.svg)]
+[![BuildStatus](https://github.com/kolloch/crate2nix/workflows/tests-nix/badge.svg)]
 
 **Same dependency tree as cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the
 dependency tree from cargo. Therefore, it will use the exact same library versions as cargo and respect any locked down
