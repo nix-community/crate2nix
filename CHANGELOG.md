@@ -38,7 +38,8 @@ Infrastructure:
 * I also now build every push with github actions, 
   and cachix/cachix-action. A suggestion from @vbrandl in #44. Unfortunately,
   the rust crates are not cached yet, I think, because they are not in the closure
-  of the result.
+  of the result. The cachix caches is called "eigenvalue" for now (I might change 
+  that in the future).
 
 # 0.5.0 - 0.5.1
 
