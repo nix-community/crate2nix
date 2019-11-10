@@ -2,6 +2,10 @@
 
 echo "================ Regenerating ./Cargo.nix =================="
 
+(cd crate2nix; cargo run -- "generate" "-n" "../nixpkgs.nix" \
+  "-f" "./Cargo.toml" "-o" "./Cargo.nix")  ||\
+     { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
+
 nix-shell --run 'crate2nix "generate" "-n" "./nixpkgs.nix" \
   "-f" "./crate2nix/Cargo.toml" "-o" "./crate2nix/Cargo.nix"'  ||\
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }

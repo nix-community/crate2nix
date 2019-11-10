@@ -6,7 +6,7 @@ use std::path::Path;
 use failure::format_err;
 use failure::Error;
 use lazy_static::lazy_static;
-use tera::Tera;
+use tera::{Tera, Context};
 
 use crate::target_cfg::{Cfg, CfgExpr};
 use crate::BuildInfo;
@@ -14,7 +14,7 @@ use std::collections::HashMap;
 use std::str::FromStr;
 
 pub fn render_build_file(metadata: &BuildInfo) -> Result<String, Error> {
-    Ok(TERA.render_value("build.nix.tera", metadata).map_err(|e| {
+    Ok(TERA.render("build.nix.tera", &Context::from_serialize(metadata)?).map_err(|e| {
         format_err!(
             "while rendering default.nix: {:?}\nMetadata: {:?}",
             e,
