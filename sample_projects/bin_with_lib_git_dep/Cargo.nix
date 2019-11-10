@@ -2427,10 +2427,12 @@ rec {
   # 
 
   # Target (platform) data for conditional dependencies.
-  # This corresponds to what buildRustCrate is setting.
+  # This corresponds roughly to what buildRustCrate is setting.
   target = {
       unix = true;
       windows = false;
+      # We don't support tests yet, so this is true for now.
+      test = false;
 
       # This doesn't appear to be officially documented anywhere yet.
       # See https://github.com/rust-lang-nursery/rust-forge/issues/101.

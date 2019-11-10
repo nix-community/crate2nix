@@ -1,0 +1,12 @@
+[package]
+name = "cfg-test"
+version = "0.1.0"
+authors = ["Andreas Rammhold <andreas@rammhold.de>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[target.'cfg(test)'.dependencies]
+tracing = { version = "0.1.5", features = ["log"] }
