@@ -63,6 +63,9 @@ or
 nix-shell https://github.com/kolloch/crate2nix/tarball/0.6.0
 ```
 
+NOTE: You can use [eigenvalue.cachix.org](https://eigenvalue.cachix.org/) to
+get prebuilt binaries for linux.
+
 ### Development Version (master)
 
 Similarly, you can either
