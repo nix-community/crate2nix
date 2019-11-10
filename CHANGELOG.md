@@ -6,6 +6,14 @@
   use of the "renamed crates" feature and therefore could not be build by 
   `buildRustCrate`/`crate2nix` anymore.
 
+Infrastructure:
+
+* I moved the integration tests to tests.nix, they were in rust code before. 
+* I also now build every push with github actions, 
+  and cachix/cachix-action. A suggestion from @vbrandl in #44. Unfortunately,
+  the rust crates are not cached yet, I think, because they are not in the closure
+  of the result.
+
 # 0.5.0 - 0.5.1
 
 Don't use ´Cargo.toml´ but ´Cargo.nix´ as default output! Thank you, @tilpner!
