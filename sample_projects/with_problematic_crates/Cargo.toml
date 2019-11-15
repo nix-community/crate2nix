@@ -8,6 +8,10 @@ edition = "2018"
 # There was a bug in buildRustCrate for this one...
 tera = "*"
 
+# Introduced some escaping around the generated target.os expression for
+# dragonfly
+nix = "0.14.1"
+
 # Regression test for issue #4
 html5ever = "0.22.5"
 cssparser = "0.25.3"
