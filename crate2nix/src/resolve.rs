@@ -40,7 +40,7 @@ pub struct CrateDerivation {
     pub build: Option<BuildTarget>,
     /// The build target for the library.
     pub lib: Option<BuildTarget>,
-    pub has_bin: bool,
+    pub binaries: Vec<BuildTarget>,
     pub proc_macro: bool,
     // This derivation builds the root crate or a workspace member.
     pub is_root_or_workspace_member: bool,
@@ -84,10 +84,17 @@ impl CrateDerivation {
             .iter()
             .any(|t| t.kind.iter().any(|k| k == "proc-macro"));
 
-        let has_bin = package
+        let binaries = package
             .targets
             .iter()
-            .any(|t| t.kind.iter().any(|k| k == "bin"));
+            .filter_map(|t| {
+                if t.kind.iter().any(|k| k == "bin") {
+                    BuildTarget::new(&t, &package_path).ok()
+                } else {
+                    None
+                }
+            })
+            .collect();
 
         let is_root_or_workspace_member = metadata
             .root
@@ -117,7 +124,7 @@ impl CrateDerivation {
             build,
             lib,
             proc_macro,
-            has_bin,
+            binaries,
             is_root_or_workspace_member,
         })
     }
