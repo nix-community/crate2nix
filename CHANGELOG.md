@@ -1,8 +1,11 @@
-# 0.6.x - 0.7.0
+# 0.6.x - 0.7.x (unreleased)
 
 * Issue #18 - Optional crate unavailable
   Allows building packages that have multiple versions of the same dependency (with different
-  targets). In particular the flate2 package now builds.
+  targets). In particular the flate2 package now builds. 
+  Thank you, @cchalmers!
+* Issue #37 - Conditional target expressions for dependencies can now 
+  also depend on features. Thank you, @cpcloud!
 
 # 0.5.1 - 0.6.0
 
