@@ -14,6 +14,8 @@ nix-shell --run 'crate2nix "generate" "-n" "./nixpkgs.nix" \
   "-f" "./crate2nix/Cargo.toml" "-o" "./crate2nix/Cargo.nix"'  ||\
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
+crate2nix=$(nix-build)/bin/crate2nix
+
 nix eval --json -f ./tests.nix buildTestConfigs |\
  jq -r .[].pregeneratedBuild |\
  while read cargo_nix; do
@@ -25,6 +27,6 @@ nix eval --json -f ./tests.nix buildTestConfigs |\
 
    echo "=============== Regenerating ${cargo_nix} ================"
 
-   nix-shell --run "crate2nix generate -f \"$dir/Cargo.toml\" -o \"$cargo_nix\"" ||\
+   $crate2nix generate -f "$dir/Cargo.toml" -o "$cargo_nix" ||\
      { echo "Regeneration of ${cargo_nix} failed." >&2 ; exit 1; }
  done
