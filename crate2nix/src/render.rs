@@ -100,11 +100,19 @@ fn cfg_to_nix_expr(cfg: &CfgExpr) -> String {
                 result.push_str(&format!("target.{}", target(name)));
             }
             CfgExpr::Value(Cfg::KeyPair(key, value)) => {
-                result.push_str(&format!(
-                    "(target.{} == {})",
-                    target(key),
-                    escape_nix_string(value)
-                ));
+                let escaped_value = escape_nix_string(value);
+                result.push_str(&if key == "feature" {
+                    format!(
+                        "(builtins.elem {} resolvedDefaultFeatures)",
+                        escaped_value,
+                    )
+                } else {
+                    format!(
+                        "(target.{} == {})",
+                        target(key),
+                        escaped_value,
+                    )
+                });
             }
             CfgExpr::Not(expr) => {
                 result.push_str("(!");
