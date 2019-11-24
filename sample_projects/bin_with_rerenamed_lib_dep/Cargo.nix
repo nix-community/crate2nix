@@ -67,6 +67,9 @@ rec {
         crateName = "bin_with_rerenamed_lib_dep";
         version = "0.1.0";
         edition = "2018";
+        crateBin = [
+          { name = "bin_with_rerenamed_lib_dep"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./.);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"

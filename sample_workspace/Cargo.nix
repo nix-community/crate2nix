@@ -143,6 +143,9 @@ rec {
         crateName = "bin_with_default_features";
         version = "0.1.0";
         edition = "2018";
+        crateBin = [
+          { name = "bin_with_default_features"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./bin_with_default_features);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
@@ -376,6 +379,9 @@ rec {
         crateName = "hello_world_bin";
         version = "0.1.0";
         edition = "2018";
+        crateBin = [
+          { name = "hello_world_bin"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./bin);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
@@ -400,6 +406,9 @@ rec {
         crateName = "hello_world_lib_and_bin";
         version = "0.1.0";
         edition = "2018";
+        crateBin = [
+          { name = "hello_world_lib_and_bin"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./lib_and_bin);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
@@ -412,6 +421,9 @@ rec {
         crateName = "hello_world_with_dep";
         version = "0.1.0";
         edition = "2018";
+        crateBin = [
+          { name = "hello_world_with_dep"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./bin_with_lib_dep);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
@@ -1394,6 +1406,9 @@ rec {
         crateName = "with_tera";
         version = "0.1.0";
         edition = "2018";
+        crateBin = [
+          { name = "with_tera"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./with_tera);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"

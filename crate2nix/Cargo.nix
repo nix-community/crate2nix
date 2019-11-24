@@ -470,6 +470,9 @@ rec {
         crateName = "crate2nix";
         version = "0.6.0";
         edition = "2018";
+        crateBin = [
+          { name = "crate2nix"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./.);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"

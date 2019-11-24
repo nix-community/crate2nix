@@ -282,6 +282,9 @@ rec {
         crateName = "numtest";
         version = "0.1.0";
         edition = "2018";
+        crateBin = [
+          { name = "numtest"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./.);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"

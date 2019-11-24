@@ -232,6 +232,9 @@ rec {
         crateName = "bin_with_lib_git_dep";
         version = "0.1.0";
         edition = "2018";
+        crateBin = [
+          { name = "bin_with_lib_git_dep"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./.);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"

@@ -4921,6 +4921,9 @@ rec {
         crateName = "with_problematic_crates";
         version = "0.1.0";
         edition = "2018";
+        crateBin = [
+          { name = "with_problematic_crates"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./.);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"

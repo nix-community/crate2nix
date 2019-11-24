@@ -80,6 +80,9 @@ rec {
         crateName = "cfg-test";
         version = "0.1.0";
         edition = "2018";
+        crateBin = [
+          { name = "cfg-test"; path = "src/main.rs"; }
+        ];
         src = (builtins.filterSource sourceFilter ./.);
         authors = [
           "Andreas Rammhold <andreas@rammhold.de>"
