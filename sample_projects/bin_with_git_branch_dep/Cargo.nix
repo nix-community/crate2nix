@@ -20,12 +20,12 @@ rec {
   #
 
   rootCrate = {
-    packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+    packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_git_branch_dep)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
     build = buildRustCrateWithFeatures {
-      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_git_branch_dep)";
       features = rootFeatures;
     };
   };
@@ -36,9 +36,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "bin_with_lib_git_dep" = {
-      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_git_branch_dep)";
       build = buildRustCrateWithFeatures {
-        packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+        packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_git_branch_dep)";
         features = rootFeatures;
       };
     };
@@ -104,6 +104,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "arrayvec 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -124,6 +125,7 @@ rec {
           "default" = [ "std" ];
           "serde-1" = [ "serde" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "atty 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -152,6 +154,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "autocfg 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -164,6 +167,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "backtrace 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -226,8 +230,9 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
-    "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)"
+    "bin_with_lib_git_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_git_branch_dep)"
       = rec {
         crateName = "bin_with_lib_git_dep";
         version = "0.1.0";
@@ -244,6 +249,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -278,6 +284,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "block-padding 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -293,6 +300,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "bstr 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -329,6 +337,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "byteorder 1.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -342,6 +351,7 @@ rec {
         features = {
           "default" = [ "std" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "cargo_metadata 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -385,6 +395,7 @@ rec {
         features = {
           "parallel" = [ "rayon" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "cfg-if 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -397,6 +408,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -487,6 +499,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "crate2nix 0.6.0-alpha.0 (git+https://github.com/kolloch/crate2nix?branch=branch-for-test#fbc6bfbae54c938420a6eb704fad35b51038a517)"
       = rec {
@@ -521,6 +534,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "crossbeam-channel 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -537,6 +551,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "crossbeam-deque 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -553,6 +568,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "crossbeam-epoch 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -645,6 +661,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "digest 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -675,6 +692,7 @@ rec {
         features = {
           "default" = [ "use_std" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "env_logger 0.5.13 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -742,6 +760,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -787,6 +806,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "fake-simd 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -799,6 +819,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -812,6 +833,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "generic-array 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -829,6 +851,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "globset 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -852,6 +875,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "globwalk 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -868,6 +892,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "globwalk 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -884,6 +909,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -899,6 +925,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "humansize 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -911,6 +938,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "humantime 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -926,6 +954,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "idna 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -943,6 +972,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "ignore 0.4.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -971,6 +1001,7 @@ rec {
         features = {
           "simd-accel" = [ "globset/simd-accel" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "itoa 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -998,6 +1029,7 @@ rec {
         features = {
           "spin_no_std" = [ "spin" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "libc 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1041,6 +1073,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "matches 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1054,6 +1087,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "memchr 2.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1081,6 +1115,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "nodrop 0.1.13 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1095,6 +1130,7 @@ rec {
           "default" = [ "std" ];
           "use_union" = [ "nodrop-union" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "nom 4.2.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1143,6 +1179,7 @@ rec {
           "i128" = [ "num-traits/i128" ];
           "std" = [ "num-traits/std" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "num-traits 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1156,6 +1193,7 @@ rec {
         features = {
           "default" = [ "std" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "num_cpus 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1171,6 +1209,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "opaque-debug 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1183,6 +1222,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "pathdiff 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1195,6 +1235,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "percent-encoding 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1208,6 +1249,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "pest 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1224,6 +1266,7 @@ rec {
         features = {
           "pretty-print" = [ "serde" "serde_json" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "pest_derive 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1241,6 +1284,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "pest_generator 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1260,6 +1304,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "pest_meta 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1279,6 +1324,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "proc-macro2 0.4.27 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1309,6 +1355,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "quicli 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1393,6 +1440,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "rayon-core 1.4.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1412,6 +1460,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "redox_syscall 0.1.54 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1425,6 +1474,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "redox_termios 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1440,6 +1490,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "regex 1.1.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1477,6 +1528,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "remove_dir_all 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1496,6 +1548,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "rustc-demangle 0.1.14 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1509,6 +1562,7 @@ rec {
         features = {
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "ryu 0.2.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1521,6 +1575,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "same-file 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1539,6 +1594,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "scopeguard 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1552,6 +1608,7 @@ rec {
         features = {
           "default" = [ "use_std" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1586,6 +1643,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "serde 1.0.90 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1684,6 +1742,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "smallvec 0.6.9 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1711,6 +1770,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "structopt 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1762,6 +1822,7 @@ rec {
         features = {
           "nightly" = [ "proc-macro2/nightly" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "syn 0.15.32 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1811,6 +1872,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "tera 1.0.0-beta.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1858,6 +1920,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "termion 1.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1886,6 +1949,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "textwrap 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1901,6 +1965,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "thread_local 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1916,6 +1981,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "time 0.1.42 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1940,6 +2006,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "toml 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1971,6 +2038,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "ucd-trie 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1997,6 +2065,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unic-char-property 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2012,6 +2081,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unic-char-range 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2054,6 +2124,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unic-ucd-segment 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2071,6 +2142,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unic-ucd-version 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2086,6 +2158,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unicode-bidi 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2120,6 +2193,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unicode-segmentation 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2132,6 +2206,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unicode-width 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2178,6 +2253,7 @@ rec {
           "heap_size" = [ "heapsize" ];
           "query_encoding" = [ "encoding" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "url_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2194,6 +2270,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "utf8-ranges 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2206,6 +2283,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "v_escape 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2225,6 +2303,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "v_escape_derive 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2244,6 +2323,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "v_htmlescape 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2263,6 +2343,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "vec_map 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2301,6 +2382,7 @@ rec {
         features = {
           "eders" = [ "serde" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "version_check 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2313,6 +2395,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "walkdir 2.2.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2337,6 +2420,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2373,6 +2457,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "winapi-util 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2392,6 +2477,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "winapi-x86_64-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2404,6 +2490,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "wincolor 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2423,6 +2510,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
   };
 

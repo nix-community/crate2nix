@@ -25,44 +25,44 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "bin_with_default_features" = {
-      packageId = "bin_with_default_features 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_default_features)";
+      packageId = "bin_with_default_features 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_default_features)";
       build = buildRustCrateWithFeatures {
-        packageId = "bin_with_default_features 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_default_features)";
+        packageId = "bin_with_default_features 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_default_features)";
         features = rootFeatures;
       };
     };
     "hello_world_bin" = {
-      packageId = "hello_world_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin)";
+      packageId = "hello_world_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin)";
       build = buildRustCrateWithFeatures {
-        packageId = "hello_world_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin)";
+        packageId = "hello_world_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin)";
         features = rootFeatures;
       };
     };
     "hello_world_lib" = {
-      packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)";
+      packageId = "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib)";
       build = buildRustCrateWithFeatures {
-        packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)";
+        packageId = "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib)";
         features = rootFeatures;
       };
     };
     "hello_world_lib_and_bin" = {
-      packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib_and_bin)";
+      packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib_and_bin)";
       build = buildRustCrateWithFeatures {
-        packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib_and_bin)";
+        packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib_and_bin)";
         features = rootFeatures;
       };
     };
     "hello_world_with_dep" = {
-      packageId = "hello_world_with_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_lib_dep)";
+      packageId = "hello_world_with_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_lib_dep)";
       build = buildRustCrateWithFeatures {
-        packageId = "hello_world_with_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_lib_dep)";
+        packageId = "hello_world_with_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_lib_dep)";
         features = rootFeatures;
       };
     };
     "with_tera" = {
-      packageId = "with_tera 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/with_tera)";
+      packageId = "with_tera 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/with_tera)";
       build = buildRustCrateWithFeatures {
-        packageId = "with_tera 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/with_tera)";
+        packageId = "with_tera 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/with_tera)";
         features = rootFeatures;
       };
     };
@@ -103,6 +103,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "aho-corasick 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -137,8 +138,9 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
-    "bin_with_default_features 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_default_features)"
+    "bin_with_default_features 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_default_features)"
       = rec {
         crateName = "bin_with_default_features";
         version = "0.1.0";
@@ -152,7 +154,7 @@ rec {
         ];
         dependencies = {
           "hello_world_lib" = {
-            packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)";
+            packageId = "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib)";
             optional = true;
           };
         };
@@ -177,6 +179,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "byte-tools 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -189,6 +192,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "cfg-if 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -201,6 +205,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -247,6 +252,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "crossbeam-utils 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -282,6 +288,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "digest 0.7.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -297,6 +304,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "fake-simd 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -309,6 +317,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -322,6 +331,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "generic-array 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -338,6 +348,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "globset 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -357,6 +368,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "globwalk 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -373,8 +385,9 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
-    "hello_world_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin)"
+    "hello_world_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin)"
       = rec {
         crateName = "hello_world_bin";
         version = "0.1.0";
@@ -388,8 +401,9 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
-    "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)"
+    "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib)"
       = rec {
         crateName = "hello_world_lib";
         version = "0.1.0";
@@ -400,8 +414,9 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
-    "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib_and_bin)"
+    "hello_world_lib_and_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib_and_bin)"
       = rec {
         crateName = "hello_world_lib_and_bin";
         version = "0.1.0";
@@ -415,8 +430,9 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
-    "hello_world_with_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_lib_dep)"
+    "hello_world_with_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_lib_dep)"
       = rec {
         crateName = "hello_world_with_dep";
         version = "0.1.0";
@@ -429,10 +445,11 @@ rec {
           "Peter Kolloch <info@eigenvalue.net>"
         ];
         dependencies = {
-          "hello_world_lib" = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)";
+          "hello_world_lib" = "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib)";
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "humansize 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -445,6 +462,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "idna 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -462,6 +480,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "ignore 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -490,6 +509,7 @@ rec {
         features = {
           "simd-accel" = [ "globset/simd-accel" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "itoa 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -517,6 +537,7 @@ rec {
         features = {
           "spin_no_std" = [ "spin" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "libc 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -547,6 +568,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "maplit 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -559,6 +581,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "matches 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -572,6 +595,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "memchr 2.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -635,6 +659,7 @@ rec {
           "i128" = [ "num-traits/i128" ];
           "std" = [ "num-traits/std" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "num-traits 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -648,6 +673,7 @@ rec {
         features = {
           "default" = [ "std" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "percent-encoding 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -661,6 +687,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "pest 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -676,6 +703,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "pest_derive 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -693,6 +721,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "pest_generator 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -712,6 +741,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "pest_meta 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -731,6 +761,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "proc-macro2 0.4.27 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -782,6 +813,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "regex 1.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -819,6 +851,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "ryu 0.2.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -831,6 +864,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "same-file 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -849,6 +883,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "serde 1.0.90 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -906,6 +941,7 @@ rec {
         features = {
           "asm" = [ "sha1-asm" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "slug 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -921,6 +957,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "smallvec 0.6.9 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1008,6 +1045,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "time 0.1.42 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1032,6 +1070,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "typenum 1.10.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1046,6 +1085,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "ucd-trie 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1072,6 +1112,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unic-char-property 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1087,6 +1128,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unic-char-range 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1129,6 +1171,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unic-ucd-segment 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1146,6 +1189,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unic-ucd-version 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1161,6 +1205,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unicode-bidi 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1195,6 +1240,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1228,6 +1274,7 @@ rec {
           "heap_size" = [ "heapsize" ];
           "query_encoding" = [ "encoding" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "utf8-ranges 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1240,6 +1287,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "v_escape 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1259,6 +1307,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "v_escape_derive 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1278,6 +1327,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "v_htmlescape 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1297,6 +1347,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "version_check 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1309,6 +1360,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "walkdir 2.2.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1333,6 +1385,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1369,6 +1422,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "winapi-util 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1388,6 +1442,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "winapi-x86_64-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1400,8 +1455,9 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
-    "with_tera 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/with_tera)"
+    "with_tera 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/with_tera)"
       = rec {
         crateName = "with_tera";
         version = "0.1.0";
@@ -1418,6 +1474,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
   };
 
