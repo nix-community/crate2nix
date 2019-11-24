@@ -189,8 +189,9 @@ rec {
 
     lib.filterAttrs
       (depName: dep:
-        builtins.isString dep
-        || dep.target or true
+      let targetFunc = dep.target or (features: true);
+      in builtins.isString dep
+        || (targetFunc features)
         && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency depName) features))
       dependencies;
 

@@ -103,7 +103,7 @@ fn cfg_to_nix_expr(cfg: &CfgExpr) -> String {
                 let escaped_value = escape_nix_string(value);
                 result.push_str(&if key == "feature" {
                     format!(
-                        "(builtins.elem {} resolvedDefaultFeatures)",
+                        "(builtins.elem {} features)",
                         escaped_value,
                     )
                 } else {

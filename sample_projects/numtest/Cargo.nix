@@ -20,12 +20,12 @@ rec {
   #
 
   rootCrate = {
-    packageId = "numtest 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/numtest)";
+    packageId = "numtest 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/numtest)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
     build = buildRustCrateWithFeatures {
-      packageId = "numtest 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/numtest)";
+      packageId = "numtest 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/numtest)";
       features = rootFeatures;
     };
   };
@@ -36,9 +36,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "numtest" = {
-      packageId = "numtest 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/numtest)";
+      packageId = "numtest 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/numtest)";
       build = buildRustCrateWithFeatures {
-        packageId = "numtest 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/numtest)";
+        packageId = "numtest 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/numtest)";
         features = rootFeatures;
       };
     };
@@ -73,7 +73,6 @@ rec {
         ];
         features = {
         };
-        resolvedDefaultFeatures = [ ];
       };
     "num 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -278,7 +277,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "std" ];
       };
-    "numtest 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/numtest)"
+    "numtest 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/numtest)"
       = rec {
         crateName = "numtest";
         version = "0.1.0";
@@ -295,7 +294,6 @@ rec {
         };
         features = {
         };
-        resolvedDefaultFeatures = [ ];
       };
   };
 
@@ -487,8 +485,9 @@ rec {
 
     lib.filterAttrs
       (depName: dep:
-        builtins.isString dep
-        || dep.target or true
+      let targetFunc = dep.target or (features: true);
+      in builtins.isString dep
+        || (targetFunc features)
         && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency depName) features))
       dependencies;
 

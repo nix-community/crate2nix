@@ -20,12 +20,12 @@ rec {
   #
 
   rootCrate = {
-    packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
+    packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
     build = buildRustCrateWithFeatures {
-      packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
+      packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
       features = rootFeatures;
     };
   };
@@ -36,9 +36,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "bin_with_rerenamed_lib_dep" = {
-      packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
+      packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
       build = buildRustCrateWithFeatures {
-        packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
+        packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
         features = rootFeatures;
       };
     };
@@ -62,7 +62,7 @@ rec {
   # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.
 
   crates = {
-    "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)"
+    "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)"
       = rec {
         crateName = "bin_with_rerenamed_lib_dep";
         version = "0.1.0";
@@ -76,15 +76,14 @@ rec {
         ];
         dependencies = {
           "hello_world_lib" = {
-            packageId = "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/lib)";
+            packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib)";
             rename = "new_name_hello_world_lib";
           };
         };
         features = {
         };
-        resolvedDefaultFeatures = [ ];
       };
-    "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/lib)"
+    "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib)"
       = rec {
         crateName = "hello_world_lib";
         version = "0.1.0";
@@ -96,7 +95,6 @@ rec {
         ];
         features = {
         };
-        resolvedDefaultFeatures = [ ];
       };
   };
 
@@ -288,8 +286,9 @@ rec {
 
     lib.filterAttrs
       (depName: dep:
-        builtins.isString dep
-        || dep.target or true
+      let targetFunc = dep.target or (features: true);
+      in builtins.isString dep
+        || (targetFunc features)
         && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency depName) features))
       dependencies;
 
