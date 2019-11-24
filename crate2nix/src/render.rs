@@ -113,25 +113,19 @@ fn cfg_to_nix_expr(cfg: &CfgExpr) -> String {
             }
             CfgExpr::All(expressions) => {
                 result.push('(');
-                let mut first = true;
-                for expr in expressions {
-                    if !first {
-                        result.push_str(" && ");
-                    }
+                render(result, &expressions[0]);
+                for expr in &expressions[1..] {
+                    result.push_str(" && ");
                     render(result, expr);
-                    first = false;
                 }
                 result.push(')');
             }
             CfgExpr::Any(expressions) => {
                 result.push('(');
-                let mut first = true;
-                for expr in expressions {
-                    if !first {
-                        result.push_str(" || ");
-                    }
+                render(result, &expressions[0]);
+                for expr in &expressions[1..] {
+                    result.push_str(" || ");
                     render(result, expr);
-                    first = false;
                 }
                 result.push(')');
             }
