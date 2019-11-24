@@ -36,4 +36,4 @@ tokio-threadpool = "*"
 # tokio-executor + tracing triggers the use of cfg(feature = "...")
 tokio-executor = "*"
 # FIXME: using default features causes 2 versions of lazy_static to be found
-tracing = { version = "*", default-features = false }
+tracing = "*"

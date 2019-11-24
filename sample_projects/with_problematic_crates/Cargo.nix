@@ -5997,6 +5997,7 @@ rec {
           "log-always" = [ "log" ];
           "std" = [ "tracing-core/std" ];
         };
+        resolvedDefaultFeatures = [ "default" "std" ];
       };
     "tracing-attributes 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -6053,6 +6054,7 @@ rec {
         features = {
           "default" = [ "std" ];
         };
+        resolvedDefaultFeatures = [ "std" ];
       };
     "trust-dns-proto 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -6828,7 +6830,6 @@ rec {
           {
             name = "tracing";
             packageId = "tracing 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
-            usesDefaultFeatures = false;
           }
         ];
         features = {
