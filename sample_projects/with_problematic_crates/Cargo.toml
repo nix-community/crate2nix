@@ -23,10 +23,13 @@ parking_lot ="*"
 error-chain = "*"
 hyper = "*"
 tokio = "*"
-tokio-executor = "*"
 tokio-timer = "*"
 tokio-io = "*"
 tokio-tcp = "*"
 mime = "*"
 tokio-threadpool = "*"
-lazy_static = "1"
+
+# tokio-executor + tracing triggers the use of cfg(feature = "...")
+tokio-executor = "*"
+# FIXME: using default features causes 2 versions of lazy_static to be found
+tracing = { version = "*", default-features = false }
