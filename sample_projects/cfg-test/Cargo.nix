@@ -20,12 +20,12 @@ rec {
   #
 
   rootCrate = {
-    packageId = "cfg-test 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cfg-test)";
+    packageId = "cfg-test 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cfg-test)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
     build = buildRustCrateWithFeatures {
-      packageId = "cfg-test 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cfg-test)";
+      packageId = "cfg-test 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cfg-test)";
       features = rootFeatures;
     };
   };
@@ -36,9 +36,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "cfg-test" = {
-      packageId = "cfg-test 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cfg-test)";
+      packageId = "cfg-test 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cfg-test)";
       build = buildRustCrateWithFeatures {
-        packageId = "cfg-test 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cfg-test)";
+        packageId = "cfg-test 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cfg-test)";
         features = rootFeatures;
       };
     };
@@ -74,8 +74,9 @@ rec {
         features = {
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
-    "cfg-test 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cfg-test)"
+    "cfg-test 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cfg-test)"
       = rec {
         crateName = "cfg-test";
         version = "0.1.0";
@@ -93,6 +94,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -129,6 +131,7 @@ rec {
         features = {
           "kv_unstable_sval" = [ "kv_unstable" "sval/fmt" ];
         };
+        resolvedDefaultFeatures = [ ];
       };
     "proc-macro2 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -180,6 +183,7 @@ rec {
         ];
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "syn 1.0.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -226,7 +230,7 @@ rec {
           };
           "spin" = {
             packageId = "spin 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)";
-            target = (!(target."feature" == "std"));
+            target = (!(builtins.elem "std" resolvedDefaultFeatures));
           };
           "tracing-attributes" = "tracing-attributes 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
           "tracing-core" = {
@@ -262,6 +266,7 @@ rec {
         };
         features = {
         };
+        resolvedDefaultFeatures = [ ];
       };
     "tracing-core 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -275,12 +280,12 @@ rec {
         dependencies = {
           "lazy_static" = {
             packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
-            target = (!(target."feature" == "std"));
+            target = (!(builtins.elem "std" resolvedDefaultFeatures));
             features = [ "spin_no_std" ];
           };
           "spin" = {
             packageId = "spin 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)";
-            target = (!(target."feature" == "std"));
+            target = (!(builtins.elem "std" resolvedDefaultFeatures));
           };
         };
         features = {
