@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
+top="$(readlink -f "$(dirname "$0")")"
+
 echo "================ Regenerating ./Cargo.nix =================="
+
+cd "${top}"
 
 (cd crate2nix; cargo run -- "generate" "-n" "../nixpkgs.nix" \
   "-f" "./Cargo.toml" "-o" "./Cargo.nix")  ||\
