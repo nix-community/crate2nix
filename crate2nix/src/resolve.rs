@@ -158,7 +158,7 @@ pub enum ResolvedSource {
         #[serde(with = "url_serde")]
         url: Url,
         rev: String,
-        r#ref: Option<String>
+        r#ref: Option<String>,
     },
     LocalDirectory {
         path: PathBuf,
@@ -205,7 +205,9 @@ impl ResolvedSource {
         let mut url = url::Url::parse(&source_string[GIT_SOURCE_PREFIX.len()..])?;
         let mut query_pairs = url.query_pairs();
 
-        let branch = query_pairs.find(|(k, _)| k == "branch").map(|(_, v)| v.to_string());
+        let branch = query_pairs
+            .find(|(k, _)| k == "branch")
+            .map(|(_, v)| v.to_string());
         let rev = if let Some((_, rev)) = query_pairs.find(|(k, _)| k == "rev") {
             rev.to_string()
         } else if let Some(rev) = url.fragment() {
@@ -285,8 +287,7 @@ impl ResolvedSource {
                 .unwrap_or_else(|| package_path.as_ref().to_path_buf());
             if path == PathBuf::from("../") {
                 path.join(PathBuf::from("."))
-            }
-            else if path.starts_with("../") {
+            } else if path.starts_with("../") {
                 path
             } else {
                 PathBuf::from("./").join(path)
@@ -349,30 +350,37 @@ impl<'a> ResolvedDependencies<'a> {
             package_name.replace('-', "_")
         }
 
-        let names: HashMap<String, &&Dependency> = self
-            .dependencies
-            .iter()
-            .filter(|d| filter(**d))
-            .map(|d| (normalize_package_name(&d.name), d))
-            .collect();
+        // A map from the normalised name (used by features) to a vector of dependencies associated
+        // with that name. There can be multiple dependencies because some might be behind
+        // different targets (including no target at all).
+        let mut names: HashMap<String, Vec<&Dependency>> = HashMap::new();
+        for d in self.dependencies.iter().filter(|d| (filter(**d))) {
+            let normalized = normalize_package_name(&d.name);
+            names
+                .entry(normalized)
+                .and_modify(|v| v.push(d))
+                .or_insert(vec![d]);
+        }
+
         self.packages
             .iter()
             .flat_map(|d| {
                 let normalized_package_name = normalize_package_name(&d.name);
                 names
                     .get(&normalized_package_name)
-                    .map(|dependency| ResolvedDependency {
-                        name: dependency.name.clone(),
-                        rename: dependency.rename.clone(),
-                        package_id: d.id.clone(),
-                        target: dependency
-                            .target
-                            .as_ref()
-                            .map(std::string::ToString::to_string),
-                        optional: dependency.optional,
-                        uses_default_features: dependency.uses_default_features,
-                        features: dependency.features.clone(),
+                    .into_iter()
+                    .flat_map(|dependencies| {
+                        dependencies.iter().map(|dependency| ResolvedDependency {
+                            name: dependency.name.clone(),
+                            rename: dependency.rename.clone(),
+                            package_id: d.id.clone(),
+                            target: dependency.target.as_ref().map(|t| t.to_string()),
+                            optional: dependency.optional,
+                            uses_default_features: dependency.uses_default_features,
+                            features: dependency.features.clone(),
+                        })
                     })
+                    .collect::<Vec<_>>()
             })
             .collect()
     }

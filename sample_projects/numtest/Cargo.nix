@@ -83,33 +83,39 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
-        dependencies = {
-          "num-bigint" = {
+        dependencies = [
+          {
+            name = "num-bigint";
             packageId = "num-bigint 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
             usesDefaultFeatures = false;
-          };
-          "num-complex" = {
+          }
+          {
+            name = "num-complex";
             packageId = "num-complex 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-          "num-integer" = {
+          }
+          {
+            name = "num-integer";
             packageId = "num-integer 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-          "num-iter" = {
+          }
+          {
+            name = "num-iter";
             packageId = "num-iter 0.1.39 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-          "num-rational" = {
+          }
+          {
+            name = "num-rational";
             packageId = "num-rational 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-          "num-traits" = {
+          }
+          {
+            name = "num-traits";
             packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-        };
+          }
+        ];
         features = {
           "default" = [ "std" ];
           "i128" = [ "num-bigint/i128" "num-complex/i128" "num-integer/i128" "num-iter/i128" "num-rational/i128" "num-traits/i128" ];
@@ -128,16 +134,18 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
-        dependencies = {
-          "num-integer" = {
+        dependencies = [
+          {
+            name = "num-integer";
             packageId = "num-integer 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-          "num-traits" = {
+          }
+          {
+            name = "num-traits";
             packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-        };
+          }
+        ];
         features = {
           "default" = [ "std" ];
           "i128" = [ "num-integer/i128" "num-traits/i128" ];
@@ -154,15 +162,19 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
-        dependencies = {
-          "num-traits" = {
+        dependencies = [
+          {
+            name = "num-traits";
             packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-        };
-        buildDependencies = {
-          "autocfg" = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
-        };
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "autocfg";
+            packageId = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
         features = {
           "default" = [ "std" ];
           "i128" = [ "num-traits/i128" ];
@@ -179,15 +191,19 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
-        dependencies = {
-          "num-traits" = {
+        dependencies = [
+          {
+            name = "num-traits";
             packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-        };
-        buildDependencies = {
-          "autocfg" = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
-        };
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "autocfg";
+            packageId = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
         features = {
           "default" = [ "std" ];
           "i128" = [ "num-traits/i128" ];
@@ -204,19 +220,24 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
-        dependencies = {
-          "num-integer" = {
+        dependencies = [
+          {
+            name = "num-integer";
             packageId = "num-integer 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-          "num-traits" = {
+          }
+          {
+            name = "num-traits";
             packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-        };
-        buildDependencies = {
-          "autocfg" = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
-        };
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "autocfg";
+            packageId = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
         features = {
           "default" = [ "std" ];
           "i128" = [ "num-integer/i128" "num-traits/i128" ];
@@ -233,24 +254,30 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
-        dependencies = {
-          "num-bigint" = {
+        dependencies = [
+          {
+            name = "num-bigint";
             packageId = "num-bigint 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
             usesDefaultFeatures = false;
-          };
-          "num-integer" = {
+          }
+          {
+            name = "num-integer";
             packageId = "num-integer 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-          "num-traits" = {
+          }
+          {
+            name = "num-traits";
             packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-        };
-        buildDependencies = {
-          "autocfg" = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
-        };
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "autocfg";
+            packageId = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
         features = {
           "bigint" = [ "num-bigint" ];
           "bigint-std" = [ "bigint" "num-bigint/std" ];
@@ -269,9 +296,12 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
-        buildDependencies = {
-          "autocfg" = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
-        };
+        buildDependencies = [
+          {
+            name = "autocfg";
+            packageId = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
         features = {
           "default" = [ "std" ];
         };
@@ -289,9 +319,12 @@ rec {
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
-        dependencies = {
-          "num" = "num 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
-        };
+        dependencies = [
+          {
+            name = "num";
+            packageId = "num 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
         features = {
         };
       };
@@ -380,14 +413,14 @@ rec {
           let features = mergedFeatures."${packageId}" or [];
               crateConfig = lib.filterAttrs (n: v: n != "resolvedDefaultFeatures") crateConfigs."${packageId}";
               dependencies =
-                dependencyDerivations buildByPackageId features (crateConfig.dependencies or {});
+                dependencyDerivations buildByPackageId features (crateConfig.dependencies or []);
               buildDependencies =
-                dependencyDerivations buildByPackageId features (crateConfig.buildDependencies or {});
+                dependencyDerivations buildByPackageId features (crateConfig.buildDependencies or []);
               dependenciesWithRenames =
-                lib.filterAttrs (n: v: v ? "rename")
-                  (crateConfig.buildDependencies or {} // crateConfig.dependencies or {});
+                lib.filter (d: d ? "rename")
+                  (crateConfig.buildDependencies or [] ++ crateConfig.dependencies or []);
               crateRenames =
-                lib.mapAttrs (name: value: value.rename or name) dependenciesWithRenames;
+                builtins.listToAttrs (map (d: { name = d.name; value = d.rename; }) dependenciesWithRenames);
           in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies crateRenames; });
     in buildByPackageId packageId;
 
@@ -395,12 +428,12 @@ rec {
   dependencyDerivations = buildByPackageId: features: dependencies:
     assert (builtins.isFunction buildByPackageId);
     assert (builtins.isList features);
-    assert (builtins.isAttrs dependencies);
+    assert (builtins.isList dependencies);
 
     let enabledDependencies = filterEnabledDependencies dependencies features;
-        depDerivation = dependencyName: dependency:
+        depDerivation = dependency:
         buildByPackageId (dependencyPackageId dependency);
-    in builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
+    in map depDerivation enabledDependencies;
 
   /* Returns differences between cargo default features and crate2nix default features.
    *
@@ -427,7 +460,10 @@ rec {
     in builtins.toJSON { inherit onlyInCargo onlyInCrate2Nix differentFeatures; };
 
   /* Returns the feature configuration by package id for the given input crate. */
-  mergePackageFeatures = {crateConfigs ? crates, packageId, features, ...} @ args:
+  mergePackageFeatures = {
+      crateConfigs ? crates, 
+      packageId, 
+      features, ...} @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
@@ -451,17 +487,16 @@ rec {
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
         expandedFeatures = expandFeatures (crateConfig.features or {}) features;
 
-        depWithResolvedFeatures = dependencyName: dependency:
+        depWithResolvedFeatures = dependency:
           let packageId = dependencyPackageId dependency;
-              features = dependencyFeatures expandedFeatures dependencyName dependency;
+              features = dependencyFeatures expandedFeatures dependency.name dependency;
           in { inherit packageId features; };
 
         resolveDependencies = path: dependencies:
-          assert (builtins.isAttrs dependencies);
+          assert (builtins.isList dependencies);
 
           let enabledDependencies = filterEnabledDependencies dependencies expandedFeatures;
-              directDependencies =
-                builtins.attrValues (lib.mapAttrs depWithResolvedFeatures enabledDependencies);
+              directDependencies = map depWithResolvedFeatures enabledDependencies;
           in builtins.concatMap
             ({packageId, features}: listOfPackageFeatures {
               # This is purely for debugging.
@@ -472,23 +507,24 @@ rec {
 
         resolvedDependencies = builtins.concatLists
           [
-            (resolveDependencies "dependencies" (crateConfig.dependencies or {}))
-            (resolveDependencies "buildDependencies" (crateConfig.buildDependencies or {}))
+            (resolveDependencies "dependencies" (crateConfig.dependencies or []))
+            (resolveDependencies "buildDependencies" (crateConfig.buildDependencies or []))
           ];
 
     in [{inherit packageId; features = expandedFeatures;}] ++ resolvedDependencies;
 
   /* Returns the enabled dependencies given the enabled features. */
   filterEnabledDependencies = dependencies: features:
-    assert (builtins.isAttrs dependencies);
+    assert (builtins.isList dependencies);
     assert (builtins.isList features);
 
-    lib.filterAttrs
-      (depName: dep:
-      let targetFunc = dep.target or (features: true);
-      in builtins.isString dep
-        || (targetFunc features)
-        && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency depName) features))
+    lib.filter
+      (dep:
+        let targetFunc = dep.target or (features: true);
+            target = targetFunc features;
+        in builtins.isString dep
+        || target
+        && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep.name) features))
       dependencies;
 
   /* Returns whether the given feature should enable the given dependency. */
