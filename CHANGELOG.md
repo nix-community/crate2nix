@@ -1,3 +1,9 @@
+# 0.6.x - 0.7.0
+
+* Issue #18 - Optional crate unavailable
+  Allows building packages that have multiple versions of the same dependency (with different
+  targets). In particular the flate2 package now builds.
+
 # 0.5.1 - 0.6.0
 
 * Issue #22 - Support renamed crates. Fixed in `buildRustCrate` in nixpkgs and in 
@@ -40,10 +46,6 @@ Infrastructure:
   the rust crates are not cached yet, I think, because they are not in the closure
   of the result. The cachix caches is called "eigenvalue" for now (I might change 
   that in the future).
-
-* Issue #18 - Optional crate unavailable
-  Allows building packages that have multiple versions of the same dependency (with different
-  targets). In particular the flate2 package now builds.
 
 # 0.5.0 - 0.5.1
 
