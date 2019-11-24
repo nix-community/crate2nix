@@ -59,10 +59,7 @@ fn run_integration_tests() -> Result<(), Error> {
         .status()
         .map_err(|e| format_err!("while spawning nix build: {}", e))?;
     if !status.success() {
-        bail!(
-            "nix build\n=> exited with: {}",
-            status.code().unwrap_or(-1)
-            );
+        bail!("nix build\n=> exited with: {}", status.code().unwrap_or(-1));
     }
 
     Ok(())

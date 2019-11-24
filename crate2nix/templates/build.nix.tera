@@ -132,11 +132,10 @@ rec {
         {%- endif -%}
 
         {%- if crate.dependencies|length > 0 %}
-        dependencies = {
+        dependencies = [
         {%- for dependency in crate.dependencies %}
-          {%- if dependency.target or dependency.optional or not dependency.uses_default_features or
-            dependency.features or dependency.rename %}
-          {{dependency.name}} = {
+          {
+            name = {{dependency.name}};
             packageId = {{dependency.package_id}};
             {%- if dependency.rename %}
             rename = {{dependency.rename}};
@@ -153,19 +152,16 @@ rec {
             {%- if dependency.features %}
             features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
             {%- endif %}
-          };
-          {%- else %}
-          {{dependency.name}} = {{dependency.package_id}};
-          {%- endif -%}
+          }
         {%- endfor %}
-        };
+        ];
         {%- endif -%}
 
         {%- if crate.build_dependencies|length > 0 %}
-        buildDependencies = {
+        buildDependencies = [
         {%- for dependency in crate.build_dependencies %}
-          {%- if dependency.target or dependency.optional or not dependency.uses_default_features or dependency.features %}
-          {{dependency.name}} = {
+          {
+            name = {{dependency.name}};
             packageId = {{dependency.package_id}};
             {%- if dependency.optional %}
             optional = true;
@@ -179,12 +175,9 @@ rec {
             {%- if dependency.features %}
             features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
             {%- endif %}
-          };
-          {%- else %}
-          {{dependency.name}} = {{dependency.package_id}};
-          {%- endif -%}
+          }
         {%- endfor %}
-        };
+        ];
         {%- endif -%}
         {#- #}
         features = {

@@ -1,17 +1,22 @@
 {lib, crate2nix}:
 
 let buildRustCrateFake = lib.id;
-    fakeDependencies = {
-      "id1" = "pkg_id1";
-      "optional_id2" = {
+    fakeDependencies = [
+      {
+        name = "id1";
+        packageId = "pkg_id1";
+      }
+      {
+        name = "optional_id2";
         packageId = "pkg_id2";
         optional = true;
-      };
-      "id3" = {
+      }
+      {
+        name = "id3";
         packageId = "pkg_id3";
         usesDefaultFeatures = false;
-      };
-    };
+      }
+    ];
     dependencyDerivations = features: dependencies:
       crate2nix.dependencyDerivations buildRustCrateFake features dependencies;
 in lib.runTests {
@@ -28,8 +33,8 @@ in lib.runTests {
     expr = dependencyDerivations ["default" "optional_id2" ] fakeDependencies;
     expected = [
       "pkg_id1"
-      "pkg_id3"
       "pkg_id2"
+      "pkg_id3"
     ];
   };
 

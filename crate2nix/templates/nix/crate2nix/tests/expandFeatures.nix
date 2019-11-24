@@ -6,16 +6,23 @@ let featureMap = {
       feature1 = [];
       extra = [];
     };
-    dependencies = {
-      "tls" = "pkgid_tls";
-      "extra" = "pkgid_extra";
-      "with_target" = {
+    dependencies = [
+      {
+        name = "tls";
+        packageId = "pkgid_tls";
+      }
+      {
+        name = "extra";
+        packageId = "pkgid_extra";
+      }
+      {
+        name = "with_target";
         target_cfg = true;
         optional = false;
         with_defaults = false;
         packageId = "pkgid_target";
-      };
-    };
+      }
+    ];
 in lib.runTests {
   testEmpty = {
       expr = crate2nix.expandFeatures featureMap [];

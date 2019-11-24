@@ -6,28 +6,37 @@ let crateConfigs = {
         features = {
           "optional_id2" = [];
         };
-        dependencies = {
-          "id1" = "pkg_id1";
-          "optional_id2" = {
+        dependencies = [
+          {
+            name = "id1";
+            packageId = "pkg_id1";
+          }
+          {
+            name = "optional_id2";
             packageId = "pkg_id2";
             optional = true;
-          };
-          "id3" = {
+          }
+          {
+            name = "id3";
             packageId = "pkg_id3";
             usesDefaultFeatures = false;
-          };
-        };
+          }
+        ];
       };
       "pkg_with_feature_clash" = {
-        dependencies = {
-          "id1" = "pkg_id1";
-        };
-        buildDependencies = {
-          "id1" = {
+        dependencies = [
+          {
+            name = "id1";
+            packageId = "pkg_id1";
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "id1";
             packageId = "pkg_id1";
             features = ["for_build"];
-          };
-        };
+          }
+        ];
       };
       "pkg_id1" =  {
         crateName = "id1";
@@ -46,9 +55,12 @@ let crateConfigs = {
 
       "pkg_numtest" = {
         crateName = "numtest";
-        dependencies = {
-            "num" = "pkg_num";
-        };
+        dependencies = [
+          {
+            name = "num";
+            packageId = "pkg_num";
+          }
+        ];
       };
 
       "pkg_num_bigint" = {
@@ -57,13 +69,14 @@ let crateConfigs = {
 
       "pkg_num" = {
         crateName = "num";
-        dependencies = {
-            "num-bigint" = {
+        dependencies = [
+            {
+                name = "num-bigint";
                 packageId = "pkg_num_bigint";
                 usesDefaultFeatures = false;
                 optional = true;
-            };
-        };
+            }
+        ];
         features = {
             "default" = [ "std" ];
             "std" = [ "num-bigint/std" ];
@@ -151,8 +164,8 @@ in lib.runTests {
       list = [
         { packageId = "pkg_root"; features = [ "default" "optional_id2" ]; }
         { packageId = "pkg_id1"; features = [ "default" ]; }
-        { packageId = "pkg_id3"; features = [ ]; }
         { packageId = "pkg_id2"; features = [ "default" ]; }
+        { packageId = "pkg_id3"; features = [ ]; }
       ];
       merged = {
         "pkg_root" = ["default" "optional_id2"];

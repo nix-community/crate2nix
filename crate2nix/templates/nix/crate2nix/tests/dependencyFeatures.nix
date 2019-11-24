@@ -1,15 +1,22 @@
 {lib, crate2nix}:
 
-let dependencies = {
-      "tls" = "pkgid_tls";
-      "extra" = "pkgid_extra";
-      "with_target" = {
+let dependencies = [
+      {
+        name = "tls";
+        packageId = "pkgid_tls";
+      }
+      {
+        name = "extra";
+        packageId = "pkgid_extra";
+      }
+      {
+        name = "with_target";
         target_cfg = true;
         optional = false;
         with_defaults = false;
         packageId = "pkgid_target";
-      };
-    };
+      }
+    ];
 in lib.runTests {
 
   testStringDependency = {

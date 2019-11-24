@@ -41,6 +41,10 @@ Infrastructure:
   of the result. The cachix caches is called "eigenvalue" for now (I might change 
   that in the future).
 
+* Issue #18 - Optional crate unavailable
+  Allows building packages that have multiple versions of the same dependency (with different
+  targets). In particular the flate2 package now builds.
+
 # 0.5.0 - 0.5.1
 
 Don't use ´Cargo.toml´ but ´Cargo.nix´ as default output! Thank you, @tilpner!

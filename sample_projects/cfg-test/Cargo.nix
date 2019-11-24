@@ -87,13 +87,14 @@ rec {
         authors = [
           "Andreas Rammhold <andreas@rammhold.de>"
         ];
-        dependencies = {
-          "tracing" = {
+        dependencies = [
+          {
+            name = "tracing";
             packageId = "tracing 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: target."test";
             features = [ "log" ];
-          };
-        };
+          }
+        ];
         features = {
         };
       };
@@ -106,12 +107,13 @@ rec {
         authors = [
           "Marvin Löbel <loebel.marvin@gmail.com>"
         ];
-        dependencies = {
-          "spin" = {
+        dependencies = [
+          {
+            name = "spin";
             packageId = "spin 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
-          };
-        };
+          }
+        ];
         features = {
           "spin_no_std" = [ "spin" ];
         };
@@ -126,9 +128,12 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
-        dependencies = {
-          "cfg-if" = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
-        };
+        dependencies = [
+          {
+            name = "cfg-if";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
         features = {
           "kv_unstable_sval" = [ "kv_unstable" "sval/fmt" ];
         };
@@ -142,9 +147,12 @@ rec {
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
-        dependencies = {
-          "unicode-xid" = "unicode-xid 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
-        };
+        dependencies = [
+          {
+            name = "unicode-xid";
+            packageId = "unicode-xid 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
         features = {
           "default" = [ "proc-macro" ];
         };
@@ -159,12 +167,13 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
-        dependencies = {
-          "proc-macro2" = {
+        dependencies = [
+          {
+            name = "proc-macro2";
             packageId = "proc-macro2 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-        };
+          }
+        ];
         features = {
           "default" = [ "proc-macro" ];
           "proc-macro" = [ "proc-macro2/proc-macro" ];
@@ -193,18 +202,23 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
-        dependencies = {
-          "proc-macro2" = {
+        dependencies = [
+          {
+            name = "proc-macro2";
             packageId = "proc-macro2 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-          "quote" = {
+          }
+          {
+            name = "quote";
             packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
             usesDefaultFeatures = false;
-          };
-          "unicode-xid" = "unicode-xid 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
-        };
+          }
+          {
+            name = "unicode-xid";
+            packageId = "unicode-xid 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
         features = {
           "default" = [ "derive" "parsing" "printing" "clone-impls" "proc-macro" ];
           "printing" = [ "quote" ];
@@ -221,22 +235,31 @@ rec {
         authors = [
           "Tokio Contributors <team@tokio.rs>"
         ];
-        dependencies = {
-          "cfg-if" = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
-          "log" = {
+        dependencies = [
+          {
+            name = "cfg-if";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "log";
             packageId = "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
-          };
-          "spin" = {
+          }
+          {
+            name = "spin";
             packageId = "spin 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: (!(builtins.elem "std" features));
-          };
-          "tracing-attributes" = "tracing-attributes 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
-          "tracing-core" = {
+          }
+          {
+            name = "tracing-attributes";
+            packageId = "tracing-attributes 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "tracing-core";
             packageId = "tracing-core 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
-          };
-        };
+          }
+        ];
         features = {
           "default" = [ "std" ];
           "log-always" = [ "log" ];
@@ -256,13 +279,17 @@ rec {
           "Eliza Weisman <eliza@buoyant.io>"
           "David Barsky <dbarsky@amazon.com>"
         ];
-        dependencies = {
-          "quote" = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
-          "syn" = {
+        dependencies = [
+          {
+            name = "quote";
+            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "syn";
             packageId = "syn 1.0.7 (registry+https://github.com/rust-lang/crates.io-index)";
             features = [ "full" "extra-traits" ];
-          };
-        };
+          }
+        ];
         features = {
         };
       };
@@ -275,17 +302,23 @@ rec {
         authors = [
           "Tokio Contributors <team@tokio.rs>"
         ];
-        dependencies = {
-          "lazy_static" = {
+        dependencies = [
+          {
+            name = "lazy_static";
+            packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "lazy_static";
             packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: (!(builtins.elem "std" features));
             features = [ "spin_no_std" ];
-          };
-          "spin" = {
+          }
+          {
+            name = "spin";
             packageId = "spin 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: (!(builtins.elem "std" features));
-          };
-        };
+          }
+        ];
         features = {
           "default" = [ "std" ];
         };
@@ -390,14 +423,14 @@ rec {
           let features = mergedFeatures."${packageId}" or [];
               crateConfig = lib.filterAttrs (n: v: n != "resolvedDefaultFeatures") crateConfigs."${packageId}";
               dependencies =
-                dependencyDerivations buildByPackageId features (crateConfig.dependencies or {});
+                dependencyDerivations buildByPackageId features (crateConfig.dependencies or []);
               buildDependencies =
-                dependencyDerivations buildByPackageId features (crateConfig.buildDependencies or {});
+                dependencyDerivations buildByPackageId features (crateConfig.buildDependencies or []);
               dependenciesWithRenames =
-                lib.filterAttrs (n: v: v ? "rename")
-                  (crateConfig.buildDependencies or {} // crateConfig.dependencies or {});
+                lib.filter (d: d ? "rename")
+                  (crateConfig.buildDependencies or [] ++ crateConfig.dependencies or []);
               crateRenames =
-                lib.mapAttrs (name: value: value.rename or name) dependenciesWithRenames;
+                builtins.listToAttrs (map (d: { name = d.name; value = d.rename; }) dependenciesWithRenames);
           in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies crateRenames; });
     in buildByPackageId packageId;
 
@@ -405,12 +438,12 @@ rec {
   dependencyDerivations = buildByPackageId: features: dependencies:
     assert (builtins.isFunction buildByPackageId);
     assert (builtins.isList features);
-    assert (builtins.isAttrs dependencies);
+    assert (builtins.isList dependencies);
 
     let enabledDependencies = filterEnabledDependencies dependencies features;
-        depDerivation = dependencyName: dependency:
+        depDerivation = dependency:
         buildByPackageId (dependencyPackageId dependency);
-    in builtins.attrValues (lib.mapAttrs depDerivation enabledDependencies);
+    in map depDerivation enabledDependencies;
 
   /* Returns differences between cargo default features and crate2nix default features.
    *
@@ -437,7 +470,10 @@ rec {
     in builtins.toJSON { inherit onlyInCargo onlyInCrate2Nix differentFeatures; };
 
   /* Returns the feature configuration by package id for the given input crate. */
-  mergePackageFeatures = {crateConfigs ? crates, packageId, features, ...} @ args:
+  mergePackageFeatures = {
+      crateConfigs ? crates, 
+      packageId, 
+      features, ...} @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
@@ -461,17 +497,16 @@ rec {
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
         expandedFeatures = expandFeatures (crateConfig.features or {}) features;
 
-        depWithResolvedFeatures = dependencyName: dependency:
+        depWithResolvedFeatures = dependency:
           let packageId = dependencyPackageId dependency;
-              features = dependencyFeatures expandedFeatures dependencyName dependency;
+              features = dependencyFeatures expandedFeatures dependency.name dependency;
           in { inherit packageId features; };
 
         resolveDependencies = path: dependencies:
-          assert (builtins.isAttrs dependencies);
+          assert (builtins.isList dependencies);
 
           let enabledDependencies = filterEnabledDependencies dependencies expandedFeatures;
-              directDependencies =
-                builtins.attrValues (lib.mapAttrs depWithResolvedFeatures enabledDependencies);
+              directDependencies = map depWithResolvedFeatures enabledDependencies;
           in builtins.concatMap
             ({packageId, features}: listOfPackageFeatures {
               # This is purely for debugging.
@@ -482,23 +517,24 @@ rec {
 
         resolvedDependencies = builtins.concatLists
           [
-            (resolveDependencies "dependencies" (crateConfig.dependencies or {}))
-            (resolveDependencies "buildDependencies" (crateConfig.buildDependencies or {}))
+            (resolveDependencies "dependencies" (crateConfig.dependencies or []))
+            (resolveDependencies "buildDependencies" (crateConfig.buildDependencies or []))
           ];
 
     in [{inherit packageId; features = expandedFeatures;}] ++ resolvedDependencies;
 
   /* Returns the enabled dependencies given the enabled features. */
   filterEnabledDependencies = dependencies: features:
-    assert (builtins.isAttrs dependencies);
+    assert (builtins.isList dependencies);
     assert (builtins.isList features);
 
-    lib.filterAttrs
-      (depName: dep:
-      let targetFunc = dep.target or (features: true);
-      in builtins.isString dep
-        || (targetFunc features)
-        && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency depName) features))
+    lib.filter
+      (dep:
+        let targetFunc = dep.target or (features: true);
+            target = targetFunc features;
+        in builtins.isString dep
+        || target
+        && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep.name) features))
       dependencies;
 
   /* Returns whether the given feature should enable the given dependency. */
