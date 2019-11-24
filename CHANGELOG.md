@@ -7,6 +7,10 @@
 * Issue #37 - Conditional target expressions for dependencies can now 
   also depend on features. Thank you, @cpcloud!
 
+# 0.6.0 - 0.6.1
+
+Backported escaping fix for target expressions.
+
 # 0.5.1 - 0.6.0
 
 * Issue #22 - Support renamed crates. Fixed in `buildRustCrate` in nixpkgs and in 
