@@ -1730,7 +1730,6 @@ rec {
         };
         features = {
         };
-        resolvedDefaultFeatures = [ ];
       };
     "hashbrown 0.6.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2532,6 +2531,30 @@ rec {
         features = {
         };
         resolvedDefaultFeatures = [ ];
+      };
+    "nix 0.14.1 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "nix";
+        version = "0.14.1";
+        edition = "2015";
+        sha256 = "1hikdrihw975fcf3m2nmqjd7a00gxdzsbwjzlnjf6bgamr7ygipz";
+        authors = [
+          "The nix-rust Project Developers"
+        ];
+        dependencies = {
+          "bitflags" = "bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)";
+          "cfg-if" = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+          "libc" = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+          "void" = "void 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+        };
+        buildDependencies = {
+          "cc" = {
+            packageId = "cc 1.0.47 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = (target."os" == "dragonfly");
+          };
+        };
+        features = {
+        };
       };
     "num-integer 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -4944,6 +4967,20 @@ rec {
         };
         resolvedDefaultFeatures = [ ];
       };
+    "void 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "void";
+        version = "1.0.2";
+        edition = "2015";
+        sha256 = "0h1dm0dx8dhf56a83k68mijyxigqhizpskwxfdrs1drwv2cdclv3";
+        authors = [
+          "Jonathan Reem <jonathan.reem@gmail.com>"
+        ];
+        features = {
+          "default" = [ "std" ];
+        };
+        resolvedDefaultFeatures = [ "default" "std" ];
+      };
     "want 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "want";
@@ -5169,6 +5206,7 @@ rec {
           "html5ever" = "html5ever 0.22.5 (registry+https://github.com/rust-lang/crates.io-index)";
           "hyper" = "hyper 0.12.35 (registry+https://github.com/rust-lang/crates.io-index)";
           "mime" = "mime 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)";
+          "nix" = "nix 0.14.1 (registry+https://github.com/rust-lang/crates.io-index)";
           "parking_lot" = "parking_lot 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)";
           "tera" = "tera 0.11.20 (registry+https://github.com/rust-lang/crates.io-index)";
           "tokio" = "tokio 0.1.22 (registry+https://github.com/rust-lang/crates.io-index)";

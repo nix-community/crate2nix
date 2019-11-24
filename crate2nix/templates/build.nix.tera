@@ -77,9 +77,15 @@ rec {
         version = {{crate.version}};
         edition = {{crate.edition}};
 
-        {%- if crate.has_bin and not crate.is_root_or_workspace_member %}
+        {%- if crate.binaries|length > 0 and not crate.is_root_or_workspace_member %}
         # Hack to suppress building binaries
         crateBin = [{name = ","; path = ",";}];
+        {%- elif crate.binaries|length > 0 and crate.is_root_or_workspace_member %}
+        crateBin = [
+        {%- for bin in crate.binaries %}
+          { name = {{ bin.name }}; path = {{ bin.src_path }}; }
+        {%- endfor %}
+        ];
         {%- endif -%}
 
         {%- if crate.source.CratesIo.sha256 %}
@@ -168,7 +174,7 @@ rec {
             usesDefaultFeatures = false;
             {%- endif -%}
             {%- if dependency.target %}
-            target = {{dependency.target | safe | cfg_to_nix_expr}};
+            target = {{dependency.target | cfg_to_nix_expr | safe }};
             {%- endif %}
             {%- if dependency.features %}
             features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
