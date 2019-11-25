@@ -10,6 +10,7 @@ rec {
   target = {
       unix = true;
       windows = false;
+      fuchsia = true;
       # We don't support tests yet, so this is true for now.
       test = false;
 
