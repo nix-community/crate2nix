@@ -13,8 +13,8 @@ use cargo_metadata::Metadata;
 use cargo_metadata::PackageId;
 use failure::format_err;
 use failure::Error;
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use serde::Deserialize;
+use serde::Serialize;
 
 use crate::metadata::IndexedMetadata;
 use crate::resolve::CrateDerivation;
