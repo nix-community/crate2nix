@@ -11,6 +11,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
         name, src, cargoToml? "Cargo.toml", features? ["default"],
         expectedOutput,
         pregeneratedBuild? null,
+        callableBuild? pregeneratedBuild,
         derivationAttrPath? ["rootCrate"]}:
         let
             nixBuild = if builtins.isNull pregeneratedBuild
@@ -18,7 +19,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
                       name = "buildTest_test_${name}";
                       inherit src cargoToml;
                     }
-                    else pkgs.callPackage (./. + "/${pregeneratedBuild}") {};
+                    else pkgs.callPackage (./. + "/${callableBuild}") {};
             derivation = (lib.attrByPath derivationAttrPath null nixBuild)
                 .build.override { inherit features; };
         in pkgs.stdenv.mkDerivation {
@@ -94,10 +95,10 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
 
          {
-             name = "sample_project_cfg_test";
-             src = ./sample_projects/cfg-test;
-             cargoToml = "Cargo.toml";
-             expectedOutput = "Hello, cfg-test!";
+            name = "sample_project_cfg_test";
+            src = ./sample_projects/cfg-test;
+            cargoToml = "Cargo.toml";
+            expectedOutput = "Hello, cfg-test!";
             pregeneratedBuild = "sample_projects/cfg-test/Cargo.nix";
          }
 
@@ -126,7 +127,8 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          {
             name = "sample_project_bin_with_git_submodule_dep";
             src = ./sample_projects/bin_with_git_submodule_dep;
-            pregeneratedBuild = "sample_projects/bin_with_git_submodule_dep/default.nix";
+            pregeneratedBuild = "sample_projects/bin_with_git_submodule_dep/Cargo.nix";
+            callableBuild = "sample_projects/bin_with_git_submodule_dep/default.nix";
             expectedOutput = "Hello world from with_git_submodule_dep!";
          }
      ];
