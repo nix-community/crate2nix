@@ -14,14 +14,15 @@ let crate2nix = pkgs.callPackage ./default.nix {};
         callableBuild? pregeneratedBuild,
         derivationAttrPath? ["rootCrate"]}:
         let
-            nixBuild = if builtins.isNull callableBuild
+            nixBuild = if pregeneratedBuild == callableBuild
                     then tools.generated {
                       name = "buildTest_test_${name}";
                       inherit src cargoToml;
                     }
                     else pkgs.callPackage (./. + "/${callableBuild}") {};
-            derivation = (lib.attrByPath derivationAttrPath null nixBuild)
-                .build.override { inherit features; };
+            derivation = if pregeneratedBuild == callableBuild then
+                  (lib.attrByPath derivationAttrPath null nixBuild).build.override { inherit features; }
+                  else nixBuild;
         in pkgs.stdenv.mkDerivation {
             name = "buildTest_test_${name}";
             phases = [ "buildPhase" ];
