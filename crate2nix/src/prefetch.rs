@@ -133,7 +133,7 @@ fn nix_prefetch_from_git(
     {
         eprintln!("Prefetching {:>4}/{}: {}", idx, num_packages, url);
         let cmd = "nix-prefetch-git";
-        let args = vec![
+        let args = [
             "--url",
             url.as_str(),
             "--fetch-submodules",
