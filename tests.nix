@@ -24,7 +24,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
                            (lib.attrByPath derivationAttrPath null nixBuild).build.override {
                              inherit features;
                            }
-                         else (builtins.trace nixBuild nixBuild);
+                         else nixBuild;
         in pkgs.stdenv.mkDerivation {
             name = "buildTest_test_${name}";
             phases = [ "buildPhase" ];
