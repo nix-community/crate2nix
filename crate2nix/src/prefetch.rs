@@ -117,8 +117,13 @@ fn nix_prefetch_from_crates_io(
     get_command_output(cmd, &args)
 }
 
+/// A struct used to contain the output returned by `nix-prefetch-git`.
+///
+/// Additional fields are available (e.g., `name`), but we only call `nix-prefetch-git` to obtain
+/// the nix sha256 for use in calls to `pkgs.fetchgit` in generated `Cargo.nix` files so there's no
+/// reason to declare the fields here until they are needed.
 #[derive(Deserialize)]
-pub struct NixPrefetchGit {
+struct NixPrefetchGitInfo {
     sha256: String,
 }
 
@@ -141,8 +146,8 @@ fn nix_prefetch_from_git(
             if let Some(r#ref) = r#ref { r#ref } else { rev },
         ];
         let json = get_command_output(cmd, &args)?;
-        let prefetch_info: NixPrefetchGit = serde_json::from_str(&json)?;
-        Ok(prefetch_info.sha256.clone())
+        let prefetch_info: NixPrefetchGitInfo = serde_json::from_str(&json)?;
+        Ok(prefetch_info.sha256)
     } else {
         Err(format_err!(
             "Invalid source type for pre-fetching using git"
