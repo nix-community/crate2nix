@@ -3,7 +3,7 @@
 use std::io::Write;
 use std::process::Command;
 
-use crate::resolve::{CrateDerivation, NixHashed, ResolvedSource};
+use crate::resolve::{CrateDerivation, ResolvedSource};
 use crate::GenerateConfig;
 use cargo_metadata::PackageId;
 use failure::bail;

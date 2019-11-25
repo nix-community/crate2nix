@@ -168,29 +168,6 @@ pub enum ResolvedSource {
 
 const GIT_SOURCE_PREFIX: &str = "git+";
 
-pub trait NixHashed {
-    fn with_sha256(&self, sha256: String) -> Self;
-}
-
-impl NixHashed for ResolvedSource {
-    fn with_sha256(&self, sha256: String) -> Self {
-        match self {
-            Self::CratesIo { .. } => Self::CratesIo {
-                sha256: Some(sha256),
-            },
-            Self::Git {
-                url, rev, r#ref, ..
-            } => Self::Git {
-                url: url.clone(),
-                rev: rev.clone(),
-                r#ref: r#ref.clone(),
-                sha256: Some(sha256),
-            },
-            _ => self.clone(),
-        }
-    }
-}
-
 impl ResolvedSource {
     pub fn new(
         config: &GenerateConfig,
@@ -318,6 +295,23 @@ impl ResolvedSource {
                 PathBuf::from("./").join(path)
             }
         })
+    }
+
+    pub fn with_sha256(&self, sha256: String) -> Self {
+        match self {
+            Self::CratesIo { .. } => Self::CratesIo {
+                sha256: Some(sha256),
+            },
+            Self::Git {
+                url, rev, r#ref, ..
+            } => Self::Git {
+                url: url.clone(),
+                rev: rev.clone(),
+                r#ref: r#ref.clone(),
+                sha256: Some(sha256),
+            },
+            _ => self.clone(),
+        }
     }
 }
 
