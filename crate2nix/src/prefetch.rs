@@ -118,17 +118,8 @@ fn nix_prefetch_from_crates_io(
 }
 
 #[derive(Deserialize)]
-#[allow(non_snake_case)]
 pub struct NixPrefetchGit {
-    #[allow(dead_code)]
-    url: String,
-    #[allow(dead_code)]
-    rev: String,
-    #[allow(dead_code)]
-    date: String,
     sha256: String,
-    #[allow(dead_code)]
-    fetchSubmodules: bool,
 }
 
 fn nix_prefetch_from_git(
