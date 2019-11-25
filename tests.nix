@@ -96,10 +96,10 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
 
          {
-            name = "sample_project_cfg_test";
-            src = ./sample_projects/cfg-test;
-            cargoToml = "Cargo.toml";
-            expectedOutput = "Hello, cfg-test!";
+             name = "sample_project_cfg_test";
+             src = ./sample_projects/cfg-test;
+             cargoToml = "Cargo.toml";
+             expectedOutput = "Hello, cfg-test!";
             pregeneratedBuild = "sample_projects/cfg-test/Cargo.nix";
          }
 
