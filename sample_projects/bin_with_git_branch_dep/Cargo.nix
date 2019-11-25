@@ -20,12 +20,12 @@ rec {
   #
 
   rootCrate = {
-    packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+    packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_git_branch_dep)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
     build = buildRustCrateWithFeatures {
-      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_git_branch_dep)";
       features = rootFeatures;
     };
   };
@@ -36,9 +36,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "bin_with_lib_git_dep" = {
-      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_git_branch_dep)";
       build = buildRustCrateWithFeatures {
-        packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+        packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_git_branch_dep)";
         features = rootFeatures;
       };
     };
@@ -249,7 +249,7 @@ rec {
         features = {
         };
       };
-    "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)"
+    "bin_with_lib_git_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/bin_with_git_branch_dep)"
       = rec {
         crateName = "bin_with_lib_git_dep";
         version = "0.1.0";
@@ -573,10 +573,10 @@ rec {
         edition = "2018";
         # Hack to suppress building binaries
         crateBin = [{name = ","; path = ",";}];
-        src = builtins.fetchGit {
+        src = pkgs.fetchgit {
           url = "https://github.com/kolloch/crate2nix";
           rev = "fbc6bfbae54c938420a6eb704fad35b51038a517";
-          ref = "branch-for-test";
+          sha256 = "0dpzqhqhgrbswas9gxj6il9cwmi3nm25yl6v37blsp63bc1zpx0v";
         };
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"

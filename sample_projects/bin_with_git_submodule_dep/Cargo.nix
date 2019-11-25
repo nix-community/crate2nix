@@ -215,6 +215,7 @@ rec {
           {
             name = "rocksdb";
             packageId = "rocksdb 0.13.0 (git+https://github.com/rust-rocksdb/rust-rocksdb#3c810163091fb8d343a3fa8373edd4b5685ed84d)";
+            usesDefaultFeatures = false;
           }
         ];
         features = {
@@ -780,7 +781,7 @@ rec {
         features = {
           "default" = [ "static" ];
         };
-        resolvedDefaultFeatures = [ "bzip2" "default" "lz4" "snappy" "static" "zlib" "zstd" ];
+        resolvedDefaultFeatures = [ "default" "static" ];
       };
     "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1032,7 +1033,6 @@ rec {
           "zlib" = [ "librocksdb-sys/zlib" ];
           "zstd" = [ "librocksdb-sys/zstd" ];
         };
-        resolvedDefaultFeatures = [ "bzip2" "default" "lz4" "snappy" "zlib" "zstd" ];
       };
     "rustc-demangle 0.1.16 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {

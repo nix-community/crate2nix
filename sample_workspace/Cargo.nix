@@ -25,44 +25,44 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "bin_with_default_features" = {
-      packageId = "bin_with_default_features 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_default_features)";
+      packageId = "bin_with_default_features 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_default_features)";
       build = buildRustCrateWithFeatures {
-        packageId = "bin_with_default_features 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_default_features)";
+        packageId = "bin_with_default_features 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_default_features)";
         features = rootFeatures;
       };
     };
     "hello_world_bin" = {
-      packageId = "hello_world_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin)";
+      packageId = "hello_world_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin)";
       build = buildRustCrateWithFeatures {
-        packageId = "hello_world_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin)";
+        packageId = "hello_world_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin)";
         features = rootFeatures;
       };
     };
     "hello_world_lib" = {
-      packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)";
+      packageId = "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib)";
       build = buildRustCrateWithFeatures {
-        packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)";
+        packageId = "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib)";
         features = rootFeatures;
       };
     };
     "hello_world_lib_and_bin" = {
-      packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib_and_bin)";
+      packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib_and_bin)";
       build = buildRustCrateWithFeatures {
-        packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib_and_bin)";
+        packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib_and_bin)";
         features = rootFeatures;
       };
     };
     "hello_world_with_dep" = {
-      packageId = "hello_world_with_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_lib_dep)";
+      packageId = "hello_world_with_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_lib_dep)";
       build = buildRustCrateWithFeatures {
-        packageId = "hello_world_with_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_lib_dep)";
+        packageId = "hello_world_with_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_lib_dep)";
         features = rootFeatures;
       };
     };
     "with_tera" = {
-      packageId = "with_tera 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/with_tera)";
+      packageId = "with_tera 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/with_tera)";
       build = buildRustCrateWithFeatures {
-        packageId = "with_tera 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/with_tera)";
+        packageId = "with_tera 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/with_tera)";
         features = rootFeatures;
       };
     };
@@ -142,7 +142,7 @@ rec {
         features = {
         };
       };
-    "bin_with_default_features 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_default_features)"
+    "bin_with_default_features 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_default_features)"
       = rec {
         crateName = "bin_with_default_features";
         version = "0.1.0";
@@ -157,7 +157,7 @@ rec {
         dependencies = [
           {
             name = "hello_world_lib";
-            packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)";
+            packageId = "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib)";
             optional = true;
           }
         ];
@@ -425,7 +425,7 @@ rec {
         features = {
         };
       };
-    "hello_world_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin)"
+    "hello_world_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin)"
       = rec {
         crateName = "hello_world_bin";
         version = "0.1.0";
@@ -440,7 +440,7 @@ rec {
         features = {
         };
       };
-    "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)"
+    "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib)"
       = rec {
         crateName = "hello_world_lib";
         version = "0.1.0";
@@ -452,7 +452,7 @@ rec {
         features = {
         };
       };
-    "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib_and_bin)"
+    "hello_world_lib_and_bin 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib_and_bin)"
       = rec {
         crateName = "hello_world_lib_and_bin";
         version = "0.1.0";
@@ -467,7 +467,7 @@ rec {
         features = {
         };
       };
-    "hello_world_with_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_lib_dep)"
+    "hello_world_with_dep 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/bin_with_lib_dep)"
       = rec {
         crateName = "hello_world_with_dep";
         version = "0.1.0";
@@ -482,7 +482,7 @@ rec {
         dependencies = [
           {
             name = "hello_world_lib";
-            packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)";
+            packageId = "hello_world_lib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/lib)";
           }
         ];
         features = {
@@ -1703,7 +1703,7 @@ rec {
         features = {
         };
       };
-    "with_tera 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/with_tera)"
+    "with_tera 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_workspace/with_tera)"
       = rec {
         crateName = "with_tera";
         version = "0.1.0";
