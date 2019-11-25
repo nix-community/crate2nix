@@ -126,7 +126,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          {
             name = "sample_project_bin_with_git_submodule_dep";
             src = ./sample_projects/bin_with_git_submodule_dep;
-            pregeneratedBuild = "sample_projects/bin_with_git_submodule_dep/Cargo.nix";
+            pregeneratedBuild = "sample_projects/bin_with_git_submodule_dep/default.nix";
             expectedOutput = "Hello world from with_git_submodule_dep!";
          }
      ];
