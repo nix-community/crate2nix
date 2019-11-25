@@ -6,3 +6,4 @@ edition = "2018"
 
 [dependencies.rocksdb]
 git = "https://github.com/rust-rocksdb/rust-rocksdb"
+default-features = false
