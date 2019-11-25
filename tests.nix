@@ -14,7 +14,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
         callableBuild? pregeneratedBuild,
         derivationAttrPath? ["rootCrate"]}:
         let
-            nixBuild = if builtins.isNull pregeneratedBuild
+            nixBuild = if builtins.isNull callableBuild
                     then tools.generated {
                       name = "buildTest_test_${name}";
                       inherit src cargoToml;
