@@ -138,13 +138,21 @@ fn nix_prefetch_from_git(
     {
         eprintln!("Prefetching {:>4}/{}: {}", idx, num_packages, url);
         let cmd = "nix-prefetch-git";
-        let args = [
+        let mut args = vec![
             "--url",
             url.as_str(),
             "--fetch-submodules",
             "--rev",
-            if let Some(r#ref) = r#ref { r#ref } else { rev },
+            rev,
         ];
+
+        // TODO: --branch-name isn't documented in nix-prefetch-git --help
+        // TODO: Consider the case when ref *isn't* a branch. You have to pass
+        // that to `--rev` instead. This seems like limitation of nix-prefetch-git.
+        if let Some(r#ref) = r#ref {
+            args.extend_from_slice(&["--branch-name", r#ref]);
+        }
+
         let json = get_command_output(cmd, &args)?;
         let prefetch_info: NixPrefetchGitInfo = serde_json::from_str(&json)?;
         Ok(prefetch_info.sha256)
