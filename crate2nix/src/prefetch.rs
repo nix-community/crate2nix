@@ -138,7 +138,7 @@ fn nix_prefetch_from_git(
             url.as_str(),
             "--fetch-submodules",
             "--rev",
-            rev
+            if let Some(r#ref) = r#ref { r#ref } else { rev },
         ];
         let json = get_command_output(cmd, &args)?;
         let prefetch_info: NixPrefetchGit = serde_json::from_str(&json)?;
