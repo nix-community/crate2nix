@@ -6,18 +6,20 @@ echo "================ Regenerating ./Cargo.nix =================="
 
 cd "${top}"
 
-(cd crate2nix; cargo run -- "generate" "-n" "../nixpkgs.nix" \
-  "-f" "./Cargo.toml" "-o" "./Cargo.nix")  ||\
+(cd crate2nix; nix run nixpkgs.cargo -c cargo run -- generate -n ../nixpkgs.nix \
+  -f ./Cargo.toml -o ./Cargo.nix)  ||\
      { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-nix-shell --run 'crate2nix "generate" "-n" "./nixpkgs.nix" \
-  "-f" "./crate2nix/Cargo.toml" "-o" "./crate2nix/Cargo.nix"'  ||\
+nix run -c crate2nix generate -n ./nixpkgs.nix \
+  -f ./crate2nix/Cargo.toml -o ./crate2nix/Cargo.nix || \
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-crate2nix=$(nix-build)/bin/crate2nix
+nix build
 
-nix eval --json -f ./tests.nix buildTestConfigs |\
- jq -r .[].pregeneratedBuild |\
+crate2nix="$(pwd)"/result/bin/crate2nix
+
+nix eval --json -f ./tests.nix buildTestConfigs | \
+ nix run nixpkgs.jq -c jq -r .[].pregeneratedBuild | \
  while read cargo_nix; do
    if [ "$cargo_nix" = "null" ]; then
      continue
@@ -27,6 +29,6 @@ nix eval --json -f ./tests.nix buildTestConfigs |\
 
    echo "=============== Regenerating ${cargo_nix} ================"
 
-   $crate2nix generate -f "$dir/Cargo.toml" -o "$cargo_nix" ||\
+   "$crate2nix" generate -f "$dir/Cargo.toml" -o "$cargo_nix" ||\
      { echo "Regeneration of ${cargo_nix} failed." >&2 ; exit 1; }
  done
