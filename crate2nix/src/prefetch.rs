@@ -3,18 +3,19 @@
 use std::io::Write;
 use std::process::Command;
 
-use crate::resolve::{CrateDerivation, ResolvedSource};
+use crate::resolve::{CrateDerivation, NixHashed, ResolvedSource};
 use crate::GenerateConfig;
 use cargo_metadata::PackageId;
 use failure::bail;
 use failure::format_err;
 use failure::Error;
+use serde::Deserialize;
 use std::collections::BTreeMap;
 
 /// Uses `nix-prefetch` to get the hashes of the sources for the given packages if they come from crates.io.
 ///
 /// Uses and updates the existing hashes in the `config.crate_hash_json` file.
-pub fn prefetch_from_crates_io(
+pub fn prefetch(
     config: &GenerateConfig,
     crate_derivations: &mut [CrateDerivation],
 ) -> Result<BTreeMap<PackageId, String>, Error> {
@@ -26,34 +27,33 @@ pub fn prefetch_from_crates_io(
     let mut hashes: BTreeMap<PackageId, String> = BTreeMap::new();
 
     // Skip none-registry packages.
-    let mut packages_from_crates_io: Vec<&mut CrateDerivation> = crate_derivations
+    let mut packages: Vec<&mut CrateDerivation> = crate_derivations
         .iter_mut()
         .filter(|c| match c.source {
-            crate::resolve::ResolvedSource::CratesIo { .. } => true,
+            ResolvedSource::CratesIo { .. } => true,
+            ResolvedSource::Git { .. } => true,
             _ => false,
         })
         .collect();
-    let without_hash_num = packages_from_crates_io
+    let without_hash_num = packages
         .iter()
         .filter(|p| !old_hashes.contains_key(&p.package_id))
         .count();
     let mut without_hash_idx = 0;
-    for package in &mut packages_from_crates_io {
+    for package in &mut packages {
         let existing_hash = old_hashes.get(&package.package_id);
         let sha256 = if let Some(hash) = existing_hash {
             hash.trim().to_string()
         } else {
             without_hash_idx += 1;
-            crate::prefetch::nix_prefetch_from_crate_io(
-                package,
-                without_hash_idx,
-                without_hash_num,
-            )?
+            if let ResolvedSource::CratesIo { .. } = package.source {
+                nix_prefetch_from_crates_io(package, without_hash_idx, without_hash_num)?
+            } else {
+                nix_prefetch_from_git(package, without_hash_idx, without_hash_num)?
+            }
         };
 
-        package.source = ResolvedSource::CratesIo {
-            sha256: Some(sha256.clone()),
-        };
+        package.source = package.source.with_sha256(sha256.clone());
         hashes.insert(package.package_id.clone(), sha256);
     }
 
@@ -71,8 +71,29 @@ pub fn prefetch_from_crates_io(
     Ok(hashes)
 }
 
+fn get_command_output(cmd: &str, args: &[&str]) -> Result<String, Error> {
+    let output = Command::new(cmd)
+        .args(args)
+        .output()
+        .map_err(|e| format_err!("While spawning '{} {}': {}", cmd, args.join(" "), e))?;
+
+    if !output.status.success() {
+        std::io::stdout().write_all(&output.stdout)?;
+        std::io::stderr().write_all(&output.stderr)?;
+        bail!(
+            "{}\n=> exited with: {}",
+            cmd,
+            output.status.code().unwrap_or(-1)
+        );
+    }
+
+    String::from_utf8(output.stdout)
+        .map(|s| s.trim().to_string())
+        .map_err(|_e| format_err!("output of '{} {}' is not UTF8!", cmd, args.join(" ")))
+}
+
 /// Invoke `nix-prefetch` for the given `package` and return the hash.
-pub fn nix_prefetch_from_crate_io(
+fn nix_prefetch_from_crates_io(
     crate_derivation: &CrateDerivation,
     idx: usize,
     num_packages: usize,
@@ -93,22 +114,38 @@ pub fn nix_prefetch_from_crate_io(
             crate_derivation.crate_name, crate_derivation.version
         ),
     ];
-    let output = Command::new(cmd)
-        .args(&args)
-        .output()
-        .map_err(|e| format_err!("While spawning '{} {}': {}", cmd, args.join(" "), e))?;
+    get_command_output(cmd, &args)
+}
 
-    if !output.status.success() {
-        std::io::stdout().write_all(&output.stdout)?;
-        std::io::stderr().write_all(&output.stderr)?;
-        bail!(
-            "{}\n=> exited with: {}",
-            "nix-prefetch-url",
-            output.status.code().unwrap_or(-1)
-        );
+#[derive(Deserialize)]
+#[allow(non_snake_case)]
+pub struct NixPrefetchGit {
+    #[allow(dead_code)]
+    url: String,
+    #[allow(dead_code)]
+    rev: String,
+    #[allow(dead_code)]
+    date: String,
+    sha256: String,
+    #[allow(dead_code)]
+    fetchSubmodules: bool,
+}
+
+fn nix_prefetch_from_git(
+    crate_derivation: &CrateDerivation,
+    idx: usize,
+    num_packages: usize,
+) -> Result<String, Error> {
+    if let ResolvedSource::Git { url, .. } = &crate_derivation.source {
+        eprintln!("Prefetching {:>4}/{}: {}", idx, num_packages, url);
+        let cmd = "nix-prefetch-git";
+        let args = ["--url", url.as_str(), "--fetch-submodules"];
+        let json = get_command_output(cmd, &args)?;
+        let prefetch_info: NixPrefetchGit = serde_json::from_str(&json)?;
+        Ok(prefetch_info.sha256.clone())
+    } else {
+        Err(format_err!(
+            "Invalid source type for pre-fetching using git"
+        ))
     }
-
-    Ok(String::from_utf8(output.stdout)
-        .map(|s| s.trim().to_string())
-        .map_err(|_e| format_err!("output of '{} {}' is not UTF8!", cmd, args.join(" ")))?)
 }

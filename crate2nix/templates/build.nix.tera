@@ -93,11 +93,15 @@ rec {
         {%- elif crate.source.LocalDirectory.path %}
         src = (builtins.filterSource sourceFilter {{crate.source.LocalDirectory.path | safe}});
         {%- elif crate.source.Git %}
-        src = builtins.fetchGit {
+        src = pkgs.fetchgit {
           url = {{crate.source.Git.url}};
           rev = {{crate.source.Git.rev}};
           {%- if crate.source.Git.ref %}
           ref = {{ crate.source.Git.ref }};
+          {%- endif %}
+
+          {%- if crate.source.Git.sha256 %}
+          sha256 = {{ crate.source.Git.sha256 }};
           {%- endif %}
         };
         {%- else %}
