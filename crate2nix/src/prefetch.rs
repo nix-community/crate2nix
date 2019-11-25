@@ -136,10 +136,19 @@ fn nix_prefetch_from_git(
     idx: usize,
     num_packages: usize,
 ) -> Result<String, Error> {
-    if let ResolvedSource::Git { url, .. } = &crate_derivation.source {
+    if let ResolvedSource::Git {
+        url, rev, r#ref, ..
+    } = &crate_derivation.source
+    {
         eprintln!("Prefetching {:>4}/{}: {}", idx, num_packages, url);
         let cmd = "nix-prefetch-git";
-        let args = ["--url", url.as_str(), "--fetch-submodules"];
+        let args = vec![
+            "--url",
+            url.as_str(),
+            "--fetch-submodules",
+            "--rev",
+            if let Some(r#ref) = r#ref { r#ref } else { rev },
+        ];
         let json = get_command_output(cmd, &args)?;
         let prefetch_info: NixPrefetchGit = serde_json::from_str(&json)?;
         Ok(prefetch_info.sha256.clone())
