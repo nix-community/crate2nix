@@ -47,10 +47,10 @@ pub fn prefetch(
         } else {
             without_hash_idx += 1;
             if let ResolvedSource::CratesIo { .. } = package.source {
-                nix_prefetch_from_crates_io(package, without_hash_idx, without_hash_num)?
+                nix_prefetch_from_crates_io(package, without_hash_idx, without_hash_num)
             } else {
-                nix_prefetch_from_git(package, without_hash_idx, without_hash_num)?
-            }
+                nix_prefetch_from_git(package, without_hash_idx, without_hash_num)
+            }?
         };
 
         package.source = package.source.with_sha256(sha256.clone());
