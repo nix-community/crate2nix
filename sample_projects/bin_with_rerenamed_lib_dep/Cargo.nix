@@ -108,6 +108,7 @@ rec {
   target = {
       unix = true;
       windows = false;
+      fuchsia = true;
       # We don't support tests yet, so this is true for now.
       test = false;
 
@@ -201,7 +202,7 @@ rec {
 
     let enabledDependencies = filterEnabledDependencies dependencies features;
         depDerivation = dependency:
-        buildByPackageId (dependencyPackageId dependency);
+        buildByPackageId dependency.packageId;
     in map depDerivation enabledDependencies;
 
   /* Returns differences between cargo default features and crate2nix default features.
@@ -257,8 +258,8 @@ rec {
         expandedFeatures = expandFeatures (crateConfig.features or {}) features;
 
         depWithResolvedFeatures = dependency:
-          let packageId = dependencyPackageId dependency;
-              features = dependencyFeatures expandedFeatures dependency.name dependency;
+          let packageId = dependency.packageId;
+              features = dependencyFeatures expandedFeatures dependency;
           in { inherit packageId features; };
 
         resolveDependencies = path: dependencies:
@@ -318,13 +319,13 @@ rec {
         outFeatures = builtins.concatMap expandFeature inputFeatures;
     in sortedUnique outFeatures;
 
-  /* The package ID of the given dependency. */
-  dependencyPackageId = dependency: if builtins.isString dependency then dependency else dependency.packageId;
-
-  /* Returns the actual dependencies for the given dependency. */
-  dependencyFeatures = features: dependencyName: dependency:
+  /*
+   * Returns the actual dependencies for the given dependency.
+   *
+   * features: The features of the crate that refers this dependency.
+   */
+  dependencyFeatures = features: dependency:
     assert (builtins.isList features);
-    assert (builtins.isString dependencyName);
     assert (builtins.isAttrs dependency || builtins.isString dependency);
 
     let defaultOrNil = if builtins.isString dependency || dependency.usesDefaultFeatures or true
@@ -333,7 +334,7 @@ rec {
         explicitFeatures = if builtins.isString dependency then [] else dependency.features or [];
         additionalDependencyFeatures =
 
-          let dependencyPrefix = dependencyName+"/";
+          let dependencyPrefix = dependency.name+"/";
               dependencyFeatures =
                 builtins.filter (f: lib.hasPrefix dependencyPrefix f) features;
           in builtins.map (lib.removePrefix dependencyPrefix) dependencyFeatures;
