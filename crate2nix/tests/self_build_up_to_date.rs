@@ -1,8 +1,8 @@
 use colored_diff::PrettyDifference;
 use crate2nix::{nix_build::dump_with_lines, render, BuildInfo, GenerateConfig, GenerateInfo};
 use failure::{bail, format_err, Error};
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use serde::Deserialize;
+use serde::Serialize;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -70,7 +70,9 @@ fn assert_up_to_date(project_dir: &Path) {
         cargo_toml: PathBuf::from("../").join(cargo_toml.clone()),
         output: PathBuf::from("../").join(output.clone()),
         nixpkgs_path: "<nixpkgs>".to_string(),
-        crate_hashes_json: PathBuf::from("../").join(project_dir).join("./crate-hashes.json"),
+        crate_hashes_json: PathBuf::from("../")
+            .join(project_dir)
+            .join("./crate-hashes.json"),
     };
     let metadata = BuildInfo::for_config(
         &GenerateInfo {

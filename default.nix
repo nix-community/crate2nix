@@ -23,7 +23,7 @@ in pkgs.symlinkJoin {
   postBuild = ''
     # Fallback to built dependencies for cargo and nix-prefetch-url
     wrapProgram $out/bin/crate2nix \
-       --suffix PATH ":" ${lib.makeBinPath [ cargo nix ]}
+       --suffix PATH ":" ${lib.makeBinPath [ cargo nix pkgs.nix-prefetch-git ]}
     rm -rf $out/lib $out/bin/crate2nix.d
     mkdir -p \
       $out/share/bash-completion/completions \

@@ -9,8 +9,8 @@ use failure::format_err;
 use failure::Error;
 use pathdiff::diff_paths;
 use semver::Version;
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use serde::Deserialize;
+use serde::Serialize;
 use serde_json::to_string_pretty;
 use std::collections::HashMap;
 use std::convert::Into;
@@ -149,7 +149,7 @@ impl BuildTarget {
 }
 
 /// Specifies how to retrieve the source code.
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum ResolvedSource {
     CratesIo {
         sha256: Option<String>,
@@ -159,6 +159,7 @@ pub enum ResolvedSource {
         url: Url,
         rev: String,
         r#ref: Option<String>,
+        sha256: Option<String>,
     },
     LocalDirectory {
         path: PathBuf,
@@ -226,6 +227,7 @@ impl ResolvedSource {
             url,
             rev,
             r#ref: branch,
+            sha256: None,
         })
     }
 
@@ -293,6 +295,23 @@ impl ResolvedSource {
                 PathBuf::from("./").join(path)
             }
         })
+    }
+
+    pub fn with_sha256(&self, sha256: String) -> Self {
+        match self {
+            Self::CratesIo { .. } => Self::CratesIo {
+                sha256: Some(sha256),
+            },
+            Self::Git {
+                url, rev, r#ref, ..
+            } => Self::Git {
+                url: url.clone(),
+                rev: rev.clone(),
+                r#ref: r#ref.clone(),
+                sha256: Some(sha256),
+            },
+            _ => self.clone(),
+        }
     }
 }
 

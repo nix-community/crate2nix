@@ -18,6 +18,7 @@
   "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)": "0cxgqgf4lknsii1k806dpmzapi2zccjpa350ns5wpb568mij096x",
   "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)": "054n9ngh6pkknpmd4acgdsp40iw6f5jzq8a4h2b76gnbvk6p5xjh",
   "clap-verbosity-flag 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)": "1239fnlr2wzrhwh17gcahda8gv8xrk3884i6j2dy3h8612ibkiq2",
+  "crate2nix 0.5.1 (git+https://github.com/kolloch/crate2nix?rev=de2caabc7fece3d7d6cf04e8b2226a7638c9b721#de2caabc7fece3d7d6cf04e8b2226a7638c9b721)": "1rpiv12dqlnbx3f8cr2j5008sksyhdsa6x2r6d6ky5lcrl42pxnb",
   "crossbeam-channel 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)": "0apm8why2qsgr8ykh9x677kc9ml7qp71mvirfkdzdn4c1jyqyyzm",
   "crossbeam-deque 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)": "1h3n1p1qy45b6388j3svfy1m72xlcx9j9a5y0mww6jz8fmknipnb",
   "crossbeam-epoch 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)": "1ljrrpvalabi3r2nnpcz7rqkbl2ydmd0mrrr2fv335f7d46xgfxa",

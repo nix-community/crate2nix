@@ -575,10 +575,7 @@ rec {
           {
             name = "serde";
             packageId = "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "serde_derive";
-            packageId = "serde_derive 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            features = [ "derive" ];
           }
           {
             name = "serde_json";
@@ -2046,11 +2043,18 @@ rec {
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        dependencies = [
+          {
+            name = "serde_derive";
+            packageId = "serde_derive 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            optional = true;
+          }
+        ];
         features = {
           "default" = [ "std" ];
           "derive" = [ "serde_derive" ];
         };
-        resolvedDefaultFeatures = [ "default" "std" ];
+        resolvedDefaultFeatures = [ "default" "derive" "serde_derive" "std" ];
       };
     "serde_derive 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {

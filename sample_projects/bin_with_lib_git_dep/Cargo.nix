@@ -573,9 +573,10 @@ rec {
         edition = "2018";
         # Hack to suppress building binaries
         crateBin = [{name = ","; path = ",";}];
-        src = builtins.fetchGit {
+        src = pkgs.fetchgit {
           url = "https://github.com/kolloch/crate2nix";
           rev = "de2caabc7fece3d7d6cf04e8b2226a7638c9b721";
+          sha256 = "1rpiv12dqlnbx3f8cr2j5008sksyhdsa6x2r6d6ky5lcrl42pxnb";
         };
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"

@@ -5,8 +5,8 @@ use structopt::StructOpt;
 use crate2nix::render;
 use failure::format_err;
 use failure::Error;
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use serde::Deserialize;
+use serde::Serialize;
 use std::str::FromStr;
 
 const DEFAULT_OUTPUT: &str = "./Cargo.nix";
