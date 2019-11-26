@@ -118,6 +118,22 @@ in lib.runTests {
     };
   };
 
+  testNumTestDependenciesNoDefault = {
+    expr = packageFeatures "pkg_numtest" [];
+    expected = {
+      list = [
+        { packageId = "pkg_numtest"; features = []; }
+        { packageId = "pkg_num"; features = []; }
+        { packageId = "pkg_num_bigint"; features = []; }
+      ];
+      merged = {
+        "pkg_numtest" = [];
+        "pkg_num" = [];
+        "pkg_num_bigint" = [];
+      };
+    };
+  };
+
   testTerminalPackageDependency = {
     expr = packageFeatures "pkg_id1" [];
     expected = {
