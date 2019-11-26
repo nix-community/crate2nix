@@ -1,8 +1,8 @@
 use colored_diff::PrettyDifference;
 use crate2nix::{nix_build::dump_with_lines, render, BuildInfo, GenerateConfig, GenerateInfo};
 use failure::{bail, format_err, Error};
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use serde::Deserialize;
+use serde::Serialize;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;

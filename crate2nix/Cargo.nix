@@ -20,12 +20,12 @@ rec {
   #
 
   rootCrate = {
-    packageId = "crate2nix 0.7.0-alpha.1 (path+file:///home/cloud/Documents/code/nix/crate2nix/crate2nix)";
+    packageId = "crate2nix 0.7.0-alpha.1 (path+file:///home/peter/projects/crate2nix/crate2nix)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
     build = buildRustCrateWithFeatures {
-      packageId = "crate2nix 0.7.0-alpha.1 (path+file:///home/cloud/Documents/code/nix/crate2nix/crate2nix)";
+      packageId = "crate2nix 0.7.0-alpha.1 (path+file:///home/peter/projects/crate2nix/crate2nix)";
       features = rootFeatures;
     };
   };
@@ -36,9 +36,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "crate2nix" = {
-      packageId = "crate2nix 0.7.0-alpha.1 (path+file:///home/cloud/Documents/code/nix/crate2nix/crate2nix)";
+      packageId = "crate2nix 0.7.0-alpha.1 (path+file:///home/peter/projects/crate2nix/crate2nix)";
       build = buildRustCrateWithFeatures {
-        packageId = "crate2nix 0.7.0-alpha.1 (path+file:///home/cloud/Documents/code/nix/crate2nix/crate2nix)";
+        packageId = "crate2nix 0.7.0-alpha.1 (path+file:///home/peter/projects/crate2nix/crate2nix)";
         features = rootFeatures;
       };
     };
@@ -535,7 +535,7 @@ rec {
         features = {
         };
       };
-    "crate2nix 0.7.0-alpha.1 (path+file:///home/cloud/Documents/code/nix/crate2nix/crate2nix)"
+    "crate2nix 0.7.0-alpha.1 (path+file:///home/peter/projects/crate2nix/crate2nix)"
       = rec {
         crateName = "crate2nix";
         version = "0.7.0-alpha.1";
