@@ -8,8 +8,8 @@ use cargo_metadata::Package;
 use cargo_metadata::PackageId;
 use failure::format_err;
 use failure::Error;
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use serde::Deserialize;
+use serde::Serialize;
 
 /// The metadata with maps indexed by {{PackageId}} instead of flat lists.
 #[derive(Debug, Deserialize, Serialize, Clone)]

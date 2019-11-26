@@ -6,7 +6,7 @@ use std::path::Path;
 use failure::format_err;
 use failure::Error;
 use lazy_static::lazy_static;
-use tera::{Tera, Context};
+use tera::{Context, Tera};
 
 use crate::target_cfg::{Cfg, CfgExpr};
 use crate::BuildInfo;
@@ -14,13 +14,15 @@ use std::collections::HashMap;
 use std::str::FromStr;
 
 pub fn render_build_file(metadata: &BuildInfo) -> Result<String, Error> {
-    Ok(TERA.render("build.nix.tera", &Context::from_serialize(metadata)?).map_err(|e| {
-        format_err!(
-            "while rendering default.nix: {:?}\nMetadata: {:?}",
-            e,
-            metadata
-        )
-    })?)
+    Ok(TERA
+        .render("build.nix.tera", &Context::from_serialize(metadata)?)
+        .map_err(|e| {
+            format_err!(
+                "while rendering default.nix: {:?}\nMetadata: {:?}",
+                e,
+                metadata
+            )
+        })?)
 }
 
 pub fn write_to_file(path: impl AsRef<Path>, contents: &str) -> Result<(), Error> {
@@ -102,16 +104,9 @@ fn cfg_to_nix_expr(cfg: &CfgExpr) -> String {
             CfgExpr::Value(Cfg::KeyPair(key, value)) => {
                 let escaped_value = escape_nix_string(value);
                 result.push_str(&if key == "feature" {
-                    format!(
-                        "(builtins.elem {} features)",
-                        escaped_value,
-                    )
+                    format!("(builtins.elem {} features)", escaped_value)
                 } else {
-                    format!(
-                        "(target.{} == {})",
-                        target(key),
-                        escaped_value,
-                    )
+                    format!("(target.{} == {})", target(key), escaped_value)
                 });
             }
             CfgExpr::Not(expr) => {

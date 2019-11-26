@@ -1,0 +1,9 @@
+[package]
+name = "bin_with_git_submodule_dep"
+version = "0.1.0"
+authors = ["Phillip Cloud <cloud@standard.ai>"]
+edition = "2018"
+
+[dependencies.rocksdb]
+git = "https://github.com/rust-rocksdb/rust-rocksdb"
+default-features = false

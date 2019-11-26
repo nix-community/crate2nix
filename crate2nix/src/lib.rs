@@ -13,8 +13,8 @@ use cargo_metadata::Metadata;
 use cargo_metadata::PackageId;
 use failure::format_err;
 use failure::Error;
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use serde::Deserialize;
+use serde::Serialize;
 
 use crate::metadata::IndexedMetadata;
 use crate::resolve::CrateDerivation;
@@ -137,7 +137,7 @@ fn prefetch_and_fill_crates_sha256(
     config: &GenerateConfig,
     default_nix: &mut BuildInfo,
 ) -> Result<(), Error> {
-    crate::prefetch::prefetch_from_crates_io(config, &mut default_nix.crates)
+    prefetch::prefetch(config, &mut default_nix.crates)
         .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
     Ok(())
 }
