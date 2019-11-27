@@ -1875,6 +1875,14 @@ rec {
             inherit packageId;
         };
         sanitizedBuildTree = sanitizeForJson buildTree;
+        dependencyTree = sanitizeForJson (buildRustCrateWithFeatures {
+            buildRustCrateFunc = crate: {
+                "01_crateName" = crate.crateName or false;
+                "02_features" = crate.features or [];
+                "03_dependencies" = crate.dependencies or [];
+            };
+            inherit packageId;
+        });
         mergedPackageFeatures = mergePackageFeatures { inherit packageId; };
         diffedDefaultPackageFeatures = diffDefaultPackageFeatures { inherit packageId; };
     };
