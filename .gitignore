@@ -4,4 +4,7 @@ target
 *.iml
 /result*
 crate2nix/result*
+*.json
+*.log
+*~
 
