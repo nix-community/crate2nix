@@ -180,31 +180,25 @@ rec {
           combined;
     in builtins.toJSON { inherit onlyInCargo onlyInCrate2Nix differentFeatures; };
 
-  /* Returns the feature configuration by package id for the given input crate. */
-  mergePackageFeatures = {
-          crateConfigs ? crates,
-          packageId,
-          features ? rootFeatures,
-          ...
-       } @ args:
-    assert (builtins.isAttrs crateConfigs);
-    assert (builtins.isString packageId);
-    assert (builtins.isList features);
+  /* Returns the feature configuration by package id for the given input crate.
 
-    let packageFeatures = listOfPackageFeatures args;
-        grouped = lib.groupBy (x: x.packageId) packageFeatures;
-    in lib.mapAttrs (n: v: sortedUnique (builtins.concatLists (builtins.map (v: v.features) v))) grouped;
-
-  /* Returns a { packageId, features } attribute set for every package needed for building the
+     Returns a { packageId, features } attribute set for every package needed for building the
      package for the given packageId with the given features.
 
      Returns multiple, potentially conflicting attribute sets for dependencies that are reachable
      by multiple paths in the dependency tree.
   */
-  listOfPackageFeatures = {crateConfigs ? crates, packageId, features, dependencyPath? [packageId], ...} @ args:
+  mergePackageFeatures = {
+    crateConfigs ? crates,
+    packageId,
+    features ? rootFeatures,
+    dependencyPath? [crates.${packageId}.crateName],
+    featuresByPackageId? {},
+    ...} @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
+    assert (builtins.isAttrs featuresByPackageId);
 
     let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
@@ -215,26 +209,41 @@ rec {
               features = dependencyFeatures expandedFeatures dependency;
           in { inherit packageId features; };
 
-        resolveDependencies = path: dependencies:
+        resolveDependencies = cache: path: dependencies:
+          assert (builtins.isAttrs cache);
           assert (builtins.isList dependencies);
 
           let enabledDependencies = filterEnabledDependencies dependencies expandedFeatures;
               directDependencies = map depWithResolvedFeatures enabledDependencies;
-          in builtins.concatMap
-            ({packageId, features}: listOfPackageFeatures {
-              # This is purely for debugging.
-              dependencyPath = dependencyPath ++ [path packageId];
-              inherit crateConfigs packageId features;
-            })
-             directDependencies;
+              foldOverCache = op: lib.foldl op cache directDependencies;
+          in foldOverCache
+            (cache: {packageId, features}:
+             let cacheFeatures = cache.${packageId} or [];
+                 combinedFeatures = sortedUnique (cacheFeatures ++ features);
+             in
+             if cache ? ${packageId} && cache.${packageId} == combinedFeatures
+             then cache
+             else mergePackageFeatures {
+                  # This is purely for debugging.
+                  dependencyPath = dependencyPath ++ [path crateConfigs.${packageId}.crateName];
+                  features = combinedFeatures;
+                  featuresByPackageId = cache;
+                  inherit crateConfigs packageId;
+                 });
 
-        resolvedDependencies = builtins.concatLists
-          [
-            (resolveDependencies "dependencies" (crateConfig.dependencies or []))
-            (resolveDependencies "buildDependencies" (crateConfig.buildDependencies or []))
-          ];
+        cacheWithSelf =
+            let cacheFeatures = featuresByPackageId.${packageId} or [];
+                combinedFeatures = sortedUnique (cacheFeatures ++ expandedFeatures);
+            in featuresByPackageId // {
+                ${packageId} = combinedFeatures;
+            };
 
-    in [{inherit packageId; features = expandedFeatures;}] ++ resolvedDependencies;
+        cacheWithDependencies =
+            resolveDependencies cacheWithSelf "dep" (crateConfig.dependencies or []);
+        cacheWithAll =
+            resolveDependencies cacheWithDependencies "build" (crateConfig.buildDependencies or []);
+
+    in cacheWithAll;
 
   /* Returns the enabled dependencies given the enabled features. */
   filterEnabledDependencies = dependencies: features:
@@ -244,10 +253,8 @@ rec {
     lib.filter
       (dep:
         let targetFunc = dep.target or (features: true);
-            target = targetFunc features;
-        in builtins.isString dep
-        || target
-        && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep.name) features))
+        in targetFunc features
+           && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep.name) features))
       dependencies;
 
   /* Returns whether the given feature should enable the given dependency. */
@@ -279,14 +286,13 @@ rec {
    */
   dependencyFeatures = features: dependency:
     assert (builtins.isList features);
-    assert (builtins.isAttrs dependency || builtins.isString dependency);
+    assert (builtins.isAttrs dependency);
 
-    let defaultOrNil = if builtins.isString dependency || dependency.usesDefaultFeatures or true
+    let defaultOrNil = if dependency.usesDefaultFeatures or true
                        then ["default"]
                        else [];
-        explicitFeatures = if builtins.isString dependency then [] else dependency.features or [];
+        explicitFeatures = dependency.features or [];
         additionalDependencyFeatures =
-
           let dependencyPrefix = dependency.name+"/";
               dependencyFeatures =
                 builtins.filter (f: lib.hasPrefix dependencyPrefix f) features;
