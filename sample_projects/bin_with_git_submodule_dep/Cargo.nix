@@ -1492,8 +1492,8 @@ rec {
             };
             inherit packageId;
         });
-        mergedPackageFeatures = mergePackageFeatures { inherit packageId; };
-        diffedDefaultPackageFeatures = diffDefaultPackageFeatures { inherit packageId; };
+        mergedPackageFeatures = mergePackageFeatures { inherit packageId; features = rootFeatures; };
+        diffedDefaultPackageFeatures = diffDefaultPackageFeatures { inherit packageId;  features = rootFeatures; };
     };
 
   /* Returns differences between cargo default features and crate2nix default features.
