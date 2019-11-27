@@ -10,7 +10,7 @@ cd "${top}"
   -f ./Cargo.toml -o ./Cargo.nix)  ||\
      { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-nix run -c crate2nix generate -n ./nixpkgs.nix \
+nix run -c crate2nix generate -n ../nixpkgs.nix \
   -f ./crate2nix/Cargo.toml -o ./crate2nix/Cargo.nix || \
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 

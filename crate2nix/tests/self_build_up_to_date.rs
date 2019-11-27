@@ -15,7 +15,7 @@ fn self_up_to_date() {
             crate2nix_arguments: vec![
                 "generate",
                 "-n",
-                "./nixpkgs.nix",
+                "../nixpkgs.nix",
                 "-f",
                 "./crate2nix/Cargo.toml",
                 "-o",
@@ -29,7 +29,7 @@ fn self_up_to_date() {
         &GenerateConfig {
             cargo_toml: PathBuf::from("./Cargo.toml"),
             output: PathBuf::from("./Cargo.nix"),
-            nixpkgs_path: "./nixpkgs.nix".to_string(),
+            nixpkgs_path: "../nixpkgs.nix".to_string(),
             crate_hashes_json: PathBuf::from("./crate-hashes.json"),
         },
     )
