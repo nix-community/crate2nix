@@ -1,6 +1,10 @@
 {lib, crate2nix}:
 
-let buildRustCrateFake = lib.id;
+let fakeCrates = {
+        "pkg_id1" = "pkg_id1";
+        "pkg_id2" = "pkg_id2";
+        "pkg_id3" = "pkg_id3";
+    };
     fakeDependencies = [
       {
         name = "id1";
@@ -18,7 +22,7 @@ let buildRustCrateFake = lib.id;
       }
     ];
     dependencyDerivations = features: dependencies:
-      crate2nix.dependencyDerivations buildRustCrateFake features dependencies;
+      crate2nix.dependencyDerivations fakeCrates features dependencies;
 in lib.runTests {
 
   testForDefaultAndIgnored = {

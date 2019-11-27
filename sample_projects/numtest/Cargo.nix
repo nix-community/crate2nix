@@ -410,13 +410,15 @@ rec {
     assert (builtins.isList features);
 
     let mergedFeatures = mergePackageFeatures args;
+        builtByPackageId =
+          lib.mapAttrs (packageId: value: buildByPackageId packageId) crateConfigs;
         buildByPackageId = packageId:
           let features = mergedFeatures."${packageId}" or [];
               crateConfig = lib.filterAttrs (n: v: n != "resolvedDefaultFeatures") crateConfigs."${packageId}";
               dependencies =
-                dependencyDerivations buildByPackageId features (crateConfig.dependencies or []);
+                dependencyDerivations builtByPackageId features (crateConfig.dependencies or []);
               buildDependencies =
-                dependencyDerivations buildByPackageId features (crateConfig.buildDependencies or []);
+                dependencyDerivations builtByPackageId features (crateConfig.buildDependencies or []);
               dependenciesWithRenames =
                 lib.filter (d: d ? "rename")
                   (crateConfig.buildDependencies or [] ++ crateConfig.dependencies or []);
@@ -426,14 +428,13 @@ rec {
     in buildByPackageId packageId;
 
   /* Returns the actual derivations for the given dependencies. */
-  dependencyDerivations = buildByPackageId: features: dependencies:
-    assert (builtins.isFunction buildByPackageId);
+  dependencyDerivations = builtByPackageId: features: dependencies:
+    assert (builtins.isAttrs builtByPackageId);
     assert (builtins.isList features);
     assert (builtins.isList dependencies);
 
     let enabledDependencies = filterEnabledDependencies dependencies features;
-        depDerivation = dependency:
-        buildByPackageId dependency.packageId;
+        depDerivation = dependency: builtByPackageId.${dependency.packageId};
     in map depDerivation enabledDependencies;
 
   /* Returns differences between cargo default features and crate2nix default features.
