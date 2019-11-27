@@ -24,47 +24,53 @@ rec {
   # You can override the features with
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
-    "bin_with_default_features" = {
+    "bin_with_default_features" = rec {
       packageId = "bin_with_default_features 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_default_features)";
       build = buildRustCrateWithFeatures {
         packageId = "bin_with_default_features 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_default_features)";
         features = rootFeatures;
       };
+      debug = debugCrate { inherit packageId; };
     };
-    "hello_world_bin" = {
+    "hello_world_bin" = rec {
       packageId = "hello_world_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin)";
       build = buildRustCrateWithFeatures {
         packageId = "hello_world_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin)";
         features = rootFeatures;
       };
+      debug = debugCrate { inherit packageId; };
     };
-    "hello_world_lib" = {
+    "hello_world_lib" = rec {
       packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)";
       build = buildRustCrateWithFeatures {
         packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib)";
         features = rootFeatures;
       };
+      debug = debugCrate { inherit packageId; };
     };
-    "hello_world_lib_and_bin" = {
+    "hello_world_lib_and_bin" = rec {
       packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib_and_bin)";
       build = buildRustCrateWithFeatures {
         packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/lib_and_bin)";
         features = rootFeatures;
       };
+      debug = debugCrate { inherit packageId; };
     };
-    "hello_world_with_dep" = {
+    "hello_world_with_dep" = rec {
       packageId = "hello_world_with_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_lib_dep)";
       build = buildRustCrateWithFeatures {
         packageId = "hello_world_with_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/bin_with_lib_dep)";
         features = rootFeatures;
       };
+      debug = debugCrate { inherit packageId; };
     };
-    "with_tera" = {
+    "with_tera" = rec {
       packageId = "with_tera 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/with_tera)";
       build = buildRustCrateWithFeatures {
         packageId = "with_tera 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_workspace/with_tera)";
         features = rootFeatures;
       };
+      debug = debugCrate { inherit packageId; };
     };
   };
   workspace_members =
@@ -1783,6 +1789,7 @@ rec {
 
       # Filter out nix build files
       # lib.hasSuffix ".nix" baseName ||
+      baseName == "Cargo.nix" ||
 
       # Filter out editor backup / swap files.
       lib.hasSuffix "~" baseName ||
@@ -1794,18 +1801,32 @@ rec {
     );
 
   /* A restricted overridable version of  buildRustCrateWithFeaturesImpl. */
-  buildRustCrateWithFeatures = {packageId, features, crateOverrides ? defaultCrateOverrides}:
+  buildRustCrateWithFeatures = {
+        packageId, 
+        features ? rootFeatures,
+        crateOverrides ? defaultCrateOverrides, 
+        buildRustCrateFunc ? buildRustCrate
+      }:
     lib.makeOverridable
-      ({features, crateOverrides}: buildRustCrateWithFeaturesImpl {inherit packageId features crateOverrides;})
+      ({features, crateOverrides}: buildRustCrateWithFeaturesImpl {
+          inherit packageId features crateOverrides  buildRustCrateFunc;
+        })
       { inherit features crateOverrides; };
 
   /* Returns a buildRustCrate derivation for the given packageId and features. */
-  buildRustCrateWithFeaturesImpl = { crateConfigs? crates, packageId, features, crateOverrides } @ args:
+  buildRustCrateWithFeaturesImpl = { 
+        crateConfigs? crates, 
+        packageId,
+        features,
+        crateOverrides, 
+        buildRustCrateFunc
+      } @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
 
     let mergedFeatures = mergePackageFeatures args;
+        # Memoize built packages so that reappearing packages are only built once.
         builtByPackageId =
           lib.mapAttrs (packageId: value: buildByPackageId packageId) crateConfigs;
         buildByPackageId = packageId:
@@ -1820,7 +1841,9 @@ rec {
                   (crateConfig.buildDependencies or [] ++ crateConfig.dependencies or []);
               crateRenames =
                 builtins.listToAttrs (map (d: { name = d.name; value = d.rename; }) dependenciesWithRenames);
-          in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies crateRenames; });
+          in buildRustCrateFunc (crateConfig // { 
+            inherit features dependencies buildDependencies crateRenames; 
+          });
     in buildByPackageId packageId;
 
   /* Returns the actual derivations for the given dependencies. */
@@ -1832,6 +1855,29 @@ rec {
     let enabledDependencies = filterEnabledDependencies dependencies features;
         depDerivation = dependency: builtByPackageId.${dependency.packageId};
     in map depDerivation enabledDependencies;
+
+  sanitizeForJson = val:
+          if builtins.isAttrs val
+          then lib.mapAttrs (n: v: sanitizeForJson v) val
+          else if builtins.isList val
+          then builtins.map sanitizeForJson val
+          else if builtins.isFunction val
+          then "function"
+          else val;
+
+  debugCrate = {packageId}:
+    assert (builtins.isString packageId);
+
+    rec {
+        # The built tree as passed to buildRustCrate.
+        buildTree = buildRustCrateWithFeatures {
+            buildRustCrateFunc = lib.id;
+            inherit packageId;
+        };
+        sanitizedBuildTree = sanitizeForJson buildTree;
+        mergedPackageFeatures = mergePackageFeatures { inherit packageId; };
+        diffedDefaultPackageFeatures = diffDefaultPackageFeatures { inherit packageId; };
+    };
 
   /* Returns differences between cargo default features and crate2nix default features.
    *
@@ -1859,9 +1905,11 @@ rec {
 
   /* Returns the feature configuration by package id for the given input crate. */
   mergePackageFeatures = {
-      crateConfigs ? crates, 
-      packageId, 
-      features, ...} @ args:
+          crateConfigs ? crates,
+          packageId,
+          features ? rootFeatures,
+          ...
+       } @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);

@@ -1,7 +1,7 @@
 #
   # crate2nix/default.nix (excerpt start)
   # {#
-{lib, stdenv, buildRustCrate, defaultCrateOverrides, crates? {}}:
+{lib, stdenv, buildRustCrate, defaultCrateOverrides, crates? {}, rootFeatures? []}:
 rec {
   # #}
 
@@ -58,6 +58,7 @@ rec {
 
       # Filter out nix build files
       # lib.hasSuffix ".nix" baseName ||
+      baseName == "Cargo.nix" ||
 
       # Filter out editor backup / swap files.
       lib.hasSuffix "~" baseName ||
@@ -69,18 +70,32 @@ rec {
     );
 
   /* A restricted overridable version of  buildRustCrateWithFeaturesImpl. */
-  buildRustCrateWithFeatures = {packageId, features, crateOverrides ? defaultCrateOverrides}:
+  buildRustCrateWithFeatures = {
+        packageId, 
+        features ? rootFeatures,
+        crateOverrides ? defaultCrateOverrides, 
+        buildRustCrateFunc ? buildRustCrate
+      }:
     lib.makeOverridable
-      ({features, crateOverrides}: buildRustCrateWithFeaturesImpl {inherit packageId features crateOverrides;})
+      ({features, crateOverrides}: buildRustCrateWithFeaturesImpl {
+          inherit packageId features crateOverrides  buildRustCrateFunc;
+        })
       { inherit features crateOverrides; };
 
   /* Returns a buildRustCrate derivation for the given packageId and features. */
-  buildRustCrateWithFeaturesImpl = { crateConfigs? crates, packageId, features, crateOverrides } @ args:
+  buildRustCrateWithFeaturesImpl = { 
+        crateConfigs? crates, 
+        packageId,
+        features,
+        crateOverrides, 
+        buildRustCrateFunc
+      } @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
 
     let mergedFeatures = mergePackageFeatures args;
+        # Memoize built packages so that reappearing packages are only built once.
         builtByPackageId =
           lib.mapAttrs (packageId: value: buildByPackageId packageId) crateConfigs;
         buildByPackageId = packageId:
@@ -95,7 +110,9 @@ rec {
                   (crateConfig.buildDependencies or [] ++ crateConfig.dependencies or []);
               crateRenames =
                 builtins.listToAttrs (map (d: { name = d.name; value = d.rename; }) dependenciesWithRenames);
-          in buildRustCrate (crateConfig // { inherit features dependencies buildDependencies crateRenames; });
+          in buildRustCrateFunc (crateConfig // { 
+            inherit features dependencies buildDependencies crateRenames; 
+          });
     in buildByPackageId packageId;
 
   /* Returns the actual derivations for the given dependencies. */
@@ -107,6 +124,29 @@ rec {
     let enabledDependencies = filterEnabledDependencies dependencies features;
         depDerivation = dependency: builtByPackageId.${dependency.packageId};
     in map depDerivation enabledDependencies;
+
+  sanitizeForJson = val:
+          if builtins.isAttrs val
+          then lib.mapAttrs (n: v: sanitizeForJson v) val
+          else if builtins.isList val
+          then builtins.map sanitizeForJson val
+          else if builtins.isFunction val
+          then "function"
+          else val;
+
+  debugCrate = {packageId}:
+    assert (builtins.isString packageId);
+
+    rec {
+        # The built tree as passed to buildRustCrate.
+        buildTree = buildRustCrateWithFeatures {
+            buildRustCrateFunc = lib.id;
+            inherit packageId;
+        };
+        sanitizedBuildTree = sanitizeForJson buildTree;
+        mergedPackageFeatures = mergePackageFeatures { inherit packageId; };
+        diffedDefaultPackageFeatures = diffDefaultPackageFeatures { inherit packageId; };
+    };
 
   /* Returns differences between cargo default features and crate2nix default features.
    *
@@ -134,9 +174,11 @@ rec {
 
   /* Returns the feature configuration by package id for the given input crate. */
   mergePackageFeatures = {
-      crateConfigs ? crates, 
-      packageId, 
-      features, ...} @ args:
+          crateConfigs ? crates,
+          packageId,
+          features ? rootFeatures,
+          ...
+       } @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
