@@ -8,6 +8,7 @@ cd "$top"/crate2nix
 
 # Crude hack check if we have the right to push to the cache
 if grep -q '"eigenvalue"' ~/.config/cachix/cachix.dhall; then
+    echo "Pushing build artifacts to eigenvalue.cachix.org..." >&2
     # we filter for "rust_" to exclude some things that are in the
     # nixos cache anyways
     nix-store -q -R --include-outputs $(nix-store -q -d result*) |\
