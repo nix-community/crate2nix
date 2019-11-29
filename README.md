@@ -71,7 +71,7 @@ get prebuilt binaries for linux.
 Similarly, you can either
 
 ```bash
-# Install the stable version to your user env (with shell completions):
+# Install the unstable version to your user env (with shell completions):
 nix-env -i -f https://github.com/kolloch/crate2nix/tarball/master
 ```
 
