@@ -7,12 +7,12 @@ jobs:
     strategy:
       matrix:
         # For now, nix installation on macos-latest doesnt work
-        # platform: [ubuntu-latest, magcos-10.14]
-        platform: [ubuntu-latest]
+        # platform: [ubuntu-latest, macos-10.14]
+        platform: [ubuntu-latest macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v1
-    - uses: cachix/install-nix-action@v3
+    - uses: cachix/install-nix-action@v6
     - uses: cachix/cachix-action@v2
       with:
         name: eigenvalue
