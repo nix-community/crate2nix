@@ -77,13 +77,15 @@ rec {
         buildRustCrateFunc ? buildRustCrate
       }:
     lib.makeOverridable
-      ({features, crateOverrides}: buildRustCrateWithFeaturesImpl {
+      ({features, crateOverrides}: 
+        let builtRustCrates = builtRustCratesWithFeatures {
           inherit packageId features crateOverrides  buildRustCrateFunc;
-        })
+        };
+        in builtRustCrates.${packageId})
       { inherit features crateOverrides; };
 
   /* Returns a buildRustCrate derivation for the given packageId and features. */
-  buildRustCrateWithFeaturesImpl = { 
+  builtRustCratesWithFeatures = { 
         crateConfigs? crates, 
         packageId,
         features,
@@ -113,7 +115,7 @@ rec {
           in buildRustCrateFunc (crateConfig // { 
             inherit features dependencies buildDependencies crateRenames; 
           });
-    in buildByPackageId packageId;
+    in builtByPackageId;
 
   /* Returns the actual derivations for the given dependencies. */
   dependencyDerivations = builtByPackageId: features: dependencies:

@@ -29,6 +29,8 @@ rec {
       inherit packageId;
     };
 
+    # Debug support which might change between releases.
+    # File a bug if you depend on any for non-debug work!
     debug = debugCrate { inherit packageId; };
   };
   root_crate =
@@ -43,6 +45,9 @@ rec {
         packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
         features = rootFeatures;
       };
+      
+      # Debug support which might change between releases.
+      # File a bug if you depend on any for non-debug work!
       debug = debugCrate { inherit packageId; };
     };
   };
@@ -178,13 +183,15 @@ rec {
         buildRustCrateFunc ? buildRustCrate
       }:
     lib.makeOverridable
-      ({features, crateOverrides}: buildRustCrateWithFeaturesImpl {
+      ({features, crateOverrides}: 
+        let builtRustCrates = builtRustCratesWithFeatures {
           inherit packageId features crateOverrides  buildRustCrateFunc;
-        })
+        };
+        in builtRustCrates.${packageId})
       { inherit features crateOverrides; };
 
   /* Returns a buildRustCrate derivation for the given packageId and features. */
-  buildRustCrateWithFeaturesImpl = { 
+  builtRustCratesWithFeatures = { 
         crateConfigs? crates, 
         packageId,
         features,
@@ -214,7 +221,7 @@ rec {
           in buildRustCrateFunc (crateConfig // { 
             inherit features dependencies buildDependencies crateRenames; 
           });
-    in buildByPackageId packageId;
+    in builtByPackageId;
 
   /* Returns the actual derivations for the given dependencies. */
   dependencyDerivations = builtByPackageId: features: dependencies:
