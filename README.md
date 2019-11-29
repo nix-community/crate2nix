@@ -234,9 +234,8 @@ gives me a feeling of what is worth working on.
   let me know if you hit problems. ~~Before 0.2.x: Filters all dependencies for the *hard-coded "Linux x86_64" target
   platform*. Again, it should be quite easy to support more platforms. To do so completely and at build time (vs build
   generation time) might be more involved.~~
-* Git sources are now also supported. ~~Before 0.3.x: Only *local sources* and *crates io* supported. Again, just
-  requires some work to resolve.~~
-* ~~Before 0.2.x: No support for workspaces.~~
+* Git sources are now also supported. Starting with 0.7 sub modules also work.    
+  Finding crates in arbitrary sub directories of git sources (which cargo supports!)is not supported, see #53.
 
 ## Feedback: What is needed for a 1.0 release?
 
@@ -257,7 +256,13 @@ If you change `crate2nix` such that it will produce a different output, you may 
 Cargo.toml files. Not all `Cargo.toml` files can be generated during test time because crate2nix does not
 work in sandboxes in some cases where cargo needs to write to lock files (I should file bugs for this).
 
-The `regenerate_cargo_nix.sh` should do what you want. Additional diffs in packageIds are, unfortunately, expected.
+`regenerate_cargo_nix.sh` should do what you want. Additional diffs in packageIds are, unfortunately, expected.
+
+## Running tests
+
+`run_tests.sh` will regenerate build files AND run cargo test for you. It will call out to nix to build the
+sample projects -- so a considerable number of dependencies will be fetched and built. Consecutive runs
+are much faster.
 
 ## Project Overview / Terminology
 
