@@ -3078,10 +3078,16 @@ rec {
       }:
     lib.makeOverridable
       ({features, crateOverrides}: 
-        let builtRustCrates = builtRustCratesWithFeatures {
-          inherit packageId features crateOverrides  buildRustCrateFunc;
-        };
-        in builtRustCrates.${packageId})
+       let builtRustCrates = builtRustCratesWithFeatures {
+              inherit packageId features crateOverrides  buildRustCrateFunc;
+            };
+            rootCrate = builtRustCrates.${packageId};
+            allBuildInputs = 
+              lib.concatMap 
+                (c: c.buildInputs) 
+                (lib.attrValues builtRustCrates);
+            buildInputs = sortedUnique allBuildInputs;
+        in rootCrate // { inherit buildInputs; })
       { inherit features crateOverrides; };
 
   /* Returns a buildRustCrate derivation for the given packageId and features. */
@@ -3099,7 +3105,7 @@ rec {
     let mergedFeatures = mergePackageFeatures args;
         # Memoize built packages so that reappearing packages are only built once.
         builtByPackageId =
-          lib.mapAttrs (packageId: value: buildByPackageId packageId) crateConfigs;
+          lib.mapAttrs (packageId: value: buildByPackageId packageId) mergedFeatures;
         buildByPackageId = packageId:
           let features = mergedFeatures."${packageId}" or [];
               crateConfig = lib.filterAttrs (n: v: n != "resolvedDefaultFeatures") crateConfigs."${packageId}";
