@@ -1,3 +1,3 @@
 {
-  "crate2nix 0.5.1 (git+https://github.com/kolloch/crate2nix?rev=de2caabc7fece3d7d6cf04e8b2226a7638c9b721#de2caabc7fece3d7d6cf04e8b2226a7638c9b721)": "1rpiv12dqlnbx3f8cr2j5008sksyhdsa6x2r6d6ky5lcrl42pxnb"
+  "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?rev=42f5544e51187f0c7535d453fcffb4b524c99eb2#42f5544e51187f0c7535d453fcffb4b524c99eb2)": "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw"
 }

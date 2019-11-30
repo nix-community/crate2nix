@@ -13,7 +13,7 @@ name = "atty"
 version = "0.2.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -46,16 +46,7 @@ name = "codegen"
 version = "0.1.0"
 dependencies = [
  "dbus 0.7.1 (git+https://github.com/diwic/dbus-rs/)",
- "dbus-codegen 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "dbus"
-version = "0.6.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)",
- "libdbus-sys 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "dbus-codegen 0.4.1 (git+https://github.com/diwic/dbus-rs/)",
 ]
 
 [[package]]
@@ -63,32 +54,24 @@ name = "dbus"
 version = "0.7.1"
 source = "git+https://github.com/diwic/dbus-rs/#b079366e27da1b9c2869f065fbb6004138e439c2"
 dependencies = [
- "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "libdbus-sys 0.2.1 (git+https://github.com/diwic/dbus-rs/)",
 ]
 
 [[package]]
 name = "dbus-codegen"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+version = "0.4.1"
+source = "git+https://github.com/diwic/dbus-rs/#b079366e27da1b9c2869f065fbb6004138e439c2"
 dependencies = [
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "dbus 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "dbus 0.7.1 (git+https://github.com/diwic/dbus-rs/)",
  "xml-rs 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "libc"
-version = "0.2.65"
+version = "0.2.66"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
-name = "libdbus-sys"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "pkg-config 0.3.17 (registry+https://github.com/rust-lang/crates.io-index)",
-]
 
 [[package]]
 name = "libdbus-sys"
@@ -159,11 +142,9 @@ dependencies = [
 "checksum bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "aad18937a628ec6abcd26d1489012cc0e18c21798210f491af69ded9b881106d"
 "checksum bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "cf1de2fe8c75bc145a2f577add951f8134889b4795d47466a54a5c846d691693"
 "checksum clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)" = "5067f5bb2d80ef5d68b4c87db81601f0b75bca627bc2ef76b141d7b846a3c6d9"
-"checksum dbus 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)" = "3e34c238dfb3f5881d46ad301403cd8f8ecf946e2a4e89bdd1166728b68b5008"
 "checksum dbus 0.7.1 (git+https://github.com/diwic/dbus-rs/)" = "<none>"
-"checksum dbus-codegen 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "0f3150cd49f3fd81f3e611ab7584f2a8e879f97ec3f782a4f35067038431edd2"
-"checksum libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)" = "1a31a0627fdf1f6a39ec0dd577e101440b7db22672c0901fe00a9a6fbb5c24e8"
-"checksum libdbus-sys 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)" = "8720f9274907052cb50313f91201597868da9d625f8dd125f2aca5bddb7e83a1"
+"checksum dbus-codegen 0.4.1 (git+https://github.com/diwic/dbus-rs/)" = "<none>"
+"checksum libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)" = "d515b1f41455adea1313a4a2ac8a8a477634fbae63cc6100e3aebb207ce61558"
 "checksum libdbus-sys 0.2.1 (git+https://github.com/diwic/dbus-rs/)" = "<none>"
 "checksum pkg-config 0.3.17 (registry+https://github.com/rust-lang/crates.io-index)" = "05da548ad6865900e60eaba7f589cc0783590a92e940c26953ff81ddbab2d677"
 "checksum strsim 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"

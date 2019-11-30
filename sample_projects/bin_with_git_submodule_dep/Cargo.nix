@@ -127,7 +127,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
             target = features: target."unix";
           }
@@ -162,7 +162,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
           {
@@ -193,7 +193,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
         ];
@@ -222,7 +222,7 @@ rec {
         dependencies = [
           {
             name = "rocksdb";
-            packageId = "rocksdb 0.13.0 (git+https://github.com/rust-rocksdb/rust-rocksdb#3c810163091fb8d343a3fa8373edd4b5685ed84d)";
+            packageId = "rocksdb 0.13.0 (git+https://github.com/rust-rocksdb/rust-rocksdb#64bd09899306d23dfd1504465bd1e9adb15fb9ca)";
             usesDefaultFeatures = false;
           }
         ];
@@ -419,7 +419,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
           {
@@ -602,7 +602,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
             target = features: target."unix";
           }
@@ -641,7 +641,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
         ];
@@ -685,7 +685,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: target."unix";
           }
           {
@@ -709,12 +709,12 @@ rec {
           "spin_no_std" = [ "spin" ];
         };
       };
-    "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)"
+    "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "libc";
-        version = "0.2.65";
+        version = "0.2.66";
         edition = "2015";
-        sha256 = "1s14bjxnz6haw0gr1h3j4sr7s2s407hpgm8dxhwnl7yzgxia0c8s";
+        sha256 = "0n0mwry21fxfwc063k33mvxk8xj7ia5ar8m42c9ymbam2ksb25fm";
         authors = [
           "The Rust Project Developers"
         ];
@@ -751,15 +751,15 @@ rec {
         features = {
         };
       };
-    "librocksdb-sys 6.2.4 (git+https://github.com/rust-rocksdb/rust-rocksdb#3c810163091fb8d343a3fa8373edd4b5685ed84d)"
+    "librocksdb-sys 6.2.4 (git+https://github.com/rust-rocksdb/rust-rocksdb#64bd09899306d23dfd1504465bd1e9adb15fb9ca)"
       = rec {
         crateName = "librocksdb-sys";
         version = "6.2.4";
         edition = "2015";
         src = pkgs.fetchgit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
-          rev = "3c810163091fb8d343a3fa8373edd4b5685ed84d";
-          sha256 = "0mqarjb3b97azy50719fgv4r7nj1v6wvh552xbpi052yxfrlsp6i";
+          rev = "64bd09899306d23dfd1504465bd1e9adb15fb9ca";
+          sha256 = "0mgawc86jxvbmgk66xq644mizh59vgb1i0a2f28knram4lch108f";
         };
         authors = [
           "Karl Hobley <karlhobley10@gmail.com>"
@@ -768,7 +768,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         buildDependencies = [
@@ -874,7 +874,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -1009,15 +1009,15 @@ rec {
         };
         resolvedDefaultFeatures = [ "unicode-age" "unicode-bool" "unicode-case" "unicode-gencat" "unicode-perl" "unicode-script" "unicode-segment" ];
       };
-    "rocksdb 0.13.0 (git+https://github.com/rust-rocksdb/rust-rocksdb#3c810163091fb8d343a3fa8373edd4b5685ed84d)"
+    "rocksdb 0.13.0 (git+https://github.com/rust-rocksdb/rust-rocksdb#64bd09899306d23dfd1504465bd1e9adb15fb9ca)"
       = rec {
         crateName = "rocksdb";
         version = "0.13.0";
         edition = "2015";
         src = pkgs.fetchgit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
-          rev = "3c810163091fb8d343a3fa8373edd4b5685ed84d";
-          sha256 = "0mqarjb3b97azy50719fgv4r7nj1v6wvh552xbpi052yxfrlsp6i";
+          rev = "64bd09899306d23dfd1504465bd1e9adb15fb9ca";
+          sha256 = "0mgawc86jxvbmgk66xq644mizh59vgb1i0a2f28knram4lch108f";
         };
         authors = [
           "Tyler Neely <t@jujit.su>"
@@ -1026,11 +1026,11 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "librocksdb-sys";
-            packageId = "librocksdb-sys 6.2.4 (git+https://github.com/rust-rocksdb/rust-rocksdb#3c810163091fb8d343a3fa8373edd4b5685ed84d)";
+            packageId = "librocksdb-sys 6.2.4 (git+https://github.com/rust-rocksdb/rust-rocksdb#64bd09899306d23dfd1504465bd1e9adb15fb9ca)";
           }
         ];
         features = {
@@ -1245,7 +1245,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {

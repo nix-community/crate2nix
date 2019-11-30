@@ -146,7 +146,7 @@ rec {
           }
           {
             name = "http";
-            packageId = "http 0.1.19 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "http 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
           }
           {
@@ -229,7 +229,7 @@ rec {
           }
           {
             name = "chrono";
-            packageId = "chrono 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "chrono 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "copyless";
@@ -272,7 +272,7 @@ rec {
           }
           {
             name = "http";
-            packageId = "http 0.1.19 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "http 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "httparse";
@@ -312,11 +312,11 @@ rec {
           }
           {
             name = "serde";
-            packageId = "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "serde_json";
-            packageId = "serde_json 1.0.41 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_json 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "serde_urlencoded";
@@ -344,7 +344,7 @@ rec {
           }
           {
             name = "tokio-timer";
-            packageId = "tokio-timer 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-timer 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "trust-dns-resolver";
@@ -380,7 +380,7 @@ rec {
           }
           {
             name = "http";
-            packageId = "http 0.1.19 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "http 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
           }
           {
@@ -393,7 +393,7 @@ rec {
           }
           {
             name = "serde";
-            packageId = "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "string";
@@ -434,15 +434,15 @@ rec {
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-reactor";
-            packageId = "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-reactor 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-timer";
-            packageId = "tokio-timer 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-timer 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -481,7 +481,7 @@ rec {
           }
           {
             name = "mio";
-            packageId = "mio 0.6.20 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "net2";
@@ -501,7 +501,7 @@ rec {
           }
           {
             name = "tokio-reactor";
-            packageId = "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-reactor 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-signal";
@@ -513,7 +513,7 @@ rec {
           }
           {
             name = "tokio-timer";
-            packageId = "tokio-timer 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-timer 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -615,7 +615,7 @@ rec {
           }
           {
             name = "tokio-reactor";
-            packageId = "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-reactor 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-tcp";
@@ -709,7 +709,7 @@ rec {
           }
           {
             name = "tokio-timer";
-            packageId = "tokio-timer 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-timer 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -817,12 +817,12 @@ rec {
           }
           {
             name = "serde";
-            packageId = "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
             features = [ "derive" ];
           }
           {
             name = "serde_json";
-            packageId = "serde_json 1.0.41 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_json 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "serde_urlencoded";
@@ -872,7 +872,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
             features = [ "full" "parsing" ];
           }
         ];
@@ -960,7 +960,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
             target = features: target."unix";
           }
@@ -1042,11 +1042,11 @@ rec {
           }
           {
             name = "serde";
-            packageId = "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "serde_json";
-            packageId = "serde_json 1.0.41 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_json 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "serde_urlencoded";
@@ -1054,7 +1054,7 @@ rec {
           }
           {
             name = "tokio-timer";
-            packageId = "tokio-timer 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-timer 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -1084,11 +1084,11 @@ rec {
           }
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
           {
@@ -1119,7 +1119,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
         ];
@@ -1226,7 +1226,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         buildDependencies = [
@@ -1254,7 +1254,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -1316,6 +1316,20 @@ rec {
         };
         resolvedDefaultFeatures = [ "either" ];
       };
+    "bytes 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "bytes";
+        version = "0.5.2";
+        edition = "2018";
+        sha256 = "15fq2gn9zk111dkzm1lj3704c6mpdbi6i3k70g3jckky2ngk318w";
+        authors = [
+          "Carl Lerche <me@carllerche.com>"
+        ];
+        features = {
+          "default" = [ "std" ];
+        };
+        resolvedDefaultFeatures = [ "default" "std" ];
+      };
     "c2-chacha 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "c2-chacha";
@@ -1356,34 +1370,30 @@ rec {
           "parallel" = [ "num_cpus" "jobserver" ];
         };
       };
-    "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)"
+    "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "cfg-if";
-        version = "0.1.9";
-        edition = "2015";
-        sha256 = "0csygklgz3ybpr0670rkip49zh76m43ar3k7xgypkzbzrwycx1ml";
+        version = "0.1.10";
+        edition = "2018";
+        sha256 = "08h80ihs74jcyp24cd75wwabygbbdgl05k6p5dmq8akbr78vv1a7";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
         features = {
+          "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
       };
-    "chrono 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)"
+    "chrono 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "chrono";
-        version = "0.4.9";
+        version = "0.4.10";
         edition = "2015";
-        sha256 = "0s5xbn4im53169bnqbcr4qvnyn44frplvc0v7hcv10w5jrb30jg8";
+        sha256 = "00dw7k11hmkm7yhc1v9pi0lrk0n28k4r3rh9g9pk3bkb9m50p19i";
         authors = [
           "Kang Seonghoon <public+rust@mearie.org>"
           "Brandon W Maister <quodlibetor@gmail.com>"
         ];
         dependencies = [
-          {
-            name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
-            usesDefaultFeatures = false;
-          }
           {
             name = "num-integer";
             packageId = "num-integer 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)";
@@ -1401,11 +1411,12 @@ rec {
           }
         ];
         features = {
-          "clock" = [ "time" ];
-          "default" = [ "clock" ];
+          "bench" = [ "std" ];
+          "clock" = [ "time" "std" ];
+          "default" = [ "clock" "std" ];
           "wasmbind" = [ "wasm-bindgen" "js-sys" ];
         };
-        resolvedDefaultFeatures = [ "clock" "default" "time" ];
+        resolvedDefaultFeatures = [ "clock" "default" "std" "time" ];
       };
     "cloudabi 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -1501,7 +1512,7 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -1561,7 +1572,7 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "crossbeam-utils";
@@ -1627,7 +1638,7 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "lazy_static";
@@ -1653,7 +1664,7 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "lazy_static";
@@ -1727,7 +1738,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
             features = [ "extra-traits" "fold" "full" ];
           }
         ];
@@ -1764,7 +1775,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
             features = [ "full" "extra-traits" ];
           }
         ];
@@ -1886,7 +1897,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
             features = [ "full" "fold" ];
           }
         ];
@@ -1970,7 +1981,7 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -2127,7 +2138,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "synstructure";
@@ -2161,7 +2172,7 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "crc32fast";
@@ -2169,7 +2180,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "miniz-sys";
@@ -2349,11 +2360,11 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
             target = features: target."unix";
           }
@@ -2409,7 +2420,7 @@ rec {
           }
           {
             name = "http";
-            packageId = "http 0.1.19 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "http 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "indexmap";
@@ -2477,7 +2488,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
         ];
@@ -2498,7 +2509,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: (target."unix" || (target."os" == "redox"));
           }
           {
@@ -2551,12 +2562,12 @@ rec {
         features = {
         };
       };
-    "http 0.1.19 (registry+https://github.com/rust-lang/crates.io-index)"
+    "http 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "http";
-        version = "0.1.19";
+        version = "0.1.20";
         edition = "2015";
-        sha256 = "1bxs4i4cc2ysdc94savy08v867k2wdas167hd8h7icahc4rnxq6p";
+        sha256 = "0s5zl0w03lnb2n3lj60pxfns05bh3m1nq5r5isq84bn8vn66b417";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
           "Carl Lerche <me@carllerche.com>"
@@ -2599,7 +2610,7 @@ rec {
           }
           {
             name = "http";
-            packageId = "http 0.1.19 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "http 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-buf";
@@ -2683,7 +2694,7 @@ rec {
           }
           {
             name = "http";
-            packageId = "http 0.1.19 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "http 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "http-body";
@@ -2727,7 +2738,7 @@ rec {
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
           }
           {
@@ -2736,7 +2747,7 @@ rec {
           }
           {
             name = "tokio-reactor";
-            packageId = "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-reactor 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
           }
           {
@@ -2751,7 +2762,7 @@ rec {
           }
           {
             name = "tokio-timer";
-            packageId = "tokio-timer 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-timer 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
           }
           {
@@ -2855,7 +2866,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: target."unix";
           }
         ];
@@ -2969,12 +2980,12 @@ rec {
         };
         resolvedDefaultFeatures = [ "spin" "spin_no_std" ];
       };
-    "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)"
+    "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "libc";
-        version = "0.2.65";
+        version = "0.2.66";
         edition = "2015";
-        sha256 = "1s14bjxnz6haw0gr1h3j4sr7s2s407hpgm8dxhwnl7yzgxia0c8s";
+        sha256 = "0n0mwry21fxfwc063k33mvxk8xj7ia5ar8m42c9ymbam2ksb25fm";
         authors = [
           "The Rust Project Developers"
         ];
@@ -3000,12 +3011,12 @@ rec {
           "serde_impl" = [ "serde" "serde_test" ];
         };
       };
-    "lock_api 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)"
+    "lock_api 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "lock_api";
-        version = "0.3.1";
+        version = "0.3.2";
         edition = "2018";
-        sha256 = "1p04271jikw69ja0ap0plrfwm9incf1iny48g0b3ma9k4mw2x4gq";
+        sha256 = "11nmqxlzjqr1h6zddsqwvf1w6z4mwb1gd5qjxkdn0asxfabkjyz5";
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];
@@ -3031,7 +3042,7 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -3113,15 +3124,15 @@ rec {
           }
           {
             name = "serde";
-            packageId = "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "serde_derive";
-            packageId = "serde_derive 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_derive 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "serde_json";
-            packageId = "serde_json 1.0.41 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_json 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "string_cache_codegen";
@@ -3216,7 +3227,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         buildDependencies = [
@@ -3247,19 +3258,19 @@ rec {
         features = {
         };
       };
-    "mio 0.6.20 (registry+https://github.com/rust-lang/crates.io-index)"
+    "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "mio";
-        version = "0.6.20";
+        version = "0.6.21";
         edition = "2015";
-        sha256 = "0maqc1n6swpnhh60wiysci0kxs76igds9vlrvhvcs0xbwwg2dx3j";
+        sha256 = "13q02a7cwc140aygf8amadpzpl5lyj3p2r4wnvgydfpnphifqb9h";
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "fuchsia-zircon";
@@ -3282,7 +3293,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: target."unix";
           }
           {
@@ -3330,12 +3341,12 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: target."unix";
           }
           {
             name = "mio";
-            packageId = "mio 0.6.20 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: target."unix";
           }
         ];
@@ -3385,11 +3396,11 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: ((target."os" == "redox") || target."unix");
           }
           {
@@ -3434,11 +3445,11 @@ rec {
           }
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "void";
@@ -3519,7 +3530,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -3537,6 +3548,33 @@ rec {
         features = {
         };
       };
+    "parking_lot 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "parking_lot";
+        version = "0.10.0";
+        edition = "2018";
+        sha256 = "1z0wgf2sd1266y768kxxs3313zjfzj9r3k7j4arfaz0bmd4qrscj";
+        authors = [
+          "Amanieu d'Antras <amanieu@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "lock_api";
+            packageId = "lock_api 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "parking_lot_core";
+            packageId = "parking_lot_core 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
+        features = {
+          "deadlock_detection" = [ "parking_lot_core/deadlock_detection" ];
+          "nightly" = [ "parking_lot_core/nightly" "lock_api/nightly" ];
+          "owning_ref" = [ "lock_api/owning_ref" ];
+          "serde" = [ "lock_api/serde" ];
+        };
+        resolvedDefaultFeatures = [ "default" ];
+      };
     "parking_lot 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "parking_lot";
@@ -3549,7 +3587,7 @@ rec {
         dependencies = [
           {
             name = "lock_api";
-            packageId = "lock_api 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "lock_api 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "parking_lot_core";
@@ -3582,7 +3620,7 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "cloudabi";
@@ -3591,7 +3629,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: target."unix";
           }
           {
@@ -3614,6 +3652,50 @@ rec {
           {
             name = "rustc_version";
             packageId = "rustc_version 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
+        features = {
+          "deadlock_detection" = [ "petgraph" "thread-id" "backtrace" ];
+        };
+      };
+    "parking_lot_core 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "parking_lot_core";
+        version = "0.7.0";
+        edition = "2018";
+        sha256 = "1wdbrvh35nn09ga570vl5062dpwfbrwgzyrlhhy78ifzhj2870km";
+        authors = [
+          "Amanieu d'Antras <amanieu@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "cfg-if";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "cloudabi";
+            packageId = "cloudabi 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = features: (target."os" == "cloudabi");
+          }
+          {
+            name = "libc";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = features: target."unix";
+          }
+          {
+            name = "redox_syscall";
+            packageId = "redox_syscall 0.1.56 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = features: (target."os" == "redox");
+          }
+          {
+            name = "smallvec";
+            packageId = "smallvec 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "winapi";
+            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = features: target."windows";
+            features = [ "winnt" "ntstatus" "minwindef" "winerror" "winbase" "errhandlingapi" "handleapi" ];
           }
         ];
         features = {
@@ -3716,7 +3798,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -3834,6 +3916,18 @@ rec {
         features = {
         };
       };
+    "pin-project-lite 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "pin-project-lite";
+        version = "0.1.1";
+        edition = "2018";
+        sha256 = "149rf3qk5gdvx5ryns3vw2cihr2bff6zn6gfja3cxqz6l2y6rbzh";
+        authors = [
+          "Taiki Endo <te316e89@gmail.com>"
+        ];
+        features = {
+        };
+      };
     "ppv-lite86 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "ppv-lite86";
@@ -3881,7 +3975,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -4010,7 +4104,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
             target = features: target."unix";
           }
@@ -4091,7 +4185,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
             target = features: target."unix";
           }
@@ -4311,7 +4405,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
             target = features: ((target."os" == "macos") || (target."os" == "ios"));
           }
@@ -4353,7 +4447,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: target."unix";
           }
           {
@@ -4635,12 +4729,12 @@ rec {
         features = {
         };
       };
-    "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)"
+    "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "serde";
-        version = "1.0.102";
+        version = "1.0.103";
         edition = "2015";
-        sha256 = "1q0v1cd6810iia6m28i33nh4cyp0wdcjqy9s0627c20bkfykjjqc";
+        sha256 = "00ip3xy09nk6c2b47ky1m5379yjmwk6n3sr2vmblp478p1xgj5qj";
         authors = [
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
@@ -4648,7 +4742,7 @@ rec {
         dependencies = [
           {
             name = "serde_derive";
-            packageId = "serde_derive 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_derive 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
           }
         ];
@@ -4658,12 +4752,12 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "derive" "serde_derive" "std" ];
       };
-    "serde_derive 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)"
+    "serde_derive 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "serde_derive";
-        version = "1.0.102";
+        version = "1.0.103";
         edition = "2015";
-        sha256 = "1y1b1bx786xd65fq73w98i2g9wx9mfrzn8w948i36y9ghcdgq4ya";
+        sha256 = "1l2icqq548dmq5bn278zb2vj725znj4h4ms89w3b0r1fkbpzmim8";
         procMacro = true;
         authors = [
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
@@ -4680,7 +4774,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
             features = [ "visit" ];
           }
         ];
@@ -4688,12 +4782,12 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-    "serde_json 1.0.41 (registry+https://github.com/rust-lang/crates.io-index)"
+    "serde_json 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "serde_json";
-        version = "1.0.41";
+        version = "1.0.42";
         edition = "2015";
-        sha256 = "1hipk84x40454mf599752mi7l08wb8qakz8vd6d3zp57d0mfnwig";
+        sha256 = "0hq0x0x0lbjcvfnml2s7zk7s9lca50gkqz5bj8n7w1hzpkf52cqs";
         authors = [
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
@@ -4709,7 +4803,7 @@ rec {
           }
           {
             name = "serde";
-            packageId = "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -4737,7 +4831,7 @@ rec {
           }
           {
             name = "serde";
-            packageId = "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "url";
@@ -4805,7 +4899,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "signal-hook-registry";
@@ -4834,7 +4928,7 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -4928,12 +5022,12 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: (target."unix" || (target."os" == "redox"));
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: (target."unix" || (target."os" == "redox"));
           }
           {
@@ -5013,7 +5107,7 @@ rec {
           }
           {
             name = "serde";
-            packageId = "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "string_cache_shared";
@@ -5110,12 +5204,12 @@ rec {
         };
         resolvedDefaultFeatures = [ "clone-impls" "default" "derive" "extra-traits" "fold" "full" "parsing" "printing" "proc-macro" "quote" ];
       };
-    "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)"
+    "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "syn";
-        version = "1.0.8";
+        version = "1.0.9";
         edition = "2018";
-        sha256 = "14hyd7n87a6bq6b6nigvq6shn1r21l0aszdrvv6lan515bm425k6";
+        sha256 = "1h67q2bhp44zpkahdq3wz71vzy35s3ibv5pxjgggh0aj06p975pq";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -5165,7 +5259,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
             features = [ "derive" "parsing" "printing" "clone-impls" "visit" "extra-traits" ];
           }
@@ -5220,7 +5314,7 @@ rec {
         dependencies = [
           {
             name = "chrono";
-            packageId = "chrono 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "chrono 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "error-chain";
@@ -5252,11 +5346,11 @@ rec {
           }
           {
             name = "serde";
-            packageId = "serde 1.0.102 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "serde_json";
-            packageId = "serde_json 1.0.41 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_json 1.0.42 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "slug";
@@ -5345,7 +5439,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "redox_syscall";
@@ -5383,17 +5477,12 @@ rec {
           }
           {
             name = "mio";
-            packageId = "mio 0.6.20 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
           }
           {
             name = "num_cpus";
             packageId = "num_cpus 1.11.1 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-          }
-          {
-            name = "tokio-codec";
-            packageId = "tokio-codec 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
           }
           {
@@ -5403,12 +5492,7 @@ rec {
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-          }
-          {
-            name = "tokio-fs";
-            packageId = "tokio-fs 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
           }
           {
@@ -5418,17 +5502,7 @@ rec {
           }
           {
             name = "tokio-reactor";
-            packageId = "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-          }
-          {
-            name = "tokio-sync";
-            packageId = "tokio-sync 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-          }
-          {
-            name = "tokio-tcp";
-            packageId = "tokio-tcp 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-reactor 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
           }
           {
@@ -5438,19 +5512,8 @@ rec {
           }
           {
             name = "tokio-timer";
-            packageId = "tokio-timer 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-timer 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
-          }
-          {
-            name = "tokio-udp";
-            packageId = "tokio-udp 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-          }
-          {
-            name = "tokio-uds";
-            packageId = "tokio-uds 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-            target = features: target."unix";
           }
         ];
         features = {
@@ -5467,7 +5530,48 @@ rec {
           "udp" = [ "tokio-udp" ];
           "uds" = [ "tokio-uds" ];
         };
-        resolvedDefaultFeatures = [ "bytes" "codec" "default" "fs" "io" "mio" "num_cpus" "reactor" "rt-full" "sync" "tcp" "timer" "tokio-codec" "tokio-current-thread" "tokio-executor" "tokio-fs" "tokio-io" "tokio-reactor" "tokio-sync" "tokio-tcp" "tokio-threadpool" "tokio-timer" "tokio-udp" "tokio-uds" "udp" "uds" ];
+        resolvedDefaultFeatures = [ "bytes" "io" "mio" "num_cpus" "reactor" "rt-full" "timer" "tokio-current-thread" "tokio-executor" "tokio-io" "tokio-reactor" "tokio-threadpool" "tokio-timer" ];
+      };
+    "tokio 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "tokio";
+        version = "0.2.2";
+        edition = "2018";
+        sha256 = "05sbxqpv0k3ljdmf5jsxdi5hq4mqaqxwlcq6jy59pgahypwmnxif";
+        authors = [
+          "Tokio Contributors <team@tokio.rs>"
+        ];
+        dependencies = [
+          {
+            name = "bytes";
+            packageId = "bytes 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "pin-project-lite";
+            packageId = "pin-project-lite 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
+        features = {
+          "blocking" = [ "rt-core" ];
+          "dns" = [ "rt-core" ];
+          "fs" = [ "rt-core" ];
+          "full" = [ "blocking" "dns" "fs" "io-driver" "io-util" "io-std" "macros" "net" "process" "rt-core" "rt-util" "rt-threaded" "signal" "stream" "sync" "time" ];
+          "io-driver" = [ "mio" "lazy_static" ];
+          "io-std" = [ "rt-core" ];
+          "io-util" = [ "memchr" ];
+          "macros" = [ "tokio-macros" ];
+          "net" = [ "dns" "tcp" "udp" "uds" ];
+          "process" = [ "io-driver" "libc" "mio-named-pipes" "signal" "winapi/consoleapi" "winapi/minwindef" "winapi/threadpoollegacyapiset" "winapi/winerror" ];
+          "rt-threaded" = [ "num_cpus" "rt-core" ];
+          "signal" = [ "io-driver" "lazy_static" "libc" "mio-uds" "signal-hook-registry" "winapi/consoleapi" "winapi/minwindef" ];
+          "stream" = [ "futures-core" ];
+          "sync" = [ "fnv" ];
+          "tcp" = [ "io-driver" ];
+          "time" = [ "slab" ];
+          "udp" = [ "io-driver" ];
+          "uds" = [ "io-driver" "mio-uds" "libc" ];
+        };
+        resolvedDefaultFeatures = [ "default" ];
       };
     "tokio-buf 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -5542,18 +5646,18 @@ rec {
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
         };
       };
-    "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)"
+    "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "tokio-executor";
-        version = "0.1.8";
+        version = "0.1.9";
         edition = "2015";
-        sha256 = "1b5n6barppmhfyb1m2cvswp7nqvyrr3lb0kk545my75hdl7fw9qg";
+        sha256 = "1arj6n9lnkqqq9mhlmddj0q7kk8py0p5v19dm0q3631bqhvg8vfa";
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -5565,32 +5669,6 @@ rec {
           {
             name = "futures";
             packageId = "futures 0.1.29 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-        ];
-        features = {
-        };
-      };
-    "tokio-fs 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)"
-      = rec {
-        crateName = "tokio-fs";
-        version = "0.1.6";
-        edition = "2015";
-        sha256 = "1bxp8585pi4j5g39ci2gkk99qnyilyhhila7cs8r6scdn0idrriz";
-        authors = [
-          "Carl Lerche <me@carllerche.com>"
-        ];
-        dependencies = [
-          {
-            name = "futures";
-            packageId = "futures 0.1.29 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "tokio-io";
-            packageId = "tokio-io 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "tokio-threadpool";
-            packageId = "tokio-threadpool 0.1.16 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -5622,12 +5700,12 @@ rec {
         features = {
         };
       };
-    "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)"
+    "tokio-reactor 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "tokio-reactor";
-        version = "0.1.10";
+        version = "0.1.11";
         edition = "2015";
-        sha256 = "0bgjb0qpf4padws2r5h0095lzrjf2vjvkh2i64b81g05k2z92qy5";
+        sha256 = "0iki6xvm6bhm96a7i1ybsk37zwiad3cwcympviw13lf8admzwck7";
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -5650,7 +5728,7 @@ rec {
           }
           {
             name = "mio";
-            packageId = "mio 0.6.20 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "num_cpus";
@@ -5666,7 +5744,7 @@ rec {
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-io";
@@ -5696,12 +5774,12 @@ rec {
           }
           {
             name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
             target = features: target."unix";
           }
           {
             name = "mio";
-            packageId = "mio 0.6.20 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "mio-uds";
@@ -5715,7 +5793,7 @@ rec {
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-io";
@@ -5723,7 +5801,7 @@ rec {
           }
           {
             name = "tokio-reactor";
-            packageId = "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-reactor 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "winapi";
@@ -5781,7 +5859,7 @@ rec {
           }
           {
             name = "mio";
-            packageId = "mio 0.6.20 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-io";
@@ -5789,7 +5867,7 @@ rec {
           }
           {
             name = "tokio-reactor";
-            packageId = "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-reactor 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -5839,18 +5917,18 @@ rec {
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
         };
       };
-    "tokio-timer 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)"
+    "tokio-timer 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "tokio-timer";
-        version = "0.2.11";
+        version = "0.2.12";
         edition = "2015";
-        sha256 = "03m68ainkdy3b5pf20rjyknhk2ppx35bjdc2yfj2bv80sl96h47j";
+        sha256 = "09z8k60jchlqp67v3rn26672qw4pv62avh8z8ql82maf6s766f8p";
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -5869,7 +5947,7 @@ rec {
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -5899,7 +5977,7 @@ rec {
           }
           {
             name = "mio";
-            packageId = "mio 0.6.20 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-codec";
@@ -5911,79 +5989,25 @@ rec {
           }
           {
             name = "tokio-reactor";
-            packageId = "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-reactor 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
         };
       };
-    "tokio-uds 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)"
-      = rec {
-        crateName = "tokio-uds";
-        version = "0.2.5";
-        edition = "2015";
-        sha256 = "0i94kxma6l7iy5hd5k7nvn7v9pnyw0s54bm9mjs0lap1l0xzqzq3";
-        authors = [
-          "Carl Lerche <me@carllerche.com>"
-        ];
-        dependencies = [
-          {
-            name = "bytes";
-            packageId = "bytes 0.4.12 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "futures";
-            packageId = "futures 0.1.29 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "iovec";
-            packageId = "iovec 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "libc";
-            packageId = "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "log";
-            packageId = "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "mio";
-            packageId = "mio 0.6.20 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "mio-uds";
-            packageId = "mio-uds 0.6.7 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "tokio-codec";
-            packageId = "tokio-codec 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "tokio-io";
-            packageId = "tokio-io 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "tokio-reactor";
-            packageId = "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-        ];
-        features = {
-        };
-      };
-    "tracing 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)"
+    "tracing 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "tracing";
-        version = "0.1.9";
+        version = "0.1.10";
         edition = "2018";
-        sha256 = "1zz5swjx2c22y2225psy69zfcndhs1aggs10dhw97hncg92zj7y2";
+        sha256 = "1icihvfyzj8257ngm15s65i99iwi27hxbik1bgmkpjsjwxclykpz";
         authors = [
           "Tokio Contributors <team@tokio.rs>"
         ];
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "spin";
@@ -6026,7 +6050,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
             features = [ "full" "extra-traits" ];
           }
         ];
@@ -6117,7 +6141,7 @@ rec {
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-io";
@@ -6125,7 +6149,7 @@ rec {
           }
           {
             name = "tokio-reactor";
-            packageId = "tokio-reactor 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-reactor 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-tcp";
@@ -6133,7 +6157,7 @@ rec {
           }
           {
             name = "tokio-timer";
-            packageId = "tokio-timer 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-timer 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-udp";
@@ -6165,7 +6189,7 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "failure";
@@ -6203,7 +6227,7 @@ rec {
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "trust-dns-proto";
@@ -6805,7 +6829,7 @@ rec {
           }
           {
             name = "parking_lot";
-            packageId = "parking_lot 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "parking_lot 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tera";
@@ -6813,11 +6837,11 @@ rec {
           }
           {
             name = "tokio";
-            packageId = "tokio 0.1.22 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-executor";
-            packageId = "tokio-executor 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-executor 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tokio-io";
@@ -6833,11 +6857,11 @@ rec {
           }
           {
             name = "tokio-timer";
-            packageId = "tokio-timer 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tokio-timer 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "tracing";
-            packageId = "tracing 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tracing 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {

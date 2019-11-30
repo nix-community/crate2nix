@@ -4,6 +4,6 @@ version = "0.1.0"
 authors = ["Peter Kolloch <info@eigenvalue.net>"]
 edition = "2018"
 
-[dependencies.crate2nix]
-git = "https://github.com/kolloch/crate2nix"
+[dependencies.nix-base32]
+git = "https://github.com/kolloch/nix-base32"
 branch = "branch-for-test"

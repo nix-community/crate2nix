@@ -201,12 +201,12 @@ rec {
         features = {
         };
       };
-    "syn 1.0.7 (registry+https://github.com/rust-lang/crates.io-index)"
+    "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "syn";
-        version = "1.0.7";
+        version = "1.0.9";
         edition = "2018";
-        sha256 = "0k34zdvdcqcynwfqi8zdlcvd7mr8i8y742sbb4sk03qd6arysyqf";
+        sha256 = "1h67q2bhp44zpkahdq3wz71vzy35s3ibv5pxjgggh0aj06p975pq";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -294,7 +294,7 @@ rec {
           }
           {
             name = "syn";
-            packageId = "syn 1.0.7 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)";
             features = [ "full" "extra-traits" ];
           }
         ];

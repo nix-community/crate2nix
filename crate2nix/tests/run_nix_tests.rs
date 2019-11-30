@@ -47,7 +47,7 @@ fn nix_integration_tests() {
 
 fn run_integration_tests() -> Result<(), Error> {
     let status = Command::new("nix")
-        .args(&["build", "-f", "../tests.nix", "--show-trace"])
+        .args(&["build", "-f", "../tests.nix", "--show-trace", "-o", "target/nix-result", "--keep-going"])
         .stdin(Stdio::null())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())

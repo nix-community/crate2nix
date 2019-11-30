@@ -70,12 +70,12 @@ rec {
   # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.
 
   crates = {
-    "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)"
+    "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "autocfg";
-        version = "0.1.5";
+        version = "0.1.7";
         edition = "2015";
-        sha256 = "0asl6fnc35yk5l2rxwhp25v128jgm45dp754h9z8x51b6n90w4r2";
+        sha256 = "1chwgimpx5z7xbag7krr9d8asxfqbh683qhgl9kn3hxk2l0djj8x";
         authors = [
           "Josh Stone <cuviper@gmail.com>"
         ];
@@ -94,7 +94,7 @@ rec {
         dependencies = [
           {
             name = "num-bigint";
-            packageId = "num-bigint 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "num-bigint 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
             usesDefaultFeatures = false;
           }
@@ -120,7 +120,7 @@ rec {
           }
           {
             name = "num-traits";
-            packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "num-traits 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
         ];
@@ -133,12 +133,12 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "num-bigint" "std" ];
       };
-    "num-bigint 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)"
+    "num-bigint 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "num-bigint";
-        version = "0.2.2";
+        version = "0.2.3";
         edition = "2015";
-        sha256 = "067pb5af5zrf5ah4759l5rfqyyqs3f2m8pih84d1z5axhnbh6iap";
+        sha256 = "06hsaiahwbx98xbph5k9086r4hd2m2zzi6sx4v5k9wr4vm6g7hzr";
         authors = [
           "The Rust Project Developers"
         ];
@@ -150,8 +150,14 @@ rec {
           }
           {
             name = "num-traits";
-            packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "num-traits 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "autocfg";
+            packageId = "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -173,14 +179,14 @@ rec {
         dependencies = [
           {
             name = "num-traits";
-            packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "num-traits 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
         ];
         buildDependencies = [
           {
             name = "autocfg";
-            packageId = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -202,14 +208,14 @@ rec {
         dependencies = [
           {
             name = "num-traits";
-            packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "num-traits 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
         ];
         buildDependencies = [
           {
             name = "autocfg";
-            packageId = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -236,14 +242,14 @@ rec {
           }
           {
             name = "num-traits";
-            packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "num-traits 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
         ];
         buildDependencies = [
           {
             name = "autocfg";
-            packageId = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -265,7 +271,7 @@ rec {
         dependencies = [
           {
             name = "num-bigint";
-            packageId = "num-bigint 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "num-bigint 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
             usesDefaultFeatures = false;
           }
@@ -276,14 +282,14 @@ rec {
           }
           {
             name = "num-traits";
-            packageId = "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "num-traits 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)";
             usesDefaultFeatures = false;
           }
         ];
         buildDependencies = [
           {
             name = "autocfg";
-            packageId = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
@@ -295,19 +301,19 @@ rec {
         };
         resolvedDefaultFeatures = [ "bigint" "num-bigint" "std" ];
       };
-    "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)"
+    "num-traits 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "num-traits";
-        version = "0.2.8";
+        version = "0.2.10";
         edition = "2015";
-        sha256 = "0clvrm34rrqc8p6gq5ps5fcgws3kgq5knh7nlqxf2ayarwks9abb";
+        sha256 = "1r079jbmrnrbvsz7dc5mcghijx7bhpfikjspfqrgl4n227y1zj6l";
         authors = [
           "The Rust Project Developers"
         ];
         buildDependencies = [
           {
             name = "autocfg";
-            packageId = "autocfg 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
           }
         ];
         features = {
