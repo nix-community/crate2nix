@@ -219,6 +219,11 @@ rec {
               crateRenames =
                 builtins.listToAttrs (map (d: { name = d.name; value = d.rename; }) dependenciesWithRenames);
           in buildRustCrateFunc (crateConfig // { 
+            src = crateConfig.src or (pkgs.fetchurl {
+              name = "${crateConfig.crateName}-${crateConfig.version}.tar.gz";
+              url = "https://crates.io/api/v1/crates/${crateConfig.crateName}/${crateConfig.version}/download";
+              sha256 = crateConfig.sha256;
+            });
             inherit features dependencies buildDependencies crateRenames; 
           });
     in builtByPackageId;

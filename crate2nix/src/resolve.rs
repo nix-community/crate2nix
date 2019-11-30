@@ -149,7 +149,7 @@ impl BuildTarget {
 }
 
 /// Specifies how to retrieve the source code.
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub enum ResolvedSource {
     CratesIo {
         sha256: Option<String>,

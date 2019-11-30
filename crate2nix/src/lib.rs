@@ -17,8 +17,9 @@ use serde::Deserialize;
 use serde::Serialize;
 
 use crate::metadata::IndexedMetadata;
-use crate::resolve::CrateDerivation;
+use crate::resolve::{CrateDerivation, ResolvedSource};
 
+mod lock;
 mod metadata;
 pub mod nix_build;
 mod prefetch;
@@ -132,11 +133,26 @@ fn cargo_metadata(config: &GenerateConfig) -> Result<Metadata, Error> {
     })
 }
 
-/// Call `nix-prefetch` to determine sha256 for crates from crates.io.
+/// Prefetch hashes when necessary.
 fn prefetch_and_fill_crates_sha256(
     config: &GenerateConfig,
     default_nix: &mut BuildInfo,
 ) -> Result<(), Error> {
+    let lock_file =
+        crate::lock::load_lock_file(&config.cargo_toml.parent().unwrap().join("Cargo.lock"))?;
+
+    for package in default_nix.crates.iter_mut()
+        .filter(|c| match c.source {
+            ResolvedSource::CratesIo { .. } => true,
+            _ => false,
+        }) {
+        if let Some(hash) = lock_file.get_hash(&package.package_id.repr)? {
+            package.source = package.source.with_sha256(hash);
+        } else {
+            eprintln!("Lock file incomplete, hash for {} missing.", package.package_id);
+        }
+    }
+
     prefetch::prefetch(config, &mut default_nix.crates)
         .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
     Ok(())

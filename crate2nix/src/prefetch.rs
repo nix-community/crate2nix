@@ -11,6 +11,7 @@ use failure::format_err;
 use failure::Error;
 use serde::Deserialize;
 use std::collections::BTreeMap;
+use itertools::Itertools;
 
 /// Uses `nix-prefetch` to get the hashes of the sources for the given packages if they come from crates.io.
 ///
@@ -23,6 +24,7 @@ pub fn prefetch(
         std::fs::read_to_string(&config.crate_hashes_json).unwrap_or_else(|_| "{}".to_string());
 
     let old_hashes: BTreeMap<PackageId, String> = serde_json::from_str(&hashes_string)?;
+
     // Only copy used hashes over to the new map.
     let mut hashes: BTreeMap<PackageId, String> = BTreeMap::new();
 
@@ -30,7 +32,7 @@ pub fn prefetch(
     let mut packages: Vec<&mut CrateDerivation> = crate_derivations
         .iter_mut()
         .filter(|c| match c.source {
-            ResolvedSource::CratesIo { .. } => true,
+            ResolvedSource::CratesIo { sha256: None, .. } => true,
             ResolvedSource::Git { .. } => true,
             _ => false,
         })
@@ -38,19 +40,22 @@ pub fn prefetch(
     let without_hash_num = packages
         .iter()
         .filter(|p| !old_hashes.contains_key(&p.package_id))
+        .unique_by(|p| &p.source)
         .count();
     let mut without_hash_idx = 0;
     for package in &mut packages {
-        let existing_hash = old_hashes.get(&package.package_id);
+        let existing_hash = old_hashes
+            .get(&package.package_id)
+            .or_else(|| hashes.get(&package.package_id));
         let sha256 = if let Some(hash) = existing_hash {
             hash.trim().to_string()
         } else {
             without_hash_idx += 1;
             if let ResolvedSource::CratesIo { .. } = package.source {
-                nix_prefetch_from_crates_io(package, without_hash_idx, without_hash_num)
+                nix_prefetch_from_crates_io(package, without_hash_idx, without_hash_num)?
             } else {
-                nix_prefetch_from_git(package, without_hash_idx, without_hash_num)
-            }?
+                nix_prefetch_from_git(package, without_hash_idx, without_hash_num)?
+            }
         };
 
         package.source = package.source.with_sha256(sha256.clone());
@@ -107,7 +112,6 @@ fn nix_prefetch_from_crates_io(
     let cmd = "nix-prefetch-url";
     let args = [
         &url,
-        "--unpack",
         "--name",
         &format!(
             "{}-{}",
@@ -138,13 +142,7 @@ fn nix_prefetch_from_git(
     {
         eprintln!("Prefetching {:>4}/{}: {}", idx, num_packages, url);
         let cmd = "nix-prefetch-git";
-        let mut args = vec![
-            "--url",
-            url.as_str(),
-            "--fetch-submodules",
-            "--rev",
-            rev,
-        ];
+        let mut args = vec!["--url", url.as_str(), "--fetch-submodules", "--rev", rev];
 
         // TODO: --branch-name isn't documented in nix-prefetch-git --help
         // TODO: Consider the case when ref *isn't* a branch. You have to pass

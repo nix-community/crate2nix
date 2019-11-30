@@ -1,13 +1,1 @@
-{
-  "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)": "0x52qzpbyl2f2jqs7kkqzgfki2cpq99gpfjjigdp8pwwfqk01007",
-  "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)": "13h6sdghdcy7vcqsm2gasfw3qg7ssa0fl3sw7lq6pdkbk52wbyfr",
-  "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)": "0wvzzzcn89dai172rrqcyz06pzldyyy0lf0w71csmn206rdpnb15",
-  "proc-macro2 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)": "1l56ss9ip8cg6764cpi9y8dv7nsyqf2i4hb7sn29zx61n03jr81z",
-  "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)": "0r7030w7dymarn92gjgm02hsm04fwsfs6f1l20wdqiyrm9z8rs5q",
-  "spin 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)": "1x0mfk6jfxknrp833xq97kzqxidlryndn0v3xkwf4pd7l9hr5k4h",
-  "syn 1.0.7 (registry+https://github.com/rust-lang/crates.io-index)": "1y68sh9hpcrc8cbc3kkffj7gr7ay2b1dh6cl0b3ma5qv3x6bahk2",
-  "tracing 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)": "1l77jvk04jdgrjg5yqnqyaqr2l7kg3lh1w03b1h03mr6ymz8q4l0",
-  "tracing-attributes 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)": "05yjirn85vwvamgiw85pkl1c7rwl3p90jh2x2fv6l3xf9spidkd6",
-  "tracing-core 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)": "02h62n1bv8y8xmq7r6qw9srrj48w9947333jj2d200ri1l43hp5d",
-  "unicode-xid 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)": "1c85gb3p3qhbjvfyjb31m06la4f024jx319k10ig7n47dz2fk8v7"
-}
+{}

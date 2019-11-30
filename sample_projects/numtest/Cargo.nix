@@ -75,7 +75,7 @@ rec {
         crateName = "autocfg";
         version = "0.1.5";
         edition = "2015";
-        sha256 = "1f3bj604fyr4xh08r357hs3hpdzapiqgccvmj1jpi953ffqrp09a";
+        sha256 = "0asl6fnc35yk5l2rxwhp25v128jgm45dp754h9z8x51b6n90w4r2";
         authors = [
           "Josh Stone <cuviper@gmail.com>"
         ];
@@ -87,7 +87,7 @@ rec {
         crateName = "num";
         version = "0.2.0";
         edition = "2015";
-        sha256 = "0kkql31mc46lghl2qyirk5vl6l0ij24cb5q9d23zm7bkfm05rmzx";
+        sha256 = "1nq8krgrz3nah4c2wqp3ap06xwjk9lpyk31ag2rhc50ygr0jaj6g";
         authors = [
           "The Rust Project Developers"
         ];
@@ -138,7 +138,7 @@ rec {
         crateName = "num-bigint";
         version = "0.2.2";
         edition = "2015";
-        sha256 = "0alza0afrwvhiilqvjazkxv94sir14jqfi50cpv40rgjl1rk7xf6";
+        sha256 = "067pb5af5zrf5ah4759l5rfqyyqs3f2m8pih84d1z5axhnbh6iap";
         authors = [
           "The Rust Project Developers"
         ];
@@ -166,7 +166,7 @@ rec {
         crateName = "num-complex";
         version = "0.2.3";
         edition = "2015";
-        sha256 = "1l8gwn4cqhx77wzhzslwxhryrr5h4vsv19ys8wr5xb1g332805m9";
+        sha256 = "1z6zjdzx1g1hj4y132ddy83d3p3zvw06igbf59npxxrzzcqwzc7w";
         authors = [
           "The Rust Project Developers"
         ];
@@ -195,7 +195,7 @@ rec {
         crateName = "num-integer";
         version = "0.1.41";
         edition = "2015";
-        sha256 = "1y45nh9xlp2dra9svb1wfsy65fysm3k1w4m8jynywccq645yixid";
+        sha256 = "02dwjjpfbi16c71fq689s4sw3ih52cvfzr5z5gs6qpr5z0g58pmq";
         authors = [
           "The Rust Project Developers"
         ];
@@ -224,7 +224,7 @@ rec {
         crateName = "num-iter";
         version = "0.1.39";
         edition = "2015";
-        sha256 = "003j2hysdrkia435vxn38s1qs8cllrgk04l4aapb8hd0wci109mj";
+        sha256 = "0bhk2qbr3261r6zvfc58lz4spfqjhvdripxgz5mks5rd85r55gbn";
         authors = [
           "The Rust Project Developers"
         ];
@@ -258,7 +258,7 @@ rec {
         crateName = "num-rational";
         version = "0.2.2";
         edition = "2015";
-        sha256 = "0igg7jnhsxffy3qdvq30pv5h58a9a20h43s4qpxviyzi5zmzqsx2";
+        sha256 = "0m5l76rdzzq98cfhnbjsxfngz6w75pal5mnfflpxqapysmw5527j";
         authors = [
           "The Rust Project Developers"
         ];
@@ -300,7 +300,7 @@ rec {
         crateName = "num-traits";
         version = "0.2.8";
         edition = "2015";
-        sha256 = "1mnlmy35n734n9xlq0qkfbgzz33x09a1s4rfj30p1976p09b862v";
+        sha256 = "0clvrm34rrqc8p6gq5ps5fcgws3kgq5knh7nlqxf2ayarwks9abb";
         authors = [
           "The Rust Project Developers"
         ];
@@ -450,6 +450,11 @@ rec {
               crateRenames =
                 builtins.listToAttrs (map (d: { name = d.name; value = d.rename; }) dependenciesWithRenames);
           in buildRustCrateFunc (crateConfig // { 
+            src = crateConfig.src or (pkgs.fetchurl {
+              name = "${crateConfig.crateName}-${crateConfig.version}.tar.gz";
+              url = "https://crates.io/api/v1/crates/${crateConfig.crateName}/${crateConfig.version}/download";
+              sha256 = crateConfig.sha256;
+            });
             inherit features dependencies buildDependencies crateRenames; 
           });
     in builtByPackageId;
