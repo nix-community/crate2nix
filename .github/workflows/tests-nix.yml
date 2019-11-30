@@ -6,9 +6,8 @@ jobs:
   tests:
     strategy:
       matrix:
-        # For now, nix installation on macos-latest doesnt work
-        # platform: [ubuntu-latest, macos-10.14]
-        platform: [ubuntu-latest, macos-latest]
+        # For now, macos-latest still has problems
+        platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v1
