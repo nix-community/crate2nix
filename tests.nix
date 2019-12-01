@@ -12,28 +12,29 @@ let crate2nix = pkgs.callPackage ./default.nix {};
         expectedOutput,
         expectedTestOutputs ? [],
         pregeneratedBuild? null,
-        customBuild? pregeneratedBuild,
+        customBuild? null,
         derivationAttrPath? ["rootCrate"],
       }:
         let
-          nixBuild =
+          generatedBuild =
             if builtins.isNull pregeneratedBuild
               then
-                tools.generated {
+                tools.generate {
                   name = "buildTest_test_${name}";
                   inherit src cargoToml;
                 }
               else
-                pkgs.callPackage (./. + "/${customBuild}") {};
-
+                ./. + "/${pregeneratedBuild}";
           derivation =
-            if pregeneratedBuild == customBuild
+            if builtins.isNull customBuild
               then
-                (lib.attrByPath derivationAttrPath null nixBuild).build.override {
+                (lib.attrByPath derivationAttrPath null (pkgs.callPackage generatedBuild {})).build.override {
                   inherit features;
                 }
             else
-              nixBuild;
+                pkgs.callPackage (./. + "/${customBuild}") {
+                  inherit generatedBuild;
+                };
         in
           assert lib.length expectedTestOutputs > 0 -> derivation ? test;
           pkgs.stdenv.mkDerivation {
@@ -114,9 +115,9 @@ let crate2nix = pkgs.callPackage ./default.nix {};
 
          {
             name = "bin_with_rerenamed_lib_dep";
-            src = ./sample_projects/bin_with_rerenamed_lib_dep;
+            src = ./sample_projects;
+            cargoToml = "bin_with_rerenamed_lib_dep/Cargo.toml";
             expectedOutput = "Hello, bin_with_rerenamed_lib_dep!";
-            pregeneratedBuild = "sample_projects/bin_with_rerenamed_lib_dep/Cargo.nix";
          }
 
          {
@@ -124,7 +125,6 @@ let crate2nix = pkgs.callPackage ./default.nix {};
             src = ./sample_projects/cfg-test;
             cargoToml = "Cargo.toml";
             expectedOutput = "Hello, cfg-test!";
-            pregeneratedBuild = "sample_projects/cfg-test/Cargo.nix";
          }
 
          {
@@ -137,35 +137,30 @@ let crate2nix = pkgs.callPackage ./default.nix {};
               "test lib_test ... ok"
             ];
             customBuild = "sample_projects/cfg-test/test.nix";
-            pregeneratedBuild = "sample_projects/cfg-test/Cargo.nix";
          }
 
          {
              name = "renamed_build_deps";
              src = ./sample_projects/renamed_build_deps;
              expectedOutput = "Hello, renamed_build_deps!";
-             pregeneratedBuild = "sample_projects/renamed_build_deps/Cargo.nix";
          }
 
          {
             name = "sample_workspace";
             src = ./sample_workspace;
             expectedOutput = "Hello, with_tera!";
-            pregeneratedBuild = "sample_workspace/Cargo.nix";
             derivationAttrPath = [ "workspaceMembers" "with_tera" ];
          }
 
          {
             name = "sample_project_numtest";
             src = ./sample_projects/numtest;
-            pregeneratedBuild = "sample_projects/numtest/Cargo.nix";
             expectedOutput = "Hello from numtest, world!";
          }
 
          {
             name = "sample_project_with_problematic_crates";
             src = ./sample_projects/with_problematic_crates;
-            pregeneratedBuild = "sample_projects/with_problematic_crates/Cargo.nix";
             expectedOutput = "Hello, with_problematic_crates!";
          }
 
@@ -180,17 +175,19 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          {
             name = "cdylib";
             src = ./sample_projects/cdylib;
-            pregeneratedBuild = "sample_projects/cdylib/Cargo.nix";
             customBuild = "sample_projects/cdylib/test.nix";
             expectedOutput = "cdylib test";
          }
      ];
 
-   buildTestDerivationAttrSet = let buildTestDerivations =
-                   builtins.map
-                       (c: {name = c.name;  value = buildTest c;})
-                       buildTestConfigs;
-           in builtins.listToAttrs buildTestDerivations;
+   buildTestDerivationAttrSet = 
+    let 
+      buildTestDerivations =
+      builtins.map
+        (c: {name = c.name;  value = buildTest c;})
+        buildTestConfigs;
+    in builtins.listToAttrs buildTestDerivations;
+
 in {
      help = pkgs.stdenv.mkDerivation {
         name = "help";
@@ -232,24 +229,24 @@ in {
         '';
       };
 
-     sample_workspace_with_deprecated_alias =
-        let bin_build = (pkgs.callPackage ./sample_workspace/Cargo.nix {})
-            .workspace_members.with_tera;
-        in pkgs.stdenv.mkDerivation {
-            name = "test_sample_workspace_bin_with_deprecated_alias";
-            phases = [ "buildPhase" ];
-            buildInputs = [ bin_build ];
-            buildPhase = ''
-              mkdir -p $out
-              with_tera >$out/test.log
-              echo grepping
-              grep 'Hello, with_tera!' $out/test.log || {
-                echo "Unexpected output: "
-                cat $out/test.log
-                exit 1
-              }
-        '';
-      };
+    #  sample_workspace_with_deprecated_alias =
+    #     let bin_build = (pkgs.callPackage ./sample_workspace/Cargo.nix {})
+    #         .workspace_members.with_tera;
+    #     in pkgs.stdenv.mkDerivation {
+    #         name = "test_sample_workspace_bin_with_deprecated_alias";
+    #         phases = [ "buildPhase" ];
+    #         buildInputs = [ bin_build ];
+    #         buildPhase = ''
+    #           mkdir -p $out
+    #           with_tera >$out/test.log
+    #           echo grepping
+    #           grep 'Hello, with_tera!' $out/test.log || {
+    #             echo "Unexpected output: "
+    #             cat $out/test.log
+    #             exit 1
+    #           }
+    #     '';
+    #   };
 
     inherit buildTestConfigs;
     # TODO: File bug for cargo that it does an index fetch if fetching git package

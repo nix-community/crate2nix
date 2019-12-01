@@ -1,4 +1,5 @@
-{ pkgs? import ../../nixpkgs.nix { config = {}; } }:
+{ pkgs? import ../../nixpkgs.nix { config = {}; }
+, generatedBuild ? ./Cargo.nix }:
 
 let customBuildRustCrate = pkgs.buildRustCrate.override {
   defaultCrateOverrides = pkgs.defaultCrateOverrides // {
@@ -10,6 +11,7 @@ let customBuildRustCrate = pkgs.buildRustCrate.override {
     };
   };
 };
-basePackage = pkgs.callPackage ./Cargo.nix { buildRustCrate = customBuildRustCrate; };
+basePackage = pkgs.callPackage generatedBuild { buildRustCrate = customBuildRustCrate; };
 submodulePackage = basePackage.rootCrate.build;
 in submodulePackage
+
