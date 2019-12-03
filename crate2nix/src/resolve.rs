@@ -143,7 +143,7 @@ impl BuildTarget {
     pub fn new(target: &Target, package_path: impl AsRef<Path>) -> Result<BuildTarget, Error> {
         Ok(BuildTarget {
             name: target.name.clone(),
-            src_path: target.src_path.strip_prefix(&package_path)?.to_path_buf(),
+            src_path: target.src_path.canonicalize()?.strip_prefix(&package_path)?.to_path_buf(),
         })
     }
 }
