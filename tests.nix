@@ -10,34 +10,56 @@ let crate2nix = pkgs.callPackage ./default.nix {};
     buildTest = {
         name, src, cargoToml? "Cargo.toml", features? ["default"],
         expectedOutput,
+        expectedTestOutputs ? [],
         pregeneratedBuild? null,
         customBuild? pregeneratedBuild,
-        derivationAttrPath? ["rootCrate"]}:
+        derivationAttrPath? ["rootCrate"],
+      }:
         let
-            nixBuild = if builtins.isNull pregeneratedBuild
-                    then tools.generated {
-                      name = "buildTest_test_${name}";
-                      inherit src cargoToml;
-                    }
-                    else pkgs.callPackage (./. + "/${customBuild}") {};
-            derivation = if pregeneratedBuild == customBuild then
-                           (lib.attrByPath derivationAttrPath null nixBuild).build.override {
-                             inherit features;
-                           }
-                         else nixBuild;
-        in pkgs.stdenv.mkDerivation {
+          nixBuild =
+            if builtins.isNull pregeneratedBuild
+              then
+                tools.generated {
+                  name = "buildTest_test_${name}";
+                  inherit src cargoToml;
+                }
+              else
+                pkgs.callPackage (./. + "/${customBuild}") {};
+
+          derivation =
+            if pregeneratedBuild == customBuild
+              then
+                (lib.attrByPath derivationAttrPath null nixBuild).build.override {
+                  inherit features;
+                }
+            else
+              nixBuild;
+        in
+          assert lib.length expectedTestOutputs > 0 -> derivation ? test;
+          pkgs.stdenv.mkDerivation {
             name = "buildTest_test_${name}";
             phases = [ "buildPhase" ];
             buildInputs = [ derivation ];
             buildPhase = ''
               mkdir -p $out
-              ${derivation.crateName} >$out/test.log
+              ${derivation.crateName} >$out/run.log
               echo grepping
-              grep '${expectedOutput}' $out/test.log || {
+              grep '${expectedOutput}' $out/run.log || {
                 echo '${expectedOutput}' not found in:
-                cat $out/test.log
+                cat $out/run.log
                 exit 23
               }
+
+              ${lib.optionalString (lib.length expectedTestOutputs > 0) ''
+                cp ${derivation.test}/tests.log $out/tests.log
+              ''}
+              ${lib.concatMapStringsSep "\n" (output: ''
+                grep '${output}' $out/tests.log || {
+                  echo '${output}' not found in:
+                  cat $out/tests.log
+                  exit 23
+                }
+              '') expectedTestOutputs}
             '';
           };
 
@@ -103,17 +125,20 @@ let crate2nix = pkgs.callPackage ./default.nix {};
             cargoToml = "Cargo.toml";
             expectedOutput = "Hello, cfg-test!";
             pregeneratedBuild = "sample_projects/cfg-test/Cargo.nix";
-          }
+         }
 
          {
             name = "sample_project_cfg_test-with-tests";
             src = ./sample_projects/cfg-test;
             cargoToml = "Cargo.toml";
             expectedOutput = "Hello, cfg-test!";
+            expectedTestOutputs = [
+              "test cfg_test ... ok"
+              "test lib_test ... ok"
+            ];
             customBuild = "sample_projects/cfg-test/test.nix";
             pregeneratedBuild = "sample_projects/cfg-test/Cargo.nix";
          }
-
 
          {
             name = "sample_workspace";

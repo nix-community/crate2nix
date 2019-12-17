@@ -68,6 +68,44 @@ rec {
       baseName == "tests.nix"
     );
 
+  /* Returns a crate which depends on successful test execution of crate given as the second argument */
+  crateWithTest = crate: testCrate:
+    let
+      # override the `crate` so that it will build and execute tests instead of
+      # building the actual lib and bin targets We just have to pass `--test`
+      # to rustc and it will do the right thing.  We execute the tests and copy
+      # their log and the test executables to $out for later inspection.
+      test = (testCrate.overrideAttrs (old: {
+        name = "${old.name}-test";
+        postBuild = ''
+          mkdir $TMP/tests
+          find target/lib target/bin -type f -executable -exec cp {} $TMP/tests/ \;
+          for file in $TMP/tests/*; do
+            echo "Executing test $file"
+            "$file" 2>&1 >> $TMP/tests.log || exit 1
+          done
+        '';
+        # remove any other outputs, this also purposely breaks using this as a
+        # rust library in case someone gets confused and passes this into
+        # `dependencies` of `buildRustCrate`.
+        outputs = [ "out" ];
+        installPhase = ''
+          mkdir -p $out
+          cp -rv $TMP/tests $out
+          mv $TMP/tests.log $out
+        '';
+      })).override {
+        extraRustcOpts = [ "--test" ];
+      };
+    in crate.overrideAttrs (old: {
+      checkPhase = ''
+        test -e ${test}
+      '';
+      passthru = (old.passthru or {}) // {
+        inherit test;
+      };
+    });
+
   /* A restricted overridable version of  buildRustCrateWithFeaturesImpl. */
   buildRustCrateWithFeatures =
     { packageId
@@ -78,10 +116,18 @@ rec {
     }:
     lib.makeOverridable
       ({features, crateOverrides, doTest}:
-        let builtRustCrates = builtRustCratesWithFeatures {
-          inherit packageId features crateOverrides buildRustCrateFunc doTest;
-        };
-        in builtRustCrates.${packageId})
+        let
+          builtRustCrates = builtRustCratesWithFeatures {
+            inherit packageId features crateOverrides buildRustCrateFunc;
+            doTest = false;
+          };
+          builtTestRustCrates = builtRustCratesWithFeatures {
+            inherit packageId features crateOverrides buildRustCrateFunc;
+            doTest = true;
+          };
+          drv = builtRustCrates.${packageId};
+          testDrv = builtTestRustCrates.${packageId};
+        in if doTest then crateWithTest drv testDrv else drv)
       { inherit features crateOverrides doTest; };
 
   /* Returns a buildRustCrate derivation for the given packageId and features. */
@@ -99,20 +145,17 @@ rec {
     assert (builtins.isList features);
     assert (builtins.isAttrs target);
 
-    let mergedFeatures = mergePackageFeatures ( args // { inherit target; });
-        mergedTestFeatures = mergePackageFeatures ( args // { target = target // { test = true; }; });
+    let mergedFeatures = mergePackageFeatures ( args // { target = target // { test = doTest; }; });
 
-        buildByPackageId = packageId: buildByPackageIdImpl packageId false;
-        buildTestByPackageId = packageId: buildByPackageIdImpl packageId true;
+        buildByPackageId = packageId: buildByPackageIdImpl packageId;
 
         # Memoize built packages so that reappearing packages are only built once.
         builtByPackageId =
           lib.mapAttrs (packageId: value: buildByPackageId packageId) crateConfigs;
 
-        buildByPackageIdImpl = packageId: test:
+        buildByPackageIdImpl = packageId:
           let
-              features = let f = if !test then mergedFeatures else mergedTestFeatures; in
-                f."${packageId}" or [];
+              features = mergedFeatures."${packageId}" or [];
               crateConfig = lib.filterAttrs (n: v: n != "resolvedDefaultFeatures") crateConfigs."${packageId}";
               dependencies =
                 dependencyDerivations {
