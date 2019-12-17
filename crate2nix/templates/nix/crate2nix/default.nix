@@ -69,46 +69,25 @@ rec {
     );
 
   /* Returns a crate which depends on successful test execution of crate given as the second argument */
-  crateWithTest = crate: testCrate:
+  crateWithTest = crate: testCrate: testCrateFlags:
     let
       # override the `crate` so that it will build and execute tests instead of
       # building the actual lib and bin targets We just have to pass `--test`
       # to rustc and it will do the right thing.  We execute the tests and copy
       # their log and the test executables to $out for later inspection.
-      test = (testCrate.overrideAttrs (old: {
-        name = "${old.name}-test";
-        preBuild = ''
-          ls -la ${lib.getLib testCrate}
-          cp ${lib.getLib testCrate}/lib/* target/lib
-          chmod +rw target/lib/*
-        '';
-
-        postBuild = ''
-          # execute builds for every file in tests/ since those aren't handled by the nixpkgs expression right now
-          for file in $(find tests/ -type f -name '*.rs'); do
-            fn=''${file%.rs}
-            build_bin "''${fn//\//-}" "$file"
-          done
-
-          # execute all the tests
-          IFS=$'\n'; set -f
-          for file in $(find target/lib target/bin -type f -executable); do
-            echo "Executing test $file" | tee -a $TMP/tests.log
-            "$file" 2>&1 | tee -a $TMP/tests.log || exit 1
-          done
-          unset IFS; set +f
-        '';
-        # remove any other outputs, this also purposely breaks using this as a
-        # rust library in case someone gets confused and passes this into
-        # `dependencies` of `buildRustCrate`.
-        outputs = [ "out" ];
-        installPhase = ''
-          mkdir -p $out
-          mv $TMP/tests.log $out
-        '';
-      })).override {
-        extraRustcOpts = [ "--test" ];
-      };
+      test = let
+        drv = testCrate.override (_: {
+          buildTests = true;
+        });
+      in pkgs.runCommand "run-tests-${testCrate.name}" {
+        inherit testCrateFlags;
+      } ''
+        set -e
+        for file in ${drv}/tests/*; do
+          echo "Executing test $file" | tee -a $out
+          $file -- "$testCrateFlags" 2>&1 | tee -a $out
+        done
+      '';
     in crate.overrideAttrs (old: {
       checkPhase = ''
         test -e ${test}
@@ -124,23 +103,24 @@ rec {
     , features ? rootFeatures
     , crateOverrides ? defaultCrateOverrides
     , buildRustCrateFunc ? buildRustCrate
-    , doTest ? false,
+    , runTests ? false
+    , testCrateFlags ? []
     }:
     lib.makeOverridable
-      ({features, crateOverrides, doTest}:
+      ({features, crateOverrides, runTests, testCrateFlags}:
         let
           builtRustCrates = builtRustCratesWithFeatures {
             inherit packageId features crateOverrides buildRustCrateFunc;
-            doTest = false;
+            runTests = false;
           };
           builtTestRustCrates = builtRustCratesWithFeatures {
             inherit packageId features crateOverrides buildRustCrateFunc;
-            doTest = true;
+            runTests = true;
           };
           drv = builtRustCrates.${packageId};
           testDrv = builtTestRustCrates.${packageId};
-        in if doTest then crateWithTest drv testDrv else drv)
-      { inherit features crateOverrides doTest; };
+        in if runTests then crateWithTest drv testDrv testCrateFlags else drv)
+      { inherit features crateOverrides runTests testCrateFlags; };
 
   /* Returns a buildRustCrate derivation for the given packageId and features. */
   builtRustCratesWithFeatures =
@@ -149,18 +129,19 @@ rec {
     , crateConfigs ? crates
     , crateOverrides
     , buildRustCrateFunc
-    , doTest
+    , runTests
     , target ? defaultTarget
     } @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
     assert (builtins.isList features);
     assert (builtins.isAttrs target);
+    assert (builtins.isBool runTests);
 
-    let rootPackageId = lib.traceVal packageId;
+    let rootPackageId = packageId;
         mergedFeatures = mergePackageFeatures (args // {
           inherit rootPackageId;
-          target = target // { test = doTest; };
+          target = target // { test = runTests; };
         });
 
         buildByPackageId = packageId: buildByPackageIdImpl packageId;
@@ -174,7 +155,7 @@ rec {
               features = mergedFeatures."${packageId}" or [];
               crateConfig' = crateConfigs."${packageId}";
               crateConfig = builtins.removeAttrs crateConfig' ["resolvedDefaultFeatures" "devDependencies"];
-              devDependencies = lib.optionals (doTest && packageId == rootPackageId) (crateConfig'.devDependencies or []);
+              devDependencies = lib.optionals (runTests && packageId == rootPackageId) (crateConfig'.devDependencies or []);
               dependencies =
                 dependencyDerivations {
                   inherit builtByPackageId features target;
@@ -216,6 +197,7 @@ rec {
     assert (builtins.isAttrs builtByPackageId);
     assert (builtins.isList features);
     assert (builtins.isList dependencies);
+    assert (builtins.isAttrs target);
 
     let enabledDependencies = filterEnabledDependencies { inherit dependencies features target; };
         depDerivation = dependency: builtByPackageId.${dependency.packageId};
@@ -297,7 +279,7 @@ rec {
     dependencyPath? [crates.${packageId}.crateName],
     featuresByPackageId? {},
     target,
-    doTest,
+    runTests,
     ...} @ args:
     assert (builtins.isAttrs crateConfigs);
     assert (builtins.isString packageId);
@@ -335,7 +317,7 @@ rec {
                   dependencyPath = dependencyPath ++ [path crateConfigs.${packageId}.crateName];
                   features = combinedFeatures;
                   featuresByPackageId = cache;
-                  inherit crateConfigs packageId target doTest rootPackageId;
+                  inherit crateConfigs packageId target runTests rootPackageId;
                  });
 
         cacheWithSelf =
@@ -348,7 +330,7 @@ rec {
         cacheWithDependencies =
             resolveDependencies cacheWithSelf "dep" (
               crateConfig.dependencies or []
-              ++ lib.optionals (doTest && packageId == rootPackageId) (crateConfig.devDependencies or [])
+              ++ lib.optionals (runTests && packageId == rootPackageId) (crateConfig.devDependencies or [])
         );
         cacheWithAll =
             resolveDependencies cacheWithDependencies "build" (crateConfig.buildDependencies or []);
@@ -359,6 +341,7 @@ rec {
   filterEnabledDependencies = {dependencies, features, target}:
     assert (builtins.isList dependencies);
     assert (builtins.isList features);
+    assert (builtins.isAttrs target);
 
     lib.filter
       (dep:

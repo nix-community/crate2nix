@@ -10,7 +10,11 @@
 
 let cargo_nix = callPackage ./crate2nix/Cargo.nix {};
     crate2nix = cargo_nix.rootCrate.build.override {
-      doTest = true;
+      runTests = true;
+      testCrateFlags = [
+        "--skip nix_integration_tests"
+        "--skip nix_unit_tests"
+      ];
       crateOverrides = defaultCrateOverrides // {
         cssparser-macros = attrs: {
           buildInputs = stdenv.lib.optionals stdenv.isDarwin [darwin.apple_sdk.frameworks.Security]; };

@@ -51,7 +51,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
               }
 
               ${lib.optionalString (lib.length expectedTestOutputs > 0) ''
-                cp ${derivation.test}/tests.log $out/tests.log
+                cp ${derivation.test} $out/tests.log
               ''}
               ${lib.concatMapStringsSep "\n" (output: ''
                 grep '${output}' $out/tests.log || {
@@ -133,7 +133,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
             cargoToml = "Cargo.toml";
             expectedOutput = "Hello, cfg-test!";
             expectedTestOutputs = [
-              "test cfg_test ... ok"
+              "test echo_foo_test ... ok"
               "test lib_test ... ok"
             ];
             customBuild = "sample_projects/cfg-test/test.nix";
