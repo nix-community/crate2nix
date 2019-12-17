@@ -156,11 +156,14 @@ rec {
         buildByPackageIdImpl = packageId:
           let
               features = mergedFeatures."${packageId}" or [];
-              crateConfig = lib.filterAttrs (n: v: n != "resolvedDefaultFeatures") crateConfigs."${packageId}";
+              crateConfig' = crateConfigs."${packageId}";
+              crateConfig = builtins.removeAttrs crateConfig' ["resolvedDefaultFeatures" "devDependencies"];
               dependencies =
                 dependencyDerivations {
                   inherit builtByPackageId features target;
-                  dependencies = crateConfig.dependencies or [];
+                  dependencies =
+                       (crateConfig.dependencies or [])
+                    ++ lib.optionals doTest (crateConfig'.devDependencies or []);
                 };
               buildDependencies =
                 dependencyDerivations {
