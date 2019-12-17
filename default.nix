@@ -10,7 +10,6 @@
 
 let cargo_nix = callPackage ./crate2nix/Cargo.nix {};
     crate2nix = cargo_nix.rootCrate.build.override {
-      runTests = true;
       testCrateFlags = [
         "--skip nix_integration_tests"
         "--skip nix_unit_tests"
@@ -20,7 +19,6 @@ let cargo_nix = callPackage ./crate2nix/Cargo.nix {};
           buildInputs = stdenv.lib.optionals stdenv.isDarwin [darwin.apple_sdk.frameworks.Security]; };
       };
     };
-
 in pkgs.symlinkJoin {
   name = crate2nix.name;
   paths = [ crate2nix ];
