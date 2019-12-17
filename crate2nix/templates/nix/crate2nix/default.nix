@@ -84,12 +84,19 @@ rec {
         '';
 
         postBuild = ''
-          mkdir $TMP/tests
-          find target/lib target/bin -type f -executable -exec cp {} $TMP/tests/ \;
-          for file in $TMP/tests/*; do
-            echo "Executing test $file"
-            "$file" 2>&1 >> $TMP/tests.log || exit 1
+          # execute builds for every file in tests/ since those aren't handled by the nixpkgs expression right now
+          for file in $(find tests/ -type f -name '*.rs'); do
+            fn=''${file%.rs}
+            build_bin "''${fn//\//-}" "$file"
           done
+
+          # execute all the tests
+          IFS=$'\n'; set -f
+          for file in $(find target/lib target/bin -type f -executable); do
+            echo "Executing test $file" | tee -a $TMP/tests.log
+            "$file" 2>&1 | tee -a $TMP/tests.log || exit 1
+          done
+          unset IFS; set +f
         '';
         # remove any other outputs, this also purposely breaks using this as a
         # rust library in case someone gets confused and passes this into
@@ -97,7 +104,6 @@ rec {
         outputs = [ "out" ];
         installPhase = ''
           mkdir -p $out
-          cp -rv $TMP/tests $out
           mv $TMP/tests.log $out
         '';
       })).override {
