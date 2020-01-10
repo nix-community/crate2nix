@@ -20,7 +20,7 @@ rec {
   #
 
   rootCrate = rec {
-    packageId = "numtest 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/numtest)";
+    packageId = "numtest 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/numtest)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
@@ -40,9 +40,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "numtest" = rec {
-      packageId = "numtest 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/numtest)";
+      packageId = "numtest 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/numtest)";
       build = buildRustCrateWithFeatures {
-        packageId = "numtest 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/numtest)";
+        packageId = "numtest 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/numtest)";
         features = rootFeatures;
       };
       
@@ -321,7 +321,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "std" ];
       };
-    "numtest 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/numtest)"
+    "numtest 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/numtest)"
       = rec {
         crateName = "numtest";
         version = "0.1.0";
