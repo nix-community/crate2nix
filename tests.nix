@@ -106,6 +106,13 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
 
          {
+             name = "renamed_build_deps";
+             src = ./sample_projects/renamed_build_deps;
+             expectedOutput = "Hello, renamed_build_deps!";
+             pregeneratedBuild = "sample_projects/renamed_build_deps/Cargo.nix";
+         }
+
+         {
             name = "sample_workspace";
             src = ./sample_workspace;
             expectedOutput = "Hello, with_tera!";
