@@ -32,6 +32,7 @@ pub struct CrateDerivation {
     pub source: ResolvedSource,
     pub dependencies: Vec<ResolvedDependency>,
     pub build_dependencies: Vec<ResolvedDependency>,
+    pub dev_dependencies: Vec<ResolvedDependency>,
     /// Feature rules. Which feature (key) enables which other features (values).
     pub features: BTreeMap<String, Vec<String>>,
     /// The resolved features for this crate for a default build as returned by cargo.
@@ -59,6 +60,9 @@ impl CrateDerivation {
         let dependencies = resolved_dependencies.filtered_dependencies(|d| {
             d.kind == DependencyKind::Normal || d.kind == DependencyKind::Unknown
         });
+
+        let dev_dependencies =
+            resolved_dependencies.filtered_dependencies(|d| d.kind == DependencyKind::Development);
 
         let package_path = package
             .manifest_path
@@ -121,6 +125,7 @@ impl CrateDerivation {
                 .unwrap_or_else(|| Vec::new()),
             dependencies,
             build_dependencies,
+            dev_dependencies,
             build,
             lib,
             proc_macro,

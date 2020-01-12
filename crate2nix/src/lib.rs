@@ -83,7 +83,10 @@ impl BuildInfo {
                 indexed_crates
                     .get(next_package_id)
                     .iter()
-                    .flat_map(|c| c.dependencies.iter().chain(c.build_dependencies.iter()))
+                    .flat_map(|c| c.dependencies.iter()
+                              .chain(c.build_dependencies.iter())
+                              .chain(c.dev_dependencies.iter())
+                    )
                     .map(|d| &d.package_id),
             );
         }
