@@ -6,3 +6,8 @@ edition = "2018"
 
 [dependencies]
 "new_name_hello_world_lib" = { package = "hello_world_lib", path = "../lib"}
+"feature_hello_world_lib_and_bin" = { package = "hello_world_lib_and_bin", path = "../lib_and_bin", optional = true}
+
+[features]
+default = [ "enable_renamed_crate" ]
+enable_renamed_crate = [ "feature_hello_world_lib_and_bin" ]

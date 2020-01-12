@@ -88,9 +88,18 @@ rec {
             packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib)";
             rename = "new_name_hello_world_lib";
           }
+          {
+            name = "hello_world_lib_and_bin";
+            packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib_and_bin)";
+            rename = "feature_hello_world_lib_and_bin";
+            optional = true;
+          }
         ];
         features = {
+          "default" = [ "enable_renamed_crate" ];
+          "enable_renamed_crate" = [ "feature_hello_world_lib_and_bin" ];
         };
+        resolvedDefaultFeatures = [ "default" "enable_renamed_crate" "feature_hello_world_lib_and_bin" ];
       };
     "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib)"
       = rec {
@@ -99,6 +108,20 @@ rec {
         edition = "2018";
         src = (builtins.filterSource sourceFilter ../lib);
         libName = "renamed_hello_world_lib";
+        authors = [
+          "Peter Kolloch <info@eigenvalue.net>"
+        ];
+        features = {
+        };
+      };
+    "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib_and_bin)"
+      = rec {
+        crateName = "hello_world_lib_and_bin";
+        version = "0.1.0";
+        edition = "2018";
+        # Hack to suppress building binaries
+        crateBin = [{name = ","; path = ",";}];
+        src = (builtins.filterSource sourceFilter ../lib_and_bin);
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
@@ -367,15 +390,15 @@ rec {
       (dep:
         let targetFunc = dep.target or (features: true);
         in targetFunc features
-           && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep.name) features))
+           && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep) features))
       dependencies;
 
   /* Returns whether the given feature should enable the given dependency. */
-  doesFeatureEnableDependency = depName: feature:
-    let prefix = "${depName}/";
+  doesFeatureEnableDependency = { name, rename ? null, ...}: feature:
+    let prefix = "${name}/";
         len = builtins.stringLength prefix;
         startsWithPrefix = builtins.substring 0 len feature == prefix;
-    in feature == depName || startsWithPrefix;
+    in feature == name || (rename != null && rename == feature) || startsWithPrefix;
 
   /* Returns the expanded features for the given inputFeatures by applying the rules in featureMap.
 
