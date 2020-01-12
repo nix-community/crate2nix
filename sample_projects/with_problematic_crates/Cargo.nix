@@ -20,7 +20,7 @@ rec {
   #
 
   rootCrate = rec {
-    packageId = "with_problematic_crates 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/with_problematic_crates)";
+    packageId = "with_problematic_crates 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/with_problematic_crates)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
@@ -40,9 +40,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "with_problematic_crates" = rec {
-      packageId = "with_problematic_crates 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/with_problematic_crates)";
+      packageId = "with_problematic_crates 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/with_problematic_crates)";
       build = buildRustCrateWithFeatures {
-        packageId = "with_problematic_crates 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/with_problematic_crates)";
+        packageId = "with_problematic_crates 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/with_problematic_crates)";
         features = rootFeatures;
       };
       
@@ -6766,7 +6766,7 @@ rec {
         features = {
         };
       };
-    "with_problematic_crates 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/with_problematic_crates)"
+    "with_problematic_crates 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/with_problematic_crates)"
       = rec {
         crateName = "with_problematic_crates";
         version = "0.1.0";

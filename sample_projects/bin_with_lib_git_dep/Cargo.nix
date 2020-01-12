@@ -20,7 +20,7 @@ rec {
   #
 
   rootCrate = rec {
-    packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_lib_git_dep)";
+    packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_lib_git_dep)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
@@ -40,9 +40,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "bin_with_lib_git_dep" = rec {
-      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_lib_git_dep)";
+      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_lib_git_dep)";
       build = buildRustCrateWithFeatures {
-        packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_lib_git_dep)";
+        packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_lib_git_dep)";
         features = rootFeatures;
       };
       
@@ -70,7 +70,7 @@ rec {
   # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.
 
   crates = {
-    "bin_with_lib_git_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_lib_git_dep)"
+    "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_lib_git_dep)"
       = rec {
         crateName = "bin_with_lib_git_dep";
         version = "0.1.0";
