@@ -51,7 +51,7 @@ rec {
         packageId = {{pkg_id}};
         features = rootFeatures;
       };
-      
+
       # Debug support which might change between releases.
       # File a bug if you depend on any for non-debug work!
       debug = debugCrate { inherit packageId; };
@@ -76,6 +76,8 @@ rec {
   # * `dependencies`/`buildDependencies`: similar to the corresponding fields for buildRustCrate.
   #   but with additional information which is used during dependency/feature resolution.
   # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.
+  # * `devDependencies` as of now not used by `buildRustCrate` but used to
+  #   inject test dependencies into the build
 
   crates = {
   {%- for crate in crates %}
@@ -155,7 +157,7 @@ rec {
             usesDefaultFeatures = false;
             {%- endif -%}
             {%- if dependency.target %}
-            target = features: {{dependency.target | cfg_to_nix_expr | safe }};
+            target = {target, features}: {{dependency.target | cfg_to_nix_expr | safe }};
             {%- endif %}
             {%- if dependency.features %}
             features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
@@ -181,7 +183,7 @@ rec {
             usesDefaultFeatures = false;
             {%- endif -%}
             {%- if dependency.target %}
-            target = features: {{dependency.target | cfg_to_nix_expr | safe }};
+            target = {target, features}: {{dependency.target | cfg_to_nix_expr | safe }};
             {%- endif %}
             {%- if dependency.features %}
             features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
@@ -190,6 +192,29 @@ rec {
         {%- endfor %}
         ];
         {%- endif -%}
+        {%- if crate.dev_dependencies|length > 0 %}
+        devDependencies = [
+        {%- for dependency in crate.dev_dependencies %}
+          {
+            name = {{dependency.name}};
+            packageId = {{dependency.package_id}};
+            {%- if dependency.optional %}
+            optional = true;
+            {%- endif -%}
+            {%- if not dependency.uses_default_features %}
+            usesDefaultFeatures = false;
+            {%- endif -%}
+            {%- if dependency.target %}
+            target = {target, features}: {{dependency.target | cfg_to_nix_expr | safe }};
+            {%- endif %}
+            {%- if dependency.features %}
+            features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
+            {%- endif %}
+          }
+        {%- endfor %}
+        ];
+        {%- endif -%}
+
         {#- #}
         features = {
         {%- for feature, features in crate.features -%}
