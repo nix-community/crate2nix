@@ -83,7 +83,15 @@ let crateConfigs = {
         };
       };
     };
-    packageFeatures = packageId: features: crate2nix.mergePackageFeatures {inherit crateConfigs packageId features;};
+    packageFeatures = 
+      packageId: features: 
+        crate2nix.mergePackageFeatures 
+          {
+            target = crate2nix.defaultTarget;
+            runTests = false;
+            rootPackageId = packageId;
+            inherit crateConfigs packageId features;
+          };
 in lib.runTests {
 
   testNumDependencies = {

@@ -22,7 +22,11 @@ let fakeCrates = {
       }
     ];
     dependencyDerivations = features: dependencies:
-      crate2nix.dependencyDerivations fakeCrates features dependencies;
+      crate2nix.dependencyDerivations {
+        builtByPackageId = fakeCrates;
+        target = crate2nix.defaultTarget; 
+        inherit features dependencies;
+      };
 in lib.runTests {
 
   testForDefaultAndIgnored = {
