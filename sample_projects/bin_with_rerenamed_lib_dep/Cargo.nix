@@ -20,7 +20,7 @@ rec {
   #
 
   rootCrate = rec {
-    packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
+    packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
@@ -40,9 +40,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "bin_with_rerenamed_lib_dep" = rec {
-      packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
+      packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
       build = buildRustCrateWithFeatures {
-        packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
+        packageId = "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)";
         features = rootFeatures;
       };
 
@@ -72,7 +72,7 @@ rec {
   #   inject test dependencies into the build
 
   crates = {
-    "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)"
+    "bin_with_rerenamed_lib_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_rerenamed_lib_dep)"
       = rec {
         crateName = "bin_with_rerenamed_lib_dep";
         version = "0.1.0";
@@ -87,12 +87,12 @@ rec {
         dependencies = [
           {
             name = "hello_world_lib";
-            packageId = "hello_world_lib 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/lib)";
+            packageId = "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib)";
             rename = "new_name_hello_world_lib";
           }
           {
             name = "hello_world_lib_and_bin";
-            packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/lib_and_bin)";
+            packageId = "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib_and_bin)";
             rename = "feature_hello_world_lib_and_bin";
             optional = true;
           }
@@ -103,7 +103,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "enable_renamed_crate" "feature_hello_world_lib_and_bin" ];
       };
-    "hello_world_lib 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/lib)"
+    "hello_world_lib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib)"
       = rec {
         crateName = "hello_world_lib";
         version = "0.1.0";
@@ -116,7 +116,7 @@ rec {
         features = {
         };
       };
-    "hello_world_lib_and_bin 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/lib_and_bin)"
+    "hello_world_lib_and_bin 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/lib_and_bin)"
       = rec {
         crateName = "hello_world_lib_and_bin";
         version = "0.1.0";

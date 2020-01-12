@@ -20,7 +20,7 @@ rec {
   #
 
   rootCrate = rec {
-    packageId = "bin_with_git_submodule_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_git_submodule_dep)";
+    packageId = "bin_with_git_submodule_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_submodule_dep)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
@@ -40,9 +40,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "bin_with_git_submodule_dep" = rec {
-      packageId = "bin_with_git_submodule_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_git_submodule_dep)";
+      packageId = "bin_with_git_submodule_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_submodule_dep)";
       build = buildRustCrateWithFeatures {
-        packageId = "bin_with_git_submodule_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_git_submodule_dep)";
+        packageId = "bin_with_git_submodule_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_submodule_dep)";
         features = rootFeatures;
       };
 
@@ -209,7 +209,7 @@ rec {
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
       };
-    "bin_with_git_submodule_dep 0.1.0 (path+file:///home/andi/dev/tweag/sc/crate2nix/sample_projects/bin_with_git_submodule_dep)"
+    "bin_with_git_submodule_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_submodule_dep)"
       = rec {
         crateName = "bin_with_git_submodule_dep";
         version = "0.1.0";
