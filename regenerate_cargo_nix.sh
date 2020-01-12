@@ -6,7 +6,7 @@ echo "================ Regenerating ./Cargo.nix =================="
 
 cd "${top}"
 
-(cd crate2nix; nix run nixpkgs.cargo -c cargo run -- generate -n ../nixpkgs.nix \
+(cd crate2nix; ./cargo.sh run -- generate -n ../nixpkgs.nix \
   -f ./Cargo.toml -o ./Cargo.nix)  ||\
      { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 

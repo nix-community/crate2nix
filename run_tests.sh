@@ -4,7 +4,7 @@ top="$(readlink -f "$(dirname "$0")")"
 
 cd "$top"/crate2nix
 
-../regenerate_cargo_nix.sh && nix run nixpkgs.cargo -c cargo test || {
+../regenerate_cargo_nix.sh && ./cargo.sh test || {
     echo "==================" >&2
     echo "cargo test: FAILED" >&2
     exit 1
