@@ -251,20 +251,6 @@ adds the built-time nix/cargo binaries as fallback to the path.
 Currently, crate2nix is only tested with nixos-unstable (the future 19.03) since it depends on some new features
 and bug fixes.
 
-## Regenerating Cargo.nix files for tests
-
-If you change `crate2nix` such that it will produce a different output, you may need to regenerate some of the 
-Cargo.toml files. Not all `Cargo.toml` files can be generated during test time because crate2nix does not
-work in sandboxes in some cases where cargo needs to write to lock files (I should file bugs for this).
-
-`regenerate_cargo_nix.sh` should do what you want. Additional diffs in packageIds are, unfortunately, expected.
-
-## Running tests
-
-`run_tests.sh` will regenerate build files AND run cargo test for you. It will call out to nix to build the
-sample projects -- so a considerable number of dependencies will be fetched and built. Consecutive runs
-are much faster.
-
 ## Project Overview / Terminology
 
 If you want to hack on this, it is useful to know that build file generation is broken up into multiple phases:
@@ -289,9 +275,23 @@ If you want to hack on this, it is useful to know that build file generation is 
 Contributions in the form of documentation and bug fixes are highly welcome. Please start a discussion with me before
 working on larger features.
 
-I'd really appreciate tests for all new features. Please run `cargo test` before submitting a pull request.
+I'd really appreciate tests for all new features. Please run `./run_tests.sh` before submitting a pull request.
 
 Feature ideas are also welcome -- just know that this is a pure hobby side project and I will not allocate a lot of
 bandwidth to this. Therefore, important bug fixes are always prioritised.
 
 By submitting a pull request, you agree to license your changes via all the current licenses of the project.
+
+### Regenerating Cargo.nix files for tests
+
+If you change `crate2nix` such that it will produce a different output, you may need to regenerate some of the 
+Cargo.toml files. Not all `Cargo.toml` files can be generated during test time because crate2nix does not
+work in sandboxes in some cases where cargo needs to write to lock files (I should file bugs for this).
+
+`regenerate_cargo_nix.sh` should do what you want. Additional diffs in packageIds are, unfortunately, expected.
+
+### Running tests
+
+`run_tests.sh` will regenerate build files AND run cargo test for you. It will call out to nix to build the
+sample projects -- so a considerable number of dependencies will be fetched and built. Consecutive runs
+are much faster.
