@@ -604,15 +604,15 @@ rec {
       (dep:
         let targetFunc = dep.target or (features: true);
         in targetFunc features
-           && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep.name) features))
+           && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep) features))
       dependencies;
 
   /* Returns whether the given feature should enable the given dependency. */
-  doesFeatureEnableDependency = depName: feature:
-    let prefix = "${depName}/";
+  doesFeatureEnableDependency = { name, rename ? null, ...}: feature:
+    let prefix = "${name}/";
         len = builtins.stringLength prefix;
         startsWithPrefix = builtins.substring 0 len feature == prefix;
-    in feature == depName || startsWithPrefix;
+    in feature == name || (rename != null && rename == feature) || startsWithPrefix;
 
   /* Returns the expanded features for the given inputFeatures by applying the rules in featureMap.
 
