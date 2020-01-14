@@ -31,14 +31,14 @@ Here is a simple example which uses all the defaults and will generate a `Cargo.
 crate2nix generate
 ```
 
-Here is a more elaborate example that uses `<nixos-unstable>` as the default `nixpkgs` path and specifies both the path
+Here is a more elaborate example that uses `<nixos-unstable>` as the default `pkgs` path (instead of `<nixpkgs>`) and specifies both the path
 to the `Cargo.toml` file (`-f`) and the output (`-o`) file explicitly.
 
 ```bash
 crate2nix generate \
     -n '<nixos-unstable>' \
     -f /some/project/dir/Cargo.toml \
-    -o /some/project/dir/crate2nix.nix
+    -o /some/project/dir/Cargo.nix
 ```
 
 Use `crate2nix help` to show all commands and options.
