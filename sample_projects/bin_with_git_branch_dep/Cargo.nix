@@ -103,6 +103,7 @@ rec {
           rev = "42f5544e51187f0c7535d453fcffb4b524c99eb2";
           sha256 = "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw";
         };
+        type = [ "lib" ];
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];

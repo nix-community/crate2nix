@@ -78,6 +78,7 @@ rec {
         version = "0.1.10";
         edition = "2018";
         sha256 = "08h80ihs74jcyp24cd75wwabygbbdgl05k6p5dmq8akbr78vv1a7";
+        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -94,6 +95,7 @@ rec {
           { name = "cfg-test"; path = "src/main.rs"; }
         ];
         src = (builtins.filterSource sourceFilter ./.);
+        type = [ "lib" ];
         authors = [
           "Andreas Rammhold <andreas@rammhold.de>"
         ];
@@ -114,6 +116,7 @@ rec {
         version = "1.4.0";
         edition = "2015";
         sha256 = "0in6ikhw8mgl33wjv6q6xfrb5b9jr16q8ygjy803fay4zcisvaz2";
+        type = [ "lib" ];
         authors = [
           "Marvin Löbel <loebel.marvin@gmail.com>"
         ];
@@ -135,6 +138,7 @@ rec {
         version = "0.4.8";
         edition = "2015";
         sha256 = "1xz18ixccl5c6np4linv3ypc7hpmmgpc5zzd2ymp2ssfx0mhbdhl";
+        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -154,6 +158,7 @@ rec {
         version = "1.0.6";
         edition = "2018";
         sha256 = "09rgb5ab0jgw39kyad0lgqs4nb9yaf7mwcrgxqnsxbn4il54g7lw";
+        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -174,6 +179,7 @@ rec {
         version = "1.0.2";
         edition = "2018";
         sha256 = "1zkc46ryacf2jdkc6krsy2z615xbk1x8kp1830rcxz3irj5qqfh5";
+        type = [ "lib" ];
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -196,6 +202,7 @@ rec {
         version = "0.5.2";
         edition = "2015";
         sha256 = "0b84m6dbzrwf2kxylnw82d3dr8w06av7rfkr8s85fb5f43rwyqvf";
+        type = [ "lib" ];
         authors = [
           "Mathijs van de Nes <git@mathijs.vd-nes.nl>"
           "John Ericson <git@JohnEricson.me>"
@@ -209,6 +216,7 @@ rec {
         version = "1.0.9";
         edition = "2018";
         sha256 = "1h67q2bhp44zpkahdq3wz71vzy35s3ibv5pxjgggh0aj06p975pq";
+        type = [ "lib" ];
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -242,6 +250,7 @@ rec {
         version = "0.1.10";
         edition = "2018";
         sha256 = "1icihvfyzj8257ngm15s65i99iwi27hxbik1bgmkpjsjwxclykpz";
+        type = [ "lib" ];
         authors = [
           "Tokio Contributors <team@tokio.rs>"
         ];
@@ -290,6 +299,7 @@ rec {
         edition = "2018";
         sha256 = "0avwsbaivjklsr96ay9484hm6fq9crcq1swk8hkh7i6kqc93n9m4";
         procMacro = true;
+        type = [ "proc-macro" ];
         authors = [
           "Tokio Contributors <team@tokio.rs>"
           "Eliza Weisman <eliza@buoyant.io>"
@@ -315,6 +325,7 @@ rec {
         version = "0.1.7";
         edition = "2018";
         sha256 = "07dgaq67w82iik5jy2lzrbg72jcqls7ysd8ysav5kj90qm3kd4dw";
+        type = [ "lib" ];
         authors = [
           "Tokio Contributors <team@tokio.rs>"
         ];
@@ -346,6 +357,7 @@ rec {
         version = "0.2.0";
         edition = "2015";
         sha256 = "0z09fn515xm7zyr0mmdyxa9mx2f7azcpv74pqmg611iralwpcvl2";
+        type = [ "lib" ];
         authors = [
           "erick.tryzelaar <erick.tryzelaar@gmail.com>"
           "kwantam <kwantam@gmail.com>"

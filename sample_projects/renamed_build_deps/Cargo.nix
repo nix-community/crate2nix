@@ -78,6 +78,7 @@ rec {
         version = "0.2.66";
         edition = "2015";
         sha256 = "0n0mwry21fxfwc063k33mvxk8xj7ia5ar8m42c9ymbam2ksb25fm";
+        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -117,6 +118,7 @@ rec {
         version = "3.1.0";
         edition = "2015";
         sha256 = "1j14a331qz3dj30hm4kiyxhfvwsycigbmxql0vk056i0g1qd8xal";
+        type = [ "lib" ];
         authors = [
           "Harry Fei <tiziyuanfang@gmail.com>"
         ];
