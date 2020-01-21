@@ -12,13 +12,13 @@ use semver::Version;
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::to_string_pretty;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::convert::Into;
-use std::iter::FromIterator;
 use std::path::{Path, PathBuf};
 
 use crate::metadata::IndexedMetadata;
 use crate::GenerateConfig;
+use itertools::Itertools;
 use std::collections::btree_map::BTreeMap;
 use url::Url;
 
@@ -31,7 +31,8 @@ pub struct CrateDerivation {
     pub authors: Vec<String>,
     pub version: Version,
     pub source: ResolvedSource,
-    pub crate_types: Option<Vec<String>>,
+    /// The crate types of the lib targets of this crate, e.g. "lib", "dylib", "rlib", ...
+    pub lib_crate_types: Vec<String>,
     pub dependencies: Vec<ResolvedDependency>,
     pub build_dependencies: Vec<ResolvedDependency>,
     pub dev_dependencies: Vec<ResolvedDependency>,
@@ -108,33 +109,6 @@ impl CrateDerivation {
             .chain(metadata.workspace_members.iter())
             .any(|pkg_id| *pkg_id == package.id);
 
-        let crate_types = {
-            let types = package
-                .targets
-                .iter()
-                // remove all example crates, we aren't building them yet. This would require
-                // multiple "proper" build targets per crate
-                .filter(|target| target.kind.iter().filter(|kind| *kind != "example").count() != 0)
-                // Remove the bin type from the crates as that would build libs with the bin target
-                // as well. In general we are only interestd in the lib variants that cargo
-                // supports.
-                .filter(|target| {
-                    target
-                        .crate_types
-                        .iter()
-                        .filter(|crate_type| *crate_type != "bin")
-                        .count()
-                        > 0
-                })
-                .flat_map(|target| target.crate_types.clone())
-                .collect::<HashSet<_>>();
-            if !types.is_empty() {
-                Some(Vec::from_iter(types.into_iter()))
-            } else {
-                None
-            }
-        };
-
         Ok(CrateDerivation {
             crate_name: package.name.clone(),
             edition: package.edition.clone(),
@@ -152,7 +126,14 @@ impl CrateDerivation {
                 .get(&package.id)
                 .map(|n| n.features.clone())
                 .unwrap_or_else(Vec::new),
-            crate_types,
+            lib_crate_types: package
+                .targets
+                .iter()
+                .filter(|target| target.kind.iter().any(|kind| kind.ends_with("lib")))
+                .flat_map(|target| target.crate_types.iter())
+                .unique()
+                .cloned()
+                .collect(),
             dependencies,
             build_dependencies,
             dev_dependencies,
