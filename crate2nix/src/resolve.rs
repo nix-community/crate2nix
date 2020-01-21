@@ -18,6 +18,7 @@ use std::path::{Path, PathBuf};
 
 use crate::metadata::IndexedMetadata;
 use crate::GenerateConfig;
+use itertools::Itertools;
 use std::collections::btree_map::BTreeMap;
 use url::Url;
 
@@ -30,6 +31,8 @@ pub struct CrateDerivation {
     pub authors: Vec<String>,
     pub version: Version,
     pub source: ResolvedSource,
+    /// The crate types of the lib targets of this crate, e.g. "lib", "dylib", "rlib", ...
+    pub lib_crate_types: Vec<String>,
     pub dependencies: Vec<ResolvedDependency>,
     pub build_dependencies: Vec<ResolvedDependency>,
     pub dev_dependencies: Vec<ResolvedDependency>,
@@ -122,7 +125,15 @@ impl CrateDerivation {
                 .nodes_by_id
                 .get(&package.id)
                 .map(|n| n.features.clone())
-                .unwrap_or_else(|| Vec::new()),
+                .unwrap_or_else(Vec::new),
+            lib_crate_types: package
+                .targets
+                .iter()
+                .filter(|target| target.kind.iter().any(|kind| kind.ends_with("lib")))
+                .flat_map(|target| target.crate_types.iter())
+                .unique()
+                .cloned()
+                .collect(),
             dependencies,
             build_dependencies,
             dev_dependencies,
@@ -148,7 +159,11 @@ impl BuildTarget {
     pub fn new(target: &Target, package_path: impl AsRef<Path>) -> Result<BuildTarget, Error> {
         Ok(BuildTarget {
             name: target.name.clone(),
-            src_path: target.src_path.canonicalize()?.strip_prefix(&package_path)?.to_path_buf(),
+            src_path: target
+                .src_path
+                .canonicalize()?
+                .strip_prefix(&package_path)?
+                .to_path_buf(),
         })
     }
 }
@@ -383,7 +398,7 @@ impl<'a> ResolvedDependencies<'a> {
             names
                 .entry(normalized)
                 .and_modify(|v| v.push(d))
-                .or_insert(vec![d]);
+                .or_insert_with(|| vec![d]);
         }
 
         self.packages

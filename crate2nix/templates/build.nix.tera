@@ -133,6 +133,16 @@ rec {
         libPath = {{crate.lib.src_path}};
         {%- endif -%}
 
+        {%- if not crate.proc_macro -%}
+        {#- Omitting []. -#}
+        {%- if crate.lib_crate_types|length > 0 -%}
+        {#- Omitting [ "lib" ]. -#}
+        {%- if crate.lib_crate_types|length != 1 or crate.lib_crate_types[0] != "lib" -%}
+        type = [{%- for crate_type in crate.lib_crate_types %} {{ crate_type }}{%- endfor %} ];
+        {%- endif -%}
+        {%- endif -%}
+        {%- endif -%}
+
         {%- if crate.authors|length > 0 %}
         authors = [
         {%- for author in crate.authors %}

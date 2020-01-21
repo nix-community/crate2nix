@@ -103,8 +103,7 @@ fn main() -> CliResult {
                         return Err(format_err!(
                             "No explicit output given and {} already exists.",
                             DEFAULT_OUTPUT
-                        )
-                        .into());
+                        ));
                     }
                     Ok(DEFAULT_OUTPUT.into())
                 })?;

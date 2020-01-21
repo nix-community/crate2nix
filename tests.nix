@@ -176,6 +176,14 @@ let crate2nix = pkgs.callPackage ./default.nix {};
             customBuild = "sample_projects/bin_with_git_submodule_dep/default.nix";
             expectedOutput = "Hello world from with_git_submodule_dep!";
          }
+
+         {
+            name = "cdylib";
+            src = ./sample_projects/cdylib;
+            pregeneratedBuild = "sample_projects/cdylib/Cargo.nix";
+            customBuild = "sample_projects/cdylib/test.nix";
+            expectedOutput = "cdylib test";
+         }
      ];
 
    buildTestDerivationAttrSet = let buildTestDerivations =
