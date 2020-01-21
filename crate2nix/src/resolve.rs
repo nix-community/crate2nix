@@ -151,7 +151,7 @@ impl CrateDerivation {
                 .nodes_by_id
                 .get(&package.id)
                 .map(|n| n.features.clone())
-                .unwrap_or_else(|| Vec::new()),
+                .unwrap_or_else(Vec::new),
             crate_types,
             dependencies,
             build_dependencies,
@@ -178,7 +178,11 @@ impl BuildTarget {
     pub fn new(target: &Target, package_path: impl AsRef<Path>) -> Result<BuildTarget, Error> {
         Ok(BuildTarget {
             name: target.name.clone(),
-            src_path: target.src_path.canonicalize()?.strip_prefix(&package_path)?.to_path_buf(),
+            src_path: target
+                .src_path
+                .canonicalize()?
+                .strip_prefix(&package_path)?
+                .to_path_buf(),
         })
     }
 }
@@ -413,7 +417,7 @@ impl<'a> ResolvedDependencies<'a> {
             names
                 .entry(normalized)
                 .and_modify(|v| v.push(d))
-                .or_insert(vec![d]);
+                .or_insert_with(|| vec![d]);
         }
 
         self.packages
