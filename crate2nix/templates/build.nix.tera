@@ -133,6 +133,10 @@ rec {
         libPath = {{crate.lib.src_path}};
         {%- endif -%}
 
+        {%- if crate.crate_types %}
+        type = [{%- for crate_type in crate.crate_types %} {{ crate_type }}{%- endfor %} ];
+        {%- endif -%}
+
         {%- if crate.authors|length > 0 %}
         authors = [
         {%- for author in crate.authors %}
