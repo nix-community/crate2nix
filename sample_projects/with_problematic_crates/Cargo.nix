@@ -79,7 +79,6 @@ rec {
         edition = "2018";
         sha256 = "0lv42xf57y3kwy8nl2a9pkz35yvbspd9250virfr7p069fpi2b4z";
         libName = "actix_codec";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -115,7 +114,6 @@ rec {
         edition = "2018";
         sha256 = "187whz05gjkp9pcza4i714v0a8yxlg3jdrzii7gaqsxl9fyykbcz";
         libName = "actix_connect";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -186,7 +184,6 @@ rec {
         edition = "2018";
         sha256 = "0fdi9pi33am22qbqni5dn2in11xfbchgsjnm9ws0s918rmvhzdgw";
         libName = "actix_http";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -386,7 +383,6 @@ rec {
         edition = "2018";
         sha256 = "1xyc0kzawfwjfiw4znb7xx6hh4r7nnwjq44i08fjc1724ysln8i3";
         libName = "actix_router";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -435,7 +431,6 @@ rec {
         edition = "2018";
         sha256 = "13h9dph54lhxlzcz6wxmsv96qqpbh1dzr4365gn84gb00qfxmjc8";
         libName = "actix_rt";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -479,7 +474,6 @@ rec {
         edition = "2018";
         sha256 = "19b2sl8dz01xfrynmf4iixq4a15g0gk1z43lby7762ldmws6aqnx";
         libName = "actix_server";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -556,7 +550,6 @@ rec {
         edition = "2018";
         sha256 = "0c7zp4l63n5skljbpq6j0a0avdjv6w067bdc5ca96bb8kjc38fj8";
         libName = "actix_server_config";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -588,7 +581,6 @@ rec {
         edition = "2018";
         sha256 = "0gvpw11hcr1zmi5qzq3np6qzd0j51mdxn7yfgmzgyhc8ja7b99dw";
         libName = "actix_service";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -608,7 +600,6 @@ rec {
         edition = "2018";
         sha256 = "1w9p7wv2n2wda8ph3ahp8fqslmbh12vs206l4i49jl37mjbiw05g";
         libName = "actix_testing";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -660,7 +651,6 @@ rec {
         edition = "2018";
         sha256 = "0pfk6k09cdw0w63wh8glqm6bvqz0hlqwhyqvdfw6yzns2dfyhnkb";
         libName = "actix_threadpool";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -704,7 +694,6 @@ rec {
         edition = "2018";
         sha256 = "15bv06z7pccnmh067l5zj0fvpmfagnil7lvznnl3fp4gjh4k334h";
         libName = "actix_utils";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -752,7 +741,6 @@ rec {
         edition = "2018";
         sha256 = "00wvayn7v2s61hylisr53f48s2bzg8jp3bmrqh1vkb6vgjb1nfmg";
         libName = "actix_web";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -889,7 +877,6 @@ rec {
         edition = "2018";
         sha256 = "1frs0id6k1vjczhnfhwh8q8birp27imlvgi6jylfxh911r9372h6";
         procMacro = true;
-        type = [ "proc-macro" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -917,7 +904,6 @@ rec {
         version = "1.0.4";
         edition = "2015";
         sha256 = "1hnan4fgmnidgn2k84hh2i67c3wp2c5iwd5hs61yi7gwwx1p6bjx";
-        type = [ "lib" ];
         authors = [
           "Remi Rampin <remirampin@gmail.com>"
         ];
@@ -930,7 +916,6 @@ rec {
         version = "0.2.18";
         edition = "2018";
         sha256 = "1lxmn0igyizs10fasgjr4mki97wa4d7ijygjvk0lc28jiw0vacvg";
-        type = [ "lib" ];
         authors = [
           "Tom Kaitchuck <Tom.Kaitchuck@gmail.com>"
         ];
@@ -954,7 +939,6 @@ rec {
         edition = "2015";
         sha256 = "0b8dh20fhdc59dhhnfi89n2bi80a8zbagzd5c122hf1vv2amxysq";
         libName = "aho_corasick";
-        type = [ "lib" ];
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -977,7 +961,6 @@ rec {
         version = "0.4.4";
         edition = "2015";
         sha256 = "1zwswfi9n7n3hiq51w1xv34572k2diazx680rrxlc9w07c9akf6p";
-        type = [ "lib" ];
         authors = [
           "Michal 'vorner' Vaner <vorner@vorner.cz>"
         ];
@@ -990,7 +973,6 @@ rec {
         version = "0.2.13";
         edition = "2015";
         sha256 = "140sswp1bwqwc4zk80bxkbnfb3g936hgrb77g9g0k1zcld3wc0qq";
-        type = [ "lib" ];
         authors = [
           "softprops <d.tangren@gmail.com>"
         ];
@@ -1017,7 +999,6 @@ rec {
         version = "0.1.7";
         edition = "2015";
         sha256 = "1chwgimpx5z7xbag7krr9d8asxfqbh683qhgl9kn3hxk2l0djj8x";
-        type = [ "lib" ];
         authors = [
           "Josh Stone <cuviper@gmail.com>"
         ];
@@ -1030,7 +1011,6 @@ rec {
         version = "0.2.8";
         edition = "2018";
         sha256 = "1i5qinnh37bwpx86m2yyq1q1bnsa31vlwlz7942bzlwd4y1m56ay";
-        type = [ "lib" ];
         authors = [
           "Nikolay Kim <fafhrd91@gmail.com>"
         ];
@@ -1123,7 +1103,6 @@ rec {
         version = "0.3.40";
         edition = "2018";
         sha256 = "1skpshz0gszhpmj51p35ci9nf4nmd79s899cfrfs570dgxcpck4j";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -1164,7 +1143,6 @@ rec {
         version = "0.1.32";
         edition = "2015";
         sha256 = "14c406z8bdmms8a5l8cv79jfkz1mk10qk5p97izf4vai53qparax";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -1191,7 +1169,6 @@ rec {
         version = "0.10.1";
         edition = "2015";
         sha256 = "13k6bvd3n6dm7jqn9x918w65dd9xhx454bqphbnv0bkd6n9dj98b";
-        type = [ "lib" ];
         authors = [
           "Alice Maz <alice@alicemaz.com>"
           "Marshall Pierce <marshall@mpierce.org>"
@@ -1211,7 +1188,6 @@ rec {
         version = "1.2.1";
         edition = "2015";
         sha256 = "14qnd5nq8p2almk79m4m8ydqhd413yaxsyjp5xd19g3mikzf47fg";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -1225,7 +1201,6 @@ rec {
         version = "0.7.3";
         edition = "2015";
         sha256 = "12v8wizynqin0hqf140kmp9s38q223mp1b0hkqk8j5pk8720v560";
-        type = [ "lib" ];
         authors = [
           "RustCrypto Developers"
         ];
@@ -1257,7 +1232,6 @@ rec {
         version = "0.1.5";
         edition = "2015";
         sha256 = "1xbkmysiz23vimd17rnsjpw9bgjxipwfslwyygqlkx4in3dxwygs";
-        type = [ "lib" ];
         authors = [
           "RustCrypto Developers"
         ];
@@ -1276,7 +1250,6 @@ rec {
         version = "0.3.2";
         edition = "2015";
         sha256 = "1kdfdbcba6zwa13xpjwgiplblkdf6vigxjbwwp6l2ascbylxwia4";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -1301,7 +1274,6 @@ rec {
         version = "0.3.2";
         edition = "2015";
         sha256 = "13jnhpmfkqy2xar4lxrsk3rx3i12bgnarnsxq4arhc6yxb1kdc0c";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -1324,7 +1296,6 @@ rec {
         version = "0.3.1";
         edition = "2015";
         sha256 = "1mqi29wsm8njpl51pfwr31wmpzs5ahlcb40wsjyd92l90ixcmdg3";
-        type = [ "lib" ];
         authors = [
           "RustCrypto Developers"
         ];
@@ -1337,7 +1308,6 @@ rec {
         version = "1.3.2";
         edition = "2015";
         sha256 = "1xbwjlmq2ziqjmjvkqxdx1yh136xxhilxd40bky1w4d7hn4xvhx7";
-        type = [ "lib" ];
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -1352,7 +1322,6 @@ rec {
         version = "0.4.12";
         edition = "2015";
         sha256 = "0768a55q2fsqdjsvcv98ndg9dq7w2g44dvq1avhwpxrdzbydyvr0";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -1383,7 +1352,6 @@ rec {
         version = "0.5.2";
         edition = "2018";
         sha256 = "15fq2gn9zk111dkzm1lj3704c6mpdbi6i3k70g3jckky2ngk318w";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -1398,7 +1366,6 @@ rec {
         version = "0.2.3";
         edition = "2018";
         sha256 = "1fzn2n9k51b8wp4m41pkdzwlk1dbkjb6ha9rqdp4jfmzl753hhi1";
-        type = [ "lib" ];
         authors = [
           "The CryptoCorrosion Contributors"
         ];
@@ -1426,7 +1393,6 @@ rec {
         # Hack to suppress building binaries
         crateBin = [{name = ","; path = ",";}];
         sha256 = "1f08560cwbalni1fc2jcmh1dszl3rc31azvr45bgz8vhrs6hb1xa";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -1440,7 +1406,6 @@ rec {
         version = "0.1.10";
         edition = "2018";
         sha256 = "08h80ihs74jcyp24cd75wwabygbbdgl05k6p5dmq8akbr78vv1a7";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -1454,7 +1419,6 @@ rec {
         version = "0.4.10";
         edition = "2015";
         sha256 = "00dw7k11hmkm7yhc1v9pi0lrk0n28k4r3rh9g9pk3bkb9m50p19i";
-        type = [ "lib" ];
         authors = [
           "Kang Seonghoon <public+rust@mearie.org>"
           "Brandon W Maister <quodlibetor@gmail.com>"
@@ -1491,7 +1455,6 @@ rec {
         edition = "2015";
         sha256 = "0kxcg83jlihy0phnd2g8c2c303px3l2p3pkjz357ll6llnd5pz6x";
         libPath = "cloudabi.rs";
-        type = [ "lib" ];
         authors = [
           "Nuxi (https://nuxi.nl/) and contributors"
         ];
@@ -1513,7 +1476,6 @@ rec {
         version = "0.1.6";
         edition = "2018";
         sha256 = "1znp5r6qrxs1g406w4mndk7bh3i53hxj0r2m57rl3qv7k261lr3v";
-        type = [ "lib" ];
         authors = [
           "Tom Kaitchuck <Tom.Kaitchuck@gmail.com>"
         ];
@@ -1537,7 +1499,6 @@ rec {
         edition = "2018";
         sha256 = "0ncc88bzfkm9y7djnvmiqh35p2cfw1d7z9fm21qn6xrkp09fql67";
         procMacro = true;
-        type = [ "proc-macro" ];
         authors = [
           "Tom Kaitchuck <Tom.Kaitchuck@gmail.com>"
         ];
@@ -1562,7 +1523,6 @@ rec {
         version = "0.1.4";
         edition = "2018";
         sha256 = "09s1fagd14fqch3xq9ijschay014la2i8hqfxw2rr95jkxncbybg";
-        type = [ "lib" ];
         authors = [
           "Dzmitry Malyshau <kvarkus@gmail.com>"
         ];
@@ -1575,7 +1535,6 @@ rec {
         version = "1.2.0";
         edition = "2015";
         sha256 = "1c9dhkvf3brrzzplcijaywxi2w8wv5578i0ryhcm7x8dmzi5s4ms";
-        type = [ "lib" ];
         authors = [
           "Sam Rijs <srijs@airpost.net>"
           "Alex Crichton <alex@alexcrichton.com>"
@@ -1597,7 +1556,6 @@ rec {
         version = "0.4.0";
         edition = "2015";
         sha256 = "135ncx9680afs8jkjz8g3iq3naay9rn7942gxrdg2n9m1cxrmv5c";
-        type = [ "lib" ];
         authors = [
           "The Crossbeam Project Developers"
         ];
@@ -1616,7 +1574,6 @@ rec {
         version = "0.7.2";
         edition = "2015";
         sha256 = "1jm3rqb3qfpfywrakyy81f61xnl4jsim7lam9digw6w6cdfr9an3";
-        type = [ "lib" ];
         authors = [
           "The Crossbeam Project Developers"
         ];
@@ -1639,7 +1596,6 @@ rec {
         version = "0.8.0";
         edition = "2015";
         sha256 = "1b2mgc2gxxvyzyxgd5wvn9k42gr6f9phi2swwjawpqswy3dynr2h";
-        type = [ "lib" ];
         authors = [
           "The Crossbeam Project Developers"
         ];
@@ -1688,7 +1644,6 @@ rec {
         version = "0.1.2";
         edition = "2015";
         sha256 = "0jsa9dbxnwqcxfws09vaschf92d4imlbbikmcn4ka8z7rzb9r5vw";
-        type = [ "lib" ];
         authors = [
           "The Crossbeam Project Developers"
         ];
@@ -1707,7 +1662,6 @@ rec {
         version = "0.6.6";
         edition = "2015";
         sha256 = "1rk0r9n04bmq4a3g2q5qhvvlmrmx780gc6h9lmc94mwndslkz5q4";
-        type = [ "lib" ];
         authors = [
           "The Crossbeam Project Developers"
         ];
@@ -1734,7 +1688,6 @@ rec {
         version = "0.7.0";
         edition = "2015";
         sha256 = "1x1rn35q2v05qif14ijfg7800d3rf3ji2cg79awnacfw5jq6si6f";
-        type = [ "lib" ];
         authors = [
           "The Crossbeam Project Developers"
         ];
@@ -1767,7 +1720,6 @@ rec {
         version = "0.25.9";
         edition = "2015";
         sha256 = "03klvpdzsk4cyh8k0dbnlngzafv7gqywqrnsqqb3gfmrxyj8rqgv";
-        type = [ "lib" ];
         authors = [
           "Simon Sapin <simon.sapin@exyr.org>"
         ];
@@ -1831,7 +1783,6 @@ rec {
         sha256 = "1vqyc5xm8a4va92vs1nn0cc46c930l2n21gccijnc5y7hx7cicav";
         procMacro = true;
         libPath = "lib.rs";
-        type = [ "proc-macro" ];
         authors = [
           "Simon Sapin <simon.sapin@exyr.org>"
         ];
@@ -1868,7 +1819,6 @@ rec {
         edition = "2015";
         sha256 = "1zks5bn7hmqfz927spmridk9bvy7ly4f38vls331x4hc4hq1653s";
         procMacro = true;
-        type = [ "proc-macro" ];
         authors = [
           "Jelte Fennema <github-tech@jeltef.nl>"
         ];
@@ -1910,7 +1860,6 @@ rec {
         version = "0.4.3";
         edition = "2015";
         sha256 = "146nc3wlwz2j9awwf7zf76qvjcahnls0mlv9jm6clcvr9dlph245";
-        type = [ "lib" ];
         authors = [
           "Kornel Lesinski <kornel@geekhood.net>"
           "Amit Chowdhury <amitc97@gmail.com>"
@@ -1924,7 +1873,6 @@ rec {
         version = "1.4.3";
         edition = "2015";
         sha256 = "0344ll638h3gbayd9pxfm8193xl1112cw7c60x897s8dj4xw0z4x";
-        type = [ "lib" ];
         authors = [
           "Sean Griffin <sean@seantheprogrammer.com>"
         ];
@@ -1965,7 +1913,6 @@ rec {
         edition = "2015";
         sha256 = "1lsq133fwk0zj8xvxhdxqgg0xs31zf3abnwdyshaf0ldca7hkxa5";
         procMacro = true;
-        type = [ "proc-macro" ];
         authors = [
           "Sean Griffin <sean@seantheprogrammer.com>"
         ];
@@ -1995,7 +1942,6 @@ rec {
         version = "0.8.1";
         edition = "2015";
         sha256 = "1madjl27f3kj5ql7kwgvb9c8b7yb7bv7yfgx7rqzj4i3fp4cil7k";
-        type = [ "lib" ];
         authors = [
           "RustCrypto Developers"
         ];
@@ -2015,7 +1961,6 @@ rec {
         version = "0.4.4";
         edition = "2015";
         sha256 = "0phbm7i0dpn44gzi07683zxaicjap5064w62pidci4fhhciv8mza";
-        type = [ "lib" ];
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -2028,7 +1973,6 @@ rec {
         version = "0.3.2";
         edition = "2015";
         sha256 = "1wkn7ziqffq8hj0a411lgn7674ackzdk734ikp230rmp2f2hn0jr";
-        type = [ "lib" ];
         authors = [
           "Xidorn Quan <me@upsuper.org>"
         ];
@@ -2047,7 +1991,6 @@ rec {
         version = "1.5.3";
         edition = "2015";
         sha256 = "1qyz1b1acad6w0k5928jw5zaq900zhsk7p8dlcp4hh61w4f6n7xv";
-        type = [ "lib" ];
         authors = [
           "bluss"
         ];
@@ -2062,7 +2005,6 @@ rec {
         version = "0.8.20";
         edition = "2015";
         sha256 = "1s8jgqx26q2p6msyq0b4ik8rd0g9wszqbvf2jabgf5kpj8c0a947";
-        type = [ "lib" ];
         authors = [
           "Henri Sivonen <hsivonen@hsivonen.fi>"
         ];
@@ -2084,7 +2026,6 @@ rec {
         edition = "2018";
         sha256 = "0zg3h7k3g1z7a9ayqy63sk302d4dg5g2h274ddv80mj4jxn2cn1x";
         procMacro = true;
-        type = [ "proc-macro" ];
         authors = [
           "Benjamin Fry <benjaminfry@me.com>"
         ];
@@ -2111,7 +2052,6 @@ rec {
         version = "0.7.1";
         edition = "2018";
         sha256 = "0djx8h8xfib43g5w94r1m1mkky5spcw4wblzgnhiyg5vnfxknls4";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -2155,7 +2095,6 @@ rec {
         # Hack to suppress building binaries
         crateBin = [{name = ","; path = ",";}];
         sha256 = "1ndpw1ny2kxqpw6k1shq8k56z4vfpk4xz9zr8ay988k0rffrxd1s";
-        type = [ "lib" ];
         authors = [
           "Brian Anderson <banderson@mozilla.com>"
           "Paul Colomiets <paul@colomiets.name>"
@@ -2186,7 +2125,6 @@ rec {
         version = "0.1.6";
         edition = "2015";
         sha256 = "1nay5c2cgi40kp84rbiir1dgwlh9aap9jazbnxfmqrkpr49ky9zq";
-        type = [ "lib" ];
         authors = [
           "Without Boats <boats@mozilla.com>"
         ];
@@ -2216,7 +2154,6 @@ rec {
         edition = "2015";
         sha256 = "022xfb9wcs1bdssfm2airsrfxpn2ccpbyh1ld2wf9483isvjbhhb";
         procMacro = true;
-        type = [ "proc-macro" ];
         authors = [
           "Without Boats <woboats@gmail.com>"
         ];
@@ -2247,7 +2184,6 @@ rec {
         version = "0.1.2";
         edition = "2015";
         sha256 = "1vfylvk4va2ivqx85603lyqqp0zk52cgbs4n5nfbbbqx577qm2p8";
-        type = [ "lib" ];
         authors = [
           "The Rust-Crypto Project Developers"
         ];
@@ -2260,7 +2196,6 @@ rec {
         version = "1.0.13";
         edition = "2018";
         sha256 = "03rwyh691j20ih2vcskwp1sinhf9paggrkv32fvzwli9fpsddmkb";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -2308,7 +2243,6 @@ rec {
         edition = "2015";
         sha256 = "1ww56bi1r5b8id3ns9j3qxbi7w5h005rzhiryy0zi9h97raqbb9g";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -2321,7 +2255,6 @@ rec {
         version = "0.1.1";
         edition = "2018";
         sha256 = "1fnkqrbz7ixxzsb04bsz9p0zzazanma8znfdqjvh39n14vapfvx0";
-        type = [ "lib" ];
         authors = [
           "Erick Tryzelaar <etryzelaar@google.com>"
         ];
@@ -2334,7 +2267,6 @@ rec {
         version = "0.3.3";
         edition = "2015";
         sha256 = "10jxc5ks1x06gpd0xg51kcjrxr35nj6qhx2zlc5n7bmskv3675rf";
-        type = [ "lib" ];
         authors = [
           "Raph Levien <raph@google.com>"
         ];
@@ -2357,7 +2289,6 @@ rec {
         version = "0.3.3";
         edition = "2015";
         sha256 = "19zp2085qsyq2bh1gvcxq1lb8w6v6jj9kbdkhpdjrl95fypakjix";
-        type = [ "lib" ];
         authors = [
           "Raph Levien <raph@google.com>"
         ];
@@ -2370,7 +2301,6 @@ rec {
         version = "0.1.4";
         edition = "2015";
         sha256 = "0fxc18bnabird5jl941nsd6d25vq8cn8barmz4d30dlkzbiir73w";
-        type = [ "lib" ];
         authors = [
           "Keegan McAllister <kmcallister@mozilla.com>"
         ];
@@ -2393,7 +2323,6 @@ rec {
         version = "0.1.29";
         edition = "2015";
         sha256 = "1vq3cw37knnd0afw3rcjzh71i2l01v5m4ysinrrqdvnn2ql0z60v";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -2408,7 +2337,6 @@ rec {
         version = "0.1.8";
         edition = "2015";
         sha256 = "1r32456gpblzfvnkf60545v8acqk7gh5zhyhi1jn669k9gicv45b";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -2437,7 +2365,6 @@ rec {
         edition = "2015";
         sha256 = "1v5jg7djicq34nbiv1dwaki71gkny002wyy9qfn3y0hfmrs053y6";
         libName = "generic_array";
-        type = [ "lib" ];
         authors = [
           "Bartłomiej Kamiński <fizyk20@gmail.com>"
           "Aaron Trent <novacrazy@gmail.com>"
@@ -2457,7 +2384,6 @@ rec {
         version = "0.1.13";
         edition = "2018";
         sha256 = "01zlzhdbg8y6d1zrlihvm93s421g0nldiq7f1hch3kfl9slprnz7";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
         ];
@@ -2490,7 +2416,6 @@ rec {
         version = "0.2.11";
         edition = "2015";
         sha256 = "1ysvi72slkw784fcsymgj4308c3y03gwjjzqxp80xdjnkbh8vqcb";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -2503,7 +2428,6 @@ rec {
         version = "0.1.26";
         edition = "2015";
         sha256 = "0qn457y8xh03p7c7cpk76r22gqpyqxc58g5022j3iya7d0j4rcx5";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -2558,7 +2482,6 @@ rec {
         version = "0.6.3";
         edition = "2018";
         sha256 = "1bbf9k46v57zi41m6hjwn83rjldyipv5zwxmdsa7a9c1rb876q4f";
-        type = [ "lib" ];
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];
@@ -2589,7 +2512,6 @@ rec {
         version = "0.1.3";
         edition = "2015";
         sha256 = "087ibb7v4dxhx1h66jjffk4zrjlhy3n4fr0x9d9y6f3zjfgkqz1h";
-        type = [ "lib" ];
         authors = [
           "Stefan Lankes"
         ];
@@ -2611,7 +2533,6 @@ rec {
         version = "0.1.5";
         edition = "2015";
         sha256 = "0kprf862qaa7lwdms6aw7f3275h0j2rwhs9nz5784pm8hdmb9ki1";
-        type = [ "lib" ];
         authors = [
           "fengcen <fengcen.love@gmail.com>"
         ];
@@ -2636,7 +2557,6 @@ rec {
         version = "0.22.5";
         edition = "2015";
         sha256 = "0vn2hj096dkp0s4lxv4j7j48wpdhfjx5ry2l5xaxmhcdc5mgl4y2";
-        type = [ "lib" ];
         authors = [
           "The html5ever Project Developers"
         ];
@@ -2678,7 +2598,6 @@ rec {
         version = "0.1.20";
         edition = "2015";
         sha256 = "0s5zl0w03lnb2n3lj60pxfns05bh3m1nq5r5isq84bn8vn66b417";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
           "Carl Lerche <me@carllerche.com>"
@@ -2707,7 +2626,6 @@ rec {
         version = "0.1.0";
         edition = "2015";
         sha256 = "0b99404k4mw6a92hvyr0qwzkqv4f866ykg0x7913limjq5cwhhb7";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -2739,7 +2657,6 @@ rec {
         version = "1.3.4";
         edition = "2015";
         sha256 = "1yf23ldnjwfkkhkca7f4w15mky9961gjz28dlwyybhphc7l9l5yd";
-        type = [ "lib" ];
         authors = [
           "Sean McArthur <sean@seanmonstar.com>"
         ];
@@ -2754,7 +2671,6 @@ rec {
         version = "1.1.0";
         edition = "2015";
         sha256 = "0piadmwjah1jv6q288im4za9szlgalzjyq2811w35i6gg9ib5jmn";
-        type = [ "lib" ];
         authors = [
           "Leopold Arkham <leopold.arkham@gmail.com>"
         ];
@@ -2767,7 +2683,6 @@ rec {
         version = "1.3.0";
         edition = "2015";
         sha256 = "0krwgbf35pd46xvkqg14j070vircsndabahahlv3rwhflpy4q06z";
-        type = [ "lib" ];
         authors = [
           "Paul Colomiets <paul@colomiets.name>"
         ];
@@ -2786,7 +2701,6 @@ rec {
         version = "0.12.35";
         edition = "2015";
         sha256 = "1xnm8zi4bdjqhlnx3238kx8yjf29jjd1ww54apcql7wf8g8nxglx";
-        type = [ "lib" ];
         authors = [
           "Sean McArthur <sean@seanmonstar.com>"
         ];
@@ -2904,7 +2818,6 @@ rec {
         version = "0.1.5";
         edition = "2015";
         sha256 = "0kl4gs5kaydn4v07c6ka33spm9qdh2np0x7iw7g5zd8z1c7rxw1q";
-        type = [ "lib" ];
         authors = [
           "The rust-url developers"
         ];
@@ -2931,7 +2844,6 @@ rec {
         version = "0.2.0";
         edition = "2015";
         sha256 = "1a9066imqpdrm1aavfasdyb1zahqaz8jmdcwdawvb1pf60y6gqh2";
-        type = [ "lib" ];
         authors = [
           "The rust-url developers"
         ];
@@ -2958,7 +2870,6 @@ rec {
         version = "1.3.0";
         edition = "2015";
         sha256 = "1ckd9vg6y71d9syz9j795bdz0dpilm6vy56s9yfwnzw2llz7nbbi";
-        type = [ "lib" ];
         authors = [
           "bluss"
           "Josh Stone <cuviper@gmail.com>"
@@ -2979,7 +2890,6 @@ rec {
         version = "0.1.4";
         edition = "2015";
         sha256 = "0ph73qygwx8i0mblrf110cj59l00gkmsgrpzz1rm85syz5pymcxj";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -2999,7 +2909,6 @@ rec {
         version = "0.2.1";
         edition = "2018";
         sha256 = "0gyqiqr4nk2dw9ild1aq3hnv6984sgydfdq7ki586q5ydwhzlyda";
-        type = [ "lib" ];
         authors = [
           "Liran Ringel <liranringel@gmail.com>"
         ];
@@ -3034,7 +2943,6 @@ rec {
         version = "0.4.4";
         edition = "2015";
         sha256 = "0zvg2d9qv3avhf3d8ggglh6fdyw8kkwqg3r4622ly5yhxnvnc4jh";
-        type = [ "lib" ];
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -3050,7 +2958,6 @@ rec {
         edition = "2015";
         sha256 = "1389av0601a9yz8dvx5zha9vmkd6ik7ax0idpb032d28555n41vm";
         libName = "kernel32";
-        type = [ "lib" ];
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -3075,7 +2982,6 @@ rec {
         version = "0.2.2";
         edition = "2015";
         sha256 = "16hrjdpa827carq5x4b8zhas24d8kg4s16m6nmmn1kb7cr5qh7d9";
-        type = [ "lib" ];
         authors = [
           "Pyfisch <pyfisch@gmail.com>"
         ];
@@ -3089,7 +2995,6 @@ rec {
         version = "1.4.0";
         edition = "2015";
         sha256 = "0in6ikhw8mgl33wjv6q6xfrb5b9jr16q8ygjy803fay4zcisvaz2";
-        type = [ "lib" ];
         authors = [
           "Marvin Löbel <loebel.marvin@gmail.com>"
         ];
@@ -3111,7 +3016,6 @@ rec {
         version = "0.2.66";
         edition = "2015";
         sha256 = "0n0mwry21fxfwc063k33mvxk8xj7ia5ar8m42c9ymbam2ksb25fm";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -3128,7 +3032,6 @@ rec {
         version = "0.5.2";
         edition = "2015";
         sha256 = "10qgbvh00q36ql0jh00rxh2jlq6qvl11n6mig0cvkpf4xf5bd4df";
-        type = [ "lib" ];
         authors = [
           "Stepan Koltsov <stepan.koltsov@gmail.com>"
           "Andrew Paseltiner <apaseltiner@gmail.com>"
@@ -3144,7 +3047,6 @@ rec {
         version = "0.3.2";
         edition = "2018";
         sha256 = "11nmqxlzjqr1h6zddsqwvf1w6z4mwb1gd5qjxkdn0asxfabkjyz5";
-        type = [ "lib" ];
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];
@@ -3164,7 +3066,6 @@ rec {
         version = "0.4.8";
         edition = "2015";
         sha256 = "1xz18ixccl5c6np4linv3ypc7hpmmgpc5zzd2ymp2ssfx0mhbdhl";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -3185,7 +3086,6 @@ rec {
         version = "0.1.2";
         edition = "2015";
         sha256 = "071viv6g2p3akwqmfb3c8vsycs5n7kr17b70l7la071jv0d4zqii";
-        type = [ "lib" ];
         authors = [
           "Stepan Koltsov <stepan.koltsov@gmail.com>"
         ];
@@ -3205,7 +3105,6 @@ rec {
         version = "0.1.1";
         edition = "2015";
         sha256 = "194vc7vrshqff72rl56f9xgb0cazyl4jda7qsv31m5l6xx7hq7n4";
-        type = [ "lib" ];
         authors = [
           "Jonathan Reem <jonathan.reem@gmail.com>"
         ];
@@ -3218,7 +3117,6 @@ rec {
         version = "1.0.2";
         edition = "2015";
         sha256 = "07b5kjnhrrmfhgqm9wprjw8adx6i225lqp49gasgqg74lahnabiy";
-        type = [ "lib" ];
         authors = [
           "bluss"
         ];
@@ -3232,7 +3130,6 @@ rec {
         edition = "2015";
         sha256 = "1zv2k29zkpf2nb54c20ghs9r7p2kxn1hcm550m4yyghchpwkcxl9";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "The html5ever Project Developers"
         ];
@@ -3282,7 +3179,6 @@ rec {
         edition = "2015";
         sha256 = "020axl4q7rk9vz90phs7f8jas4imxal9y9kxl4z4v7a6719mrz3z";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "Simon Sapin <simon.sapin@exyr.org>"
         ];
@@ -3295,7 +3191,6 @@ rec {
         version = "2.0.0";
         edition = "2015";
         sha256 = "004y0nzmpfdrhz251278341z6ql34iv1k6dp1h6af7d6nd6jwc30";
-        type = [ "lib" ];
         authors = [
           "est31 <MTest31@outlook.com>"
           "The Rust Project Developers"
@@ -3309,7 +3204,6 @@ rec {
         version = "2.2.1";
         edition = "2015";
         sha256 = "13j6ji9x9ydpi9grbss106gqqr3xn3bcfp28aydqfa4751qrfmw8";
-        type = [ "lib" ];
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
           "bluss"
@@ -3325,7 +3219,6 @@ rec {
         version = "0.5.3";
         edition = "2015";
         sha256 = "1fblqzc25hfaym8m0pj112s66pqq87avvaqm5hp5rskib2w9w63m";
-        type = [ "lib" ];
         authors = [
           "Gilad Naaman <gilad.naaman@gmail.com>"
         ];
@@ -3344,7 +3237,6 @@ rec {
         version = "0.3.14";
         edition = "2015";
         sha256 = "1kxg2iqf55xbpkc5xxnb7ad9ppbmhj80amij1k60715ps6n667fx";
-        type = [ "lib" ];
         authors = [
           "Sean McArthur <sean@seanmonstar.com>"
         ];
@@ -3359,7 +3251,6 @@ rec {
         sha256 = "00l2r4anm8g35x0js2zfdnwfbrih9m43vphdpb77c5ga3kjkm7hy";
         libName = "miniz_sys";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -3384,7 +3275,6 @@ rec {
         version = "0.3.5";
         edition = "2018";
         sha256 = "09bnfn4bn3hcp912v5syphm4kjd0fdkwq023a4zmr4xf4vvp8gvg";
-        type = [ "lib" ];
         authors = [
           "Frommi <daniil.liferenko@gmail.com>"
           "oyvindln <oyvindln@users.noreply.github.com>"
@@ -3404,7 +3294,6 @@ rec {
         version = "0.6.21";
         edition = "2015";
         sha256 = "13q02a7cwc140aygf8amadpzpl5lyj3p2r4wnvgydfpnphifqb9h";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -3471,7 +3360,6 @@ rec {
         version = "0.6.7";
         edition = "2015";
         sha256 = "09gimdbnj7b9yca99pk8lxh9jhl79msj795c8fxi2sqr9slmfqln";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -3501,7 +3389,6 @@ rec {
         version = "0.2.1";
         edition = "2015";
         sha256 = "06g9b8sqlh5gxakwqq4rrib07afwanfnxgxajrldwcgk3hxjy7wc";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -3533,7 +3420,6 @@ rec {
         version = "0.2.33";
         edition = "2015";
         sha256 = "126g3fgfxp06zimc1l9iyxnn9cif1hjsg7sd81nlls5nnyghsma2";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -3566,7 +3452,6 @@ rec {
         edition = "2015";
         sha256 = "0c1br326qa0rrzxrn2rd5ah7xaprig2i9r4rwsx06vnvc1f003zl";
         libName = "debug_unreachable";
-        type = [ "lib" ];
         authors = [
           "Matt Brubeck <mbrubeck@limpet.net>"
           "Jonathan Reem <jonathan.reem@gmail.com>"
@@ -3580,7 +3465,6 @@ rec {
         version = "0.14.1";
         edition = "2015";
         sha256 = "1kmxdlmvnmq8cfpmr3g6wk37rwi2ybdvp1z6z3831m1p23p2nwkc";
-        type = [ "lib" ];
         authors = [
           "The nix-rust Project Developers"
         ];
@@ -3618,7 +3502,6 @@ rec {
         version = "0.1.41";
         edition = "2015";
         sha256 = "02dwjjpfbi16c71fq689s4sw3ih52cvfzr5z5gs6qpr5z0g58pmq";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -3647,7 +3530,6 @@ rec {
         version = "0.2.10";
         edition = "2015";
         sha256 = "1r079jbmrnrbvsz7dc5mcghijx7bhpfikjspfqrgl4n227y1zj6l";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -3667,7 +3549,6 @@ rec {
         version = "1.11.1";
         edition = "2015";
         sha256 = "0wlxs00cpg16z09fwchj1gdz1jxnf5dgg1cbidvq0sc75bnwbnkn";
-        type = [ "lib" ];
         authors = [
           "Sean McArthur <sean@seanmonstar.com>"
         ];
@@ -3691,7 +3572,6 @@ rec {
         version = "0.2.3";
         edition = "2015";
         sha256 = "172j6bs8ndclqxa2m64qc0y1772rr73g4l9fg2svscgicnbfff98";
-        type = [ "lib" ];
         authors = [
           "RustCrypto Developers"
         ];
@@ -3704,7 +3584,6 @@ rec {
         version = "0.10.0";
         edition = "2018";
         sha256 = "1z0wgf2sd1266y768kxxs3313zjfzj9r3k7j4arfaz0bmd4qrscj";
-        type = [ "lib" ];
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];
@@ -3732,7 +3611,6 @@ rec {
         version = "0.9.0";
         edition = "2018";
         sha256 = "0lk2vq3hp88ygpgsrypdr3ss71fidnqbykva0csgxhmn5scb2hpq";
-        type = [ "lib" ];
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];
@@ -3766,7 +3644,6 @@ rec {
         version = "0.6.2";
         edition = "2018";
         sha256 = "0ay67dpnrn68ryyvp720m9i8hzp189fd4d6slrs1lvmcwywv2xmq";
-        type = [ "lib" ];
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];
@@ -3817,7 +3694,6 @@ rec {
         version = "0.7.0";
         edition = "2018";
         sha256 = "1wdbrvh35nn09ga570vl5062dpwfbrwgzyrlhhy78ifzhj2870km";
-        type = [ "lib" ];
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];
@@ -3863,7 +3739,6 @@ rec {
         edition = "2015";
         sha256 = "0cgq08v1fvr6bs5fvy390cz830lq4fak8havdasdacxcw790s09i";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "The rust-url developers"
         ];
@@ -3877,7 +3752,6 @@ rec {
         edition = "2015";
         sha256 = "0bp3zrsk3kr47fbpipyczidbbx4g54lzxdm77ni1i3qws10mdzfl";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "The rust-url developers"
         ];
@@ -3890,7 +3764,6 @@ rec {
         version = "2.1.2";
         edition = "2015";
         sha256 = "0jl9nv6jx1jy3fz2j49nw7jkh9z5igvrbvsgnbc5aan2ql0v4kvy";
-        type = [ "lib" ];
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
@@ -3911,7 +3784,6 @@ rec {
         edition = "2015";
         sha256 = "1l5jfa6ril71cw5nsiw0r45br54dd8cj2r1nc2d1wq6wb3jilgc3";
         procMacro = true;
-        type = [ "proc-macro" ];
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
@@ -3934,7 +3806,6 @@ rec {
         version = "2.1.1";
         edition = "2015";
         sha256 = "1h3z8jccki87mn7gppy4292s1ah98z4md998w5pd04jpkclwz7vv";
-        type = [ "lib" ];
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
@@ -3969,7 +3840,6 @@ rec {
         version = "2.1.2";
         edition = "2015";
         sha256 = "0iymvrh7lcfi8iarkgq0hwgarr00np3l4xg4bx42rmvgi6czshyz";
-        type = [ "lib" ];
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
@@ -3999,7 +3869,6 @@ rec {
         version = "0.7.24";
         edition = "2015";
         sha256 = "066xwv4dr6056a9adlkarwp4n94kbpwngbmd47ngm3cfbyw49nmk";
-        type = [ "lib" ];
         authors = [
           "Steven Fackler <sfackler@gmail.com>"
         ];
@@ -4021,7 +3890,6 @@ rec {
         version = "0.7.24";
         edition = "2015";
         sha256 = "0zjiblicfm0nrmr2xxrs6pnf6zz2394wgch6dcbd8jijkq98agmh";
-        type = [ "lib" ];
         authors = [
           "Steven Fackler <sfackler@gmail.com>"
         ];
@@ -4044,7 +3912,6 @@ rec {
         version = "0.7.24";
         edition = "2015";
         sha256 = "0qi62gxk3x3whrmw5c4i71406icqk11qmpgln438p6qm7k4lqdh9";
-        type = [ "lib" ];
         authors = [
           "Steven Fackler <sfackler@gmail.com>"
         ];
@@ -4067,7 +3934,6 @@ rec {
         version = "0.7.24";
         edition = "2015";
         sha256 = "18371fla0vsj7d6d5rlfb747xbr2in11ar9vgv5qna72bnhp2kr3";
-        type = [ "lib" ];
         authors = [
           "Steven Fackler <sfackler@gmail.com>"
         ];
@@ -4086,7 +3952,6 @@ rec {
         version = "0.1.1";
         edition = "2018";
         sha256 = "149rf3qk5gdvx5ryns3vw2cihr2bff6zn6gfja3cxqz6l2y6rbzh";
-        type = [ "lib" ];
         authors = [
           "Taiki Endo <te316e89@gmail.com>"
         ];
@@ -4099,7 +3964,6 @@ rec {
         version = "0.2.6";
         edition = "2018";
         sha256 = "06zs492wbms7j5qhy58cs3976c7kyc47rx0d6fn63rgvp580njbl";
-        type = [ "lib" ];
         authors = [
           "The CryptoCorrosion Contributors"
         ];
@@ -4114,7 +3978,6 @@ rec {
         version = "0.1.1";
         edition = "2015";
         sha256 = "075k9bfy39jhs53cb2fpb9klfakx2glxnf28zdw08ws6lgpq6lwj";
-        type = [ "lib" ];
         authors = [
           "Emilio Cobos Álvarez <emilio@crisal.io>"
         ];
@@ -4128,7 +3991,6 @@ rec {
         edition = "2018";
         sha256 = "1idz5vmnjjhvr51yvwyjb45mza18wa53fr05m1skqvbdyw15gm7c";
         procMacro = true;
-        type = [ "proc-macro" ];
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -4155,7 +4017,6 @@ rec {
         version = "0.4.30";
         edition = "2015";
         sha256 = "0nd71fl24sys066jrha6j7i34nfkjv44yzw8yww9742wmc8j0gfg";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -4176,7 +4037,6 @@ rec {
         version = "1.0.6";
         edition = "2018";
         sha256 = "09rgb5ab0jgw39kyad0lgqs4nb9yaf7mwcrgxqnsxbn4il54g7lw";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -4198,7 +4058,6 @@ rec {
         edition = "2015";
         sha256 = "1l098px1hwdzqnxl376a9hfxb9q8kmj2n0y0s8k7plrz3jjp85cs";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "Simon Sapin <simon.sapin@exyr.org>"
         ];
@@ -4211,7 +4070,6 @@ rec {
         version = "1.2.2";
         edition = "2015";
         sha256 = "1w6kgwwv7p7zr0yyg5rb315lkk24bimywklwx7fsvsbwi10bjx4j";
-        type = [ "lib" ];
         authors = [
           "Paul Colomiets <paul@colomiets.name>"
           "Colin Kiegel <kiegel@gmx.de>"
@@ -4225,7 +4083,6 @@ rec {
         version = "0.6.13";
         edition = "2015";
         sha256 = "1qgqq48jymp5h4y082aanf25hrw6bpb678xh3zw993qfhxmkpqkc";
-        type = [ "lib" ];
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -4248,7 +4105,6 @@ rec {
         version = "1.0.2";
         edition = "2018";
         sha256 = "1zkc46ryacf2jdkc6krsy2z615xbk1x8kp1830rcxz3irj5qqfh5";
-        type = [ "lib" ];
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -4271,7 +4127,6 @@ rec {
         version = "0.6.5";
         edition = "2015";
         sha256 = "1jl4449jcl4wgmzld6ffwqj5gwxrp8zvx8w573g1z368qg6xlwbd";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
           "The Rust Project Developers"
@@ -4347,7 +4202,6 @@ rec {
         version = "0.7.2";
         edition = "2018";
         sha256 = "04l4rkm4clpkp9ykl3rp88hf91d3y2cajxc4kdsn3bry4ilv3q9s";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
           "The Rust Project Developers"
@@ -4406,7 +4260,6 @@ rec {
         version = "0.1.1";
         edition = "2015";
         sha256 = "1vxwyzs4fy1ffjc8l00fsyygpiss135irjf7nyxgq2v0lqf3lvam";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
           "The Rust Project Developers"
@@ -4433,7 +4286,6 @@ rec {
         version = "0.2.1";
         edition = "2018";
         sha256 = "0lv8imzzl4h2glm6sjj8mkvasgi8jym23ya48dakyln7m06sk8h3";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
           "The Rust Project Developers"
@@ -4463,7 +4315,6 @@ rec {
         version = "0.3.1";
         edition = "2015";
         sha256 = "0jzdgszfa4bliigiy4hi66k7fs3gfwi2qxn8vik84ph77fwdwvvs";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
           "The Rust Project Developers"
@@ -4487,7 +4338,6 @@ rec {
         version = "0.4.2";
         edition = "2015";
         sha256 = "1p09ynysrq1vcdlmcqnapq4qakl2yd1ng3kxh3qscpx09k2a6cww";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
           "The Rust Project Developers"
@@ -4504,7 +4354,6 @@ rec {
         version = "0.5.1";
         edition = "2018";
         sha256 = "06bdvx08v3rkz451cm7z59xwwqn1rkfh6v9ay77b14f8dwlybgch";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
           "The Rust Project Developers"
@@ -4528,7 +4377,6 @@ rec {
         version = "0.1.0";
         edition = "2015";
         sha256 = "1i0vl8q5ddvvy0x8hf1zxny393miyzxkwqnw31ifg6p0gdy6fh3v";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
         ];
@@ -4548,7 +4396,6 @@ rec {
         version = "0.2.0";
         edition = "2018";
         sha256 = "0g31sqwpmsirdlwr0svnacr4dbqyz339im4ssl9738cjgfpjjcfa";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
         ];
@@ -4567,7 +4414,6 @@ rec {
         version = "0.1.1";
         edition = "2015";
         sha256 = "027flpjr4znx2csxk7gxb7vrf9c7y5mydmvg5az2afgisp4rgnfy";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
           "The Rust Project Developers"
@@ -4589,7 +4435,6 @@ rec {
         version = "0.1.4";
         edition = "2015";
         sha256 = "16z387y46bfz3csc42zxbjq89vcr1axqacncvv8qhyy93p4xarhi";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
         ];
@@ -4622,7 +4467,6 @@ rec {
         version = "0.1.3";
         edition = "2015";
         sha256 = "0wahppm0s64gkr2vmhcgwc0lij37in1lgfxg5rbgqlz0l5vgcxbv";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
         ];
@@ -4668,7 +4512,6 @@ rec {
         version = "0.1.2";
         edition = "2015";
         sha256 = "0i0bdla18a8x4jn1w0fxsbs3jg7ajllz6azmch1zw33r06dv1ydb";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
         ];
@@ -4694,7 +4537,6 @@ rec {
         version = "0.1.1";
         edition = "2015";
         sha256 = "0p2x8nr00hricpi2m6ca5vysiha7ybnghz79yqhhx6sl4gkfkxyb";
-        type = [ "lib" ];
         authors = [
           "The Rand Project Developers"
           "The Rust Project Developers"
@@ -4716,7 +4558,6 @@ rec {
         version = "0.4.0";
         edition = "2015";
         sha256 = "1cjq0kwx1bk7jx3kzyciiish5gqsj7620dm43dc52sr8fzmm9037";
-        type = [ "lib" ];
         authors = [
           "Simonas Kazlauskas <rdrand@kazlauskas.me>"
         ];
@@ -4739,7 +4580,6 @@ rec {
         edition = "2015";
         sha256 = "110y7dyfm2vci4x5vk7gr0q551dvp31npl99fnsx2fb17wzwcf94";
         libName = "syscall";
-        type = [ "lib" ];
         authors = [
           "Jeremy Soller <jackpot51@gmail.com>"
         ];
@@ -4752,7 +4592,6 @@ rec {
         version = "1.3.1";
         edition = "2015";
         sha256 = "1g8wp160vzxgralyd4imydd0xsxq6yh25zhs229z1s6w7g9hn8nw";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -4802,7 +4641,6 @@ rec {
         version = "0.6.12";
         edition = "2015";
         sha256 = "05pplicvzvgkb2wb4i98p2mrpgc8gws6vdl8xlpyyr6f3h6y59qi";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -4819,7 +4657,6 @@ rec {
         edition = "2015";
         sha256 = "1jvdsmksdf6yiipm3aqahyv8n1cjd7wqc8sa0p0gzsax3fmb8qxj";
         libName = "resolv_conf";
-        type = [ "lib" ];
         authors = [
           "paul@colomiets.name"
         ];
@@ -4845,7 +4682,6 @@ rec {
         version = "0.1.16";
         edition = "2015";
         sha256 = "10qp42sl1wrdbgbbh8rnay2grm976z7hqgz32c4y09l1c071qsac";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -4859,7 +4695,6 @@ rec {
         version = "0.2.3";
         edition = "2015";
         sha256 = "02h3x57lcr8l2pm0a645s9whdh33pn5cnrwvn5cb57vcrc53x3hk";
-        type = [ "lib" ];
         authors = [
           "Marvin Löbel <loebel.marvin@gmail.com>"
         ];
@@ -4878,7 +4713,6 @@ rec {
         version = "1.0.2";
         edition = "2015";
         sha256 = "1j0h74f1xqf9hjkhanp8i20mqc1aw35kr1iq9i79q7713mn51a5z";
-        type = [ "lib" ];
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -4891,7 +4725,6 @@ rec {
         version = "1.0.0";
         edition = "2015";
         sha256 = "03aay84r1f6w87ckbpj6cc4rnsxkxcfs13n5ynxjia0qkgjiabml";
-        type = [ "lib" ];
         authors = [
           "bluss"
         ];
@@ -4905,7 +4738,6 @@ rec {
         version = "0.9.0";
         edition = "2015";
         sha256 = "00q4lkcj0rrgbhviv9sd4p6qmdsipkwkbra7rh11jrhq5kpvjzhx";
-        type = [ "lib" ];
         authors = [
           "Steve Klabnik <steve@steveklabnik.com>"
           "The Rust Project Developers"
@@ -4927,7 +4759,6 @@ rec {
         version = "0.7.0";
         edition = "2015";
         sha256 = "18vhypw6zgccnrlm5ps1pwa0khz7ry927iznpr88b87cagr1v2iq";
-        type = [ "lib" ];
         authors = [
           "Steve Klabnik <steve@steveklabnik.com>"
         ];
@@ -4940,7 +4771,6 @@ rec {
         version = "1.0.103";
         edition = "2015";
         sha256 = "00ip3xy09nk6c2b47ky1m5379yjmwk6n3sr2vmblp478p1xgj5qj";
-        type = [ "lib" ];
         authors = [
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
@@ -4971,7 +4801,6 @@ rec {
         edition = "2015";
         sha256 = "1l2icqq548dmq5bn278zb2vj725znj4h4ms89w3b0r1fkbpzmim8";
         procMacro = true;
-        type = [ "proc-macro" ];
         authors = [
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
@@ -5001,7 +4830,6 @@ rec {
         version = "1.0.42";
         edition = "2015";
         sha256 = "0hq0x0x0lbjcvfnml2s7zk7s9lca50gkqz5bj8n7w1hzpkf52cqs";
-        type = [ "lib" ];
         authors = [
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
@@ -5031,7 +4859,6 @@ rec {
         version = "0.6.1";
         edition = "2015";
         sha256 = "15rcwfkff0md5i231m2ym5756ksw1mkh5b5g2rw72wsc5mzdgicy";
-        type = [ "lib" ];
         authors = [
           "Anthony Ramine <n.oxyde@gmail.com>"
         ];
@@ -5063,7 +4890,6 @@ rec {
         edition = "2015";
         sha256 = "0s6fdy5wp3x4h2z4fcl2d9vjvrpzr87v4h49r51xcq8nm4qj35i3";
         libName = "sha1";
-        type = [ "lib" ];
         authors = [
           "RustCrypto Developers"
         ];
@@ -5104,7 +4930,6 @@ rec {
         version = "0.6.0";
         edition = "2015";
         sha256 = "03gs2q4m67rn2p8xcdfxhip6mpgahdwm12bnb3vh90ahv9grhy95";
-        type = [ "lib" ];
         authors = [
           "Armin Ronacher <armin.ronacher@active-4.com>"
         ];
@@ -5117,7 +4942,6 @@ rec {
         version = "0.1.12";
         edition = "2015";
         sha256 = "0ljn31wg3j70q7l3cm5hs1zy41ysvv6jwiy9llin1lx27gfig73s";
-        type = [ "lib" ];
         authors = [
           "Michal 'vorner' Vaner <vorner@vorner.cz>"
         ];
@@ -5142,7 +4966,6 @@ rec {
         version = "1.2.0";
         edition = "2015";
         sha256 = "0haz828bif1lbp3alx17zkcy5hwy15bbpmvks72j8iznx7npix4l";
-        type = [ "lib" ];
         authors = [
           "Michal 'vorner' Vaner <vorner@vorner.cz>"
           "Masaki Hara <ackie.h.gmai@gmail.com>"
@@ -5166,7 +4989,6 @@ rec {
         version = "0.2.3";
         edition = "2015";
         sha256 = "1b53m53l24lyhr505lwqzrpjyq5qfnic71mynrcfvm43rybf938b";
-        type = [ "lib" ];
         authors = [
           "Frank Denis <github@pureftpd.org>"
         ];
@@ -5179,7 +5001,6 @@ rec {
         version = "0.4.2";
         edition = "2015";
         sha256 = "1y59xsa27jk84sxzswjk60xcjf8b4fm5960jwpznrrcmasyva4f1";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -5192,7 +5013,6 @@ rec {
         version = "0.1.4";
         edition = "2015";
         sha256 = "0wrk0w7mcmnvpmc27fw8dxkip6f6xgwpfgp7mp56yv2bd8p7dg5k";
-        type = [ "lib" ];
         authors = [
           "Steven Allen <steven@stebalien.com>"
         ];
@@ -5212,7 +5032,6 @@ rec {
         edition = "2015";
         sha256 = "1dl219vnfkmsfx28lm3f83lyw24zap6fdsli6rg8nnp1aa67bc7p";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "Simon Sapin <simon.sapin@exyr.org>"
         ];
@@ -5234,7 +5053,6 @@ rec {
         edition = "2018";
         sha256 = "11pwzjbkiw1jsy1q4w8bws3r61sk27dsp9asankvm2lfys2kpksf";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "Simon Sapin <simon.sapin@exyr.org>"
         ];
@@ -5247,7 +5065,6 @@ rec {
         version = "0.3.11";
         edition = "2018";
         sha256 = "11bdcz04i106g4q7swkll0qxrb4287srqd2k3aq2q6i22zjlvdz8";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -5283,7 +5100,6 @@ rec {
         version = "0.5.2";
         edition = "2015";
         sha256 = "0b84m6dbzrwf2kxylnw82d3dr8w06av7rfkr8s85fb5f43rwyqvf";
-        type = [ "lib" ];
         authors = [
           "Mathijs van de Nes <git@mathijs.vd-nes.nl>"
           "John Ericson <git@JohnEricson.me>"
@@ -5297,7 +5113,6 @@ rec {
         version = "0.2.1";
         edition = "2015";
         sha256 = "0vaxz85ja52fn66akgvggb29wqa5bpj3y38syykpr1pbrjzi8hfj";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -5319,7 +5134,6 @@ rec {
         version = "0.7.5";
         edition = "2015";
         sha256 = "0rrdb822gc1fs3qq4camgj3kh4182bs79hpqxhdrpmlz5yl5ih49";
-        type = [ "lib" ];
         authors = [
           "The Servo Project Developers"
         ];
@@ -5371,7 +5185,6 @@ rec {
         edition = "2015";
         sha256 = "1ik78h9gs874i24rkyh0myg6x4ni2a9cazbv5yzs9yavnv8mxx7h";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "The Servo Project Developers"
         ];
@@ -5407,7 +5220,6 @@ rec {
         edition = "2015";
         sha256 = "1z7dpdix1m42x6ddshdcpjf91ml9mhvnskmiv5kd8hcpq0dlv25i";
         libPath = "lib.rs";
-        type = [ "lib" ];
         authors = [
           "The Servo Project Developers"
         ];
@@ -5420,7 +5232,6 @@ rec {
         version = "0.15.44";
         edition = "2015";
         sha256 = "1id5g6x6zihv3j7hwrw3m1jp636bg8dpi671r7zy3jvpkavb794w";
-        type = [ "lib" ];
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -5454,7 +5265,6 @@ rec {
         version = "1.0.9";
         edition = "2018";
         sha256 = "1h67q2bhp44zpkahdq3wz71vzy35s3ibv5pxjgggh0aj06p975pq";
-        type = [ "lib" ];
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -5488,7 +5298,6 @@ rec {
         version = "0.12.3";
         edition = "2018";
         sha256 = "0igmc5fzpk6fg7kgff914j05lbpc6ai2wmji312v2h8vvjhnwrb7";
-        type = [ "lib" ];
         authors = [
           "Nika Layzell <nika@thelayzells.com>"
         ];
@@ -5526,7 +5335,6 @@ rec {
         version = "0.4.1";
         edition = "2015";
         sha256 = "0fsx7blrrzgca8aa2yqy8zxyi8s7amskhgkk1ml5sbaqyalyszvh";
-        type = [ "lib" ];
         authors = [
           "Keegan McAllister <mcallister.keegan@gmail.com>"
           "Simon Sapin <simon.sapin@exyr.org>"
@@ -5555,7 +5363,6 @@ rec {
         version = "0.11.20";
         edition = "2015";
         sha256 = "1wv4rcbx14h7qzmbszic395ifdlwghr5ip59n4j7v3wxw5wm4l2b";
-        type = [ "lib" ];
         authors = [
           "Vincent Prouillet <prouillet.vincent@gmail.com>"
         ];
@@ -5624,7 +5431,6 @@ rec {
         version = "1.0.5";
         edition = "2015";
         sha256 = "0vjfsn1a8zvqhnrbygrz1id6yckwv1dncw3w4zj65qdx0f00kmln";
-        type = [ "lib" ];
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -5644,7 +5450,6 @@ rec {
         version = "0.3.6";
         edition = "2015";
         sha256 = "06rzik99p8c5js8238yhc8rk6np543ylb1dy9nrw5v80j0r3xdf6";
-        type = [ "lib" ];
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];
@@ -5663,7 +5468,6 @@ rec {
         version = "1.7.1";
         edition = "2015";
         sha256 = "0rd89n1q7vy47w4c32cnynibffv9kj3jy3dwr0536n9lbw5ckw72";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
           "Corey Farwell <coreyf@rwell.org>"
@@ -5684,7 +5488,6 @@ rec {
         version = "0.1.42";
         edition = "2015";
         sha256 = "0vsbvsz0ryxb35dy9j4anxvy8zlaplmjmi0a4z4l64bc135cz3fv";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -5721,7 +5524,6 @@ rec {
         version = "0.1.22";
         edition = "2015";
         sha256 = "1xhaadfmm6m37f79xv5020gc3np9wqza3bq95ymp522qpfsw02as";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -5804,7 +5606,6 @@ rec {
         version = "0.2.2";
         edition = "2018";
         sha256 = "05sbxqpv0k3ljdmf5jsxdi5hq4mqaqxwlcq6jy59pgahypwmnxif";
-        type = [ "lib" ];
         authors = [
           "Tokio Contributors <team@tokio.rs>"
         ];
@@ -5846,7 +5647,6 @@ rec {
         version = "0.1.1";
         edition = "2015";
         sha256 = "0inwrkh8knqy44mr9h2i305zyy4pxhfy90y0gr5rm1akdks21clg";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -5877,7 +5677,6 @@ rec {
         version = "0.1.1";
         edition = "2015";
         sha256 = "17y3hi3dd0bdfkrzshx9qhwcf49xv9iynszj7iwy3w4nmz71wl2w";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
           "Bryan Burgers <bryan@burgers.io>"
@@ -5905,7 +5704,6 @@ rec {
         version = "0.1.6";
         edition = "2015";
         sha256 = "0hx4c8v88kk0ih8x5s564gsgwwf8n11kryvxm72l1f7isz51fqni";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -5928,7 +5726,6 @@ rec {
         version = "0.1.9";
         edition = "2015";
         sha256 = "1arj6n9lnkqqq9mhlmddj0q7kk8py0p5v19dm0q3631bqhvg8vfa";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -5951,7 +5748,6 @@ rec {
         version = "0.1.12";
         edition = "2015";
         sha256 = "09jrz1hh4h1vj45qy09y7m7m8jsy1hl6g32clnky25mdim3dp42h";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -5978,7 +5774,6 @@ rec {
         version = "0.1.11";
         edition = "2015";
         sha256 = "0iki6xvm6bhm96a7i1ybsk37zwiad3cwcympviw13lf8admzwck7";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -6043,7 +5838,6 @@ rec {
         version = "0.2.7";
         edition = "2015";
         sha256 = "15l27cvhfcjsahwnm2pgsm0690w0xj1h1sbdl5wy6p50dqkwavfx";
-        type = [ "lib" ];
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -6099,7 +5893,6 @@ rec {
         version = "0.1.7";
         edition = "2015";
         sha256 = "0xkdgk7hqq191rb5nw7dml9i94zsia8j705s5zs50jmfw7658rfh";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -6122,7 +5915,6 @@ rec {
         version = "0.1.3";
         edition = "2015";
         sha256 = "06a15vg8bcd33ng3h9ldzlq7wl4jsw0p9qpy7v22ls5yah3b250x";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -6161,7 +5953,6 @@ rec {
         version = "0.1.16";
         edition = "2015";
         sha256 = "131qsnadljpb19xl7rq02zgvjavr1pvjmj018hgmh0jki2iwdlib";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -6212,7 +6003,6 @@ rec {
         version = "0.2.12";
         edition = "2015";
         sha256 = "09z8k60jchlqp67v3rn26672qw4pv62avh8z8ql82maf6s766f8p";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -6243,7 +6033,6 @@ rec {
         version = "0.1.5";
         edition = "2015";
         sha256 = "06qj80s41cx5qk3rparhx3barm8ns3q9wdb8ymh3xxs7am89h8ph";
-        type = [ "lib" ];
         authors = [
           "Carl Lerche <me@carllerche.com>"
         ];
@@ -6286,7 +6075,6 @@ rec {
         version = "0.1.10";
         edition = "2018";
         sha256 = "1icihvfyzj8257ngm15s65i99iwi27hxbik1bgmkpjsjwxclykpz";
-        type = [ "lib" ];
         authors = [
           "Tokio Contributors <team@tokio.rs>"
         ];
@@ -6324,7 +6112,6 @@ rec {
         edition = "2018";
         sha256 = "0avwsbaivjklsr96ay9484hm6fq9crcq1swk8hkh7i6kqc93n9m4";
         procMacro = true;
-        type = [ "proc-macro" ];
         authors = [
           "Tokio Contributors <team@tokio.rs>"
           "Eliza Weisman <eliza@buoyant.io>"
@@ -6350,7 +6137,6 @@ rec {
         version = "0.1.7";
         edition = "2018";
         sha256 = "07dgaq67w82iik5jy2lzrbg72jcqls7ysd8ysav5kj90qm3kd4dw";
-        type = [ "lib" ];
         authors = [
           "Tokio Contributors <team@tokio.rs>"
         ];
@@ -6383,7 +6169,6 @@ rec {
         edition = "2018";
         sha256 = "0099dm57nnizx4apik9sh3mnvr7rp9mivc903v8xss13dkgynnam";
         libName = "trust_dns_proto";
-        type = [ "lib" ];
         authors = [
           "Benjamin Fry <benjaminfry@me.com>"
         ];
@@ -6472,7 +6257,6 @@ rec {
         edition = "2015";
         sha256 = "0fd0w2zsdwlsag27fsg0fzyd7j7niw0r22rwh2c5fdmsipjr56bc";
         libName = "trust_dns_resolver";
-        type = [ "lib" ];
         authors = [
           "Benjamin Fry <benjaminfry@me.com>"
         ];
@@ -6542,7 +6326,6 @@ rec {
         version = "0.2.2";
         edition = "2015";
         sha256 = "10p36rx6pqi9d0zr876xa8vksx2m66ha45myakl50rn08dxyn176";
-        type = [ "lib" ];
         authors = [
           "Sean McArthur <sean@seanmonstar.com>"
         ];
@@ -6556,7 +6339,6 @@ rec {
         edition = "2015";
         sha256 = "1ybmfpp7j37zmaw50w35wiwx66lbpr0yp1312c0i333b5pz869vd";
         build = "build/main.rs";
-        type = [ "lib" ];
         authors = [
           "Paho Lurie-Gregg <paho@paholg.com>"
           "Andre Bogus <bogusandre@gmail.com>"
@@ -6570,7 +6352,6 @@ rec {
         version = "0.1.2";
         edition = "2015";
         sha256 = "1hh6kyzh5xygwy96wfmsf8v8czlzhps2lgbcyhj1xzy1w1xys04g";
-        type = [ "lib" ];
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -6585,7 +6366,6 @@ rec {
         version = "0.7.0";
         edition = "2015";
         sha256 = "07mxbng6x18qcbwpkrda9as0zr9l07fz13ygrjygsjkmrvvx6dnf";
-        type = [ "lib" ];
         authors = [
           "The UNIC Project Developers"
         ];
@@ -6604,7 +6384,6 @@ rec {
         version = "0.7.0";
         edition = "2015";
         sha256 = "1s4am9xij8h1kbl30429bzhxdd4wys8zhfy0mxnb5l9ankx8bayr";
-        type = [ "lib" ];
         authors = [
           "The UNIC Project Developers"
         ];
@@ -6619,7 +6398,6 @@ rec {
         version = "0.7.0";
         edition = "2015";
         sha256 = "1gvps3vkq26bp3gk4q5ad4wacmndm0hysv71f7czg7ljvrx4m3gz";
-        type = [ "lib" ];
         authors = [
           "The UNIC Project Developers"
         ];
@@ -6633,7 +6411,6 @@ rec {
         version = "0.7.0";
         edition = "2015";
         sha256 = "17kgxvhkda6njwkqhxsj8vx050sjvh8pv1mmcv8grdczn35lgjn9";
-        type = [ "lib" ];
         authors = [
           "The UNIC Project Developers"
         ];
@@ -6652,7 +6429,6 @@ rec {
         version = "0.7.0";
         edition = "2015";
         sha256 = "0vkpcmc7fpy5rs5m7z224zqqmi7f300r7lc83cwrx6j0w26a1wa8";
-        type = [ "lib" ];
         authors = [
           "The UNIC Project Developers"
         ];
@@ -6679,7 +6455,6 @@ rec {
         version = "0.7.0";
         edition = "2015";
         sha256 = "1xlgk4rgyn09nbxb8g06achn1y6gbz2lp5m5wknd1hjkdin5w7yg";
-        type = [ "lib" ];
         authors = [
           "The UNIC Project Developers"
         ];
@@ -6699,7 +6474,6 @@ rec {
         edition = "2015";
         sha256 = "1malx8ljgm7v1gbaazkn7iicy5wj0bwcyadj3l727a38ch6bvwj9";
         libName = "unicode_bidi";
-        type = [ "lib" ];
         authors = [
           "The Servo Project Developers"
         ];
@@ -6721,7 +6495,6 @@ rec {
         version = "0.1.11";
         edition = "2015";
         sha256 = "1kxxb5ndb5dzyp1flajjdxnbwyjw6ml9xvy0pz7b8srjn9ky4qdm";
-        type = [ "lib" ];
         authors = [
           "kwantam <kwantam@gmail.com>"
         ];
@@ -6740,7 +6513,6 @@ rec {
         version = "0.1.0";
         edition = "2015";
         sha256 = "1z57lqh4s18rr4x0j4fw4fmp9hf9346h0kmdgqsqx0fhjr3k0wpw";
-        type = [ "lib" ];
         authors = [
           "erick.tryzelaar <erick.tryzelaar@gmail.com>"
           "kwantam <kwantam@gmail.com>"
@@ -6755,7 +6527,6 @@ rec {
         version = "0.2.0";
         edition = "2015";
         sha256 = "0z09fn515xm7zyr0mmdyxa9mx2f7azcpv74pqmg611iralwpcvl2";
-        type = [ "lib" ];
         authors = [
           "erick.tryzelaar <erick.tryzelaar@gmail.com>"
           "kwantam <kwantam@gmail.com>"
@@ -6770,7 +6541,6 @@ rec {
         version = "1.7.2";
         edition = "2015";
         sha256 = "0nim1c90mxpi9wgdw2xh8dqd72vlklwlzam436akcrhjac6pqknx";
-        type = [ "lib" ];
         authors = [
           "The rust-url developers"
         ];
@@ -6799,7 +6569,6 @@ rec {
         version = "2.1.0";
         edition = "2015";
         sha256 = "0qcxx9kr0wfawsr83h0kfgxl6dxw4cgrbgxsz7bpkj34qkv19d3m";
-        type = [ "lib" ];
         authors = [
           "The rust-url developers"
         ];
@@ -6827,7 +6596,6 @@ rec {
         edition = "2015";
         sha256 = "1iw5rp4i3mfi9k51picbr5bgjqhjcmnxx7001clh5ydq31y2zr05";
         libName = "utf8";
-        type = [ "lib" ];
         authors = [
           "Simon Sapin <simon.sapin@exyr.org>"
         ];
@@ -6840,7 +6608,6 @@ rec {
         version = "0.1.5";
         edition = "2015";
         sha256 = "1pf91pvj8n6akh7w6j5ypka6aqz08b3qpzgs0ak2kjf4frkiljwi";
-        type = [ "lib" ];
         authors = [
           "Sergio Benitez <sb@sergio.bz>"
         ];
@@ -6853,7 +6620,6 @@ rec {
         version = "1.0.2";
         edition = "2015";
         sha256 = "0zc8f0ksxvmhvgx4fdg0zyn6vdnbxd2xv9hfx4nhzg6kbs4f80ka";
-        type = [ "lib" ];
         authors = [
           "Jonathan Reem <jonathan.reem@gmail.com>"
         ];
@@ -6868,7 +6634,6 @@ rec {
         version = "0.2.0";
         edition = "2015";
         sha256 = "0c52g7b4hhj033jc56sx9z3krivyciz0hlblixq2gc448zx5wfdn";
-        type = [ "lib" ];
         authors = [
           "Sean McArthur <sean@seanmonstar.com>"
         ];
@@ -6895,7 +6660,6 @@ rec {
         version = "0.7.0";
         edition = "2018";
         sha256 = "03apg3sa4hjn6xwa4pkyvzjiscya51wyrygadgxwdg8lrvj3r75q";
-        type = [ "lib" ];
         authors = [
           "The Cranelift Project Developers"
         ];
@@ -6911,7 +6675,6 @@ rec {
         version = "0.4.0";
         edition = "2015";
         sha256 = "1dhx6dndjsz1y7c9w06922412kdxyrrkqblvggm76mh8z17hxz7g";
-        type = [ "lib" ];
         authors = [
           "Kathryn Long <squeeself@gmail.com>"
         ];
@@ -6924,7 +6687,6 @@ rec {
         version = "0.2.8";
         edition = "2015";
         sha256 = "0yh816lh6lf56dpsgxy189c2ai1z3j8mw9si6izqb6wsjkbcjz8n";
-        type = [ "lib" ];
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -6937,7 +6699,6 @@ rec {
         version = "0.3.8";
         edition = "2015";
         sha256 = "1ii9j9lzrhwri0902652awifzx9fpayimbp6hfhhc296xcg0k4w0";
-        type = [ "lib" ];
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -6965,7 +6726,6 @@ rec {
         edition = "2015";
         sha256 = "1g4rqsgjky0a7530qajn2bbfcrl2v0zb39idgdws9b1l7gp5wc9d";
         libName = "build";
-        type = [ "lib" ];
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -6978,7 +6738,6 @@ rec {
         version = "0.4.0";
         edition = "2015";
         sha256 = "1dmpa6mvcvzz16zg6d5vrfy4bxgg541wxrcip7cnshi06v38ffxc";
-        type = [ "lib" ];
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -6991,7 +6750,6 @@ rec {
         version = "0.1.2";
         edition = "2015";
         sha256 = "1j839dc6y8vszvrsb7yk0qvs0w6asnahxzbyans37vnsw6vbls3i";
-        type = [ "lib" ];
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -7012,7 +6770,6 @@ rec {
         version = "0.4.0";
         edition = "2015";
         sha256 = "0gqq64czqb64kskjryj8isp62m2sgvx25yyj3kpc2myh85w24bki";
-        type = [ "lib" ];
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -7025,7 +6782,6 @@ rec {
         version = "1.0.2";
         edition = "2015";
         sha256 = "1agaf3hcav113i86912ajnw6jxcy4rvkrgyf8gdj8kc031mh3xcn";
-        type = [ "lib" ];
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -7049,7 +6805,6 @@ rec {
         version = "0.6.2";
         edition = "2015";
         sha256 = "1jdcqr6zmvwyrp87h48miasfdvv16gjsb60rc8dy2kqwb3mnv65j";
-        type = [ "lib" ];
         authors = [
           "Igor Shaula <gentoo90@gmail.com>"
         ];
@@ -7071,7 +6826,6 @@ rec {
         version = "0.1.1";
         edition = "2015";
         sha256 = "0vkyl3fbbf05n5ph5yz8sfaccrk9x3qsr25560w6w68ldf5i7bvx";
-        type = [ "lib" ];
         authors = [
           "Dave Lancaster <lancaster.dave@gmail.com>"
         ];
@@ -7194,7 +6948,6 @@ rec {
         edition = "2015";
         sha256 = "0ppscg5qfqaw0gzwv2a4nhn5bn01ff9iwn6ysqnzm4n8s3myz76m";
         libName = "ws2_32";
-        type = [ "lib" ];
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];

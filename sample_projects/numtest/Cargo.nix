@@ -78,7 +78,6 @@ rec {
         version = "0.1.7";
         edition = "2015";
         sha256 = "1chwgimpx5z7xbag7krr9d8asxfqbh683qhgl9kn3hxk2l0djj8x";
-        type = [ "lib" ];
         authors = [
           "Josh Stone <cuviper@gmail.com>"
         ];
@@ -91,7 +90,6 @@ rec {
         version = "0.2.0";
         edition = "2015";
         sha256 = "1nq8krgrz3nah4c2wqp3ap06xwjk9lpyk31ag2rhc50ygr0jaj6g";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -143,7 +141,6 @@ rec {
         version = "0.2.3";
         edition = "2015";
         sha256 = "06hsaiahwbx98xbph5k9086r4hd2m2zzi6sx4v5k9wr4vm6g7hzr";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -178,7 +175,6 @@ rec {
         version = "0.2.3";
         edition = "2015";
         sha256 = "1z6zjdzx1g1hj4y132ddy83d3p3zvw06igbf59npxxrzzcqwzc7w";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -208,7 +204,6 @@ rec {
         version = "0.1.41";
         edition = "2015";
         sha256 = "02dwjjpfbi16c71fq689s4sw3ih52cvfzr5z5gs6qpr5z0g58pmq";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -238,7 +233,6 @@ rec {
         version = "0.1.39";
         edition = "2015";
         sha256 = "0bhk2qbr3261r6zvfc58lz4spfqjhvdripxgz5mks5rd85r55gbn";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -273,7 +267,6 @@ rec {
         version = "0.2.2";
         edition = "2015";
         sha256 = "0m5l76rdzzq98cfhnbjsxfngz6w75pal5mnfflpxqapysmw5527j";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];
@@ -316,7 +309,6 @@ rec {
         version = "0.2.10";
         edition = "2015";
         sha256 = "1r079jbmrnrbvsz7dc5mcghijx7bhpfikjspfqrgl4n227y1zj6l";
-        type = [ "lib" ];
         authors = [
           "The Rust Project Developers"
         ];

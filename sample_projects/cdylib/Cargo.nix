@@ -77,8 +77,7 @@ rec {
         crateName = "cdylib";
         version = "0.1.0";
         edition = "2018";
-        src = (builtins.filterSource sourceFilter ./.);
-        type = [ "cdylib" ];
+        src = (builtins.filterSource sourceFilter ./.);type = [ "cdylib" ];
         authors = [
           "Andreas Rammhold <andreas@rammhold.de>"
         ];

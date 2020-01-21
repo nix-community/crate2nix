@@ -110,7 +110,6 @@ rec {
         edition = "2018";
         src = (builtins.filterSource sourceFilter ../lib);
         libName = "renamed_hello_world_lib";
-        type = [ "lib" ];
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
@@ -125,7 +124,6 @@ rec {
         # Hack to suppress building binaries
         crateBin = [{name = ","; path = ",";}];
         src = (builtins.filterSource sourceFilter ../lib_and_bin);
-        type = [ "lib" ];
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
