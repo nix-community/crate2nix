@@ -20,7 +20,7 @@ rec {
   #
 
   rootCrate = rec {
-    packageId = "cfg-test 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cfg-test)";
+    packageId = "cfg-test 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cfg-test)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
@@ -40,9 +40,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "cfg-test" = rec {
-      packageId = "cfg-test 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cfg-test)";
+      packageId = "cfg-test 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cfg-test)";
       build = buildRustCrateWithFeatures {
-        packageId = "cfg-test 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cfg-test)";
+        packageId = "cfg-test 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cfg-test)";
         features = rootFeatures;
       };
 
@@ -85,7 +85,7 @@ rec {
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
       };
-    "cfg-test 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cfg-test)"
+    "cfg-test 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cfg-test)"
       = rec {
         crateName = "cfg-test";
         version = "0.1.0";

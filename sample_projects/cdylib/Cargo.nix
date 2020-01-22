@@ -20,7 +20,7 @@ rec {
   #
 
   rootCrate = rec {
-    packageId = "cdylib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cdylib)";
+    packageId = "cdylib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cdylib)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
@@ -40,9 +40,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "cdylib" = rec {
-      packageId = "cdylib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cdylib)";
+      packageId = "cdylib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cdylib)";
       build = buildRustCrateWithFeatures {
-        packageId = "cdylib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cdylib)";
+        packageId = "cdylib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cdylib)";
         features = rootFeatures;
       };
 
@@ -72,7 +72,7 @@ rec {
   #   inject test dependencies into the build
 
   crates = {
-    "cdylib 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/cdylib)"
+    "cdylib 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/cdylib)"
       = rec {
         crateName = "cdylib";
         version = "0.1.0";

@@ -172,6 +172,7 @@ impl BuildTarget {
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub enum ResolvedSource {
     CratesIo {
+        package_id: PackageId,
         sha256: Option<String>,
     },
     Git {
@@ -197,7 +198,7 @@ impl ResolvedSource {
         match package.source.as_ref() {
             Some(source) if source.is_crates_io() => {
                 // Will sha256 will be filled later by prefetch_and_fill_crates_sha256.
-                Ok(ResolvedSource::CratesIo { sha256: None })
+                Ok(ResolvedSource::CratesIo { package_id: package.id.clone(), sha256: None })
             }
             Some(source) => {
                 ResolvedSource::git_or_local_directory(config, package, &package_path, source)
@@ -319,7 +320,8 @@ impl ResolvedSource {
 
     pub fn with_sha256(&self, sha256: String) -> Self {
         match self {
-            Self::CratesIo { .. } => Self::CratesIo {
+            Self::CratesIo { package_id, .. } => Self::CratesIo {
+                package_id: package_id.clone(),
                 sha256: Some(sha256),
             },
             Self::Git {
