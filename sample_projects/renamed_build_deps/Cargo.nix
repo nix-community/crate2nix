@@ -20,7 +20,7 @@ rec {
   #
 
   rootCrate = rec {
-    packageId = "renamed_build_deps 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/renamed_build_deps)";
+    packageId = "renamed_build_deps 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/renamed_build_deps)";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
@@ -40,9 +40,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "renamed_build_deps" = rec {
-      packageId = "renamed_build_deps 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/renamed_build_deps)";
+      packageId = "renamed_build_deps 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/renamed_build_deps)";
       build = buildRustCrateWithFeatures {
-        packageId = "renamed_build_deps 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/renamed_build_deps)";
+        packageId = "renamed_build_deps 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/renamed_build_deps)";
         features = rootFeatures;
       };
 
@@ -88,7 +88,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
-    "renamed_build_deps 0.1.0 (path+file:///home/cloud/Documents/code/nix/crate2nix/sample_projects/renamed_build_deps)"
+    "renamed_build_deps 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/renamed_build_deps)"
       = rec {
         crateName = "renamed_build_deps";
         version = "0.1.0";
