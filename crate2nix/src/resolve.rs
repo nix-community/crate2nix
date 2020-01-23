@@ -171,20 +171,30 @@ impl BuildTarget {
 /// Specifies how to retrieve the source code.
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub enum ResolvedSource {
-    CratesIo {
-        package_id: PackageId,
-        sha256: Option<String>,
-    },
-    Git {
-        #[serde(with = "url_serde")]
-        url: Url,
-        rev: String,
-        r#ref: Option<String>,
-        sha256: Option<String>,
-    },
-    LocalDirectory {
-        path: PathBuf,
-    },
+    CratesIo(CratesIoSource),
+    Git(GitSource),
+    LocalDirectory(LocalDirectorySource),
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
+pub struct CratesIoSource {
+    pub name: String,
+    pub version: Version,
+    pub sha256: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
+pub struct GitSource {
+    #[serde(with = "url_serde")]
+    pub url: Url,
+    pub rev: String,
+    pub r#ref: Option<String>,
+    pub sha256: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
+pub struct LocalDirectorySource {
+    path: PathBuf,
 }
 
 const GIT_SOURCE_PREFIX: &str = "git+";
@@ -198,14 +208,18 @@ impl ResolvedSource {
         match package.source.as_ref() {
             Some(source) if source.is_crates_io() => {
                 // Will sha256 will be filled later by prefetch_and_fill_crates_sha256.
-                Ok(ResolvedSource::CratesIo { package_id: package.id.clone(), sha256: None })
+                Ok(ResolvedSource::CratesIo(CratesIoSource {
+                    name: package.name.clone(),
+                    version: package.version.clone(),
+                    sha256: None,
+                }))
             }
             Some(source) => {
                 ResolvedSource::git_or_local_directory(config, package, &package_path, source)
             }
-            None => Ok(ResolvedSource::LocalDirectory {
+            None => Ok(ResolvedSource::LocalDirectory(LocalDirectorySource {
                 path: ResolvedSource::relative_directory(config, package_path)?,
-            }),
+            })),
         }
     }
 
@@ -244,12 +258,12 @@ impl ResolvedSource {
         };
         url.set_query(None);
         url.set_fragment(None);
-        Ok(ResolvedSource::Git {
+        Ok(ResolvedSource::Git(GitSource {
             url,
             rev,
             r#ref: branch,
             sha256: None,
-        })
+        }))
     }
 
     fn fallback_to_local_directory(
@@ -270,7 +284,9 @@ impl ResolvedSource {
                 .unwrap_or_else(|| "N/A".to_string()),
             &path.to_string_lossy()
         );
-        Ok(ResolvedSource::LocalDirectory { path })
+        Ok(ResolvedSource::LocalDirectory(LocalDirectorySource {
+            path,
+        }))
     }
 
     fn relative_directory(
@@ -318,22 +334,82 @@ impl ResolvedSource {
         })
     }
 
+    pub fn sha256(&self) -> Option<&String> {
+        match self {
+            Self::CratesIo(CratesIoSource { sha256, .. }) | Self::Git(GitSource { sha256, .. }) => {
+                sha256.as_ref()
+            }
+            _ => None,
+        }
+    }
+
     pub fn with_sha256(&self, sha256: String) -> Self {
         match self {
-            Self::CratesIo { package_id, .. } => Self::CratesIo {
-                package_id: package_id.clone(),
+            Self::CratesIo(source) => Self::CratesIo(CratesIoSource {
                 sha256: Some(sha256),
-            },
-            Self::Git {
-                url, rev, r#ref, ..
-            } => Self::Git {
-                url: url.clone(),
-                rev: rev.clone(),
-                r#ref: r#ref.clone(),
+                ..source.clone()
+            }),
+            Self::Git(source) => Self::Git(GitSource {
                 sha256: Some(sha256),
-            },
+                ..source.clone()
+            }),
             _ => self.clone(),
         }
+    }
+
+    pub fn without_sha256(&self) -> Self {
+        match self {
+            Self::CratesIo(source) => Self::CratesIo(CratesIoSource {
+                sha256: None,
+                ..source.clone()
+            }),
+            Self::Git(source) => Self::Git(GitSource {
+                sha256: None,
+                ..source.clone()
+            }),
+            _ => self.clone(),
+        }
+    }
+}
+
+impl ToString for ResolvedSource {
+    fn to_string(&self) -> String {
+        match self {
+            Self::CratesIo(source) => source.to_string(),
+            Self::Git(source) => source.to_string(),
+            Self::LocalDirectory(source) => source.to_string(),
+        }
+    }
+}
+
+impl CratesIoSource {
+    pub fn url(&self) -> String {
+        format!(
+            "https://crates.io/api/v1/crates/{}/{}/download",
+            self.name, self.version
+        )
+    }
+}
+
+impl ToString for CratesIoSource {
+    fn to_string(&self) -> String {
+        self.url()
+    }
+}
+
+impl ToString for GitSource {
+    fn to_string(&self) -> String {
+        let mut ret = format!("{}#{}", self.url, self.rev);
+        if let Some(branch) = self.r#ref.as_ref() {
+            ret = format!("{} branch: {}", ret, branch);
+        }
+        ret
+    }
+}
+
+impl ToString for LocalDirectorySource {
+    fn to_string(&self) -> String {
+        self.path.to_str().unwrap().to_owned()
     }
 }
 
