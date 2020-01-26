@@ -219,7 +219,8 @@ gives me a feeling of what is worth working on.
 * ~~Before 0.4.x: Only *default crate features* are supported. It should be easy to support a different feature set at
   build generation time since we can simply pass this set to `cargo metadata`. Feature selection during build time is
   out of scope for now.~~
-* No support for building and running tests, see [nixpkgs, issue 59177](https://github.com/NixOS/nixpkgs/issues/59177).
+* There is only experimental support for running tests ~~Before 0.7.x: No support for building and running tests, see 
+  [nixpkgs, issue 59177](https://github.com/NixOS/nixpkgs/issues/59177).~~
 * ~~Before 0.6.x: [Renamed crates](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml)
   with an explicit `package` name don't work yet.~~
 * Since cargo exposes local paths in package IDs, the generated build file also contain them as part of an "opaque"
