@@ -1,11 +1,39 @@
 # 0.6.x - 0.7.x (unreleased)
 
+* Use hashes from Cargo.lock instead of prefetching when available. This should
+  work for any crates.io dependency. :)
+* Issue #22 (and others) - Handling of "renamed crates". Thanks a lot, @danieldk and @andir!
+* Support for multiple binaries from the same crate. Thank you, @kristoff3r!
+* Issue #34 - Support for git prefetching so that repositories with sub modules now work. 
+  Thank you, @cpcloud!
+* Issue #67 - Support for additional lib types - in particular, `cdylib`. Thank you, @andir!
+  Write a rust library that is used from C code :)
 * Issue #18 - Optional crate unavailable
   Allows building packages that have multiple versions of the same dependency (with different
   targets). In particular the flate2 package now builds. 
   Thank you, @cchalmers!
 * Issue #37 - Conditional target expressions for dependencies can now 
   also depend on features. Thank you, @cpcloud!
+* Issue #42 - Some efficiency improvements to prevent stack overflows for projects with
+  huge dependency trees. Thank you, @jamii!
+* Add fuchsia as an unsupported target (ef945396fcb700322b5b5f497a5d243950ed2513 ). 
+  Thank you, @jamii!
+
+Thank you to everyone who contributed with awesomely detailed issues, PRs or
+otherwise. You are amazing! Please let me know if I forgot something or forgot
+to give someone appropriate credit.
+
+For contributors:
+
+* `./run_tests.sh` now makes it easier to prepare your pull requests for review.
+* Build artifacts for linux are now properly pushed to 
+  [eigenvalue.cachix.org](https://eigenvalue.cachix.org/). Adding that cache with cachix will speed 
+  up your installations and builds. And it speeds up our CI builds via github actions. Shout out to
+  @domenkozar and other cachix contributors.
+
+Experimental and still undocumented:
+
+* `cargo test`-like test running support! Thank you very much for your great work, @andir!
 
 # 0.6.0 - 0.6.1
 
