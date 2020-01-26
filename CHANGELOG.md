@@ -1,5 +1,7 @@
 # 0.6.x - 0.7.x (unreleased)
 
+New features and improvements:
+
 * Use hashes from Cargo.lock instead of prefetching when available. This should
   work for any crates.io dependency. :)
 * Follow up to [Issue #22](https://github.com/kolloch/crate2nix/issues/22) (and
