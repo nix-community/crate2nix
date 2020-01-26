@@ -2,19 +2,25 @@
 
 * Use hashes from Cargo.lock instead of prefetching when available. This should
   work for any crates.io dependency. :)
-* Issue #22 (and others) - Handling of "renamed crates". Thanks a lot, @danieldk and @andir!
+* Follow up to [Issue #22](https://github.com/kolloch/crate2nix/issues/22) (and
+  others) - Handling of "renamed crates". Thanks a lot,@andir!
 * Support for multiple binaries from the same crate. Thank you, @kristoff3r!
-* Issue #34 - Support for git prefetching so that repositories with sub modules now work. 
+* [Issue #34](https://github.com/kolloch/crate2nix/issues/34) - Support for git
+  prefetching so that repositories with sub modules now work. 
   Thank you, @cpcloud!
-* Issue #67 - Support for additional lib types - in particular, `cdylib`. Thank you, @andir!
+* [Issue #67](https://github.com/kolloch/crate2nix/issues/67) - Support for
+  additional lib types - in particular, `cdylib`. Thank you, @andir!
   Write a rust library that is used from C code :)
-* Issue #18 - Optional crate unavailable
+* [Issue #18](https://github.com/kolloch/crate2nix/issues/18) - Optional crate
+  unavailable
   Allows building packages that have multiple versions of the same dependency (with different
   targets). In particular the flate2 package now builds. 
   Thank you, @cchalmers!
-* Issue #37 - Conditional target expressions for dependencies can now 
+* [Issue #37](https://github.com/kolloch/crate2nix/issues/37) - Conditional
+  target expressions for dependencies can now 
   also depend on features. Thank you, @cpcloud!
-* Issue #42 - Some efficiency improvements to prevent stack overflows for projects with
+* [Issue #42](https://github.com/kolloch/crate2nix/issues/42) - Some efficiency
+  improvements to prevent stack overflows for projects with
   huge dependency trees. Thank you, @jamii!
 * Add fuchsia as an unsupported target (ef945396fcb700322b5b5f497a5d243950ed2513 ). 
   Thank you, @jamii!
@@ -41,12 +47,14 @@ Backported escaping fix for target expressions.
 
 # 0.5.1 - 0.6.0
 
-* Issue #22 - Support renamed crates. Fixed in `buildRustCrate` in nixpkgs and in 
+* [Issue #22](https://github.com/kolloch/crate2nix/issues/22) - Support renamed
+  crates. Fixed in `buildRustCrate` in nixpkgs and in 
   `crate2nix` by PR #24 @danieldk, thanks a lot!
   This is especially awesome because the popular `rand` crate recently made
   use of the "renamed crates" feature and therefore could not be build by 
   `buildRustCrate`/`crate2nix` anymore.
-* Issue #15 - Support "overrideCrates" argument for modifying the derivation for
+* [Issue #15](https://github.com/kolloch/crate2nix/issues/15) - Support
+  "overrideCrates" argument for modifying the derivation for
   a crate by name. Common use case, adding additional buildInputs. NixOS comes
   with `[defaultCrateOverrides](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/rust/default-crate-overrides.nix)`
   for some common packages already. This is what I use in `default.nix` of `crate2nix`
@@ -62,7 +70,8 @@ Backported escaping fix for target expressions.
    ```
 
    Many thanks to @Profpatsch for pointing to the problem and analyzing it.
-* Issue #43 - Support conditional dependencies using "test" configuration:
+* [Issue #43](https://github.com/kolloch/crate2nix/issues/43) - Support
+  conditional dependencies using "test" configuration:
 
   ```toml
   [target.'cfg(test)'.dependencies]
@@ -94,9 +103,13 @@ Don't use ´Cargo.toml´ but ´Cargo.nix´ as default output! Thank you, @tilpne
 
 ## Resolved issues
 
-* Issue #10 - Changing default for `-n`/`--nixpkgs-path` to `"<nixpkgs>"` so that it works by default on NixOS AND Mac OS.
-* Issue #11 - Adding optional dependencies if any of their features is enabled.
-* Issue #14 - Only overwrite output if explicitly specified as output file.
+* [Issue #10](https://github.com/kolloch/crate2nix/issues/10) - Changing default
+  for `-n`/`--nixpkgs-path` to `"<nixpkgs>"` so that it works by default on
+  NixOS AND Mac OS.
+* [Issue #11](https://github.com/kolloch/crate2nix/issues/11) - Adding optional
+  dependencies if any of their features is enabled.
+* [Issue #14](https://github.com/kolloch/crate2nix/issues/14) - Only overwrite
+  output if explicitly specified as output file.
 
 # 0.3.1 - 0.4.0
 
