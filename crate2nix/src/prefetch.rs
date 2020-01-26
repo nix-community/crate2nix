@@ -12,6 +12,26 @@ use failure::Error;
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashMap};
 
+/// The source is important because we need to store only hashes for which we performed
+/// a prefetch.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum HashSource {
+    Prefetched,
+    CargoLock,
+}
+
+struct HashWithSource {
+    sha256: String,
+    source: HashSource,
+}
+
+/// A source with all the packages that depend on it and a potentially preexisting hash.
+struct SourcePrefetchBundle<'a> {
+    source: &'a ResolvedSource,
+    packages: &'a mut Vec<&'a mut CrateDerivation>,
+    hash: Option<HashWithSource>,
+}
+
 /// Uses `nix-prefetch` to get the hashes of the sources for the given packages if they come from crates.io.
 ///
 /// Uses and updates the existing hashes in the `config.crate_hash_json` file.
@@ -28,6 +48,9 @@ pub fn prefetch(
     let mut hashes = BTreeMap::<PackageId, String>::new();
 
     // Multiple packages might be fetched from the same source.
+    //
+    // Usually, a source is only used by one package but e.g. the same git source can be used
+    // by multiple packages.
     let mut packages_by_source: HashMap<ResolvedSource, Vec<&mut CrateDerivation>> = {
         let mut index = HashMap::new();
         for package in crate_derivations {
@@ -39,50 +62,55 @@ pub fn prefetch(
         index
     };
 
-    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-    enum HashSource {
-        Prefetched,
-        OtherPackage,
-    }
-
-    // Associate sources with existing hashes.
-    let mut prefetchable_sources: Vec<(
-        &ResolvedSource,
-        &mut Vec<&mut CrateDerivation>,
-        Option<(String, HashSource)>,
-    )> = packages_by_source
+    // Associate prefetchable sources with existing hashes.
+    let mut prefetchable_sources: Vec<SourcePrefetchBundle> = packages_by_source
         .iter_mut()
         .filter(|(source, _)| source.needs_prefetch())
         .map(|(source, packages)| {
             // All the packages have the same source.
             // So is there any package for which we already know the hash?
-            let existing_hash = packages
+            let hash = packages
                 .iter()
                 .filter_map(|p| {
                     p.source
                         .sha256()
-                        .map(|s| (s.clone(), HashSource::OtherPackage))
+                        .map(|s| HashWithSource {
+                            sha256: s.clone(),
+                            source: HashSource::CargoLock,
+                        })
                         .or_else(|| {
                             old_prefetched_hashes
                                 .get(&p.package_id)
-                                .map(|hash| (hash.clone(), HashSource::Prefetched))
+                                .map(|hash| HashWithSource {
+                                    sha256: hash.clone(),
+                                    source: HashSource::Prefetched,
+                                })
                         })
                 })
                 .next();
 
-            (source, packages, existing_hash)
+            SourcePrefetchBundle {
+                source,
+                packages,
+                hash,
+            }
         })
         .collect();
 
     let without_hash_num = prefetchable_sources
         .iter()
-        .filter(|(_, _, existing_hash)| existing_hash.is_none())
+        .filter(|SourcePrefetchBundle { hash, .. }| hash.is_none())
         .count();
 
     let mut idx = 1;
-    for (source, packages, existing_hash) in prefetchable_sources.iter_mut() {
-        let (sha256, hash_source) = if let Some((hash, hash_source)) = existing_hash {
-            (hash.trim().to_string(), *hash_source)
+    for SourcePrefetchBundle {
+        source,
+        packages,
+        hash,
+    } in prefetchable_sources.iter_mut()
+    {
+        let (sha256, hash_source) = if let Some(HashWithSource { sha256, source }) = hash {
+            (sha256.trim().to_string(), *source)
         } else {
             eprintln!(
                 "Prefetching {:>4}/{}: {}",
