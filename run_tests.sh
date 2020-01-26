@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
+set -Eeuo pipefail
+
 top="$(readlink -f "$(dirname "$0")")"
 
 cd "$top"/crate2nix
+
+./cargo.sh fmt
 
 ../regenerate_cargo_nix.sh && ./cargo.sh test || {
     echo "==================" >&2
@@ -10,8 +14,9 @@ cd "$top"/crate2nix
     exit 1
 }
 
-# Crude hack check if we have the right to push to the cache
-if grep -q '"eigenvalue"' ~/.config/cachix/cachix.dhall; then
+# Crude hack: check if we have the right to push to the cache
+if test -r ~/.config/cachix/cachix.dhall &&\
+ grep -q '"eigenvalue"' ~/.config/cachix/cachix.dhall; then
     echo "Pushing build artifacts to eigenvalue.cachix.org..." >&2
     # we filter for "rust_" to exclude some things that are in the
     # nixos cache anyways
