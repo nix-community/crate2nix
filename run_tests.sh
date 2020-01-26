@@ -7,6 +7,7 @@ top="$(readlink -f "$(dirname "$0")")"
 cd "$top"/crate2nix
 
 ./cargo.sh fmt
+./cargo.sh clippy
 
 ../regenerate_cargo_nix.sh && ./cargo.sh test || {
     echo "==================" >&2
