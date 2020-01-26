@@ -128,6 +128,13 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
 
          {
+            name = "futures_compat_test";
+            src = ./sample_projects/futures_compat;
+            cargoToml = "Cargo.toml";
+            expectedOutput = "Hello, futures_compat!";
+         }
+
+         {
             name = "sample_project_cfg_test-with-tests";
             src = ./sample_projects/cfg-test;
             cargoToml = "Cargo.toml";
