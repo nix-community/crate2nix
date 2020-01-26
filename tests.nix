@@ -236,27 +236,5 @@ in {
         '';
       };
 
-    #  sample_workspace_with_deprecated_alias =
-    #     let bin_build = (pkgs.callPackage ./sample_workspace/Cargo.nix {})
-    #         .workspace_members.with_tera;
-    #     in pkgs.stdenv.mkDerivation {
-    #         name = "test_sample_workspace_bin_with_deprecated_alias";
-    #         phases = [ "buildPhase" ];
-    #         buildInputs = [ bin_build ];
-    #         buildPhase = ''
-    #           mkdir -p $out
-    #           with_tera >$out/test.log
-    #           echo grepping
-    #           grep 'Hello, with_tera!' $out/test.log || {
-    #             echo "Unexpected output: "
-    #             cat $out/test.log
-    #             exit 1
-    #           }
-    #     '';
-    #   };
-
     inherit buildTestConfigs;
-    # TODO: File bug for cargo that it does an index fetch if fetching git package
-    # even when lock file already exists
-    # TODO: Make cargo proposal for modular builds.
 } // buildTestDerivationAttrSet
