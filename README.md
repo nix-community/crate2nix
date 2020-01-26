@@ -238,6 +238,12 @@ gives me a feeling of what is worth working on.
 * Git sources are now also supported. Starting with 0.7 sub modules also work.    
   Finding crates in arbitrary sub directories of git sources (which cargo supports!)is not supported, see #53.
 
+I consider this "Works as intended" but don't hesitate to tell me if you run into restrictions in popular crates because 
+of this:
+
+* A crate will only have access to its own source directory during build time and not e.g. to other directories in the 
+  same workspace. See [crate2nix, issue 17](https://github.com/kolloch/crate2nix/issues/17).
+
 ## Feedback: What is needed for a 1.0 release?
 
 I would really appreciate your thoughts. Please add comments to issue
