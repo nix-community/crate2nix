@@ -220,6 +220,10 @@ the like! (I didn't try that, though.)
 
 ## Known Restrictions
 
+`crate2nix` makes heavy use of `buildRustCrate` in `nixpkgs`. So we potentially depend on features in a recent version
+of `nixpkgs`. Check [nix/sources.json](https://github.com/kolloch/crate2nix/blob/master/nix/sources.json) for the version
+of nixpkgs that `crate2nix` is tested against.
+
 If you feel limited by these restrictions, please do not hesitate to file an issue! That 
 gives me a feeling of what is worth working on.
 
