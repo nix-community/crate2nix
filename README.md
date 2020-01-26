@@ -50,45 +50,34 @@ NOTE: It is only tested on Linux for now!
 If you are not running, install a recent version of nix by running `curl https://nixos.org/nix/install | sh` or following
 the instructions on [https://nixos.org/nix/](https://nixos.org/nix/).
 
-Then either
+Then
 
 ```bash
 # Install the stable version to your user env (with shell completions):
 nix-env -i -f https://github.com/kolloch/crate2nix/tarball/0.6.1
 ```
 
-or
-
-```bash
-# Start a shell with it (without shell completions):
-nix-shell https://github.com/kolloch/crate2nix/tarball/0.6.1
-```
 
 NOTE: You can use [eigenvalue.cachix.org](https://eigenvalue.cachix.org/) to
 get prebuilt binaries for linux.
 
 ### Development Version (master)
 
-Similarly, you can either
+Similarly, you can install crate2nix by
 
 ```bash
 # Install the unstable version to your user env (with shell completions):
 nix-env -i -f https://github.com/kolloch/crate2nix/tarball/master
 ```
 
-or
-
-```bash
-# Start a shell with it (without shell completions):
-nix-shell https://github.com/kolloch/crate2nix/tarball/master
-```
-
 If you want to tweak crate2nix, clone the repository and then
 
 ```bash
 cd crate2nix
-nix-shell
-# you are in a shell with crate2nix
+# to run crate2nix without installing it
+./crate2nix.sh
+# or to install it in your user environment
+nix-env -i -f .
 ```
 
 ### Nixpkgs Version
