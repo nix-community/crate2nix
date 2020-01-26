@@ -12,13 +12,9 @@ pub fn load_lock_file(path: &Path) -> Result<EncodableResolve, Error> {
     )
     .map_err(|e| format_err!("while parsing toml from {}: {}", path.display(), e))?;
 
-    let v: EncodableResolve = resolve.try_into().map_err(|e| {
-        format_err!(
-            "unexpected format in {}: {}",
-            path.display(),
-            e
-        )
-    })?;
+    let v: EncodableResolve = resolve
+        .try_into()
+        .map_err(|e| format_err!("unexpected format in {}: {}", path.display(), e))?;
     Ok(v)
 }
 

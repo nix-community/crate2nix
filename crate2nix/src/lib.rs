@@ -83,10 +83,12 @@ impl BuildInfo {
                 indexed_crates
                     .get(next_package_id)
                     .iter()
-                    .flat_map(|c| c.dependencies.iter()
-                              .chain(c.build_dependencies.iter())
-                              .chain(c.dev_dependencies.iter())
-                    )
+                    .flat_map(|c| {
+                        c.dependencies
+                            .iter()
+                            .chain(c.build_dependencies.iter())
+                            .chain(c.dev_dependencies.iter())
+                    })
                     .map(|d| &d.package_id),
             );
         }
@@ -144,15 +146,17 @@ fn prefetch_and_fill_crates_sha256(
     let lock_file =
         crate::lock::load_lock_file(&config.cargo_toml.parent().unwrap().join("Cargo.lock"))?;
 
-    for package in default_nix.crates.iter_mut()
-        .filter(|c| match c.source {
-            ResolvedSource::CratesIo { .. } => true,
-            _ => false,
-        }) {
+    for package in default_nix.crates.iter_mut().filter(|c| match c.source {
+        ResolvedSource::CratesIo { .. } => true,
+        _ => false,
+    }) {
         if let Some(hash) = lock_file.get_hash(&package.package_id.repr)? {
             package.source = package.source.with_sha256(hash);
         } else {
-            eprintln!("Lock file incomplete, hash for {} missing.", package.package_id);
+            eprintln!(
+                "Lock file incomplete, hash for {} missing.",
+                package.package_id
+            );
         }
     }
 

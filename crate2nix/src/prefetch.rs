@@ -3,7 +3,7 @@
 use std::io::Write;
 use std::process::Command;
 
-use crate::resolve::{CrateDerivation, GitSource, ResolvedSource, CratesIoSource};
+use crate::resolve::{CrateDerivation, CratesIoSource, GitSource, ResolvedSource};
 use crate::GenerateConfig;
 use cargo_metadata::PackageId;
 use failure::bail;
