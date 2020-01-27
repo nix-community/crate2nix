@@ -171,7 +171,7 @@ pub fn prefetch(
         )?;
         eprintln!(
             "Wrote hashes to {}.",
-            config.crate_hashes_json.to_string_lossy()
+            config.crate_hashes_json.display()
         );
     }
 
