@@ -45,10 +45,8 @@ Experimental and still undocumented:
 
 Heads up! Feel free to discuss these planned changes in future releases with me:
 
-* [#77](https://github.com/kolloch/crate2nix/issues/77): `builder` instead of `build` to
-  allow customization of the default parameters to buildRustCrate -- instead of override
-  which shadows the override for the underlying derivation. I will allow the old behavior 
-  for a release or so.
+* [#77](https://github.com/kolloch/crate2nix/issues/77): New/better override behavior that
+  also allows overriding `buildRustCrate`.
 * [#75](https://github.com/kolloch/crate2nix/issues/75): Cleanly separate
   internal API by `internal.` attribute path element. Formally, this is no
   breaking change if it only effects private API but still. I will mitigate by
