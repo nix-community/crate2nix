@@ -152,11 +152,6 @@ fn prefetch_and_fill_crates_sha256(
     }) {
         if let Some(hash) = lock_file.get_hash(&package.package_id.repr)? {
             package.source = package.source.with_sha256(hash);
-        } else {
-            eprintln!(
-                "Lock file incomplete, hash for {} missing.",
-                package.package_id
-            );
         }
     }
 

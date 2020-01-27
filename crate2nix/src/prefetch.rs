@@ -1,16 +1,25 @@
 //! Utilities for calling `nix-prefetch` on packages.
 
-use std::io::Write;
-use std::process::Command;
-
 use crate::resolve::{CrateDerivation, CratesIoSource, GitSource, ResolvedSource};
 use crate::GenerateConfig;
+use async_trait::async_trait;
 use cargo_metadata::PackageId;
 use failure::bail;
 use failure::format_err;
 use failure::Error;
+use futures::{StreamExt, TryStreamExt};
+use indicatif::{ProgressBar, ProgressStyle};
 use serde::Deserialize;
-use std::collections::{BTreeMap, HashMap};
+use std::{
+    collections::{BTreeMap, HashMap},
+    convert::TryInto,
+    fs,
+    sync::Arc,
+};
+use tokio::{
+    io::{self, AsyncWriteExt},
+    process::Command,
+};
 
 /// The source is important because we need to store only hashes for which we performed
 /// a prefetch.
@@ -63,12 +72,10 @@ pub fn prefetch(
     };
 
     // Associate prefetchable sources with existing hashes.
-    let mut prefetchable_sources: Vec<SourcePrefetchBundle> = packages_by_source
+    let prefetchable_sources: Vec<_> = packages_by_source
         .iter_mut()
         .filter(|(source, _)| source.needs_prefetch())
         .map(|(source, packages)| {
-            // All the packages have the same source.
-            // So is there any package for which we already know the hash?
             let hash = packages
                 .iter()
                 .filter_map(|p| {
@@ -97,41 +104,70 @@ pub fn prefetch(
         })
         .collect();
 
-    let without_hash_num = prefetchable_sources
+    let num_crates_without_hash = prefetchable_sources
         .iter()
         .filter(|SourcePrefetchBundle { hash, .. }| hash.is_none())
         .count();
 
-    let mut idx = 1;
-    for SourcePrefetchBundle {
-        source,
-        packages,
-        hash,
-    } in prefetchable_sources.iter_mut()
-    {
-        let (sha256, hash_source) = if let Some(HashWithSource { sha256, source }) = hash {
-            (sha256.trim().to_string(), *source)
-        } else {
-            eprintln!(
-                "Prefetching {:>4}/{}: {}",
-                idx,
-                without_hash_num,
-                source.to_string()
-            );
-            idx += 1;
-            (source.prefetch()?, HashSource::Prefetched)
-        };
+    let raw_progress_bar = ProgressBar::new(num_crates_without_hash.try_into()?);
+    raw_progress_bar.set_style(
+        ProgressStyle::default_bar()
+            .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})")
+            .progress_chars("#>-"),
+    );
+    let progress_bar = Arc::new(raw_progress_bar);
+    let tasks = prefetchable_sources.into_iter().map(
+        |SourcePrefetchBundle {
+             source,
+             packages,
+             hash,
+         }| {
+            let pb = progress_bar.clone();
+            async move {
+                let (sha256, hash_source) = if let Some(HashWithSource { sha256, source }) = hash {
+                    (sha256.trim().to_string(), source)
+                } else {
+                    let prefetched_hash = source.prefetch().await?;
+                    pb.inc(1);
+                    (prefetched_hash, HashSource::Prefetched)
+                };
 
-        for package in packages.iter_mut() {
-            package.source = package.source.with_sha256(sha256.clone());
-            if hash_source == HashSource::Prefetched {
-                hashes.insert(package.package_id.clone(), sha256.clone());
+                Result::<_, Error>::Ok(packages.iter_mut().map(move |package| {
+                    let package_id = package.package_id.clone();
+                    let package_source = package.source.with_sha256(sha256.clone());
+                    (
+                        package,
+                        package_source,
+                        if hash_source == HashSource::Prefetched {
+                            Some((package_id, sha256.clone()))
+                        } else {
+                            None
+                        },
+                    )
+                }))
+            }
+        },
+    );
+
+    // TODO: Is there a better way to choose this number?
+    let n_concurrent_tasks = num_cpus::get() * 10;
+    let triples: Vec<_> = tokio::runtime::Runtime::new()?.block_on(
+        futures::stream::iter(tasks)
+            .buffer_unordered(n_concurrent_tasks)
+            .try_collect(),
+    )?;
+
+    for bundle in triples.into_iter() {
+        for (package, source, package_hashes) in bundle.into_iter() {
+            package.source = source.clone();
+            if let Some((package_id, sha256)) = package_hashes {
+                hashes.insert(package_id.clone(), sha256.clone());
             }
         }
     }
 
     if hashes != old_prefetched_hashes {
-        std::fs::write(
+        fs::write(
             &config.crate_hashes_json,
             serde_json::to_vec_pretty(&hashes)?,
         )?;
@@ -144,15 +180,16 @@ pub fn prefetch(
     Ok(hashes)
 }
 
-fn get_command_output(cmd: &str, args: &[&str]) -> Result<String, Error> {
+async fn get_command_output(cmd: &str, args: &[&str]) -> Result<String, Error> {
     let output = Command::new(cmd)
         .args(args)
         .output()
+        .await
         .map_err(|e| format_err!("While spawning '{} {}': {}", cmd, args.join(" "), e))?;
 
     if !output.status.success() {
-        std::io::stdout().write_all(&output.stdout)?;
-        std::io::stderr().write_all(&output.stderr)?;
+        io::stdout().write_all(&output.stdout).await?;
+        io::stderr().write_all(&output.stderr).await?;
         bail!(
             "{}\n=> exited with: {}",
             cmd,
@@ -165,13 +202,14 @@ fn get_command_output(cmd: &str, args: &[&str]) -> Result<String, Error> {
         .map_err(|_e| format_err!("output of '{} {}' is not UTF8!", cmd, args.join(" ")))
 }
 
-trait PrefetchableSource: ToString {
+#[async_trait]
+trait PrefetchableSource {
     fn needs_prefetch(&self) -> bool;
-    fn prefetch(&self) -> Result<String, Error>;
+    async fn prefetch(&self) -> Result<String, Error>;
 }
 
 impl ResolvedSource {
-    fn inner_prefetchable(&self) -> Option<&dyn PrefetchableSource> {
+    fn inner_prefetchable(&self) -> Option<&(dyn PrefetchableSource + Send + Sync)> {
         match self {
             ResolvedSource::CratesIo(source) => Some(source),
             ResolvedSource::Git(source) => Some(source),
@@ -180,6 +218,7 @@ impl ResolvedSource {
     }
 }
 
+#[async_trait]
 impl PrefetchableSource for ResolvedSource {
     fn needs_prefetch(&self) -> bool {
         self.inner_prefetchable()
@@ -187,34 +226,40 @@ impl PrefetchableSource for ResolvedSource {
             .unwrap_or(false)
     }
 
-    fn prefetch(&self) -> Result<String, Error> {
-        self.inner_prefetchable()
-            .map(|s| s.prefetch())
+    async fn prefetch(&self) -> Result<String, Error> {
+        let prefetched = if let Some(prefetchable) = self.inner_prefetchable() {
+            Some(prefetchable.prefetch().await)
+        } else {
+            None
+        };
+        prefetched
             .unwrap_or_else(|| Err(format_err!("source does not support prefetch: {:?}", self)))
     }
 }
 
+#[async_trait]
 impl PrefetchableSource for CratesIoSource {
     fn needs_prefetch(&self) -> bool {
         self.sha256.is_none()
     }
 
-    fn prefetch(&self) -> Result<String, Error> {
+    async fn prefetch(&self) -> Result<String, Error> {
         let args = &[
             &self.url(),
             "--name",
             &format!("{}-{}", self.name, self.version),
         ];
-        get_command_output("nix-prefetch-url", args)
+        get_command_output("nix-prefetch-url", args).await
     }
 }
 
+#[async_trait]
 impl PrefetchableSource for GitSource {
     fn needs_prefetch(&self) -> bool {
         self.sha256.is_none()
     }
 
-    fn prefetch(&self) -> Result<String, Error> {
+    async fn prefetch(&self) -> Result<String, Error> {
         /// A struct used to contain the output returned by `nix-prefetch-git`.
         ///
         /// Additional fields are available (e.g., `name`), but we only call `nix-prefetch-git` to obtain
@@ -233,14 +278,13 @@ impl PrefetchableSource for GitSource {
             &self.rev,
         ];
 
-        // TODO: --branch-name isn't documented in nix-prefetch-git --help
         // TODO: Consider the case when ref *isn't* a branch. You have to pass
         // that to `--rev` instead. This seems like limitation of nix-prefetch-git.
         if let Some(r#ref) = self.r#ref.as_ref() {
             args.extend_from_slice(&["--branch-name", r#ref]);
         }
 
-        let json = get_command_output("nix-prefetch-git", &args)?;
+        let json = get_command_output("nix-prefetch-git", &args).await?;
         let prefetch_info: NixPrefetchGitInfo = serde_json::from_str(&json)?;
         Ok(prefetch_info.sha256)
     }
