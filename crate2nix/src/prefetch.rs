@@ -151,18 +151,16 @@ pub fn prefetch(
 
     // TODO: Is there a better way to choose this number?
     let n_concurrent_tasks = num_cpus::get() * 10;
-    let triples: Vec<_> = tokio::runtime::Runtime::new()?.block_on(
+    let bundles: Vec<_> = tokio::runtime::Runtime::new()?.block_on(
         futures::stream::iter(tasks)
             .buffer_unordered(n_concurrent_tasks)
             .try_collect(),
     )?;
 
-    for bundle in triples.into_iter() {
-        for (package, source, package_hashes) in bundle.into_iter() {
-            package.source = source.clone();
-            if let Some((package_id, sha256)) = package_hashes {
-                hashes.insert(package_id.clone(), sha256.clone());
-            }
+    for (package, source, package_hashes) in bundles.into_iter().flatten() {
+        package.source = source;
+        if let Some((package_id, sha256)) = package_hashes {
+            hashes.insert(package_id, sha256);
         }
     }
 
