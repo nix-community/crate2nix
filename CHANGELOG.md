@@ -43,7 +43,7 @@ Experimental and still undocumented:
 
 * `cargo test`-like test running support! Thank you very much for your great work, @andir!
 
-Heads up! Feel free to discuss the planned breaking changes in future releases with me:
+Heads up! Feel free to discuss these planned changes in future releases with me:
 
 * [#77](https://github.com/kolloch/crate2nix/issues/77): `builder` instead of `build` to
   allow customization of the default parameters to buildRustCrate -- instead of override
