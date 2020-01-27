@@ -169,10 +169,7 @@ pub fn prefetch(
             &config.crate_hashes_json,
             serde_json::to_vec_pretty(&hashes)?,
         )?;
-        eprintln!(
-            "Wrote hashes to {}.",
-            config.crate_hashes_json.display()
-        );
+        eprintln!("Wrote hashes to {}.", config.crate_hashes_json.display());
     }
 
     Ok(hashes)
@@ -225,13 +222,12 @@ impl PrefetchableSource for ResolvedSource {
     }
 
     async fn prefetch(&self) -> Result<String, Error> {
-        let prefetched = if let Some(prefetchable) = self.inner_prefetchable() {
+        if let Some(prefetchable) = self.inner_prefetchable() {
             Some(prefetchable.prefetch().await)
         } else {
             None
-        };
-        prefetched
-            .unwrap_or_else(|| Err(format_err!("source does not support prefetch: {:?}", self)))
+        }
+        .unwrap_or_else(|| Err(format_err!("source does not support prefetch: {:?}", self)))
     }
 }
 
