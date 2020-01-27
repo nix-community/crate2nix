@@ -43,6 +43,17 @@ Experimental and still undocumented:
 
 * `cargo test`-like test running support! Thank you very much for your great work, @andir!
 
+Heads up! Feel free to discuss the planned breaking changes in future releases with me:
+
+* [#77](https://github.com/kolloch/crate2nix/issues/77): `builder` instead of `build` to
+  allow customization of the default parameters to buildRustCrate -- instead of override
+  which shadows the override for the underlying derivation. I will allow the old behavior 
+  for a release or so.
+* [#75](https://github.com/kolloch/crate2nix/issues/75): Cleanly separate
+  internal API by `internal.` attribute path element. Formally, this is no
+  breaking change if it only effects private API but still. I will mitigate by
+  allowing the old paths for a release and issue a warning.
+
 # 0.6.0 - 0.6.1
 
 Backported escaping fix for target expressions.
