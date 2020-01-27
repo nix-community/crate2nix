@@ -106,8 +106,7 @@ pub fn prefetch(
 
     let num_crates_without_hash = prefetchable_sources
         .iter()
-        .filter(|SourcePrefetchBundle { hash, .. }| hash.is_none())
-        .count();
+        .fold(0, |acc, SourcePrefetchBundle { hash, .. }| acc + hash.is_none() as usize);
 
     let raw_progress_bar = ProgressBar::new(num_crates_without_hash.try_into()?);
     raw_progress_bar.set_style(
