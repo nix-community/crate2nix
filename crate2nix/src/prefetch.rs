@@ -106,15 +106,17 @@ pub fn prefetch(
 
     let num_crates_without_hash = prefetchable_sources
         .iter()
-        .fold(0, |acc, SourcePrefetchBundle { hash, .. }| acc + hash.is_none() as usize);
+        .fold(0, |acc, SourcePrefetchBundle { hash, .. }| {
+            acc + hash.is_none() as usize
+        });
 
-    let raw_progress_bar = ProgressBar::new(num_crates_without_hash.try_into()?);
-    raw_progress_bar.set_style(
-        ProgressStyle::default_bar()
-            .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})")
-            .progress_chars("#>-"),
+    let progress_bar = Arc::new(
+        ProgressBar::new(num_crates_without_hash.try_into()?).with_style(
+            ProgressStyle::default_bar()
+                .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})")
+                .progress_chars("#>-"),
+        ),
     );
-    let progress_bar = Arc::new(raw_progress_bar);
     let tasks = prefetchable_sources.into_iter().map(
         |SourcePrefetchBundle {
              source,
