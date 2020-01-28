@@ -92,13 +92,15 @@ in rec {
       cargoLock = (dirOf "${src}/${cargoToml}") + "/Cargo.lock";
       cargoConfig = vendorConfig { inherit cargoLock; };
     in
-      pkgs.stdenv.mkDerivation ({
+      pkgs.stdenv.mkDerivation {
         name = "${name}-crate2nix";
 
         buildInputs = [ pkgs.cargo crate2nix ];
 
         preferLocalBuild = true;
         buildCommand = ''
+            set -e
+
             mkdir -p "$out/cargo"
 
             export CARGO_HOME="$out/cargo"
@@ -106,12 +108,22 @@ in rec {
 
             cp ${cargoConfig} $out/cargo/config
 
+            crate_hashes="${src}/crate-hashes.json"
+            if ! test -r "$crate_hashes" ; then
+              crate_hashes="$out/crate-hashes.json"
+              echo -n No existing crate-hashes.json >&2
+              echo ' => setting path to output dir' >&2
+            fi
+
+            set -x
             crate2nix generate \
-              ${lib.escapeShellArgs additionalCargoNixArgs}\
+              ${lib.escapeShellArgs additionalCargoNixArgs} \
               -f ${src}/${cargoToml} \
+              -h "$crate_hashes" \
               -o $out/default.nix
+            { set +x; } 2>/dev/null
         '';
-    });
+      };
 
   # Returns a derivation for a rust binary package.
   #

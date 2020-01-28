@@ -178,7 +178,7 @@ rec {
       baseName == "tests.nix"
     );
 
-  /* Returns a crate which depends on successful test execution of crate given as the second argument */
+  /* Returns a crate which depends on sduccessful test execution of crate given as the second argument */
   crateWithTest = crate: testCrate: testCrateFlags:
     let
       # override the `crate` so that it will build and execute tests instead of

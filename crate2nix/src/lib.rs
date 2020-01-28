@@ -176,6 +176,10 @@ fn extract_hashes_from_lockfile(
     config: &GenerateConfig,
     default_nix: &mut BuildInfo,
 ) -> Result<HashMap<PackageId, String>, Error> {
+    if !config.use_cargo_lock_checksums {
+        return Ok(HashMap::new());
+    }
+
     let lock_file = crate::lock::EncodableResolve::load_lock_file(
         &config.cargo_toml.parent().unwrap().join("Cargo.lock"),
     )?;
@@ -220,6 +224,7 @@ impl Default for GenerateInfo {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct GenerateConfig {
     pub cargo_toml: PathBuf,
+    pub use_cargo_lock_checksums: bool,
     pub output: PathBuf,
     pub crate_hashes_json: PathBuf,
     pub nixpkgs_path: String,

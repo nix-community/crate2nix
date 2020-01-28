@@ -32,6 +32,7 @@ fn self_up_to_date() {
             nixpkgs_path: "../nixpkgs.nix".to_string(),
             crate_hashes_json: PathBuf::from("./crate-hashes.json"),
             other_metadata_options: vec![],
+            use_cargo_lock_checksums: true,
         },
     )
     .unwrap();
@@ -75,6 +76,7 @@ fn assert_up_to_date(project_dir: &Path) {
             .join(project_dir)
             .join("./crate-hashes.json"),
         other_metadata_options: vec![],
+        use_cargo_lock_checksums: true,
     };
     let metadata = BuildInfo::for_config(
         &GenerateInfo {

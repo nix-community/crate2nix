@@ -1,6 +1,6 @@
 { pkgs? import ../../nixpkgs.nix { config = {}; }
-, generatedBuild ? ./Cargo.nix { } }:
+, generatedCargoNix ? ./Cargo.nix { } }:
 
-let cargo_nix = pkgs.callPackage generatedBuild {};
+let cargo_nix = pkgs.callPackage generatedCargoNix {};
     bin = cargo_nix.rootCrate.build.override { features = ["sqlite"]; };
 in bin

@@ -1,5 +1,5 @@
 { pkgs? import ../../nixpkgs.nix { config = {}; }
-, generatedBuild ? ./Cargo.nix { } }:
+, generatedCargoNix ? ./Cargo.nix { } }:
 
-let instantiatedBuild = pkgs.callPackage generatedBuild {};
+let instantiatedBuild = pkgs.callPackage generatedCargoNix {};
 in instantiatedBuild.rootCrate.build.override { runTests = true; }

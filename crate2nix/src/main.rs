@@ -50,6 +50,12 @@ pub enum Opt {
         features: Vec<String>,
 
         #[structopt(
+            long = "no-cargo-lock-checksums",
+            help = "Do not use checksums from Cargo.lock."
+        )]
+        no_cargo_lock_checksums: bool,
+
+        #[structopt(
             short = "o",
             long = "output",
             help = "The path of the output.nix file. Uses ./Cargo.nix by default."
@@ -108,6 +114,7 @@ fn main() -> CliResult {
             all_features,
             no_default_features,
             features,
+            no_cargo_lock_checksums,
         } => {
             let crate_hashes_json = crate_hashes.unwrap_or_else(|| {
                 cargo_toml
@@ -147,6 +154,7 @@ fn main() -> CliResult {
                 nixpkgs_path,
                 crate_hashes_json,
                 other_metadata_options,
+                use_cargo_lock_checksums: !no_cargo_lock_checksums,
             };
             let build_info = crate2nix::BuildInfo::for_config(&generate_info, &generate_config)?;
             let nix_string = render::render_build_file(&build_info)?;

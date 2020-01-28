@@ -136,7 +136,14 @@ pub fn prefetch(
         std::fs::write(
             &config.crate_hashes_json,
             serde_json::to_vec_pretty(&hashes)?,
-        )?;
+        )
+        .map_err(|e| {
+            format_err!(
+                "while writing hashes to {}: {}",
+                config.crate_hashes_json.to_str().unwrap_or("<unknown>"),
+                e
+            )
+        })?;
         eprintln!(
             "Wrote hashes to {}.",
             config.crate_hashes_json.to_string_lossy()
