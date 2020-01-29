@@ -188,4 +188,5 @@ pub struct GenerateConfig {
     pub output: PathBuf,
     pub crate_hashes_json: PathBuf,
     pub nixpkgs_path: String,
+    pub concurrent_tasks: usize,
 }
