@@ -113,7 +113,7 @@ rec {
 
   #
   # crate2nix/default.nix (excerpt start)
-  # 
+  #
 
   # Target (platform) data for conditional dependencies.
   # This corresponds roughly to what buildRustCrate is setting.
@@ -192,10 +192,9 @@ rec {
       in pkgs.runCommand "run-tests-${testCrate.name}" {
         inherit testCrateFlags;
       } ''
-        set -e
+        set -ex
         for file in ${drv}/tests/*; do
-          echo "Executing test $file" | tee -a $out
-          $file -- "$testCrateFlags" 2>&1 | tee -a $out
+          $file --test $testCrateFlags 2>&1 | tee -a $out
         done
       '';
     in crate.overrideAttrs (old: {
@@ -514,6 +513,6 @@ rec {
 
   #
   # crate2nix/default.nix (excerpt end)
-  # 
+  #
 
 }
