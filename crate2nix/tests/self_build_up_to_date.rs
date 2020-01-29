@@ -22,7 +22,7 @@ fn self_up_to_date() {
                 "./crate2nix/Cargo.nix",
             ]
             .iter()
-            .map(|s| s.to_string())
+            .map(|&s| s.to_string())
             .collect(),
             ..GenerateInfo::default()
         },
@@ -84,7 +84,7 @@ fn assert_up_to_date(project_dir: &Path) {
                 output.to_str().unwrap(),
             ]
             .iter()
-            .map(|s| s.to_string())
+            .map(|&s| s.to_string())
             .collect(),
             ..GenerateInfo::default()
         },
