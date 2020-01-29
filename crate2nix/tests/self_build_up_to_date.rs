@@ -31,7 +31,7 @@ fn self_up_to_date() {
             output: PathBuf::from("./Cargo.nix"),
             nixpkgs_path: "../nixpkgs.nix".to_string(),
             crate_hashes_json: PathBuf::from("./crate-hashes.json"),
-            concurrent_tasks: 60,
+            concurrent_tasks: 1,
         },
     )
     .unwrap();
@@ -74,7 +74,7 @@ fn assert_up_to_date(project_dir: &Path) {
         crate_hashes_json: PathBuf::from("../")
             .join(project_dir)
             .join("./crate-hashes.json"),
-        concurrent_tasks: 60,
+        concurrent_tasks: 1,
     };
     let metadata = BuildInfo::for_config(
         &GenerateInfo {
