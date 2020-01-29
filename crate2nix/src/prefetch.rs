@@ -13,13 +13,11 @@ use serde::Deserialize;
 use std::{
     collections::{BTreeMap, HashMap},
     convert::TryInto,
+    io::{self, Write},
     fs,
     sync::Arc,
 };
-use tokio::{
-    io::{self, AsyncWriteExt},
-    process::Command,
-};
+use tokio::process::Command;
 
 /// The source is important because we need to store only hashes for which we performed
 /// a prefetch.
@@ -150,11 +148,9 @@ pub fn prefetch(
         },
     );
 
-    // TODO: Is there a better way to choose this number?
-    let n_concurrent_tasks = num_cpus::get() * 10;
-    let bundles: Vec<_> = tokio::runtime::Runtime::new()?.block_on(
+    let bundles: Vec<_> = futures::executor::block_on(
         futures::stream::iter(tasks)
-            .buffer_unordered(n_concurrent_tasks)
+            .buffer_unordered(config.concurrent_tasks)
             .try_collect(),
     )?;
 
@@ -184,8 +180,8 @@ async fn get_command_output(cmd: &str, args: &[&str]) -> Result<String, Error> {
         .map_err(|e| format_err!("While spawning '{} {}': {}", cmd, args.join(" "), e))?;
 
     if !output.status.success() {
-        io::stdout().write_all(&output.stdout).await?;
-        io::stderr().write_all(&output.stderr).await?;
+        io::stdout().write_all(&output.stdout)?;
+        io::stderr().write_all(&output.stderr)?;
         bail!(
             "{}\n=> exited with: {}",
             cmd,
