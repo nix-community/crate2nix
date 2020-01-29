@@ -113,7 +113,7 @@ pub fn prefetch(
             .progress_chars("#>-"),
     );
     let tasks = prefetchable_sources.into_iter().map(
-        |SourcePrefetchBundle {
+        move |SourcePrefetchBundle {
              source,
              packages,
              hash,
