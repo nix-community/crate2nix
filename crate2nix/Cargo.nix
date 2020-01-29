@@ -810,10 +810,6 @@ rec {
             packageId = "nix-base32 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
-            name = "num_cpus";
-            packageId = "num_cpus 1.11.1 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
             name = "pathdiff";
             packageId = "pathdiff 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)";
           }
