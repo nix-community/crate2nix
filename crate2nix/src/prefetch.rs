@@ -148,7 +148,7 @@ pub fn prefetch(
         },
     );
 
-    let bundles: Vec<_> = futures::executor::block_on(
+    let bundles: Vec<_> = tokio::runtime::Runtime::new()?.block_on(
         futures::stream::iter(tasks)
             .buffer_unordered(config.concurrent_tasks)
             .try_collect(),

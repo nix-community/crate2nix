@@ -27,7 +27,7 @@ semver = "0.9"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tera = "1.0"
-tokio = { version = "0.2", features = ["process"] }
+tokio = { version = "0.2", features = ["rt-core", "process"] }
 toml = "0.5.0"
 url = "1.7"
 url_serde = "0.2.0"
