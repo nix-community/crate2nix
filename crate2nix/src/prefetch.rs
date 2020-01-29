@@ -13,9 +13,8 @@ use serde::Deserialize;
 use std::{
     collections::{BTreeMap, HashMap},
     convert::TryInto,
-    io::{self, Write},
     fs,
-    sync::Arc,
+    io::{self, Write},
 };
 use tokio::process::Command;
 
@@ -108,12 +107,10 @@ pub fn prefetch(
             acc + hash.is_none() as usize
         });
 
-    let progress_bar = Arc::new(
-        ProgressBar::new(num_crates_without_hash.try_into()?).with_style(
-            ProgressStyle::default_bar()
-                .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})")
-                .progress_chars("#>-"),
-        ),
+    let progress_bar = ProgressBar::new(num_crates_without_hash.try_into()?).with_style(
+        ProgressStyle::default_bar()
+            .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})")
+            .progress_chars("#>-"),
     );
     let tasks = prefetchable_sources.into_iter().map(
         |SourcePrefetchBundle {
