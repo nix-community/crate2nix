@@ -70,7 +70,7 @@ pub fn prefetch(
     };
 
     // Associate prefetchable sources with existing hashes.
-    let prefetchable_sources: Vec<_> = packages_by_source
+    let prefetchable_sources: Vec<SourcePrefetchBundle> = packages_by_source
         .iter_mut()
         .filter(|(source, _)| source.needs_prefetch())
         .map(|(source, packages)| {
