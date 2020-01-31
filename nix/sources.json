@@ -5,10 +5,10 @@
         "homepage": "https://github.com/nmattia/niv",
         "owner": "nmattia",
         "repo": "niv",
-        "rev": "c8f74f44b5f5df2c8f20a1834460d012e74d78f9",
-        "sha256": "0zmhxgl37f1p2aiqjmiccflpgga6phj6vmqs3jd33z0frj6hsy5c",
+        "rev": "49157afd2298749b8a5062fd21079542a6b2de35",
+        "sha256": "0q7ymfrcgagcsw6kr93kprag7k358qj8znyzyri53ci1mrsak5y1",
         "type": "tarball",
-        "url": "https://github.com/nmattia/niv/archive/c8f74f44b5f5df2c8f20a1834460d012e74d78f9.tar.gz",
+        "url": "https://github.com/nmattia/niv/archive/49157afd2298749b8a5062fd21079542a6b2de35.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
@@ -17,10 +17,10 @@
         "homepage": "https://github.com/NixOS/nixpkgs",
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "aa561c6fb4f48974639a9e2b76fdd3e15b2abfd4",
-        "sha256": "15p0lbf227l26mvvpqi62nry3h0b249hig9fgpnsl6a3rlp6bj2v",
+        "rev": "8539d5f48f9de4ba428d2ca6687712db1d9cb2b7",
+        "sha256": "1hymj87ffvrwmml1mlpf6pyvrpa93gbgrir3cayxm483qlarab3f",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/aa561c6fb4f48974639a9e2b76fdd3e15b2abfd4.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/8539d5f48f9de4ba428d2ca6687712db1d9cb2b7.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-mozilla": {
@@ -29,10 +29,10 @@
         "homepage": null,
         "owner": "mozilla",
         "repo": "nixpkgs-mozilla",
-        "rev": "c482bfd3dab1bde9590b03e712d73ced15385be4",
-        "sha256": "18sxl0fxhbdnrfmkbmgxwsn12qy8dbv6ccb3imyyqbjqb76j8dpi",
+        "rev": "5300241b41243cb8962fad284f0004afad187dad",
+        "sha256": "1h3g3817anicwa9705npssvkwhi876zijyyvv4c86qiklrkn5j9w",
         "type": "tarball",
-        "url": "https://github.com/mozilla/nixpkgs-mozilla/archive/c482bfd3dab1bde9590b03e712d73ced15385be4.tar.gz",
+        "url": "https://github.com/mozilla/nixpkgs-mozilla/archive/5300241b41243cb8962fad284f0004afad187dad.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
