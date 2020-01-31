@@ -161,7 +161,7 @@ The enabled features for a crate now are resolved at build time! That means you 
       ```nix
       let cargo_nix = callPackage ./Cargo.nix { rootFeatures = ["default" "other"]; };
           crate2nix = cargo_nix.rootCrate.build;
-      in ...;
+      in ...
       ```
 
 3. Or by overriding them on the rootCrate or workspaceMembers:
@@ -169,8 +169,13 @@ The enabled features for a crate now are resolved at build time! That means you 
       ```nix
       let cargo_nix = callPackage ./Cargo.nix {};
           crate2nix = cargo_nix.rootCrate.build.override { features = ["default" "other"]; };
-      in ...;
+      in ...
       ```
+Note that only dependencies for the default features are included in the build.
+If you want full flexibility, you can use `crate2nix generate --all-features` to
+generate the most general build file. If you want to strip down the generated
+build file, you may want to use `crate2nix generate --no-default-features
+--features "feature1 feature2"`.
 
 ## Patching crate derivations with `crateOverride`
 

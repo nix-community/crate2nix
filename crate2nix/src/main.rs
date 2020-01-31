@@ -32,6 +32,24 @@ pub enum Opt {
         cargo_toml: PathBuf,
 
         #[structopt(
+            long = "all-features",
+            help = "Resolve project dependencies with all features enabled. By default, only the default features are resolved."
+        )]
+        all_features: bool,
+
+        #[structopt(
+            long = "no-default-features",
+            help = "Disables default default features. Often combined with --features to reenable selected features."
+        )]
+        no_default_features: bool,
+
+        #[structopt(
+            long = "features",
+            help = "Resolve project dependencies additionally with these features enabled. By default, only the default features are resolved."
+        )]
+        features: Vec<String>,
+
+        #[structopt(
             short = "o",
             long = "output",
             help = "The path of the output.nix file. Uses ./Cargo.nix by default."
@@ -87,6 +105,9 @@ fn main() -> CliResult {
             output: opt_output,
             nixpkgs_path,
             crate_hashes,
+            all_features,
+            no_default_features,
+            features,
         } => {
             let crate_hashes_json = crate_hashes.unwrap_or_else(|| {
                 cargo_toml
@@ -107,11 +128,25 @@ fn main() -> CliResult {
                     }
                     Ok(DEFAULT_OUTPUT.into())
                 })?;
+
+            let mut other_metadata_options = Vec::new();
+            if all_features {
+                other_metadata_options.push("--all-features".to_string());
+            }
+            if no_default_features {
+                other_metadata_options.push("--no-default-features".to_string());
+            }
+            if !features.is_empty() {
+                other_metadata_options.push("--features".to_string());
+                other_metadata_options.push(features.join(" "));
+            }
+
             let generate_config = crate2nix::GenerateConfig {
                 cargo_toml,
                 output: output.clone(),
                 nixpkgs_path,
                 crate_hashes_json,
+                other_metadata_options,
             };
             let build_info = crate2nix::BuildInfo::for_config(&generate_info, &generate_config)?;
             let nix_string = render::render_build_file(&build_info)?;

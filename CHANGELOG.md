@@ -10,6 +10,10 @@ New features and improvements:
 * [Issue #34](https://github.com/kolloch/crate2nix/issues/34) - Support for git
   prefetching so that repositories with sub modules now work. 
   Thank you, @cpcloud!
+* [Issue #65](https://github.com/kolloch/crate2nix/issues/65) - Reexpose
+  feature selection parameters from `cargo metadata`. This allows to include
+  dependencies in the generated build file which are not used for the default 
+  features. Or to exclude dependencies for features that you do not care about.
 * [Issue #67](https://github.com/kolloch/crate2nix/issues/67) - Support for
   additional lib types - in particular, `cdylib`. Thank you, @andir!
   Write a rust library that is used from C code :)

@@ -1,0 +1,18 @@
+[package]
+name = "dependency_issue_65"
+version = "0.1.0"
+authors = ["Peter Kolloch <info@eigenvalue.net>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[dependencies.diesel]
+features = ["r2d2", "chrono"]
+version = "*"
+
+[features]
+default = ["postgres"]
+postgres = ["diesel/postgres"]
+sqlite = ["diesel/sqlite"]

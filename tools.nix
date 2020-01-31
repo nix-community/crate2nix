@@ -87,7 +87,7 @@ in rec {
   # name: will be part of the derivation name
   # src: the source that is needed to build the crate, usually the crate/workspace root directory
   # cargoToml: Path to the Cargo.toml file relative to src, "Cargo.toml" by default.
-  generate = {name, src, cargoToml? "Cargo.toml"}: 
+  generate = {name, src, cargoToml? "Cargo.toml", additionalCargoNixArgs? []}: 
     let 
       cargoLock = (dirOf "${src}/${cargoToml}") + "/Cargo.lock";
       cargoConfig = vendorConfig { inherit cargoLock; };
@@ -106,6 +106,7 @@ in rec {
             cp ${cargoConfig} $out/cargo/config
 
             crate2nix generate \
+              ${escapeShellArgs additionalCargoNixArgs}\
               -f ${src}/${cargoToml} \
               -o $out/default.nix
         '';

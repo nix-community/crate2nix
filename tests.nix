@@ -12,6 +12,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
         expectedOutput,
         expectedTestOutputs ? [],
         pregeneratedBuild? null,
+        additionalCargoNixArgs? [],
         customBuild? null,
         derivationAttrPath? ["rootCrate"],
       }:
@@ -21,7 +22,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
               then
                 tools.generate {
                   name = "buildTest_test_${name}";
-                  inherit src cargoToml;
+                  inherit src cargoToml additionalCargoNixArgs;
                 }
               else
                 ./. + "/${pregeneratedBuild}";
@@ -163,6 +164,22 @@ let crate2nix = pkgs.callPackage ./default.nix {};
             name = "numtest";
             src = ./sample_projects/numtest;
             expectedOutput = "Hello from numtest, world!";
+         }
+
+         {
+            name = "dependency_issue_65_all_features";
+            additionalCargoNixArgs = ["--all-features"];
+            src = ./sample_projects/dependency_issue_65;
+            customBuild = "sample_projects/dependency_issue_65/default.nix";
+            expectedOutput = "Hello from dependency_issue_65, world!";
+         }
+
+         {
+            name = "dependency_issue_65_sqlite_feature";
+            additionalCargoNixArgs = ["--features" "sqlite"];
+            src = ./sample_projects/dependency_issue_65;
+            customBuild = "sample_projects/dependency_issue_65/default.nix";
+            expectedOutput = "Hello from dependency_issue_65, world!";
          }
 
          {

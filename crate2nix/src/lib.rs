@@ -129,8 +129,10 @@ impl BuildInfo {
 /// Call `cargo metadata` and return result.
 fn cargo_metadata(config: &GenerateConfig) -> Result<Metadata, Error> {
     let mut cmd = cargo_metadata::MetadataCommand::new();
+    let mut other_options = config.other_metadata_options.clone();
+    other_options.push("--locked".into());
     cmd.manifest_path(&config.cargo_toml)
-        .other_options(&["--locked".into()]);
+        .other_options(&other_options);
     cmd.exec().map_err(|e| {
         format_err!(
             "while retrieving metadata about {}: {}",
@@ -221,4 +223,5 @@ pub struct GenerateConfig {
     pub output: PathBuf,
     pub crate_hashes_json: PathBuf,
     pub nixpkgs_path: String,
+    pub other_metadata_options: Vec<String>,
 }
