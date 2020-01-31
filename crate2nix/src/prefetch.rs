@@ -16,7 +16,7 @@ use std::{
     fs,
     io::{self, Write},
 };
-use tokio::process::Command;
+use std::process::Command;
 
 /// The source is important because we need to store only hashes for which we performed
 /// a prefetch.
@@ -173,7 +173,6 @@ async fn get_command_output(cmd: &str, args: &[&str]) -> Result<String, Error> {
     let output = Command::new(cmd)
         .args(args)
         .output()
-        .await
         .map_err(|e| format_err!("While spawning '{} {}': {}", cmd, args.join(" "), e))?;
 
     if !output.status.success() {

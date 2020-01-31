@@ -57,10 +57,9 @@ pub enum Opt {
         #[structopt(
             short = "t",
             long = "tasks",
-            default_value = "60",
             help = "The number of concurrent tasks to run when prefetching dependencies."
         )]
-        concurrent_tasks: usize,
+        concurrent_tasks: Option<usize>,
     },
 
     #[structopt(
@@ -121,7 +120,7 @@ fn main() -> CliResult {
                 output: output.clone(),
                 nixpkgs_path,
                 crate_hashes_json,
-                concurrent_tasks,
+                concurrent_tasks: concurrent_tasks.unwrap_or_else(num_cpus::get),
             };
             let build_info = crate2nix::BuildInfo::for_config(&generate_info, &generate_config)?;
             let nix_string = render::render_build_file(&build_info)?;
