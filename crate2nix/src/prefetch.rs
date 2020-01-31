@@ -113,7 +113,7 @@ pub fn prefetch(
             .progress_chars("#>-"),
     );
     let tasks = prefetchable_sources.into_iter().map(
-        move |SourcePrefetchBundle {
+        |SourcePrefetchBundle {
              source,
              packages,
              hash,
@@ -150,6 +150,11 @@ pub fn prefetch(
             .buffer_unordered(config.concurrent_tasks)
             .try_collect(),
     )?;
+
+    // only show a progress bar if we actually had to download anything
+    if num_crates_without_hash > 0 {
+        progress_bar.finish();
+    }
 
     for (package, source, package_hashes) in bundles.into_iter().flatten() {
         package.source = source;
