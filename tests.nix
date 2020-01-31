@@ -38,7 +38,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
         in
           assert lib.length expectedTestOutputs > 0 -> derivation ? test;
           pkgs.stdenv.mkDerivation {
-            name = "buildTest_test_${name}";
+            name = "buildTest_${name}";
             phases = [ "buildPhase" ];
             buildInputs = [ derivation ];
             buildPhase = ''
@@ -66,33 +66,33 @@ let crate2nix = pkgs.callPackage ./default.nix {};
 
      buildTestConfigs = [
          {
-             name = "sample_project_bin";
+             name = "bin";
              src = ./sample_projects/bin;
              expectedOutput = "Hello, world!";
          }
 
          {
-             name = "sample_project_lib_and_bin";
+             name = "lib_and_bin";
              src = ./sample_projects/lib_and_bin;
              expectedOutput = "Hello, lib_and_bin!";
          }
 
          {
-             name = "sample_project_bin_with_lib_dep";
+             name = "bin_with_lib_dep";
              src = ./sample_projects;
              cargoToml = "bin_with_lib_dep/Cargo.toml";
              expectedOutput = "Hello, bin_with_lib_dep!";
          }
 
          {
-             name = "sample_project_bin_with_default_features";
+             name = "bin_with_default_features";
              src = ./sample_projects;
              cargoToml = "bin_with_default_features/Cargo.toml";
              expectedOutput = "Hello, bin_with_default_features!";
          }
 
          {
-             name = "sample_project_bin_with_NON_default_features";
+             name = "bin_with_NON_default_features";
              src = ./sample_projects;
              cargoToml = "bin_with_default_features/Cargo.toml";
              features = ["default" "do_not_activate"];
@@ -100,7 +100,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
 
          {
-            name = "sample_project_bin_with_lib_git_dep";
+            name = "bin_with_lib_git_dep";
             src = ./sample_projects/bin_with_lib_git_dep;
             expectedOutput = "Hello world from bin_with_lib_git_dep!";
             pregeneratedBuild = "sample_projects/bin_with_lib_git_dep/Cargo.nix";
@@ -121,7 +121,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
 
          {
-            name = "sample_project_cfg_test";
+            name = "cfg_test";
             src = ./sample_projects/cfg-test;
             cargoToml = "Cargo.toml";
             expectedOutput = "Hello, cfg-test!";
@@ -135,7 +135,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
 
          {
-            name = "sample_project_cfg_test-with-tests";
+            name = "cfg_test-with-tests";
             src = ./sample_projects/cfg-test;
             cargoToml = "Cargo.toml";
             expectedOutput = "Hello, cfg-test!";
@@ -160,19 +160,25 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
 
          {
-            name = "sample_project_numtest";
+            name = "numtest";
             src = ./sample_projects/numtest;
             expectedOutput = "Hello from numtest, world!";
          }
 
          {
-            name = "sample_project_with_problematic_crates";
+            name = "numtest_new_cargo_lock";
+            src = ./sample_projects/numtest_new_cargo_lock;
+            expectedOutput = "Hello from numtest, world!";
+         }
+
+         {
+            name = "with_problematic_crates";
             src = ./sample_projects/with_problematic_crates;
             expectedOutput = "Hello, with_problematic_crates!";
          }
 
          {
-            name = "sample_project_bin_with_git_submodule_dep";
+            name = "bin_with_git_submodule_dep";
             src = ./sample_projects/bin_with_git_submodule_dep;
             pregeneratedBuild = "sample_projects/bin_with_git_submodule_dep/Cargo.nix";
             customBuild = "sample_projects/bin_with_git_submodule_dep/default.nix";
@@ -219,13 +225,13 @@ in {
         '';
       };
 
-     sample_project_bin_with_deprecated_alias =
+     bin_with_deprecated_alias =
         let bin_build = (tools.generated {
-            name = "sample_project_bin_with_deprecated_alias";
+            name = "bin_with_deprecated_alias";
             src = ./sample_projects/bin;
         }).root_crate;
         in pkgs.stdenv.mkDerivation {
-            name = "test_sample_project_bin";
+            name = "test_bin";
             phases = [ "buildPhase" ];
             buildInputs = [ bin_build ];
             buildPhase = ''

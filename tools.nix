@@ -38,7 +38,10 @@ let
         assert builtins.isAttrs package;
 
         with package; 
-        let sha256 = locked.metadata."checksum ${name} ${version} (${source})";
+        let sha256 = 
+          package.checksum 
+          or locked.metadata."checksum ${name} ${version} (${source})"
+          or (builtins.throw "Checksum for ${name} ${version} (${source}) not found");
         in unpacked sha256 (pkgs.fetchurl {
           name = "crates-io-${name}-${version}.tar.gz";
           url = "https://crates.io/api/v1/crates/${name}/${version}/download";
