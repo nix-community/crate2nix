@@ -117,6 +117,18 @@ rec {
         features = {
         };
       };
+    "arc-swap 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "arc-swap";
+        version = "0.4.4";
+        edition = "2015";
+        sha256 = "1zwswfi9n7n3hiq51w1xv34572k2diazx680rrxlc9w07c9akf6p";
+        authors = [
+          "Michal 'vorner' Vaner <vorner@vorner.cz>"
+        ];
+        features = {
+        };
+      };
     "async-trait 0.1.22 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "async-trait";
@@ -798,10 +810,6 @@ rec {
             packageId = "nix-base32 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
-            name = "num_cpus";
-            packageId = "num_cpus 1.12.0 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
             name = "pathdiff";
             packageId = "pathdiff 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)";
           }
@@ -833,7 +841,7 @@ rec {
           {
             name = "tokio";
             packageId = "tokio 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
-            features = [ "rt-threaded" ];
+            features = [ "rt-core" "process" ];
           }
           {
             name = "toml";
@@ -1279,6 +1287,40 @@ rec {
         sha256 = "1fnkqrbz7ixxzsb04bsz9p0zzazanma8znfdqjvh39n14vapfvx0";
         authors = [
           "Erick Tryzelaar <etryzelaar@google.com>"
+        ];
+        features = {
+        };
+      };
+    "fuchsia-zircon 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "fuchsia-zircon";
+        version = "0.3.3";
+        edition = "2015";
+        sha256 = "10jxc5ks1x06gpd0xg51kcjrxr35nj6qhx2zlc5n7bmskv3675rf";
+        authors = [
+          "Raph Levien <raph@google.com>"
+        ];
+        dependencies = [
+          {
+            name = "bitflags";
+            packageId = "bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "fuchsia-zircon-sys";
+            packageId = "fuchsia-zircon-sys 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
+        features = {
+        };
+      };
+    "fuchsia-zircon-sys 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "fuchsia-zircon-sys";
+        version = "0.3.3";
+        edition = "2015";
+        sha256 = "19zp2085qsyq2bh1gvcxq1lb8w6v6jj9kbdkhpdjrl95fypakjix";
+        authors = [
+          "Raph Levien <raph@google.com>"
         ];
         features = {
         };
@@ -1931,6 +1973,25 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
+    "iovec 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "iovec";
+        version = "0.1.4";
+        edition = "2015";
+        sha256 = "0ph73qygwx8i0mblrf110cj59l00gkmsgrpzz1rm85syz5pymcxj";
+        authors = [
+          "Carl Lerche <me@carllerche.com>"
+        ];
+        dependencies = [
+          {
+            name = "libc";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."unix";
+          }
+        ];
+        features = {
+        };
+      };
     "itertools 0.7.11 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "itertools";
@@ -1985,6 +2046,31 @@ rec {
           "default" = [ "std" ];
         };
         resolvedDefaultFeatures = [ "default" "std" ];
+      };
+    "kernel32-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "kernel32-sys";
+        version = "0.2.2";
+        edition = "2015";
+        sha256 = "1389av0601a9yz8dvx5zha9vmkd6ik7ax0idpb032d28555n41vm";
+        libName = "kernel32";
+        authors = [
+          "Peter Atashian <retep998@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "winapi";
+            packageId = "winapi 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "winapi-build";
+            packageId = "winapi-build 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
+        features = {
+        };
       };
     "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -2093,6 +2179,221 @@ rec {
         ];
         features = {
         };
+      };
+    "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "mio";
+        version = "0.6.21";
+        edition = "2015";
+        sha256 = "13q02a7cwc140aygf8amadpzpl5lyj3p2r4wnvgydfpnphifqb9h";
+        authors = [
+          "Carl Lerche <me@carllerche.com>"
+        ];
+        dependencies = [
+          {
+            name = "cfg-if";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "fuchsia-zircon";
+            packageId = "fuchsia-zircon 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: (target."os" == "fuchsia");
+          }
+          {
+            name = "fuchsia-zircon-sys";
+            packageId = "fuchsia-zircon-sys 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: (target."os" == "fuchsia");
+          }
+          {
+            name = "iovec";
+            packageId = "iovec 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "kernel32-sys";
+            packageId = "kernel32-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."windows";
+          }
+          {
+            name = "libc";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."unix";
+          }
+          {
+            name = "log";
+            packageId = "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "miow";
+            packageId = "miow 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."windows";
+          }
+          {
+            name = "net2";
+            packageId = "net2 0.2.33 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "slab";
+            packageId = "slab 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "winapi";
+            packageId = "winapi 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."windows";
+          }
+        ];
+        features = {
+          "default" = [ "with-deprecated" ];
+        };
+        resolvedDefaultFeatures = [ "default" "with-deprecated" ];
+      };
+    "mio-named-pipes 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "mio-named-pipes";
+        version = "0.1.6";
+        edition = "2015";
+        sha256 = "1cwwfx1yr9vws8x971x34ijnirs377vcxi47frdirki5yppp9qzm";
+        authors = [
+          "Alex Crichton <alex@alexcrichton.com>"
+        ];
+        dependencies = [
+          {
+            name = "log";
+            packageId = "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."windows";
+          }
+          {
+            name = "mio";
+            packageId = "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."windows";
+          }
+          {
+            name = "miow";
+            packageId = "miow 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."windows";
+          }
+          {
+            name = "winapi";
+            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."windows";
+            features = [ "winerror" "ioapiset" "minwinbase" "winbase" ];
+          }
+        ];
+        features = {
+        };
+      };
+    "mio-uds 0.6.7 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "mio-uds";
+        version = "0.6.7";
+        edition = "2015";
+        sha256 = "09gimdbnj7b9yca99pk8lxh9jhl79msj795c8fxi2sqr9slmfqln";
+        authors = [
+          "Alex Crichton <alex@alexcrichton.com>"
+        ];
+        dependencies = [
+          {
+            name = "iovec";
+            packageId = "iovec 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."unix";
+          }
+          {
+            name = "libc";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."unix";
+          }
+          {
+            name = "mio";
+            packageId = "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."unix";
+          }
+        ];
+        features = {
+        };
+      };
+    "miow 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "miow";
+        version = "0.2.1";
+        edition = "2015";
+        sha256 = "06g9b8sqlh5gxakwqq4rrib07afwanfnxgxajrldwcgk3hxjy7wc";
+        authors = [
+          "Alex Crichton <alex@alexcrichton.com>"
+        ];
+        dependencies = [
+          {
+            name = "kernel32-sys";
+            packageId = "kernel32-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "net2";
+            packageId = "net2 0.2.33 (registry+https://github.com/rust-lang/crates.io-index)";
+            usesDefaultFeatures = false;
+          }
+          {
+            name = "winapi";
+            packageId = "winapi 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "ws2_32-sys";
+            packageId = "ws2_32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
+        features = {
+        };
+      };
+    "miow 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "miow";
+        version = "0.3.3";
+        edition = "2015";
+        sha256 = "09ljvx6wg30f2xlv7b7hhpkw7k312n3hjgmrbhwzhz9x03ra0sir";
+        authors = [
+          "Alex Crichton <alex@alexcrichton.com>"
+        ];
+        dependencies = [
+          {
+            name = "socket2";
+            packageId = "socket2 0.3.11 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "winapi";
+            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            features = [ "std" "fileapi" "handleapi" "ioapiset" "minwindef" "namedpipeapi" "ntdef" "synchapi" "winerror" "winsock2" "ws2def" "ws2ipdef" ];
+          }
+        ];
+        features = {
+        };
+      };
+    "net2 0.2.33 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "net2";
+        version = "0.2.33";
+        edition = "2015";
+        sha256 = "126g3fgfxp06zimc1l9iyxnn9cif1hjsg7sd81nlls5nnyghsma2";
+        authors = [
+          "Alex Crichton <alex@alexcrichton.com>"
+        ];
+        dependencies = [
+          {
+            name = "cfg-if";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "libc";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: ((target."os" == "redox") || target."unix");
+          }
+          {
+            name = "winapi";
+            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."windows";
+            features = [ "handleapi" "winsock2" "ws2def" "ws2ipdef" "ws2tcpip" ];
+          }
+        ];
+        features = {
+          "default" = [ "duration" ];
+        };
+        resolvedDefaultFeatures = [ "default" "duration" ];
       };
     "nix-base32 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -3238,6 +3539,29 @@ rec {
           "std" = [ "digest/std" ];
         };
       };
+    "signal-hook-registry 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "signal-hook-registry";
+        version = "1.2.0";
+        edition = "2015";
+        sha256 = "0haz828bif1lbp3alx17zkcy5hwy15bbpmvks72j8iznx7npix4l";
+        authors = [
+          "Michal 'vorner' Vaner <vorner@vorner.cz>"
+          "Masaki Hara <ackie.h.gmai@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "arc-swap";
+            packageId = "arc-swap 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "libc";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
+        features = {
+        };
+      };
     "slab 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "slab";
@@ -3277,6 +3601,41 @@ rec {
         libPath = "lib.rs";
         authors = [
           "Simon Sapin <simon.sapin@exyr.org>"
+        ];
+        features = {
+        };
+      };
+    "socket2 0.3.11 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "socket2";
+        version = "0.3.11";
+        edition = "2018";
+        sha256 = "11bdcz04i106g4q7swkll0qxrb4287srqd2k3aq2q6i22zjlvdz8";
+        authors = [
+          "Alex Crichton <alex@alexcrichton.com>"
+        ];
+        dependencies = [
+          {
+            name = "cfg-if";
+            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: (target."unix" || (target."os" == "redox"));
+          }
+          {
+            name = "libc";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: (target."unix" || (target."os" == "redox"));
+          }
+          {
+            name = "redox_syscall";
+            packageId = "redox_syscall 0.1.56 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: (target."os" == "redox");
+          }
+          {
+            name = "winapi";
+            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            target = {target, features}: target."windows";
+            features = [ "handleapi" "ws2def" "ws2ipdef" "ws2tcpip" "minwindef" ];
+          }
         ];
         features = {
         };
@@ -3691,13 +4050,49 @@ rec {
             packageId = "bytes 0.5.4 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
-            name = "num_cpus";
-            packageId = "num_cpus 1.12.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            name = "lazy_static";
+            packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
             optional = true;
+          }
+          {
+            name = "libc";
+            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            optional = true;
+            target = {target, features}: target."unix";
+          }
+          {
+            name = "mio";
+            packageId = "mio 0.6.21 (registry+https://github.com/rust-lang/crates.io-index)";
+            optional = true;
+          }
+          {
+            name = "mio-named-pipes";
+            packageId = "mio-named-pipes 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            optional = true;
+            target = {target, features}: target."windows";
+          }
+          {
+            name = "mio-uds";
+            packageId = "mio-uds 0.6.7 (registry+https://github.com/rust-lang/crates.io-index)";
+            optional = true;
+            target = {target, features}: target."unix";
           }
           {
             name = "pin-project-lite";
             packageId = "pin-project-lite 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+          {
+            name = "signal-hook-registry";
+            packageId = "signal-hook-registry 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            optional = true;
+            target = {target, features}: target."unix";
+          }
+          {
+            name = "winapi";
+            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            optional = true;
+            usesDefaultFeatures = false;
+            target = {target, features}: target."windows";
           }
         ];
         features = {
@@ -3720,7 +4115,7 @@ rec {
           "udp" = [ "io-driver" ];
           "uds" = [ "io-driver" "mio-uds" "libc" ];
         };
-        resolvedDefaultFeatures = [ "default" "num_cpus" "rt-core" "rt-threaded" ];
+        resolvedDefaultFeatures = [ "default" "io-driver" "lazy_static" "libc" "mio" "mio-named-pipes" "mio-uds" "process" "rt-core" "signal" "signal-hook-registry" "winapi" ];
       };
     "toml 0.5.5 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -4117,6 +4512,18 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
+    "winapi 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "winapi";
+        version = "0.2.8";
+        edition = "2015";
+        sha256 = "0yh816lh6lf56dpsgxy189c2ai1z3j8mw9si6izqb6wsjkbcjz8n";
+        authors = [
+          "Peter Atashian <retep998@gmail.com>"
+        ];
+        features = {
+        };
+      };
     "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "winapi";
@@ -4141,7 +4548,20 @@ rec {
         features = {
           "debug" = [ "impl-debug" ];
         };
-        resolvedDefaultFeatures = [ "consoleapi" "errhandlingapi" "fileapi" "handleapi" "minwinbase" "minwindef" "ntdef" "ntsecapi" "processenv" "profileapi" "std" "sysinfoapi" "timezoneapi" "winbase" "wincon" "winerror" "winnt" "winuser" ];
+        resolvedDefaultFeatures = [ "consoleapi" "errhandlingapi" "fileapi" "handleapi" "ioapiset" "minwinbase" "minwindef" "namedpipeapi" "ntdef" "ntsecapi" "processenv" "profileapi" "std" "synchapi" "sysinfoapi" "threadpoollegacyapiset" "timezoneapi" "winbase" "wincon" "winerror" "winnt" "winsock2" "winuser" "ws2def" "ws2ipdef" "ws2tcpip" ];
+      };
+    "winapi-build 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "winapi-build";
+        version = "0.1.1";
+        edition = "2015";
+        sha256 = "1g4rqsgjky0a7530qajn2bbfcrl2v0zb39idgdws9b1l7gp5wc9d";
+        libName = "build";
+        authors = [
+          "Peter Atashian <retep998@gmail.com>"
+        ];
+        features = {
+        };
       };
     "winapi-i686-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
@@ -4183,6 +4603,31 @@ rec {
         sha256 = "0gqq64czqb64kskjryj8isp62m2sgvx25yyj3kpc2myh85w24bki";
         authors = [
           "Peter Atashian <retep998@gmail.com>"
+        ];
+        features = {
+        };
+      };
+    "ws2_32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)"
+      = rec {
+        crateName = "ws2_32-sys";
+        version = "0.2.1";
+        edition = "2015";
+        sha256 = "0ppscg5qfqaw0gzwv2a4nhn5bn01ff9iwn6ysqnzm4n8s3myz76m";
+        libName = "ws2_32";
+        authors = [
+          "Peter Atashian <retep998@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "winapi";
+            packageId = "winapi 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "winapi-build";
+            packageId = "winapi-build 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)";
+          }
         ];
         features = {
         };
