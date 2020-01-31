@@ -795,7 +795,7 @@ rec {
           }
           {
             name = "indicatif";
-            packageId = "indicatif 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "indicatif 0.14.0 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
             name = "itertools";
@@ -1939,12 +1939,12 @@ rec {
           "simd-accel" = [ "globset/simd-accel" ];
         };
       };
-    "indicatif 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)"
+    "indicatif 0.14.0 (registry+https://github.com/rust-lang/crates.io-index)"
       = rec {
         crateName = "indicatif";
-        version = "0.13.0";
+        version = "0.14.0";
         edition = "2018";
-        sha256 = "11w4yi5kqnkblxidajnda0s85q5q864f4kplzavp0pk6n37vqwl5";
+        sha256 = "0h3ysblmny7a7lpx5jwvqm7wb9rf22vkb0prsz4qjy21rxqq79j9";
         authors = [
           "Armin Ronacher <armin.ronacher@active-4.com>"
         ];
