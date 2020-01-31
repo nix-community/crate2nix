@@ -106,7 +106,7 @@ in rec {
             cp ${cargoConfig} $out/cargo/config
 
             crate2nix generate \
-              ${escapeShellArgs additionalCargoNixArgs}\
+              ${lib.escapeShellArgs additionalCargoNixArgs}\
               -f ${src}/${cargoToml} \
               -o $out/default.nix
         '';

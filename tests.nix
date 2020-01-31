@@ -171,7 +171,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
             additionalCargoNixArgs = ["--all-features"];
             src = ./sample_projects/dependency_issue_65;
             customBuild = "sample_projects/dependency_issue_65/default.nix";
-            expectedOutput = "Hello from dependency_issue_65, world!";
+            expectedOutput = "Hello, dependency_issue_65!";
          }
 
          {
@@ -179,7 +179,7 @@ let crate2nix = pkgs.callPackage ./default.nix {};
             additionalCargoNixArgs = ["--features" "sqlite"];
             src = ./sample_projects/dependency_issue_65;
             customBuild = "sample_projects/dependency_issue_65/default.nix";
-            expectedOutput = "Hello from dependency_issue_65, world!";
+            expectedOutput = "Hello, dependency_issue_65";
          }
 
          {
