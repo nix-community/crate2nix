@@ -20,15 +20,17 @@ enum HashSource {
     CargoLock,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct HashWithSource {
     sha256: String,
     source: HashSource,
 }
 
 /// A source with all the packages that depend on it and a potentially preexisting hash.
+#[derive(Debug)]
 struct SourcePrefetchBundle<'a> {
     source: &'a ResolvedSource,
-    packages: &'a mut Vec<&'a mut CrateDerivation>,
+    packages: &'a Vec<&'a CrateDerivation>,
     hash: Option<HashWithSource>,
 }
 
@@ -37,7 +39,8 @@ struct SourcePrefetchBundle<'a> {
 /// Uses and updates the existing hashes in the `config.crate_hash_json` file.
 pub fn prefetch(
     config: &GenerateConfig,
-    crate_derivations: &mut [CrateDerivation],
+    from_lock_file: &HashMap<PackageId, String>,
+    crate_derivations: &[CrateDerivation],
 ) -> Result<BTreeMap<PackageId, String>, Error> {
     let hashes_string: String =
         std::fs::read_to_string(&config.crate_hashes_json).unwrap_or_else(|_| "{}".to_string());
@@ -51,7 +54,7 @@ pub fn prefetch(
     //
     // Usually, a source is only used by one package but e.g. the same git source can be used
     // by multiple packages.
-    let mut packages_by_source: HashMap<ResolvedSource, Vec<&mut CrateDerivation>> = {
+    let packages_by_source: HashMap<ResolvedSource, Vec<&CrateDerivation>> = {
         let mut index = HashMap::new();
         for package in crate_derivations {
             index
@@ -63,8 +66,8 @@ pub fn prefetch(
     };
 
     // Associate prefetchable sources with existing hashes.
-    let mut prefetchable_sources: Vec<SourcePrefetchBundle> = packages_by_source
-        .iter_mut()
+    let prefetchable_sources: Vec<SourcePrefetchBundle> = packages_by_source
+        .iter()
         .filter(|(source, _)| source.needs_prefetch())
         .map(|(source, packages)| {
             // All the packages have the same source.
@@ -72,10 +75,10 @@ pub fn prefetch(
             let hash = packages
                 .iter()
                 .filter_map(|p| {
-                    p.source
-                        .sha256()
-                        .map(|s| HashWithSource {
-                            sha256: s.clone(),
+                    from_lock_file
+                        .get(&p.package_id)
+                        .map(|hash| HashWithSource {
+                            sha256: hash.clone(),
                             source: HashSource::CargoLock,
                         })
                         .or_else(|| {
@@ -107,10 +110,10 @@ pub fn prefetch(
         source,
         packages,
         hash,
-    } in prefetchable_sources.iter_mut()
+    } in prefetchable_sources
     {
         let (sha256, hash_source) = if let Some(HashWithSource { sha256, source }) = hash {
-            (sha256.trim().to_string(), *source)
+            (sha256.trim().to_string(), source)
         } else {
             eprintln!(
                 "Prefetching {:>4}/{}: {}",
@@ -122,8 +125,7 @@ pub fn prefetch(
             (source.prefetch()?, HashSource::Prefetched)
         };
 
-        for package in packages.iter_mut() {
-            package.source = package.source.with_sha256(sha256.clone());
+        for package in packages {
             if hash_source == HashSource::Prefetched {
                 hashes.insert(package.package_id.clone(), sha256.clone());
             }

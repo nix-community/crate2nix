@@ -5,7 +5,7 @@
 
 //#![deny(missing_docs)]
 
-use std::collections::{BTreeMap, HashSet, VecDeque};
+use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::env;
 use std::path::PathBuf;
 
@@ -13,11 +13,13 @@ use cargo_metadata::Metadata;
 use cargo_metadata::PackageId;
 use failure::format_err;
 use failure::Error;
+use failure::ResultExt;
 use serde::Deserialize;
 use serde::Serialize;
 
 use crate::metadata::IndexedMetadata;
 use crate::resolve::{CrateDerivation, ResolvedSource};
+use itertools::Itertools;
 
 mod lock;
 mod metadata;
@@ -143,26 +145,57 @@ fn prefetch_and_fill_crates_sha256(
     config: &GenerateConfig,
     default_nix: &mut BuildInfo,
 ) -> Result<(), Error> {
-    let lock_file =
-        crate::lock::load_lock_file(&config.cargo_toml.parent().unwrap().join("Cargo.lock"))?;
+    let mut from_lock_file: HashMap<PackageId, String> =
+        extract_hashes_from_lockfile(&config, default_nix)?;
+    for (_package_id, hash) in from_lock_file.iter_mut() {
+        let bytes =
+            hex::decode(&hash).map_err(|e| format_err!("while decoding '{}': {}", hash, e))?;
+        *hash = nix_base32::to_nix_base32(&bytes);
+    }
 
-    for package in default_nix.crates.iter_mut().filter(|c| match c.source {
-        ResolvedSource::CratesIo { .. } => true,
-        _ => false,
-    }) {
-        if let Some(hash) = lock_file.get_hash(&package.package_id.repr)? {
-            package.source = package.source.with_sha256(hash);
-        } else {
-            eprintln!(
-                "Lock file incomplete, hash for {} missing.",
-                package.package_id
-            );
+    let prefetched = prefetch::prefetch(config, &from_lock_file, &default_nix.crates)
+        .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
+
+    for package in default_nix.crates.iter_mut() {
+        if package.source.sha256().is_none() {
+            if let Some(hash) = prefetched
+                .get(&package.package_id)
+                .or_else(|| from_lock_file.get(&package.package_id))
+            {
+                package.source = package.source.with_sha256(hash.clone());
+            }
         }
     }
 
-    prefetch::prefetch(config, &mut default_nix.crates)
-        .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
     Ok(())
+}
+
+fn extract_hashes_from_lockfile(
+    config: &GenerateConfig,
+    default_nix: &mut BuildInfo,
+) -> Result<HashMap<PackageId, String>, Error> {
+    let lock_file = crate::lock::EncodableResolve::load_lock_file(
+        &config.cargo_toml.parent().unwrap().join("Cargo.lock"),
+    )?;
+    let hashes = lock_file
+        .get_hashes_by_package_id()
+        .context("while parsing checksums from Lockfile")?;
+
+    let mut missing_hashes = Vec::new();
+    for package in default_nix.crates.iter_mut().filter(|c| match &c.source {
+        ResolvedSource::CratesIo { .. } => !hashes.contains_key(&c.package_id),
+        _ => false,
+    }) {
+        missing_hashes.push(format!("{} {}", package.crate_name, package.version));
+    }
+    if !missing_hashes.is_empty() {
+        eprintln!(
+            "Did not find all crates.io hashes in Cargo.lock. Hashes for e.g. {} are missing.\n\
+             This is probably a bug.",
+            missing_hashes.iter().take(10).join(", ")
+        );
+    }
+    Ok(hashes)
 }
 
 /// Some info about the crate2nix invocation.

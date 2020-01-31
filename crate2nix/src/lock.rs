@@ -1,36 +1,144 @@
+use cargo_metadata::PackageId;
 use failure::{format_err, Error};
 use serde::{de, ser, Deserialize, Serialize};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::fmt;
 use std::path::Path;
 use std::str::FromStr;
 
-pub fn load_lock_file(path: &Path) -> Result<EncodableResolve, Error> {
-    let resolve: toml::Value = toml::from_str(
-        &std::fs::read_to_string(path)
-            .map_err(|e| format_err!("while reading lock file {}: {}", path.display(), e))?,
-    )
-    .map_err(|e| format_err!("while parsing toml from {}: {}", path.display(), e))?;
+impl EncodableResolve {
+    pub fn load_lock_file(path: &Path) -> Result<EncodableResolve, Error> {
+        let config = &std::fs::read_to_string(path)
+            .map_err(|e| format_err!("while reading lock file {}: {}", path.display(), e))?;
+        Self::load_lock_string(path, config)
+    }
 
-    let v: EncodableResolve = resolve
-        .try_into()
-        .map_err(|e| format_err!("unexpected format in {}: {}", path.display(), e))?;
-    Ok(v)
+    pub fn load_lock_string(path: &Path, config: &str) -> Result<EncodableResolve, Error> {
+        let resolve: toml::Value = toml::from_str(&config)
+            .map_err(|e| format_err!("while parsing toml from {}: {}", path.display(), e))?;
+
+        let v: EncodableResolve = resolve
+            .try_into()
+            .map_err(|e| format_err!("unexpected format in {}: {}", path.display(), e))?;
+        Ok(v)
+    }
+
+    pub fn get_hashes_by_package_id(&self) -> Result<HashMap<PackageId, String>, Error> {
+        let mut hashes = HashMap::new();
+
+        for EncodableDependency {
+            name,
+            version,
+            source,
+            checksum,
+            ..
+        } in self.package.iter()
+        {
+            if let (Some(source), Some(checksum)) = (source, checksum) {
+                let package_id = PackageId {
+                    repr: format!("{} {} ({})", name, version, source),
+                };
+                if checksum != "<none>" {
+                    hashes.insert(package_id, checksum.clone());
+                }
+            }
+        }
+
+        // Retrieve legacy checksums.
+        const CHECKSUM_PREFIX: &str = "checksum ";
+        if let Some(metadata) = &self.metadata {
+            for (key, value) in metadata {
+                if key.starts_with(CHECKSUM_PREFIX) {
+                    let package_id = PackageId {
+                        repr: key.trim_start_matches(CHECKSUM_PREFIX).to_string(),
+                    };
+                    if value != "<none>" {
+                        hashes.insert(package_id, value.clone());
+                    }
+                }
+            }
+        }
+
+        Ok(hashes)
+    }
 }
 
-impl EncodableResolve {
-    pub fn get_hash(&self, package_id_str: &str) -> Result<Option<String>, Error> {
-        let key = format!("checksum {}", package_id_str);
-        if let Some(hex_hash) = self
-            .metadata
-            .as_ref()
-            .and_then(|metadata| metadata.get(&key))
-        {
-            let bytes = hex::decode(&hex_hash)?;
-            return Ok(Some(nix_base32::to_nix_base32(&bytes)));
-        }
-        Ok(None)
-    }
+#[test]
+fn test_no_legacy_checksums() {
+    let config = r#"
+[[package]]
+name = "aho-corasick"
+version = "0.7.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+        dependencies = [
+        "memchr 2.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+    ]
+"#;
+    let resolve = EncodableResolve::load_lock_string(Path::new("dummy"), config).unwrap();
+    assert_eq!(resolve.get_hashes_by_package_id().unwrap(), HashMap::new());
+}
+
+#[test]
+fn test_some_legacy_checksums() {
+    let config = r#"
+[[package]]
+name = "aho-corasick"
+version = "0.7.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+  "memchr 2.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[metadata]
+"checksum structopt 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)" = "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
+"checksum structopt-derive 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)" = "53010261a84b37689f9ed7d395165029f9cc7abb9f56bbfe86bee2597ed25107"
+
+"#;
+    let resolve = EncodableResolve::load_lock_string(Path::new("dummy"), config).unwrap();
+    assert_eq!(
+        resolve.get_hashes_by_package_id().unwrap(),
+        vec![
+            (
+                PackageId { repr: "structopt 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)".to_string() },
+                "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
+            ),
+            (
+                PackageId { repr: "structopt-derive 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)".to_string()},
+                "53010261a84b37689f9ed7d395165029f9cc7abb9f56bbfe86bee2597ed25107"
+            )
+        ]
+        .iter()
+        .map(|(package_id, hash)| (package_id.clone(), hash.to_string()))
+        .collect::<HashMap<_, _>>()
+    );
+}
+
+#[test]
+fn test_some_inline_checksums() {
+    let config = r#"
+[[package]]
+name = "aho-corasick"
+version = "0.7.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+  "memchr 2.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+checksum = "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
+"#;
+    let resolve = EncodableResolve::load_lock_string(Path::new("dummy"), config).unwrap();
+    assert_eq!(
+        resolve.get_hashes_by_package_id().unwrap(),
+        vec![(
+            PackageId {
+                repr: "aho-corasick 0.7.6 (registry+https://github.com/rust-lang/crates.io-index)"
+                    .to_string()
+            },
+            "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
+        )]
+        .iter()
+        .map(|(package_id, hash)| (package_id.clone(), hash.to_string()))
+        .collect::<HashMap<_, _>>()
+    );
 }
 
 //
