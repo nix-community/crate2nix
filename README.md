@@ -269,6 +269,7 @@ If you want to hack on this, it is useful to know that build file generation is 
   generate correct builds for my rust projects. After some attempts to fix that, I gave up. That said, big kudos for
   all the work on buildRustCrate and showing the way!
 * [cargo-raze](https://github.com/google/cargo-raze) generates `BUILD` files for bazel.
+* [cargo2nix](https://github.com/tenx-tech/cargo2nix) generates Nix definitions for the crate.
 
 ## Contributions
 
