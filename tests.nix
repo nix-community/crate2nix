@@ -148,6 +148,19 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
 
          {
+             name = "test_flag_passing";
+             src = ./sample_projects/test_flag_passing;
+             cargoToml = "Cargo.toml";
+             expectedTestOutputs = [
+                 "test this_must_run ... ok"
+                 "1 filtered out"
+             ];
+             expectedOutput = "Banana is a veggie and tomato is a fruit";
+             customBuild = "sample_projects/test_flag_passing/test.nix";
+         }
+
+
+         {
              name = "renamed_build_deps";
              src = ./sample_projects/renamed_build_deps;
              expectedOutput = "Hello, renamed_build_deps!";
@@ -210,8 +223,8 @@ let crate2nix = pkgs.callPackage ./default.nix {};
          }
      ];
 
-   buildTestDerivationAttrSet = 
-    let 
+   buildTestDerivationAttrSet =
+    let
       buildTestDerivations =
       builtins.map
         (c: {name = c.name;  value = buildTest c;})
