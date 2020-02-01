@@ -1,7 +1,7 @@
 //! Utilities for calling `nix-prefetch` on packages.
 
 use std::io::Write;
-use std::process::Command;
+use std::process::{Command, Child, Output, Stdio};
 
 use crate::resolve::{CrateDerivation, CratesIoSource, GitSource, ResolvedSource};
 use crate::GenerateConfig;
@@ -10,7 +10,7 @@ use failure::bail;
 use failure::format_err;
 use failure::Error;
 use serde::Deserialize;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, VecDeque};
 
 /// The source is important because we need to store only hashes for which we performed
 /// a prefetch.
@@ -105,30 +105,37 @@ pub fn prefetch(
         .filter(|SourcePrefetchBundle { hash, .. }| hash.is_none())
         .count();
 
+    let mut currently_fetching: VecDeque<(&ResolvedSource, &Vec<&CrateDerivation>, _)> = Default::default();
     let mut idx = 1;
-    for SourcePrefetchBundle {
-        source,
-        packages,
-        hash,
-    } in prefetchable_sources
-    {
-        let (sha256, hash_source) = if let Some(HashWithSource { sha256, source }) = hash {
-            (sha256.trim().to_string(), source)
+    for SourcePrefetchBundle { source, packages, hash } in prefetchable_sources {
+        // Wait for previously scheduled prefetching to complete
+        if currently_fetching.len() >= config.jobs {
+            let (src, defer_pkgs, defer) = currently_fetching.pop_front().unwrap();
+            let sha256 = src.finish_prefetch(defer)?;
+            for pkg in defer_pkgs {
+                hashes.insert(pkg.package_id.clone(), sha256.clone());
+            }
+        }
+
+        let result = if let Some(HashWithSource { sha256, source: hash_source }) = hash {
+            let sha256 = sha256.trim().to_string();
+            for package in packages {
+                if hash_source == HashSource::Prefetched {
+                    hashes.insert(package.package_id.clone(), sha256.clone());
+                }
+            }
         } else {
-            eprintln!(
-                "Prefetching {:>4}/{}: {}",
-                idx,
-                without_hash_num,
-                source.to_string()
-            );
+            eprintln!("Prefetching {:>4}/{}: {}", idx, without_hash_num, source.to_string());
             idx += 1;
-            (source.prefetch()?, HashSource::Prefetched)
+            currently_fetching.push_back((source, packages, source.start_prefetch()?));
         };
 
-        for package in packages {
-            if hash_source == HashSource::Prefetched {
-                hashes.insert(package.package_id.clone(), sha256.clone());
-            }
+    }
+    while !currently_fetching.is_empty() {
+        let (src, defer_pkgs, defer) = currently_fetching.pop_front().unwrap();
+        let sha256 = src.finish_prefetch(defer)?;
+        for pkg in defer_pkgs {
+            hashes.insert(pkg.package_id.clone(), sha256.clone());
         }
     }
 
@@ -153,87 +160,90 @@ pub fn prefetch(
     Ok(hashes)
 }
 
-fn get_command_output(cmd: &str, args: &[&str]) -> Result<String, Error> {
-    let output = Command::new(cmd)
-        .args(args)
-        .output()
-        .map_err(|e| format_err!("While spawning '{} {}': {}", cmd, args.join(" "), e))?;
-
+fn get_command_output(command: Command, output: Output) -> Result<String, Error> {
     if !output.status.success() {
         std::io::stdout().write_all(&output.stdout)?;
         std::io::stderr().write_all(&output.stderr)?;
         bail!(
-            "{}\n=> exited with: {}",
-            cmd,
+            "{:?}\n=> exited with: {}",
+            command,
             output.status.code().unwrap_or(-1)
         );
     }
 
     String::from_utf8(output.stdout)
         .map(|s| s.trim().to_string())
-        .map_err(|_e| format_err!("output of '{} {}' is not UTF8!", cmd, args.join(" ")))
+        .map_err(|_e| format_err!("output of {:?} is not UTF8!", command))
 }
 
 trait PrefetchableSource: ToString {
+    type StartResult;
     fn needs_prefetch(&self) -> bool;
-    fn prefetch(&self) -> Result<String, Error>;
+    fn start_prefetch(&self) -> Result<Self::StartResult, Error>;
+    fn finish_prefetch(&self, defer: Self::StartResult) -> Result<String, Error>;
 }
 
-impl ResolvedSource {
-    fn inner_prefetchable(&self) -> Option<&dyn PrefetchableSource> {
+impl PrefetchableSource for ResolvedSource {
+    type StartResult = (Command, Child);
+
+    fn needs_prefetch(&self) -> bool {
         match self {
-            ResolvedSource::CratesIo(source) => Some(source),
-            ResolvedSource::Git(source) => Some(source),
-            _ => None,
+            ResolvedSource::CratesIo(source) => source.needs_prefetch(),
+            ResolvedSource::Git(source) => source.needs_prefetch(),
+            ResolvedSource::LocalDirectory(..) => false,
+        }
+    }
+
+    fn start_prefetch(&self) -> Result<Self::StartResult, Error> {
+        match self {
+            ResolvedSource::CratesIo(source) => source.start_prefetch(),
+            ResolvedSource::Git(source) => source.start_prefetch(),
+            ResolvedSource::LocalDirectory(..) =>
+                Err(format_err!("source does not support prefetch: {:?}", self)),
+        }
+    }
+
+    fn finish_prefetch(&self, child: Self::StartResult) -> Result<String, Error> {
+        match self {
+            ResolvedSource::CratesIo(source) => source.finish_prefetch(child),
+            ResolvedSource::Git(source) => source.finish_prefetch(child),
+            ResolvedSource::LocalDirectory(..) => unreachable!(),
         }
     }
 }
 
-impl PrefetchableSource for ResolvedSource {
-    fn needs_prefetch(&self) -> bool {
-        self.inner_prefetchable()
-            .map(|s| s.needs_prefetch())
-            .unwrap_or(false)
-    }
-
-    fn prefetch(&self) -> Result<String, Error> {
-        self.inner_prefetchable()
-            .map(|s| s.prefetch())
-            .unwrap_or_else(|| Err(format_err!("source does not support prefetch: {:?}", self)))
-    }
-}
-
 impl PrefetchableSource for CratesIoSource {
+    type StartResult = (Command, Child);
+
     fn needs_prefetch(&self) -> bool {
         self.sha256.is_none()
     }
 
-    fn prefetch(&self) -> Result<String, Error> {
+    fn start_prefetch(&self) -> Result<Self::StartResult, Error> {
         let args = &[
             &self.url(),
             "--name",
             &format!("{}-{}", self.name, self.version),
         ];
-        get_command_output("nix-prefetch-url", args)
+        let mut command = Command::new("nix-prefetch-url");
+        command.args(args).stdout(Stdio::piped()).stderr(Stdio::piped());
+        let child = command.spawn()?;
+        Ok((command, child))
+    }
+
+    fn finish_prefetch(&self, child: Self::StartResult) -> Result<String, Error> {
+        get_command_output(child.0, child.1.wait_with_output()?)
     }
 }
 
 impl PrefetchableSource for GitSource {
+    type StartResult = (Command, Child);
+
     fn needs_prefetch(&self) -> bool {
         self.sha256.is_none()
     }
 
-    fn prefetch(&self) -> Result<String, Error> {
-        /// A struct used to contain the output returned by `nix-prefetch-git`.
-        ///
-        /// Additional fields are available (e.g., `name`), but we only call `nix-prefetch-git` to obtain
-        /// the nix sha256 for use in calls to `pkgs.fetchgit` in generated `Cargo.nix` files so there's no
-        /// reason to declare the fields here until they are needed.
-        #[derive(Deserialize)]
-        struct NixPrefetchGitInfo {
-            sha256: String,
-        }
-
+    fn start_prefetch(&self) -> Result<Self::StartResult, Error> {
         let mut args = vec![
             "--url",
             self.url.as_str(),
@@ -248,9 +258,27 @@ impl PrefetchableSource for GitSource {
         if let Some(r#ref) = self.r#ref.as_ref() {
             args.extend_from_slice(&["--branch-name", r#ref]);
         }
+        let mut command = Command::new("nix-prefetch-git");
+        command.args(args).stdout(Stdio::piped()).stderr(Stdio::piped());
+        let child = command.spawn()?;
+        Ok((command, child))
+    }
 
-        let json = get_command_output("nix-prefetch-git", &args)?;
+    fn finish_prefetch(&self, child: Self::StartResult) -> Result<String, Error> {
+        /// A struct used to contain the output returned by `nix-prefetch-git`.
+        ///
+        /// Additional fields are available (e.g., `name`), but we only call `nix-prefetch-git` to
+        /// obtain the nix sha256 for use in calls to `pkgs.fetchgit` in generated `Cargo.nix`
+        /// files so there's no reason to declare the fields here until they are needed.
+        #[derive(Deserialize)]
+        struct NixPrefetchGitInfo {
+            sha256: String,
+        }
+
+        let json = get_command_output(child.0, child.1.wait_with_output()?)?;
         let prefetch_info: NixPrefetchGitInfo = serde_json::from_str(&json)?;
         Ok(prefetch_info.sha256)
     }
+
+
 }
