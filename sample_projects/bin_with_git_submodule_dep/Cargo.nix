@@ -1441,7 +1441,7 @@ rec {
       } ''
         set -ex
         for file in ${drv}/tests/*; do
-          $file --test $testCrateFlags 2>&1 | tee -a $out
+          $file $testCrateFlags 2>&1 | tee -a $out
         done
       '';
     in crate.overrideAttrs (old: {
