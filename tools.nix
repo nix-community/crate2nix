@@ -97,6 +97,7 @@ in rec {
 
         buildInputs = [ pkgs.cargo crate2nix ];
 
+        preferLocalBuild = true;
         buildCommand = ''
             mkdir -p "$out/cargo"
 
@@ -117,7 +118,7 @@ in rec {
   # name: will be part of the derivation name
   # src: the source that is needed to build the crate, usually the crate/workspace root directory
   # cargoToml: Path to the Cargo.toml file relative to src, "Cargo.toml" by default.
-  generated = {name, src, cargoToml? "Cargo.toml"} @ args:
+  generated = {cargoToml? "Cargo.toml", ...} @ args:
     pkgs.callPackage (generate args) {};
 
 
