@@ -123,7 +123,6 @@ let crate2nix = pkgs.callPackage ./default.nix {};
             name = "bin_with_lib_git_dep";
             src = ./sample_projects/bin_with_lib_git_dep;
             expectedOutput = "Hello world from bin_with_lib_git_dep!";
-            pregeneratedBuild = "sample_projects/bin_with_lib_git_dep/Cargo.nix";
          }
 
          {
