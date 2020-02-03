@@ -155,7 +155,8 @@ fn prefetch_and_fill_crates_sha256(
         *hash = nix_base32::to_nix_base32(&bytes);
     }
 
-    let prefetched = prefetch::prefetch(config, &from_lock_file, &default_nix.crates)
+    let prefetched = prefetch::Prefetcher::new(config, &from_lock_file, &default_nix.crates)
+        .prefetch()
         .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
 
     for package in default_nix.crates.iter_mut() {

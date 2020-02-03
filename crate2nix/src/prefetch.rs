@@ -28,136 +28,181 @@ struct HashWithSource {
 
 /// A source with all the packages that depend on it and a potentially preexisting hash.
 #[derive(Debug)]
-struct SourcePrefetchBundle<'a> {
-    source: &'a ResolvedSource,
-    packages: &'a Vec<&'a CrateDerivation>,
+struct SourcePrefetchBundle {
+    source: ResolvedSource,
+    derivations: Vec<usize>,
     hash: Option<HashWithSource>,
 }
 
-/// Uses `nix-prefetch` to get the hashes of the sources for the given packages if they come from crates.io.
-///
-/// Uses and updates the existing hashes in the `config.crate_hash_json` file.
-pub fn prefetch(
-    config: &GenerateConfig,
-    from_lock_file: &HashMap<PackageId, String>,
-    crate_derivations: &[CrateDerivation],
-) -> Result<BTreeMap<PackageId, String>, Error> {
-    let hashes_string: String =
-        std::fs::read_to_string(&config.crate_hashes_json).unwrap_or_else(|_| "{}".to_string());
+pub(crate) struct Prefetcher<'a> {
+    config: &'a GenerateConfig,
+    from_lock_file: &'a HashMap<PackageId, String>,
+    crate_derivations: &'a [CrateDerivation],
+    hashes: BTreeMap<PackageId, String>,
+    fetch_queue: VecDeque<(ResolvedSource, Vec<PackageId>, (Command, Child))>,
+    started_idx: usize,
+}
 
-    let old_prefetched_hashes: BTreeMap<PackageId, String> = serde_json::from_str(&hashes_string)?;
-
-    // Only copy used hashes over to the new map.
-    let mut hashes = BTreeMap::<PackageId, String>::new();
-
-    // Multiple packages might be fetched from the same source.
-    //
-    // Usually, a source is only used by one package but e.g. the same git source can be used
-    // by multiple packages.
-    let packages_by_source: HashMap<ResolvedSource, Vec<&CrateDerivation>> = {
-        let mut index = HashMap::new();
-        for package in crate_derivations {
-            index
-                .entry(package.source.without_sha256())
-                .or_insert_with(Vec::new)
-                .push(package);
+impl<'a> Prefetcher<'a> {
+    pub(crate) fn new(
+        config: &'a GenerateConfig,
+        from_lock_file: &'a HashMap<PackageId, String>,
+        crate_derivations: &'a [CrateDerivation],
+    ) -> Prefetcher<'a> {
+        Prefetcher {
+            config,
+            from_lock_file,
+            crate_derivations,
+            hashes: Default::default(),
+            fetch_queue: Default::default(),
+            started_idx: 0,
         }
-        index
-    };
+    }
 
-    // Associate prefetchable sources with existing hashes.
-    let prefetchable_sources: Vec<SourcePrefetchBundle> = packages_by_source
-        .iter()
-        .filter(|(source, _)| source.needs_prefetch())
-        .map(|(source, packages)| {
-            // All the packages have the same source.
-            // So is there any package for which we already know the hash?
-            let hash = packages
-                .iter()
-                .filter_map(|p| {
-                    from_lock_file
-                        .get(&p.package_id)
-                        .map(|hash| HashWithSource {
-                            sha256: hash.clone(),
-                            source: HashSource::CargoLock,
-                        })
-                        .or_else(|| {
-                            old_prefetched_hashes
-                                .get(&p.package_id)
-                                .map(|hash| HashWithSource {
-                                    sha256: hash.clone(),
-                                    source: HashSource::Prefetched,
-                                })
-                        })
-                })
-                .next();
-
-            SourcePrefetchBundle {
-                source,
-                packages,
-                hash,
+    fn prefetchable_sources(&self, old_prefetches: &BTreeMap<PackageId, String>)
+    -> Vec<SourcePrefetchBundle> {
+        // Multiple packages might be fetched from the same source.
+        //
+        // Usually, a source is only used by one package but e.g. the same git source can be used
+        // by multiple packages.
+        let packages_by_source = {
+            let mut map = HashMap::new();
+            for (idx, package) in self.crate_derivations.into_iter().enumerate() {
+                map
+                    .entry(package.source.without_sha256())
+                    .or_insert_with(Vec::new)
+                    .push(idx);
             }
-        })
-        .collect();
-
-    let without_hash_num = prefetchable_sources
-        .iter()
-        .filter(|SourcePrefetchBundle { hash, .. }| hash.is_none())
-        .count();
-
-    let mut currently_fetching: VecDeque<(&ResolvedSource, &Vec<&CrateDerivation>, _)> = Default::default();
-    let mut idx = 1;
-    for SourcePrefetchBundle { source, packages, hash } in prefetchable_sources {
-        // Wait for previously scheduled prefetching to complete
-        if currently_fetching.len() >= config.jobs {
-            let (src, defer_pkgs, defer) = currently_fetching.pop_front().unwrap();
-            let sha256 = src.finish_prefetch(defer)?;
-            for pkg in defer_pkgs {
-                hashes.insert(pkg.package_id.clone(), sha256.clone());
-            }
-        }
-
-        let result = if let Some(HashWithSource { sha256, source: hash_source }) = hash {
-            let sha256 = sha256.trim().to_string();
-            for package in packages {
-                if hash_source == HashSource::Prefetched {
-                    hashes.insert(package.package_id.clone(), sha256.clone());
-                }
-            }
-        } else {
-            eprintln!("Prefetching {:>4}/{}: {}", idx, without_hash_num, source.to_string());
-            idx += 1;
-            currently_fetching.push_back((source, packages, source.start_prefetch()?));
+            map
         };
 
+        // Associate prefetchable sources with existing hashes.
+        packages_by_source
+            .into_iter()
+            .filter(|(source, _)| source.needs_prefetch())
+            .map(|(source, derivations)| {
+                // All the packages have the same source.
+                // So is there any package for which we already know the hash?
+                let hash = derivations
+                    .iter()
+                    .filter_map(|&drv_idx| {
+                        let pkg_id = self.package_id_for(drv_idx);
+                        self.from_lock_file
+                            .get(&pkg_id)
+                            .map(|hash| HashWithSource {
+                                sha256: hash.clone(),
+                                source: HashSource::CargoLock,
+                            })
+                            .or_else(|| {
+                                old_prefetches
+                                    .get(&pkg_id)
+                                    .map(|hash| HashWithSource {
+                                        sha256: hash.clone(),
+                                        source: HashSource::Prefetched,
+                                    })
+                            })
+                    })
+                    .next();
+
+                SourcePrefetchBundle {
+                    source,
+                    derivations,
+                    hash,
+                }
+            })
+            .collect()
     }
-    while !currently_fetching.is_empty() {
-        let (src, defer_pkgs, defer) = currently_fetching.pop_front().unwrap();
-        let sha256 = src.finish_prefetch(defer)?;
-        for pkg in defer_pkgs {
-            hashes.insert(pkg.package_id.clone(), sha256.clone());
+
+    /// Uses `nix-prefetch` to get the hashes of the sources for the given packages if they come
+    /// from crates.io.
+    ///
+    /// Uses and updates the existing hashes in the `config.crate_hash_json` file.
+    pub(crate) fn prefetch(mut self) -> Result<BTreeMap<PackageId, String>, Error> {
+        let hashes_string = std::fs::read_to_string(&self.config.crate_hashes_json)
+            .unwrap_or_else(|_| "{}".to_string());
+        let old_prefetched_hashes =
+            serde_json::from_str(&hashes_string)?;
+
+        {
+        let prefetchable_sources = self.prefetchable_sources(&old_prefetched_hashes);
+
+            let without_hash_num = prefetchable_sources
+                .iter()
+                .filter(|SourcePrefetchBundle { hash, .. }| hash.is_none())
+                .count();
+
+            for SourcePrefetchBundle { source, derivations, hash } in prefetchable_sources {
+                let result = if let Some(HashWithSource { sha256, source: hash_source }) = hash {
+                    let sha256 = sha256.trim().to_string();
+                    for drv_idx in derivations {
+                        if hash_source == HashSource::Prefetched {
+                            self.hashes.insert(self.package_id_for(drv_idx), sha256.clone());
+                        }
+                    }
+                } else {
+                    self.enqueue(without_hash_num, source, &derivations)?;
+                };
+
+            }
         }
-    }
 
-    if hashes != old_prefetched_hashes {
-        std::fs::write(
-            &config.crate_hashes_json,
-            serde_json::to_vec_pretty(&hashes)?,
-        )
-        .map_err(|e| {
-            format_err!(
-                "while writing hashes to {}: {}",
-                config.crate_hashes_json.to_str().unwrap_or("<unknown>"),
-                e
+        while !self.fetch_queue.is_empty() {
+            self.dequeue();
+        }
+
+        if self.hashes != old_prefetched_hashes {
+            std::fs::write(
+                &config.crate_hashes_json,
+                serde_json::to_vec_pretty(&hashes)?,
             )
-        })?;
-        eprintln!(
-            "Wrote hashes to {}.",
-            config.crate_hashes_json.to_string_lossy()
-        );
+            .map_err(|e| {
+                format_err!(
+                    "while writing hashes to {}: {}",
+                    config.crate_hashes_json.to_str().unwrap_or("<unknown>"),
+                    e
+                )
+            })?;
+            eprintln!(
+                "Wrote hashes to {}.",
+                config.crate_hashes_json.to_string_lossy()
+            );
+        }
+
+        Ok(self.hashes)
     }
 
-    Ok(hashes)
+    fn package_id_for(&self, derivation_index: usize) -> PackageId {
+        self.crate_derivations[derivation_index].package_id.clone()
+    }
+
+    fn enqueue(
+        &mut self,
+        total: usize,
+        source: ResolvedSource,
+        derivations: &[usize]
+    ) -> Result<(), Error> {
+        if self.fetch_queue.len() >= self.config.jobs {
+            self.dequeue()?;
+        }
+        self.started_idx += 1;
+        eprintln!("Prefetching {:>4}/{}: {}", self.started_idx, total, source.to_string());
+        let pkg_ids = derivations.iter()
+            .map(|&idx| self.crate_derivations[idx].package_id.clone())
+            .collect();
+        let defer = source.start_prefetch()?;
+        self.fetch_queue.push_back((source, pkg_ids, defer));
+        Ok(())
+>>>>>>> ae478ae... Split out prefetch into multple methods on a ctx
+    }
+
+    fn dequeue(&mut self) -> Result<(), Error> {
+        let (src, pkg_ids, defer) = self.fetch_queue.pop_front().unwrap();
+        let sha256 = src.finish_prefetch(defer)?;
+        for id in pkg_ids {
+            self.hashes.insert(id, sha256.clone());
+        }
+        Ok(())
+    }
 }
 
 fn get_command_output(command: Command, output: Output) -> Result<String, Error> {
