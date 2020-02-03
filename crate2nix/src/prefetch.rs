@@ -123,33 +123,28 @@ impl<'a> Prefetcher<'a> {
         let old_prefetched_hashes =
             serde_json::from_str(&hashes_string)?;
 
-        {
         let prefetchable_sources = self.prefetchable_sources(&old_prefetched_hashes);
-
-            let without_hash_num = prefetchable_sources
-                .iter()
-                .filter(|SourcePrefetchBundle { hash, .. }| hash.is_none())
-                .count();
-
-            for SourcePrefetchBundle { source, derivations, hash } in prefetchable_sources {
-                let result = if let Some(HashWithSource { sha256, source: hash_source }) = hash {
-                    let sha256 = sha256.trim().to_string();
-                    for drv_idx in derivations {
-                        if hash_source == HashSource::Prefetched {
-                            self.hashes.insert(self.package_id_for(drv_idx), sha256.clone());
-                        }
+        let without_hash_num = prefetchable_sources
+            .iter()
+            .filter(|SourcePrefetchBundle { hash, .. }| hash.is_none())
+            .count();
+        for SourcePrefetchBundle { source, derivations, hash } in prefetchable_sources {
+            let result = if let Some(HashWithSource { sha256, source: hash_source }) = hash {
+                let sha256 = sha256.trim().to_string();
+                for drv_idx in derivations {
+                    if hash_source == HashSource::Prefetched {
+                        self.hashes.insert(self.package_id_for(drv_idx), sha256.clone());
                     }
-                } else {
-                    self.enqueue(without_hash_num, source, &derivations)?;
-                };
-
-            }
+                }
+            } else {
+                self.enqueue(without_hash_num, source, &derivations)?;
+            };
         }
 
+        // Drain the outstanding prefetch jobs
         while !self.fetch_queue.is_empty() {
             self.dequeue();
         }
-
         if self.hashes != old_prefetched_hashes {
             std::fs::write(
                 &config.crate_hashes_json,
@@ -181,7 +176,7 @@ impl<'a> Prefetcher<'a> {
         source: ResolvedSource,
         derivations: &[usize]
     ) -> Result<(), Error> {
-        if self.fetch_queue.len() >= self.config.jobs {
+        if self.fetch_queue.len() >= self.config.prefetch_parallelism {
             self.dequeue()?;
         }
         self.started_idx += 1;

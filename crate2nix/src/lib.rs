@@ -230,5 +230,5 @@ pub struct GenerateConfig {
     pub crate_hashes_json: PathBuf,
     pub nixpkgs_path: String,
     pub other_metadata_options: Vec<String>,
-    pub jobs: usize,
+    pub prefetch_parallelism: usize,
 }
