@@ -147,19 +147,19 @@ impl<'a> Prefetcher<'a> {
         }
         if self.hashes != old_prefetched_hashes {
             std::fs::write(
-                &config.crate_hashes_json,
-                serde_json::to_vec_pretty(&hashes)?,
+                &self.config.crate_hashes_json,
+                serde_json::to_vec_pretty(&self.hashes)?,
             )
             .map_err(|e| {
                 format_err!(
                     "while writing hashes to {}: {}",
-                    config.crate_hashes_json.to_str().unwrap_or("<unknown>"),
+                    self.config.crate_hashes_json.to_str().unwrap_or("<unknown>"),
                     e
                 )
             })?;
             eprintln!(
                 "Wrote hashes to {}.",
-                config.crate_hashes_json.to_string_lossy()
+                self.config.crate_hashes_json.to_string_lossy()
             );
         }
 
@@ -187,7 +187,6 @@ impl<'a> Prefetcher<'a> {
         let defer = source.start_prefetch()?;
         self.fetch_queue.push_back((source, pkg_ids, defer));
         Ok(())
->>>>>>> ae478ae... Split out prefetch into multple methods on a ctx
     }
 
     fn dequeue(&mut self) -> Result<(), Error> {
