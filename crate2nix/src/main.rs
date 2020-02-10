@@ -76,6 +76,14 @@ pub enum Opt {
         )]
         crate_hashes: Option<PathBuf>,
 
+        #[structopt(
+            short = "p",
+            long = "prefetch-parallelism",
+            default_value = "4",
+            help = "maximum concurrent prefetch jobs"
+        )]
+        prefetch_parallelism: usize,
+
         // Mostly useful for testing
         #[structopt(
             long = "no-cargo-lock-checksums",
@@ -128,6 +136,7 @@ fn main() -> CliResult {
             features,
             no_cargo_lock_checksums,
             dont_read_crate_hashes,
+            prefetch_parallelism,
         } => {
             let crate_hashes_json = crate_hashes.unwrap_or_else(|| {
                 cargo_toml
@@ -169,6 +178,7 @@ fn main() -> CliResult {
                 other_metadata_options,
                 use_cargo_lock_checksums: !no_cargo_lock_checksums,
                 read_crate_hashes: !dont_read_crate_hashes,
+                prefetch_parallelism,
             };
             let build_info = crate2nix::BuildInfo::for_config(&generate_info, &generate_config)?;
             let nix_string = render::render_build_file(&build_info)?;

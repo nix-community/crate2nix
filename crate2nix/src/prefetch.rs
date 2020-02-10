@@ -1,7 +1,7 @@
 //! Utilities for calling `nix-prefetch` on packages.
 
 use std::io::Write;
-use std::process::Command;
+use std::process::{Child, Command, Output, Stdio};
 
 use crate::resolve::{CrateDerivation, CratesIoSource, GitSource, ResolvedSource};
 use crate::GenerateConfig;
@@ -10,7 +10,7 @@ use failure::bail;
 use failure::format_err;
 use failure::Error;
 use serde::Deserialize;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, VecDeque};
 
 /// The source is important because we need to store only hashes for which we performed
 /// a prefetch.
@@ -28,215 +28,288 @@ struct HashWithSource {
 
 /// A source with all the packages that depend on it and a potentially preexisting hash.
 #[derive(Debug)]
-struct SourcePrefetchBundle<'a> {
-    source: &'a ResolvedSource,
-    packages: &'a Vec<&'a CrateDerivation>,
+struct SourcePrefetchBundle {
+    source: ResolvedSource,
+    derivations: Vec<usize>,
     hash: Option<HashWithSource>,
 }
 
-/// Uses `nix-prefetch` to get the hashes of the sources for the given packages if they come from crates.io.
-///
-/// Uses and updates the existing hashes in the `config.crate_hash_json` file.
-pub fn prefetch(
-    config: &GenerateConfig,
-    from_lock_file: &HashMap<PackageId, String>,
-    crate_derivations: &[CrateDerivation],
-) -> Result<BTreeMap<PackageId, String>, Error> {
-    let hashes_string: String = if config.read_crate_hashes {
-        std::fs::read_to_string(&config.crate_hashes_json).unwrap_or_else(|_| "{}".to_string())
-    } else {
-        "{}".to_string()
-    };
+pub(crate) struct Prefetcher<'a> {
+    config: &'a GenerateConfig,
+    from_lock_file: &'a HashMap<PackageId, String>,
+    crate_derivations: &'a [CrateDerivation],
+    hashes: BTreeMap<PackageId, String>,
+    fetch_queue: VecDeque<(ResolvedSource, Vec<PackageId>, (Command, Child))>,
+    started_idx: usize,
+}
 
-    let old_prefetched_hashes: BTreeMap<PackageId, String> = serde_json::from_str(&hashes_string)?;
-
-    // Only copy used hashes over to the new map.
-    let mut hashes = BTreeMap::<PackageId, String>::new();
-
-    // Multiple packages might be fetched from the same source.
-    //
-    // Usually, a source is only used by one package but e.g. the same git source can be used
-    // by multiple packages.
-    let packages_by_source: HashMap<ResolvedSource, Vec<&CrateDerivation>> = {
-        let mut index = HashMap::new();
-        for package in crate_derivations {
-            index
-                .entry(package.source.without_sha256())
-                .or_insert_with(Vec::new)
-                .push(package);
+impl<'a> Prefetcher<'a> {
+    pub(crate) fn new(
+        config: &'a GenerateConfig,
+        from_lock_file: &'a HashMap<PackageId, String>,
+        crate_derivations: &'a [CrateDerivation],
+    ) -> Prefetcher<'a> {
+        Prefetcher {
+            config,
+            from_lock_file,
+            crate_derivations,
+            hashes: Default::default(),
+            fetch_queue: Default::default(),
+            started_idx: 0,
         }
-        index
-    };
+    }
 
-    // Associate prefetchable sources with existing hashes.
-    let prefetchable_sources: Vec<SourcePrefetchBundle> = packages_by_source
-        .iter()
-        .filter(|(source, _)| source.needs_prefetch())
-        .map(|(source, packages)| {
-            // All the packages have the same source.
-            // So is there any package for which we already know the hash?
-            let hash = packages
-                .iter()
-                .filter_map(|p| {
-                    from_lock_file
-                        .get(&p.package_id)
-                        .map(|hash| HashWithSource {
-                            sha256: hash.clone(),
-                            source: HashSource::CargoLock,
-                        })
-                        .or_else(|| {
-                            old_prefetched_hashes
-                                .get(&p.package_id)
-                                .map(|hash| HashWithSource {
+    fn prefetchable_sources(
+        &self,
+        old_prefetches: &BTreeMap<PackageId, String>,
+    ) -> Vec<SourcePrefetchBundle> {
+        // Multiple packages might be fetched from the same source.
+        //
+        // Usually, a source is only used by one package but e.g. the same git source can be used
+        // by multiple packages.
+        let packages_by_source = {
+            let mut map = HashMap::new();
+            for (idx, package) in self.crate_derivations.into_iter().enumerate() {
+                map.entry(package.source.without_sha256())
+                    .or_insert_with(Vec::new)
+                    .push(idx);
+            }
+            map
+        };
+
+        // Associate prefetchable sources with existing hashes.
+        packages_by_source
+            .into_iter()
+            .filter(|(source, _)| source.needs_prefetch())
+            .map(|(source, derivations)| {
+                // All the packages have the same source.
+                // So is there any package for which we already know the hash?
+                let hash = derivations
+                    .iter()
+                    .filter_map(|&drv_idx| {
+                        let pkg_id = self.package_id_for(drv_idx);
+                        self.from_lock_file
+                            .get(&pkg_id)
+                            .map(|hash| HashWithSource {
+                                sha256: hash.clone(),
+                                source: HashSource::CargoLock,
+                            })
+                            .or_else(|| {
+                                old_prefetches.get(&pkg_id).map(|hash| HashWithSource {
                                     sha256: hash.clone(),
                                     source: HashSource::Prefetched,
                                 })
-                        })
-                })
-                .next();
+                            })
+                    })
+                    .next();
 
-            SourcePrefetchBundle {
-                source,
-                packages,
-                hash,
-            }
-        })
-        .collect();
+                SourcePrefetchBundle {
+                    source,
+                    derivations,
+                    hash,
+                }
+            })
+            .collect()
+    }
 
-    let without_hash_num = prefetchable_sources
-        .iter()
-        .filter(|SourcePrefetchBundle { hash, .. }| hash.is_none())
-        .count();
-
-    let mut idx = 1;
-    for SourcePrefetchBundle {
-        source,
-        packages,
-        hash,
-    } in prefetchable_sources
-    {
-        let (sha256, hash_source) = if let Some(HashWithSource { sha256, source }) = hash {
-            (sha256.trim().to_string(), source)
+    /// Uses `nix-prefetch` to get the hashes of the sources for the given packages if they come
+    /// from crates.io.
+    ///
+    /// Uses and updates the existing hashes in the `config.crate_hash_json` file.
+    pub(crate) fn prefetch(mut self) -> Result<BTreeMap<PackageId, String>, Error> {
+        let hashes_string: String = if self.config.read_crate_hashes {
+            std::fs::read_to_string(&self.config.crate_hashes_json)
+                .unwrap_or_else(|_| "{}".to_string())
         } else {
-            eprintln!(
-                "Prefetching {:>4}/{}: {}",
-                idx,
-                without_hash_num,
-                source.to_string()
-            );
-            idx += 1;
-            (source.prefetch()?, HashSource::Prefetched)
+            "{}".to_string()
         };
 
-        for package in packages {
-            if hash_source == HashSource::Prefetched {
-                hashes.insert(package.package_id.clone(), sha256.clone());
-            }
+        let old_prefetched_hashes: BTreeMap<PackageId, String> =
+            serde_json::from_str(&hashes_string)?;
+
+        let prefetchable_sources = self.prefetchable_sources(&old_prefetched_hashes);
+        let without_hash_num = prefetchable_sources
+            .iter()
+            .filter(|SourcePrefetchBundle { hash, .. }| hash.is_none())
+            .count();
+        for SourcePrefetchBundle {
+            source,
+            derivations,
+            hash,
+        } in prefetchable_sources
+        {
+            let result = if let Some(HashWithSource {
+                sha256,
+                source: hash_source,
+            }) = hash
+            {
+                let sha256 = sha256.trim().to_string();
+                for drv_idx in derivations {
+                    if hash_source == HashSource::Prefetched {
+                        self.hashes
+                            .insert(self.package_id_for(drv_idx), sha256.clone());
+                    }
+                }
+            } else {
+                self.enqueue(without_hash_num, source, &derivations)?;
+            };
         }
-    }
 
-    if hashes != old_prefetched_hashes {
-        std::fs::write(
-            &config.crate_hashes_json,
-            serde_json::to_vec_pretty(&hashes)?,
-        )
-        .map_err(|e| {
-            format_err!(
-                "while writing hashes to {}: {}",
-                config.crate_hashes_json.to_str().unwrap_or("<unknown>"),
-                e
+        // Drain the outstanding prefetch jobs
+        while !self.fetch_queue.is_empty() {
+            self.dequeue();
+        }
+        if self.hashes != old_prefetched_hashes {
+            std::fs::write(
+                &self.config.crate_hashes_json,
+                serde_json::to_vec_pretty(&self.hashes)?,
             )
-        })?;
-        eprintln!(
-            "Wrote hashes to {}.",
-            config.crate_hashes_json.to_string_lossy()
-        );
+            .map_err(|e| {
+                format_err!(
+                    "while writing hashes to {}: {}",
+                    self.config
+                        .crate_hashes_json
+                        .to_str()
+                        .unwrap_or("<unknown>"),
+                    e
+                )
+            })?;
+            eprintln!(
+                "Wrote hashes to {}.",
+                self.config.crate_hashes_json.to_string_lossy()
+            );
+        }
+
+        Ok(self.hashes)
     }
 
-    Ok(hashes)
+    fn package_id_for(&self, derivation_index: usize) -> PackageId {
+        self.crate_derivations[derivation_index].package_id.clone()
+    }
+
+    fn enqueue(
+        &mut self,
+        total: usize,
+        source: ResolvedSource,
+        derivations: &[usize],
+    ) -> Result<(), Error> {
+        if self.fetch_queue.len() >= self.config.prefetch_parallelism {
+            self.dequeue()?;
+        }
+        self.started_idx += 1;
+        eprintln!(
+            "Prefetching {:>4}/{}: {}",
+            self.started_idx,
+            total,
+            source.to_string()
+        );
+        let pkg_ids = derivations
+            .iter()
+            .map(|&idx| self.crate_derivations[idx].package_id.clone())
+            .collect();
+        let defer = source.start_prefetch()?;
+        self.fetch_queue.push_back((source, pkg_ids, defer));
+        Ok(())
+    }
+
+    fn dequeue(&mut self) -> Result<(), Error> {
+        let (src, pkg_ids, defer) = self.fetch_queue.pop_front().unwrap();
+        let sha256 = src.finish_prefetch(defer)?;
+        for id in pkg_ids {
+            self.hashes.insert(id, sha256.clone());
+        }
+        Ok(())
+    }
 }
 
-fn get_command_output(cmd: &str, args: &[&str]) -> Result<String, Error> {
-    let output = Command::new(cmd)
-        .args(args)
-        .output()
-        .map_err(|e| format_err!("While spawning '{} {}': {}", cmd, args.join(" "), e))?;
-
+fn get_command_output(command: Command, output: Output) -> Result<String, Error> {
     if !output.status.success() {
         std::io::stdout().write_all(&output.stdout)?;
         std::io::stderr().write_all(&output.stderr)?;
         bail!(
-            "{}\n=> exited with: {}",
-            cmd,
+            "{:?}\n=> exited with: {}",
+            command,
             output.status.code().unwrap_or(-1)
         );
     }
 
     String::from_utf8(output.stdout)
         .map(|s| s.trim().to_string())
-        .map_err(|_e| format_err!("output of '{} {}' is not UTF8!", cmd, args.join(" ")))
+        .map_err(|_e| format_err!("output of {:?} is not UTF8!", command))
 }
 
 trait PrefetchableSource: ToString {
+    type StartResult;
     fn needs_prefetch(&self) -> bool;
-    fn prefetch(&self) -> Result<String, Error>;
+    fn start_prefetch(&self) -> Result<Self::StartResult, Error>;
+    fn finish_prefetch(&self, defer: Self::StartResult) -> Result<String, Error>;
 }
 
-impl ResolvedSource {
-    fn inner_prefetchable(&self) -> Option<&dyn PrefetchableSource> {
+impl PrefetchableSource for ResolvedSource {
+    type StartResult = (Command, Child);
+
+    fn needs_prefetch(&self) -> bool {
         match self {
-            ResolvedSource::CratesIo(source) => Some(source),
-            ResolvedSource::Git(source) => Some(source),
-            _ => None,
+            ResolvedSource::CratesIo(source) => source.needs_prefetch(),
+            ResolvedSource::Git(source) => source.needs_prefetch(),
+            ResolvedSource::LocalDirectory(..) => false,
+        }
+    }
+
+    fn start_prefetch(&self) -> Result<Self::StartResult, Error> {
+        match self {
+            ResolvedSource::CratesIo(source) => source.start_prefetch(),
+            ResolvedSource::Git(source) => source.start_prefetch(),
+            ResolvedSource::LocalDirectory(..) => {
+                Err(format_err!("source does not support prefetch: {:?}", self))
+            }
+        }
+    }
+
+    fn finish_prefetch(&self, child: Self::StartResult) -> Result<String, Error> {
+        match self {
+            ResolvedSource::CratesIo(source) => source.finish_prefetch(child),
+            ResolvedSource::Git(source) => source.finish_prefetch(child),
+            ResolvedSource::LocalDirectory(..) => unreachable!(),
         }
     }
 }
 
-impl PrefetchableSource for ResolvedSource {
-    fn needs_prefetch(&self) -> bool {
-        self.inner_prefetchable()
-            .map(|s| s.needs_prefetch())
-            .unwrap_or(false)
-    }
-
-    fn prefetch(&self) -> Result<String, Error> {
-        self.inner_prefetchable()
-            .map(|s| s.prefetch())
-            .unwrap_or_else(|| Err(format_err!("source does not support prefetch: {:?}", self)))
-    }
-}
-
 impl PrefetchableSource for CratesIoSource {
+    type StartResult = (Command, Child);
+
     fn needs_prefetch(&self) -> bool {
         self.sha256.is_none()
     }
 
-    fn prefetch(&self) -> Result<String, Error> {
+    fn start_prefetch(&self) -> Result<Self::StartResult, Error> {
         let args = &[
             &self.url(),
             "--name",
             &format!("{}-{}", self.name, self.version),
         ];
-        get_command_output("nix-prefetch-url", args)
+        let mut command = Command::new("nix-prefetch-url");
+        command
+            .args(args)
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+        let child = command.spawn()?;
+        Ok((command, child))
+    }
+
+    fn finish_prefetch(&self, child: Self::StartResult) -> Result<String, Error> {
+        get_command_output(child.0, child.1.wait_with_output()?)
     }
 }
 
 impl PrefetchableSource for GitSource {
+    type StartResult = (Command, Child);
+
     fn needs_prefetch(&self) -> bool {
         self.sha256.is_none()
     }
 
-    fn prefetch(&self) -> Result<String, Error> {
-        /// A struct used to contain the output returned by `nix-prefetch-git`.
-        ///
-        /// Additional fields are available (e.g., `name`), but we only call `nix-prefetch-git` to obtain
-        /// the nix sha256 for use in calls to `pkgs.fetchgit` in generated `Cargo.nix` files so there's no
-        /// reason to declare the fields here until they are needed.
-        #[derive(Deserialize)]
-        struct NixPrefetchGitInfo {
-            sha256: String,
-        }
-
+    fn start_prefetch(&self) -> Result<Self::StartResult, Error> {
         let mut args = vec![
             "--url",
             self.url.as_str(),
@@ -251,8 +324,27 @@ impl PrefetchableSource for GitSource {
         if let Some(r#ref) = self.r#ref.as_ref() {
             args.extend_from_slice(&["--branch-name", r#ref]);
         }
+        let mut command = Command::new("nix-prefetch-git");
+        command
+            .args(args)
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+        let child = command.spawn()?;
+        Ok((command, child))
+    }
 
-        let json = get_command_output("nix-prefetch-git", &args)?;
+    fn finish_prefetch(&self, child: Self::StartResult) -> Result<String, Error> {
+        /// A struct used to contain the output returned by `nix-prefetch-git`.
+        ///
+        /// Additional fields are available (e.g., `name`), but we only call `nix-prefetch-git` to
+        /// obtain the nix sha256 for use in calls to `pkgs.fetchgit` in generated `Cargo.nix`
+        /// files so there's no reason to declare the fields here until they are needed.
+        #[derive(Deserialize)]
+        struct NixPrefetchGitInfo {
+            sha256: String,
+        }
+
+        let json = get_command_output(child.0, child.1.wait_with_output()?)?;
         let prefetch_info: NixPrefetchGitInfo = serde_json::from_str(&json)?;
         Ok(prefetch_info.sha256)
     }
