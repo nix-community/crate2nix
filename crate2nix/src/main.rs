@@ -4,7 +4,7 @@ use structopt::StructOpt;
 
 use crate2nix::render;
 use failure::format_err;
-use failure::Error;
+use failure::{bail, Error};
 use serde::Deserialize;
 use serde::Serialize;
 use std::str::FromStr;
@@ -34,13 +34,22 @@ pub enum Opt {
         #[structopt(
             long = "all-features",
             help = "Resolve project dependencies with all features enabled. \
-                    By default, only the default features are resolved."
+                    This is the default and does not need to be specified. \
+                    Users can choose their sub set of features and evaluation time so \
+                    that one generated build file can be used for different feature selections."
         )]
         all_features: bool,
 
         #[structopt(
+            long = "default-features",
+            help = "Enables the default default features. 
+                    Often combined with --features to add selected features on top."
+        )]
+        default_features: bool,
+
+        #[structopt(
             long = "no-default-features",
-            help = "Disables default default features. \
+            help = "Disables all features. \
                     Often combined with --features to reenable selected features."
         )]
         no_default_features: bool,
@@ -124,6 +133,7 @@ fn main() -> CliResult {
             nixpkgs_path,
             crate_hashes,
             all_features,
+            default_features,
             no_default_features,
             features,
             no_cargo_lock_checksums,
@@ -149,24 +159,44 @@ fn main() -> CliResult {
                     Ok(DEFAULT_OUTPUT.into())
                 })?;
 
-            let mut other_metadata_options = Vec::new();
-            if all_features {
-                other_metadata_options.push("--all-features".to_string());
-            }
-            if no_default_features {
-                other_metadata_options.push("--no-default-features".to_string());
-            }
-            if !features.is_empty() {
-                other_metadata_options.push("--features".to_string());
-                other_metadata_options.push(features.join(" "));
-            }
+            let feature_metadata_options = || {
+                let mut options = Vec::new();
+
+                if [all_features, default_features, no_default_features]
+                    .iter()
+                    .filter(|x| **x)
+                    .count()
+                    > 1
+                {
+                    bail!(
+                        "Please specify at most one of \
+                           --all-features, --no-default-features and --default-features."
+                    )
+                }
+
+                // "cargo metadata" will default to the "default features".
+                // crate2nix defaults to "--all-features" since this allows users to choose
+                // any set of features at evaluation time.
+                if no_default_features {
+                    options.push("--no-default-features".to_string());
+                } else if !default_features {
+                    options.push("--all-features".to_string());
+                }
+
+                if !features.is_empty() {
+                    options.push("--features".to_string());
+                    options.push(features.join(" "));
+                }
+
+                Ok(options)
+            };
 
             let generate_config = crate2nix::GenerateConfig {
                 cargo_toml,
                 output: output.clone(),
                 nixpkgs_path,
                 crate_hashes_json,
-                other_metadata_options,
+                other_metadata_options: feature_metadata_options()?,
                 use_cargo_lock_checksums: !no_cargo_lock_checksums,
                 read_crate_hashes: !dont_read_crate_hashes,
             };

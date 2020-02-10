@@ -290,8 +290,9 @@ let
 
     {
       name = "dependency_issue_65_all_features";
-      additionalCargoNixArgs = [ "--all-features" ];
       src = ./sample_projects/dependency_issue_65;
+      # This will not work with only default features.
+      # Therefore, it tests that the default is really --all-features.
       customBuild = "sample_projects/dependency_issue_65/default.nix";
       expectedOutput = "Hello, dependency_issue_65!";
     }
