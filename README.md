@@ -179,7 +179,7 @@ build file, you may want to use `crate2nix generate --no-default-features
 ## Patching crate derivations with `crateOverride`
 
 NixOS comes
-with `[defaultCrateOverrides](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/rust/default-crate-overrides.nix)`
+with [`defaultCrateOverrides`](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/rust/default-crate-overrides.nix)
 which specifies mostly some additional native `buildInputs` for various popular crates. If you are using a rust crate with
 native dependencies which is not yet covered, you can add additional `buildInputs` with the `crateOverride` parameter 
 (similar to `features`):
