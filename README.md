@@ -273,16 +273,16 @@ If you want to hack on this, it is useful to know that build file generation is 
   widely used in NixOS itself, yet it failed to
   generate correct builds for my rust projects. After some attempts to fix that, I gave up. That said, big kudos for
   all the work on buildRustCrate and showing the way!
+* [naersk](https://github.com/nmattia/naersk/) uses cargo to drive the   
+  entire build. It builds all dependencies in one derivation and the crate itself in another. Since it relies on hashes from the Cargo.lock
+  file, I don't know how it handles git dependencies with sub modules.
 * [tenx-tech/cargo2nix](https://github.com/tenx-tech/cargo2nix): I
   haven't used it so take it with a grain of salt but I think
     * it uses its own build logic instead of `buildRustCrate` but
       still builds each crate in its own derivation.
     * it has some support for cross building (which is quite weak in
       crate2nix).
-* [naersk](https://github.com/nmattia/naersk/) uses cargo to drive the
-  entire build. So, at the time of writing, it builds all dependencies
-  in one derivation and the the crate itself in another.
-* [cargo-raze](https://github.com/google/cargo-raze) generates `BUILD`   
+* [cargo-raze](https://github.com/google/cargo-raze) generates `BUILD`
   files for bazel.
 
 ## Contributions
