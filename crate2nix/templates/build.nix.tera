@@ -65,7 +65,7 @@ rec {
   {%- endif %}
 
   #
-  # "private" attributes that may change in every new version of crate2nix.
+  # "internal" ("private") attributes that may change in every new version of crate2nix.
   #
 
   # Build and dependency information for crates.

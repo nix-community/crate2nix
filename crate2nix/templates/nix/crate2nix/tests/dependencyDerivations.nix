@@ -1,36 +1,38 @@
-{lib, crate2nix}:
+{ lib, crate2nix }:
 
-let fakeCrates = {
-        "pkg_id1" = "pkg_id1";
-        "pkg_id2" = "pkg_id2";
-        "pkg_id3" = "pkg_id3";
+let
+  fakeCrates = {
+    "pkg_id1" = "pkg_id1";
+    "pkg_id2" = "pkg_id2";
+    "pkg_id3" = "pkg_id3";
+  };
+  fakeDependencies = [
+    {
+      name = "id1";
+      packageId = "pkg_id1";
+    }
+    {
+      name = "optional_id2";
+      packageId = "pkg_id2";
+      optional = true;
+    }
+    {
+      name = "id3";
+      packageId = "pkg_id3";
+      usesDefaultFeatures = false;
+    }
+  ];
+  dependencyDerivations = features: dependencies:
+    crate2nix.dependencyDerivations {
+      builtByPackageId = fakeCrates;
+      target = crate2nix.defaultTarget;
+      inherit features dependencies;
     };
-    fakeDependencies = [
-      {
-        name = "id1";
-        packageId = "pkg_id1";
-      }
-      {
-        name = "optional_id2";
-        packageId = "pkg_id2";
-        optional = true;
-      }
-      {
-        name = "id3";
-        packageId = "pkg_id3";
-        usesDefaultFeatures = false;
-      }
-    ];
-    dependencyDerivations = features: dependencies:
-      crate2nix.dependencyDerivations {
-        builtByPackageId = fakeCrates;
-        target = crate2nix.defaultTarget; 
-        inherit features dependencies;
-      };
-in lib.runTests {
+in
+lib.runTests {
 
   testForDefaultAndIgnored = {
-    expr = dependencyDerivations ["default" "ignored" ] fakeDependencies;
+    expr = dependencyDerivations [ "default" "ignored" ] fakeDependencies;
     expected = [
       "pkg_id1"
       "pkg_id3"
@@ -38,7 +40,7 @@ in lib.runTests {
   };
 
   testWithOptional = {
-    expr = dependencyDerivations ["default" "optional_id2" ] fakeDependencies;
+    expr = dependencyDerivations [ "default" "optional_id2" ] fakeDependencies;
     expected = [
       "pkg_id1"
       "pkg_id2"
@@ -48,8 +50,8 @@ in lib.runTests {
 
   testWithDepFeatures = {
     expr = dependencyDerivations
-        ["default" "id1/default" "id1/stuff" "id2/ignored_feature" "id3/feature1" ]
-        fakeDependencies;
+      [ "default" "id1/default" "id1/stuff" "id2/ignored_feature" "id3/feature1" ]
+      fakeDependencies;
     expected = [
       "pkg_id1"
       "pkg_id3"

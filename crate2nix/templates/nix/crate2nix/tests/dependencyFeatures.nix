@@ -1,53 +1,55 @@
-{lib, crate2nix}:
+{ lib, crate2nix }:
 
-let dependencies = [
-      {
-        name = "tls";
-        packageId = "pkgid_tls";
-      }
-      {
-        name = "extra";
-        packageId = "pkgid_extra";
-      }
-      {
-        name = "with_target";
-        target_cfg = true;
-        optional = false;
-        with_defaults = false;
-        packageId = "pkgid_target";
-      }
-    ];
-in lib.runTests {
+let
+  dependencies = [
+    {
+      name = "tls";
+      packageId = "pkgid_tls";
+    }
+    {
+      name = "extra";
+      packageId = "pkgid_extra";
+    }
+    {
+      name = "with_target";
+      target_cfg = true;
+      optional = false;
+      with_defaults = false;
+      packageId = "pkgid_target";
+    }
+  ];
+in
+lib.runTests {
 
   testStringDependency = {
     expr = crate2nix.dependencyFeatures [] { name = "my_dep"; packageId = "pkg_id"; };
-    expected = ["default"];
+    expected = [ "default" ];
   };
 
   testWithDefaultUnsetDependency = {
     expr = crate2nix.dependencyFeatures
-             []
-             { name = "my_dep"; };
-    expected = ["default"];
+      []
+      { name = "my_dep"; };
+    expected = [ "default" ];
   };
 
   testWithDefaultDependency = {
     expr = crate2nix.dependencyFeatures
-             []
-             { name = "my_dep"; usesDefaultFeatures = true; };
-    expected = ["default"];
+      []
+      { name = "my_dep"; usesDefaultFeatures = true; };
+    expected = [ "default" ];
   };
 
   testWithDefaultDisabledDependency = {
     expr = crate2nix.dependencyFeatures
-             []
-             { name = "my_dep"; usesDefaultFeatures = false; };
+      []
+      { name = "my_dep"; usesDefaultFeatures = false; };
     expected = [];
   };
 
 
   testDependencyFeature = {
-    expr = crate2nix.dependencyFeatures ["my_dep/feature1"] { name = "my_dep"; packageId = "pkg_id"; };
+    expr = crate2nix.dependencyFeatures [ "my_dep/feature1" ] { name = "my_dep"; packageId = "pkg_id"; };
     expected = [ "default" "feature1" ];
   };
 

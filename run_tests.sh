@@ -4,6 +4,12 @@ set -Eeuo pipefail
 
 top="$(readlink -f "$(dirname "$0")")"
 
+cd "$top"
+# Add other files when we adopt nixpkgs-fmt for them.
+./nixpkgs-fmt.sh \
+    ./tests.nix \
+    ./crate2nix/templates/nix/crate2nix/{*.nix,tests/*.nix}
+
 cd "$top"/crate2nix
 
 ./cargo.sh fmt
