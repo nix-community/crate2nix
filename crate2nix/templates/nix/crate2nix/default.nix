@@ -5,10 +5,9 @@
 rec {
   # #}
 
-  /* 
-    Target (platform) data for conditional dependencies.
-    This corresponds roughly to what buildRustCrate is setting.
-    */
+  /* Target (platform) data for conditional dependencies.
+     This corresponds roughly to what buildRustCrate is setting.
+  */
   defaultTarget = {
     unix = true;
     windows = false;
@@ -78,7 +77,8 @@ rec {
       );
 
   /* Returns a crate which depends on successful test execution 
-   of crate given as the second argument. */
+     of crate given as the second argument. 
+  */
   crateWithTest = crate: testCrate: testCrateFlags:
     let
       # override the `crate` so that it will build and execute tests instead of
@@ -241,7 +241,8 @@ rec {
         map depDerivation enabledDependencies;
 
   /* Returns a sanitized version of val with all values substituted that cannot
-     be serialized as JSON. */
+     be serialized as JSON. 
+  */
   sanitizeForJson = val:
     if builtins.isAttrs val
     then lib.mapAttrs (n: v: sanitizeForJson v) val
@@ -274,19 +275,22 @@ rec {
           }
         );
         mergedPackageFeatures = mergePackageFeatures {
-          inherit packageId target; features = rootFeatures;
+          features = rootFeatures;
+          inherit packageId target;
         };
         diffedDefaultPackageFeatures = diffDefaultPackageFeatures {
-          inherit packageId;  features = rootFeatures;
+          features = rootFeatures;
+          inherit packageId;
         };
       };
     in
       { internal = debug; };
 
-  /* Returns differences between cargo default features and crate2nix default features.
-   *
-   * This is useful for verifying the feature resolution in crate2nix.
-   */
+  /* Returns differences between cargo default features and crate2nix default
+     features.
+   
+     This is useful for verifying the feature resolution in crate2nix.
+  */
   diffDefaultPackageFeatures =
     { crateConfigs ? crates
     , packageId
@@ -302,8 +306,12 @@ rec {
             (mergePackageFeatures { inherit crateConfigs packageId target; features = [ "default" ]; });
         configs = prefixValues "cargo" crateConfigs;
         combined = lib.foldAttrs (a: b: a // b) {} [ mergedFeatures configs ];
-        onlyInCargo = builtins.attrNames (lib.filterAttrs (n: v: !(v ? "crate2nix") && (v ? "cargo")) combined);
-        onlyInCrate2Nix = builtins.attrNames (lib.filterAttrs (n: v: (v ? "crate2nix") && !(v ? "cargo")) combined);
+        onlyInCargo =
+          builtins.attrNames
+            (lib.filterAttrs (n: v: !(v ? "crate2nix") && (v ? "cargo")) combined);
+        onlyInCrate2Nix =
+          builtins.attrNames
+            (lib.filterAttrs (n: v: (v ? "crate2nix") && !(v ? "cargo")) combined);
         differentFeatures = lib.filterAttrs
           (
             n: v:
@@ -313,32 +321,35 @@ rec {
           )
           combined;
       in
-        builtins.toJSON { inherit onlyInCargo onlyInCrate2Nix differentFeatures; };
+        builtins.toJSON {
+          inherit onlyInCargo onlyInCrate2Nix differentFeatures;
+        };
 
-  /* Returns the feature configuration by package id for the given input crate.
+  /* Returns an attrset mapping packageId to the list of enabled features.
 
-     Returns a { packageId, features } attribute set for every package needed for building the
-     package for the given packageId with the given features.
-
-     Returns multiple, potentially conflicting attribute sets for dependencies that are reachable
-     by multiple paths in the dependency tree.
+     If multiple paths to a dependency enable different features, the
+     corresponding feature sets are merged. Features in rust are additive.
   */
-
   mergePackageFeatures =
     { crateConfigs ? crates
     , packageId
-    , rootPackageId
+    , rootPackageId ? packageId
     , features ? rootFeatures
     , dependencyPath ? [ crates.${packageId}.crateName ]
     , featuresByPackageId ? {}
     , target
-    , runTests
+      # Adds devDependencies to the crate with rootPackageId.
+    , runTests ? false
     , ...
     } @ args:
       assert (builtins.isAttrs crateConfigs);
       assert (builtins.isString packageId);
+      assert (builtins.isString rootPackageId);
       assert (builtins.isList features);
+      assert (builtins.isList dependencyPath);
       assert (builtins.isAttrs featuresByPackageId);
+      assert (builtins.isAttrs target);
+      assert (builtins.isBool runTests);
 
       let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
@@ -373,9 +384,6 @@ rec {
                     if cache ? ${packageId} && cache.${packageId} == combinedFeatures
                     then cache
                     else mergePackageFeatures {
-                      # This is purely for debugging.
-                      dependencyPath =
-                        dependencyPath ++ [ path crateConfigs.${packageId}.crateName ];
                       features = combinedFeatures;
                       featuresByPackageId = cache;
                       inherit crateConfigs packageId target runTests rootPackageId;
@@ -388,16 +396,21 @@ rec {
             combinedFeatures = sortedUnique (cacheFeatures ++ expandedFeatures);
           in
             featuresByPackageId // {
-              ${packageId} = combinedFeatures;
+              "${packageId}" = combinedFeatures;
             };
 
         cacheWithDependencies =
           resolveDependencies cacheWithSelf "dep" (
             crateConfig.dependencies or []
-            ++ lib.optionals (runTests && packageId == rootPackageId) (crateConfig.devDependencies or [])
+            ++ lib.optionals
+              (runTests && packageId == rootPackageId)
+              (crateConfig.devDependencies or [])
           );
+
         cacheWithAll =
-          resolveDependencies cacheWithDependencies "build" (crateConfig.buildDependencies or []);
+          resolveDependencies
+            cacheWithDependencies "build"
+            (crateConfig.buildDependencies or []);
 
       in
         cacheWithAll;
@@ -415,7 +428,10 @@ rec {
             targetFunc = dep.target or (features: true);
           in
             targetFunc { inherit features target; }
-            && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep) features)
+            && (
+              !(dep.optional or false)
+              || builtins.any (doesFeatureEnableDependency dep) features
+            )
       )
       dependencies;
 
@@ -430,10 +446,11 @@ rec {
       || (rename != null && rename == feature)
       || startsWithPrefix;
 
-  /* Returns the expanded features for the given inputFeatures by applying the rules in featureMap.
+  /* Returns the expanded features for the given inputFeatures by applying the
+     rules in featureMap.
 
-     featureMap is an attribute set which maps feature names to lists of further feature names to enable in case this
-     feature is selected.
+     featureMap is an attribute set which maps feature names to lists of further
+     feature names to enable in case this feature is selected.
   */
   expandFeatures = featureMap: inputFeatures:
     assert (builtins.isAttrs featureMap);
@@ -448,10 +465,10 @@ rec {
       sortedUnique outFeatures;
 
   /*
-   * Returns the actual dependencies for the given dependency.
-   *
-   * features: The features of the crate that refers this dependency.
-   */
+     Returns the actual dependencies for the given dependency.
+    
+     features: The features of the crate that refers this dependency.
+  */
   dependencyFeatures = features: dependency:
     assert (builtins.isList features);
     assert (builtins.isAttrs dependency);
