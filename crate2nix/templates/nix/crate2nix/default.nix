@@ -175,7 +175,9 @@ rec {
         buildByPackageIdImpl = packageId:
           let
             features = mergedFeatures."${packageId}" or [];
-            crateConfig' = crateConfigs."${packageId}";
+            unoverriddenCrateConfig = crateConfigs."${packageId}";
+            crateOverride = crateOverrides.${unoverriddenCrateConfig.crateName} or (lib.const {});
+            crateConfig' = unoverriddenCrateConfig // (crateOverride unoverriddenCrateConfig);
             crateConfig =
               builtins.removeAttrs crateConfig' [ "resolvedDefaultFeatures" "devDependencies" ];
             devDependencies =
