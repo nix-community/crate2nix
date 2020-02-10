@@ -252,8 +252,8 @@ I would really appreciate your thoughts. Please add comments to issue
 crate2nix use `cargo metadata` / `nix-prefetch-url` at runtime so they need to be in the PATH. The default.nix
 adds the built-time nix/cargo binaries as fallback to the path.
 
-Currently, crate2nix is only tested with nixos-unstable (the future 19.03) since it depends on some new features
-and bug fixes.
+Currently, crate2nix is only tested with nixpkgs-unstable since it depends on
+some new features and bug fixes.
 
 ## Project Overview / Terminology
 
