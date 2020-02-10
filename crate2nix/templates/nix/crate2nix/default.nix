@@ -96,6 +96,7 @@ rec {
           inherit testCrateFlags;
         } ''
           set -ex
+          cd ${crate.src}
           for file in ${drv}/tests/*; do
             $file $testCrateFlags 2>&1 | tee -a $out
           done
