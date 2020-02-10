@@ -19,7 +19,7 @@ nix build
 crate2nix="$(pwd)"/result/bin/crate2nix
 
 nix eval --json -f ./tests.nix buildTestConfigs | \
- nix run nixpkgs.jq -c jq -r .[].pregeneratedBuild | \
+ nix run -f '<nixpkgs>' jq -c jq -r .[].pregeneratedBuild | \
  while read cargo_nix; do
    if [ "$cargo_nix" = "null" ]; then
      continue
