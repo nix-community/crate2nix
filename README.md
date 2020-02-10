@@ -57,7 +57,6 @@ Then
 nix-env -i -f https://github.com/kolloch/crate2nix/tarball/0.6.1
 ```
 
-
 NOTE: You can use [eigenvalue.cachix.org](https://eigenvalue.cachix.org/) to
 get prebuilt binaries for linux.
 
@@ -87,7 +86,7 @@ This uses a pinned version nixos-unstable because at the time of writing this, i
 If that doesn't work for you, you can override the `pkgs` argument, e.g.:
 
 ```bash
-nix-shell --arg pkgs 'import <nixos> {config = {}; }'
+nix-env --arg pkgs 'import <nixos> {config = {}; }' -i -f https://github.com/kolloch/crate2nix/tarball/master
 ```
 
 ## Generating build files
