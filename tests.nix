@@ -95,6 +95,13 @@ let
         };
 
   buildTestConfigs = [
+
+    #
+    # BASIC
+    #
+    # Artificial tests that tend to test only a few features.
+    #
+
     {
       name = "bin";
       src = ./sample_projects/bin;
@@ -157,13 +164,6 @@ let
     }
 
     {
-      name = "futures_compat_test";
-      src = ./sample_projects/futures_compat;
-      cargoToml = "Cargo.toml";
-      expectedOutput = "Hello, futures_compat!";
-    }
-
-    {
       name = "cfg_test-with-tests";
       src = ./sample_projects/cfg-test;
       cargoToml = "Cargo.toml";
@@ -187,7 +187,6 @@ let
       customBuild = "sample_projects/test_flag_passing/test.nix";
     }
 
-
     {
       name = "renamed_build_deps";
       src = ./sample_projects/renamed_build_deps;
@@ -202,11 +201,30 @@ let
     }
 
     {
-      name = "numtest";
-      src = ./sample_projects/numtest;
+      name = "bin_with_git_submodule_dep";
+      src = ./sample_projects/bin_with_git_submodule_dep;
+      pregeneratedBuild = "sample_projects/bin_with_git_submodule_dep/Cargo.nix";
+      customBuild = "sample_projects/bin_with_git_submodule_dep/default.nix";
+      expectedOutput = "Hello world from with_git_submodule_dep!";
+    }
+
+    {
+      name = "cdylib";
+      src = ./sample_projects/cdylib;
+      customBuild = "sample_projects/cdylib/test.nix";
+      expectedOutput = "cdylib test";
+    }
+
+    {
+      name = "numtest_new_cargo_lock";
+      src = ./sample_projects/numtest_new_cargo_lock;
       expectedOutput = "Hello from numtest, world!";
     }
 
+    #
+    # Prefetch tests
+    #
+  
     {
       name = "simple_dep_prefetch_test";
       src = ./sample_projects/simple_dep;
@@ -223,7 +241,23 @@ let
             ;;
         esac
       '';
+    }
 
+    #
+    # Compatibility tests with "real" crates
+    #
+
+    {
+      name = "futures_compat_test";
+      src = ./sample_projects/futures_compat;
+      cargoToml = "Cargo.toml";
+      expectedOutput = "Hello, futures_compat!";
+    }
+
+    {
+      name = "numtest";
+      src = ./sample_projects/numtest;
+      expectedOutput = "Hello from numtest, world!";
     }
 
     {
@@ -243,31 +277,11 @@ let
     }
 
     {
-      name = "numtest_new_cargo_lock";
-      src = ./sample_projects/numtest_new_cargo_lock;
-      expectedOutput = "Hello from numtest, world!";
-    }
-
-    {
       name = "with_problematic_crates";
       src = ./sample_projects/with_problematic_crates;
       expectedOutput = "Hello, with_problematic_crates!";
     }
 
-    {
-      name = "bin_with_git_submodule_dep";
-      src = ./sample_projects/bin_with_git_submodule_dep;
-      pregeneratedBuild = "sample_projects/bin_with_git_submodule_dep/Cargo.nix";
-      customBuild = "sample_projects/bin_with_git_submodule_dep/default.nix";
-      expectedOutput = "Hello world from with_git_submodule_dep!";
-    }
-
-    {
-      name = "cdylib";
-      src = ./sample_projects/cdylib;
-      customBuild = "sample_projects/cdylib/test.nix";
-      expectedOutput = "cdylib test";
-    }
   ];
 
   buildTestDerivationAttrSet =
