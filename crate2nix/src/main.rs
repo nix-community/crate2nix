@@ -33,27 +33,24 @@ pub enum Opt {
 
         #[structopt(
             long = "all-features",
-            help = "Resolve project dependencies with all features enabled. By default, only the default features are resolved."
+            help = "Resolve project dependencies with all features enabled. \
+                    By default, only the default features are resolved."
         )]
         all_features: bool,
 
         #[structopt(
             long = "no-default-features",
-            help = "Disables default default features. Often combined with --features to reenable selected features."
+            help = "Disables default default features. \
+                    Often combined with --features to reenable selected features."
         )]
         no_default_features: bool,
 
         #[structopt(
             long = "features",
-            help = "Resolve project dependencies additionally with these features enabled. By default, only the default features are resolved."
+            help = "Resolve project dependencies additionally with these features enabled. \
+                    By default, only the default features are resolved."
         )]
         features: Vec<String>,
-
-        #[structopt(
-            long = "no-cargo-lock-checksums",
-            help = "Do not use checksums from Cargo.lock."
-        )]
-        no_cargo_lock_checksums: bool,
 
         #[structopt(
             short = "o",
@@ -74,9 +71,24 @@ pub enum Opt {
             short = "h",
             long = "crate-hashes",
             parse(from_os_str),
-            help = "The path to the crate hash cache file. Uses 'crate-hashes.json' in the same directory as Cargo.toml by default."
+            help = "The path to the crate hash cache file. \
+                    Uses 'crate-hashes.json' in the same directory as Cargo.toml by default."
         )]
         crate_hashes: Option<PathBuf>,
+
+        // Mostly useful for testing
+        #[structopt(
+            long = "no-cargo-lock-checksums",
+            help = "(FOR TESTING) Do not use checksums from Cargo.lock."
+        )]
+        no_cargo_lock_checksums: bool,
+
+        #[structopt(
+            long = "dont-read-crate-hashes",
+            help = "(FOR TESTING) Do not read crate-hashes file. \
+                    If there are any prefetches, their hashes will still be written into crate-hashes.json."
+        )]
+        dont_read_crate_hashes: bool,
     },
 
     #[structopt(
@@ -115,6 +127,7 @@ fn main() -> CliResult {
             no_default_features,
             features,
             no_cargo_lock_checksums,
+            dont_read_crate_hashes,
         } => {
             let crate_hashes_json = crate_hashes.unwrap_or_else(|| {
                 cargo_toml
@@ -155,6 +168,7 @@ fn main() -> CliResult {
                 crate_hashes_json,
                 other_metadata_options,
                 use_cargo_lock_checksums: !no_cargo_lock_checksums,
+                read_crate_hashes: !dont_read_crate_hashes,
             };
             let build_info = crate2nix::BuildInfo::for_config(&generate_info, &generate_config)?;
             let nix_string = render::render_build_file(&build_info)?;

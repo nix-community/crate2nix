@@ -12,6 +12,7 @@ cd "$top"
 
 cd "$top"/crate2nix
 
+cd "$top"/crate2nix
 ./cargo.sh fmt
 ./cargo.sh clippy
 

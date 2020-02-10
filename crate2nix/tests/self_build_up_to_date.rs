@@ -33,6 +33,7 @@ fn self_up_to_date() {
             crate_hashes_json: PathBuf::from("./crate-hashes.json"),
             other_metadata_options: vec![],
             use_cargo_lock_checksums: true,
+            read_crate_hashes: true,
         },
     )
     .unwrap();
@@ -77,6 +78,7 @@ fn assert_up_to_date(project_dir: &Path) {
             .join("./crate-hashes.json"),
         other_metadata_options: vec![],
         use_cargo_lock_checksums: true,
+        read_crate_hashes: true,
     };
     let metadata = BuildInfo::for_config(
         &GenerateInfo {

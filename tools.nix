@@ -22,56 +22,68 @@ rec {
    src: the source that is needed to build the crate, usually the crate/workspace root directory
    cargoToml: Path to the Cargo.toml file relative to src, "Cargo.toml" by default.
    */
-  generate = { name, src, cargoToml ? "Cargo.toml", additionalCargoNixArgs ? [] }:
-    let
-      cargoLock = (dirOf "${src}/${cargoToml}") + "/Cargo.lock";
-      vendor = internal.vendorSupport { inherit cargoLock; };
-    in
-      pkgs.stdenv.mkDerivation {
-        name = "${name}-crate2nix";
+  generate =
+    { name
+    , src
+    , cargoToml ? "Cargo.toml"
+    , additionalCargoNixArgs ? []
+    }:
 
-        buildInputs = [ pkgs.cargo crate2nix ];
+      let
+        cargoLock = (dirOf "${src}/${cargoToml}") + "/Cargo.lock";
+        vendor = internal.vendorSupport { inherit cargoLock; };
+      in
+        pkgs.stdenv.mkDerivation {
+          name = "${name}-crate2nix";
 
-        preferLocalBuild = true;
-        buildCommand = ''
-          set -e
+          buildInputs = [ pkgs.cargo crate2nix ];
 
-          mkdir -p "$out/cargo"
+          preferLocalBuild = true;
+          buildCommand = ''
+            set -e
 
-          export CARGO_HOME="$out/cargo"
-          export HOME="$out"
+            mkdir -p "$out/cargo"
 
-          cp ${vendor.cargoConfig} $out/cargo/config
+            export CARGO_HOME="$out/cargo"
+            export HOME="$out"
 
-          crate_hashes="${src}/crate-hashes.json"
-          if ! test -r "$crate_hashes" ; then
+            cp ${vendor.cargoConfig} $out/cargo/config
+
             crate_hashes="$out/crate-hashes.json"
-            echo -n No existing crate-hashes.json >&2
-            echo ' => setting path to output dir' >&2
-          fi
+            if test -r "${src}/crate-hashes.json" ; then
+              cp "${src}/crate-hashes.json" "$crate_hashes"
+              chmod +w "$crate_hashes"
+            fi
 
-          set -x
-          crate2nix generate \
-            ${lib.escapeShellArgs additionalCargoNixArgs} \
-            -f ${src}/${cargoToml} \
-            -h "$crate_hashes" \
-            -o $out/default.nix || {
-            { set +x; } 2>/dev/null
-            echo "crate2nix failed." >&2
-            echo "== cargo/config (BEGIN)" >&2
-            sed 's/^/    /' $out/cargo/config >&2
-            echo ""
-            echo "== cargo/config (END)" >&2
-            echo ""
-            echo "== crate-hashes.json (BEGIN)" >&2
-            sed 's/^/    /' $crate_hashes >&2
-            echo ""
-            echo "== crate-hashes.json (END)" >&2
-            exit 3
-          }
-          { set +x; } 2>/dev/null 
-        '';
-      };
+            set -x
+            crate2nix generate \
+              -f ${src}/${cargoToml} \
+              -h "$crate_hashes" \
+              -o $out/default.nix \
+              ${lib.escapeShellArgs additionalCargoNixArgs} || {
+              { set +x; } 2>/dev/null
+              echo "crate2nix failed." >&2
+              echo "== cargo/config (BEGIN)" >&2
+              sed 's/^/    /' $out/cargo/config >&2
+              echo ""
+              echo "== cargo/config (END)" >&2
+              echo ""
+              echo "== crate-hashes.json (BEGIN)" >&2
+              sed 's/^/    /' $crate_hashes >&2
+              echo ""
+              echo "== crate-hashes.json (END)" >&2
+              exit 3
+            }
+            { set +x; } 2>/dev/null 
+
+            if test -r "${src}/crate-hashes.json" ; then
+              set -x
+              diff -u "${src}/crate-hashes.json" $crate_hashes
+             { set +x; } 2>/dev/null 
+            fi
+          '';
+
+        };
 
   # Returns a derivation for a rust binary package.
   #

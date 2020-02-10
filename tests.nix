@@ -224,7 +224,7 @@ let
     #
     # Prefetch tests
     #
-  
+
     {
       name = "simple_dep_prefetch_test";
       src = ./sample_projects/simple_dep;
@@ -236,7 +236,35 @@ let
             echo "04jnq6arig0amz0scadavbzn9bg9k4zphmrm1562n6ygfj1dnj45"
             ;;
           *)
-            echo "Unrecognized fetch: $@" >&2
+            echo -e "\e[31mUnrecognized fetch:\e[0m $(basename $0) $@" >&2
+            exit 1
+            ;;
+        esac
+      '';
+    }
+
+    {
+      name = "git_prefetch_test";
+      src = ./sample_projects/bin_with_lib_git_dep;
+      expectedOutput = "Hello world from bin_with_lib_git_dep!";
+      additionalCargoNixArgs = [
+        "--dont-read-crate-hashes"
+      ];
+      nixPrefetchGit = ''
+        case "$@" in
+          "--url https://github.com/kolloch/nix-base32 --fetch-submodules --rev 42f5544e51187f0c7535d453fcffb4b524c99eb2")
+            echo '
+            {
+              "url": "https://github.com/kolloch/nix-base32",
+              "rev": "42f5544e51187f0c7535d453fcffb4b524c99eb2",
+              "date": "2019-11-29T22:22:24+01:00",
+              "sha256": "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw",
+              "fetchSubmodules": true
+            }            
+            '
+            ;;
+          *)
+            echo -e "\e[31mUnrecognized fetch:\e[0m $(basename $0) $@" >&2
             exit 1
             ;;
         esac

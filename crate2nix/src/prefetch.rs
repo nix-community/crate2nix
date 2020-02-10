@@ -42,8 +42,11 @@ pub fn prefetch(
     from_lock_file: &HashMap<PackageId, String>,
     crate_derivations: &[CrateDerivation],
 ) -> Result<BTreeMap<PackageId, String>, Error> {
-    let hashes_string: String =
-        std::fs::read_to_string(&config.crate_hashes_json).unwrap_or_else(|_| "{}".to_string());
+    let hashes_string: String = if config.read_crate_hashes {
+        std::fs::read_to_string(&config.crate_hashes_json).unwrap_or_else(|_| "{}".to_string())
+    } else {
+        "{}".to_string()
+    };
 
     let old_prefetched_hashes: BTreeMap<PackageId, String> = serde_json::from_str(&hashes_string)?;
 
