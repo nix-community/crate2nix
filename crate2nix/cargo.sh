@@ -8,4 +8,4 @@ set -Eeuo pipefail
 
 mydir=$(dirname "$0")
 
-nix run "(with import $mydir/../nixpkgs.nix { config = {}; }; [ cargo clippy rustfmt binutils ])" -c cargo "$@"
+nix run "(with import $mydir/../nixpkgs.nix { config = {}; }; [ cargo rustfmt binutils ])" -c cargo "$@"
