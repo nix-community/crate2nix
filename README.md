@@ -99,7 +99,7 @@ crate2nix generate -o Cargo.nix
 
 generates Cargo.nix from the Cargo.lock in the current directory.
 
-Look at the [./Cargo.nix](./Cargo.nix) file of this project for a non-trivial example. (How meta!)
+Look at the [./crate2nix/Cargo.nix](_) file of this project for a non-trivial example. (How meta!)
 
 ## Using build files (single binaries)
 
