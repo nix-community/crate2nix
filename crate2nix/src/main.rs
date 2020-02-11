@@ -170,7 +170,7 @@ fn main() -> CliResult {
                 {
                     bail!(
                         "Please specify at most one of \
-                           --all-features, --no-default-features and --default-features."
+                         --all-features, --no-default-features and --default-features."
                     )
                 }
 
