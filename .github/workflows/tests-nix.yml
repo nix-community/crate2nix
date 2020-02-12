@@ -6,8 +6,10 @@ jobs:
   tests:
     strategy:
       matrix:
-        # macos-latest had problems in the past
-        platform: [ubuntu-latest macos-latest]
+        platform: 
+          - ubuntu-latest 
+          # macos-latest had problems in the past
+          - macos-latest
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v1
