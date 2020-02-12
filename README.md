@@ -19,7 +19,7 @@ build minimal docker images, deploy your binary as a service to the the cloud wi
 **Out of the box support for libraries with non-rust dependencies**: It builds on top of the `buildRustCrate`
 function from [NixOS](https://nixos.org/) so that native dependencies of
 many rust libraries are already correctly fetched when needed. If your library with native dependencies is not yet
-supported, you can create an overlay to add the needed configuration to the `defaultCrateOverrides`.
+supported, you can customize `defaultCrateOverrides` / `crateOverrides`, see below.
 
 **Easy to understand nix template**: The actual nix code is generated via `templates/build.nix.tera` so you can
 fix/improve the nix code without knowing rust if all the data is already there.
@@ -176,7 +176,7 @@ generate the most general build file. If you want to strip down the generated
 build file, you may want to use `crate2nix generate --no-default-features
 --features "feature1 feature2"`.
 
-## Patching crate derivations with `crateOverride`
+## Patching crate derivations with `crateOverrides`
 
 NixOS comes
 with [`defaultCrateOverrides`](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/rust/default-crate-overrides.nix)

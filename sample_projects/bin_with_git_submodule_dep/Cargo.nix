@@ -5,11 +5,9 @@
 
 { pkgs ? import <nixpkgs> { config = {}; }
 , lib ? pkgs.lib
-, callPackage ? pkgs.callPackage
 , stdenv ? pkgs.stdenv
 , buildRustCrate ? pkgs.buildRustCrate
-, fetchurl ? pkgs.fetchurl
-, fetchCrate ? pkgs.fetchCrate
+  # This is used as the `crateOverrides` argument for `buildRustCrate`.
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
   # The features to enable for the root_crate or the workspace_members.
 , rootFeatures ? [ "default" ]
@@ -26,7 +24,6 @@ rec {
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
     build = buildRustCrateWithFeatures {
-      features = rootFeatures;
       inherit packageId;
     };
 
