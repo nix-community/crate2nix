@@ -8,8 +8,9 @@ jobs:
       matrix:
         platform: 
           - ubuntu-latest 
-          # macos-latest had problems in the past
-          - macos-latest
+          # macos-latest had problems in the past.
+          # https://github.com/cachix/cachix-action/issues/27
+          # - macos-latest
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v1
