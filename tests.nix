@@ -137,6 +137,14 @@ let
     }
 
     {
+      name = "bin_with_NON_default_ROOT_features";
+      src = ./sample_projects;
+      cargoToml = "bin_with_default_features/Cargo.toml";
+      expectedOutput = "Hello, bin_with_default_features, do_not_activate!";
+      customBuild = "sample_projects/bin_with_default_features/override-root-features.nix";
+    }
+
+    {
       name = "bin_with_lib_git_dep";
       src = ./sample_projects/bin_with_lib_git_dep;
       expectedOutput = "Hello world from bin_with_lib_git_dep!";
