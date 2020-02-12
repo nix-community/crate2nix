@@ -217,6 +217,14 @@ let
     }
 
     {
+      name = "bin_with_git_submodule_dep_customBuildRustCrate";
+      src = ./sample_projects/bin_with_git_submodule_dep;
+      pregeneratedBuild = "sample_projects/bin_with_git_submodule_dep/Cargo.nix";
+      customBuild = "sample_projects/bin_with_git_submodule_dep/default-with-customBuildRustCrate.nix";
+      expectedOutput = "Hello world from with_git_submodule_dep!";
+    }
+
+    {
       name = "cdylib";
       src = ./sample_projects/cdylib;
       customBuild = "sample_projects/cdylib/test.nix";

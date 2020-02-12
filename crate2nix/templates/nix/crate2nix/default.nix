@@ -113,12 +113,18 @@ rec {
         }
       );
 
-  /* A restricted overridable version of buildRustCrateWithFeaturesImpl. */
+  /* A restricted overridable version of builtRustCratesWithFeatures. */
   buildRustCrateWithFeatures =
     { packageId
     , features ? rootFeatures
     , crateOverrides ? defaultCrateOverrides
-    , buildRustCrateFunc ? buildRustCrate
+    , buildRustCrateFunc ? (
+        if crateOverrides == pkgs.defaultCrateOverrides
+        then buildRustCrate
+        else buildRustCrate.override {
+          defaultCrateOverrides = crateOverrides;
+        }
+      )
     , runTests ? false
     , testCrateFlags ? []
     }:
@@ -127,11 +133,11 @@ rec {
           { features, crateOverrides, runTests, testCrateFlags }:
             let
               builtRustCrates = builtRustCratesWithFeatures {
-                inherit packageId features crateOverrides buildRustCrateFunc;
+                inherit packageId features buildRustCrateFunc;
                 runTests = false;
               };
               builtTestRustCrates = builtRustCratesWithFeatures {
-                inherit packageId features crateOverrides buildRustCrateFunc;
+                inherit packageId features buildRustCrateFunc;
                 runTests = true;
               };
               drv = builtRustCrates.${packageId};
@@ -141,12 +147,13 @@ rec {
         )
         { inherit features crateOverrides runTests testCrateFlags; };
 
-  /* Returns a buildRustCrate derivation for the given packageId and features. */
+  /* Returns an attr set with packageId mapped to the result of buildRustCrateFunc 
+     for the corresponding crate. 
+  */
   builtRustCratesWithFeatures =
     { packageId
     , features
     , crateConfigs ? crates
-    , crateOverrides
     , buildRustCrateFunc
     , runTests
     , target ? defaultTarget
