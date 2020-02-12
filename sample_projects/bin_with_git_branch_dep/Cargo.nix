@@ -3,16 +3,17 @@
 #   "generate" "-f" "sample_projects/bin_with_git_branch_dep/Cargo.toml" "-o" "sample_projects/bin_with_git_branch_dep/Cargo.nix"
 # See https://github.com/kolloch/crate2nix for more info.
 
-{ pkgs? import <nixpkgs> { config = {}; },
-  lib? pkgs.lib,
-  callPackage? pkgs.callPackage,
-  stdenv? pkgs.stdenv,
-  buildRustCrate? pkgs.buildRustCrate,
-  fetchurl? pkgs.fetchurl,
-  fetchCrate? pkgs.fetchCrate,
-  defaultCrateOverrides? pkgs.defaultCrateOverrides,
+{ pkgs ? import <nixpkgs> { config = {}; }
+, lib ? pkgs.lib
+, callPackage ? pkgs.callPackage
+, stdenv ? pkgs.stdenv
+, buildRustCrate ? pkgs.buildRustCrate
+, fetchurl ? pkgs.fetchurl
+, fetchCrate ? pkgs.fetchCrate
+, defaultCrateOverrides ? pkgs.defaultCrateOverrides
   # The features to enable for the root_crate or the workspace_members.
-  rootFeatures? ["default"]}:
+, rootFeatures ? [ "default" ]
+}:
 
 rec {
   #
@@ -72,43 +73,39 @@ rec {
   #   inject test dependencies into the build
 
   crates = {
-    "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)"
-      = rec {
-        crateName = "bin_with_lib_git_dep";
-        version = "0.1.0";
-        edition = "2018";
-        crateBin = [
-          { name = "bin_with_lib_git_dep"; path = "src/main.rs"; }
-        ];
-        src = (builtins.filterSource sourceFilter ./.);
-        authors = [
-          "Peter Kolloch <info@eigenvalue.net>"
-        ];
-        dependencies = [
-          {
-            name = "nix-base32";
-            packageId = "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?branch=branch-for-test#42f5544e51187f0c7535d453fcffb4b524c99eb2)";
-          }
-        ];
-        features = {
-        };
+    "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)" = rec {
+      crateName = "bin_with_lib_git_dep";
+      version = "0.1.0";
+      edition = "2018";
+      crateBin = [
+        { name = "bin_with_lib_git_dep"; path = "src/main.rs"; }
+      ];
+      src = (builtins.filterSource sourceFilter ./.);
+      authors = [
+        "Peter Kolloch <info@eigenvalue.net>"
+      ];
+      dependencies = [
+        {
+          name = "nix-base32";
+          packageId = "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?branch=branch-for-test#42f5544e51187f0c7535d453fcffb4b524c99eb2)";
+        }
+      ];
+      
+    };
+    "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?branch=branch-for-test#42f5544e51187f0c7535d453fcffb4b524c99eb2)" = rec {
+      crateName = "nix-base32";
+      version = "0.1.2-alpha.0";
+      edition = "2018";
+      src = pkgs.fetchgit {
+        url = "https://github.com/kolloch/nix-base32";
+        rev = "42f5544e51187f0c7535d453fcffb4b524c99eb2";
+        sha256 = "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw";
       };
-    "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?branch=branch-for-test#42f5544e51187f0c7535d453fcffb4b524c99eb2)"
-      = rec {
-        crateName = "nix-base32";
-        version = "0.1.2-alpha.0";
-        edition = "2018";
-        src = pkgs.fetchgit {
-          url = "https://github.com/kolloch/nix-base32";
-          rev = "42f5544e51187f0c7535d453fcffb4b524c99eb2";
-          sha256 = "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw";
-        };
-        authors = [
-          "Peter Kolloch <info@eigenvalue.net>"
-        ];
-        features = {
-        };
-      };
+      authors = [
+        "Peter Kolloch <info@eigenvalue.net>"
+      ];
+      
+    };
   };
 
   #

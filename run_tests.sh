@@ -4,15 +4,6 @@ set -Eeuo pipefail
 
 top="$(readlink -f "$(dirname "$0")")"
 
-cd "$top"
-# Add other files when we adopt nixpkgs-fmt for them.
-./nixpkgs-fmt.sh \
-    ./{tests,tools}.nix \
-    ./crate2nix/templates/nix/crate2nix/{*.nix,tests/*.nix} \
-    ./sample_projects/*/*.nix
-
-cd "$top"/crate2nix
-
 cd "$top"/crate2nix
 ./cargo.sh fmt
 ./cargo.sh clippy
@@ -23,7 +14,15 @@ cd "$top"/crate2nix
     exit 1
 }
 
+# Add other files when we adopt nixpkgs-fmt for them.
+cd "$top"
+./nixpkgs-fmt.sh \
+    ./{tests,tools}.nix \
+    ./crate2nix/templates/nix/crate2nix/{*.nix,tests/*.nix} \
+    ./sample_projects/*/*.nix
+
 # Crude hack: check if we have the right to push to the cache
+cd "$top"/crate2nix
 if test -r ~/.config/cachix/cachix.dhall &&\
  grep -q '"eigenvalue"' ~/.config/cachix/cachix.dhall; then
     echo "Pushing build artifacts to eigenvalue.cachix.org..." >&2
