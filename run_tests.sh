@@ -10,7 +10,7 @@ cd "$top"/crate2nix
 
 ../regenerate_cargo_nix.sh && ./cargo.sh test || {
     echo "==================" >&2
-    echo "cargo test: FAILED" >&2
+    echo "regeneration or cargo test: FAILED" >&2
     exit 1
 }
 
@@ -19,7 +19,7 @@ cd "$top"
 ./nixpkgs-fmt.sh \
     ./{tests,tools}.nix \
     ./crate2nix/templates/nix/crate2nix/{*.nix,tests/*.nix} \
-    ./sample_projects/*/*.nix
+    ./sample_projects/*/[[:lower:]]*.nix
 
 # Crude hack: check if we have the right to push to the cache
 cd "$top"/crate2nix
