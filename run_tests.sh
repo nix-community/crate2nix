@@ -8,7 +8,8 @@ cd "$top"
 # Add other files when we adopt nixpkgs-fmt for them.
 ./nixpkgs-fmt.sh \
     ./{tests,tools}.nix \
-    ./crate2nix/templates/nix/crate2nix/{*.nix,tests/*.nix}
+    ./crate2nix/templates/nix/crate2nix/{*.nix,tests/*.nix} \
+    ./sample_projects/*/*.nix
 
 cd "$top"/crate2nix
 

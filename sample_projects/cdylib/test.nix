@@ -1,6 +1,6 @@
-{ pkgs? import ../../nixpkgs.nix { config = {}; }, generatedCargoNix }:
+{ pkgs ? import ../../nixpkgs.nix { config = {}; }, generatedCargoNix }:
 let
-  basePackage = pkgs.callPackage generatedCargoNix { };
+  basePackage = pkgs.callPackage generatedCargoNix {};
   lib = basePackage.rootCrate.build.lib;
   src = pkgs.writeText "main.c" ''
     extern void some_function(void);
@@ -9,7 +9,8 @@ let
        some_function();
     }
   '';
-in pkgs.runCommandCC "link-cdylib" {
+in
+pkgs.runCommandCC "link-cdylib" {
   crateName = "cdylib";
 } ''
   mkdir -p $out/bin
