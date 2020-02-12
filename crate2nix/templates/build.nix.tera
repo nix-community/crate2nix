@@ -13,6 +13,8 @@
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
   # The features to enable for the root_crate or the workspace_members.
 , rootFeatures ? [ "default" ]
+  # If true, throw errors instead of issueing deprecation warnings.
+, strictDeprecation ? false
 }:
 
 rec {
@@ -26,16 +28,18 @@ rec {
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
-    build = buildRustCrateWithFeatures {
+    build = internal.buildRustCrateWithFeatures {
       inherit packageId;
     };
 
     # Debug support which might change between releases.
     # File a bug if you depend on any for non-debug work!
-    debug = debugCrate { inherit packageId; };
+    debug = internal.debugCrate { inherit packageId; };
   };
   root_crate =
-    builtins.trace "root_crate is deprecated since crate2nix 0.4. Please use rootCrate instead." rootCrate.build;
+    internal.deprecationWarning 
+      "root_crate is deprecated since crate2nix 0.4. Please use rootCrate instead." 
+      rootCrate.build;
   {%- endif -%}
   {% if workspace_members %}
   # Refer your crate build derivation by name here.
@@ -45,19 +49,18 @@ rec {
   {%- for name, pkg_id in workspace_members %}
     {{name}} = rec {
       packageId = {{pkg_id}};
-      build = buildRustCrateWithFeatures {
+      build = internal.buildRustCrateWithFeatures {
         packageId = {{pkg_id}};
-        features = rootFeatures;
       };
 
       # Debug support which might change between releases.
       # File a bug if you depend on any for non-debug work!
-      debug = debugCrate { inherit packageId; };
+      debug = internal.debugCrate { inherit packageId; };
     };
   {%- endfor %}
   };
   workspace_members =
-    builtins.trace
+    internal.deprecationWarning
       "workspace_members is deprecated in crate2nix 0.4. Please use workspaceMembers instead."
       lib.mapAttrs (n: v: v.build) workspaceMembers;
   {%- endif %}
@@ -66,178 +69,180 @@ rec {
   # "internal" ("private") attributes that may change in every new version of crate2nix.
   #
 
-  # Build and dependency information for crates.
-  # Many of the fields are passed one-to-one to buildRustCrate.
-  #
-  # Noteworthy:
-  # * `crateBin = [{name = ","; path = ",";}];`: a hack to disable building the binary.
-  # * `dependencies`/`buildDependencies`: similar to the corresponding fields for buildRustCrate.
-  #   but with additional information which is used during dependency/feature resolution.
-  # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.
-  # * `devDependencies` as of now not used by `buildRustCrate` but used to
-  #   inject test dependencies into the build
+  internal = rec {
+    # Build and dependency information for crates.
+    # Many of the fields are passed one-to-one to buildRustCrate.
+    #
+    # Noteworthy:
+    # * `crateBin = [{name = ","; path = ",";}];`: a hack to disable building the binary.
+    # * `dependencies`/`buildDependencies`: similar to the corresponding fields for buildRustCrate.
+    #   but with additional information which is used during dependency/feature resolution.
+    # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.
+    # * `devDependencies` as of now not used by `buildRustCrate` but used to
+    #   inject test dependencies into the build
 
-  crates = {
-  {%- for crate in crates %}
-    {{crate.package_id}} = rec {
-      crateName = {{crate.crate_name}};
-      version = {{crate.version}};
-      edition = {{crate.edition}};
+    crates = {
+    {%- for crate in crates %}
+      {{crate.package_id}} = rec {
+        crateName = {{crate.crate_name}};
+        version = {{crate.version}};
+        edition = {{crate.edition}};
 
-      {%- if crate.binaries|length > 0 and not crate.is_root_or_workspace_member %}
-      # Hack to suppress building binaries
-      crateBin = [ { name = ","; path = ","; } ];
-      {%- elif crate.binaries|length > 0 and crate.is_root_or_workspace_member %}
-      crateBin = [
-      {%- for bin in crate.binaries %}
-        { name = {{ bin.name }}; path = {{ bin.src_path }}; }
-      {%- endfor %}
-      ];
-      {%- endif -%}
+        {%- if crate.binaries|length > 0 and not crate.is_root_or_workspace_member %}
+        # Hack to suppress building binaries
+        crateBin = [ { name = ","; path = ","; } ];
+        {%- elif crate.binaries|length > 0 and crate.is_root_or_workspace_member %}
+        crateBin = [
+        {%- for bin in crate.binaries %}
+          { name = {{ bin.name }}; path = {{ bin.src_path }}; }
+        {%- endfor %}
+        ];
+        {%- endif -%}
 
-      {%- if crate.source.CratesIo.sha256 %}
-      sha256 = {{crate.source.CratesIo.sha256}};
-      {%- elif crate.source.LocalDirectory.path %}
-      src = (builtins.filterSource sourceFilter {{crate.source.LocalDirectory.path | safe}});
-      {%- elif crate.source.Git %}
-      src = pkgs.fetchgit {
-        url = {{crate.source.Git.url}};
-        rev = {{crate.source.Git.rev}};
-        {%- if crate.source.Git.sha256 %}
-        sha256 = {{ crate.source.Git.sha256 }};
+        {%- if crate.source.CratesIo.sha256 %}
+        sha256 = {{crate.source.CratesIo.sha256}};
+        {%- elif crate.source.LocalDirectory.path %}
+        src = (builtins.filterSource sourceFilter {{crate.source.LocalDirectory.path | safe}});
+        {%- elif crate.source.Git %}
+        src = pkgs.fetchgit {
+          url = {{crate.source.Git.url}};
+          rev = {{crate.source.Git.rev}};
+          {%- if crate.source.Git.sha256 %}
+          sha256 = {{ crate.source.Git.sha256 }};
+          {%- endif %}
+        };
+        {%- else %}
+        # ERROR: Could not resolve source: {{crate.source | safe | json_encode()}}
+        {%- endif -%}
+
+        {%- if crate.proc_macro %}
+        procMacro = true;
+        {%- endif -%}
+
+        {%- if crate.build.src_path and crate.build.src_path != "build.rs" -%}
+        {#- This defaults to "build.rs". #}
+        build = {{crate.build.src_path}};
+        {%- endif -%}
+
+        {%- if crate.lib and crate.lib.name and crate.lib.name != crate.crate_name -%}
+        {#- This defaults to crateName. #}
+        libName = {{crate.lib.name}};
+        {%- endif -%}
+
+        {%- if crate.lib and crate.lib.src_path and crate.lib.src_path != "src/lib.rs" -%}
+        {#- This defaults to empty which triggers some auto-probing. #}
+        libPath = {{crate.lib.src_path}};
+        {%- endif -%}
+
+        {%- if not crate.proc_macro -%}
+        {#- Omitting []. -#}
+        {%- if crate.lib_crate_types|length > 0 -%}
+        {#- Omitting [ "lib" ]. -#}
+        {%- if crate.lib_crate_types|length != 1 or crate.lib_crate_types[0] != "lib" -%}
+        type = [{%- for crate_type in crate.lib_crate_types %} {{ crate_type }}{%- endfor %} ];
+        {%- endif -%}
+        {%- endif -%}
+        {%- endif -%}
+
+        {%- if crate.authors|length > 0 %}
+        authors = [
+        {%- for author in crate.authors %}
+          {{author}}
+        {%- endfor %}
+        ];
+        {%- endif -%}
+
+        {%- if crate.dependencies|length > 0 %}
+        dependencies = [
+        {%- for dependency in crate.dependencies %}
+          {
+            name = {{dependency.name}};
+            packageId = {{dependency.package_id}};
+            {%- if dependency.rename %}
+            rename = {{dependency.rename}};
+            {%- endif %}
+            {%- if dependency.optional %}
+            optional = true;
+            {%- endif -%}
+            {%- if not dependency.uses_default_features %}
+            usesDefaultFeatures = false;
+            {%- endif -%}
+            {%- if dependency.target %}
+            target = { target, features }: {{dependency.target | cfg_to_nix_expr | safe }};
+            {%- endif %}
+            {%- if dependency.features %}
+            features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
+            {%- endif %}
+          }
+        {%- endfor %}
+        ];
+        {%- endif -%}
+
+        {%- if crate.build_dependencies|length > 0 %}
+        buildDependencies = [
+        {%- for dependency in crate.build_dependencies %}
+          {
+            name = {{dependency.name}};
+            packageId = {{dependency.package_id}};
+            {%- if dependency.optional %}
+            optional = true;
+            {%- endif -%}
+            {%- if dependency.rename %}
+            rename = {{dependency.rename}};
+            {%- endif %}
+            {%- if not dependency.uses_default_features %}
+            usesDefaultFeatures = false;
+            {%- endif -%}
+            {%- if dependency.target %}
+            target = {target, features}: {{dependency.target | cfg_to_nix_expr | safe }};
+            {%- endif %}
+            {%- if dependency.features %}
+            features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
+            {%- endif %}
+          }
+        {%- endfor %}
+        ];
+        {%- endif -%}
+        {%- if crate.dev_dependencies|length > 0 %}
+        devDependencies = [
+        {%- for dependency in crate.dev_dependencies %}
+          {
+            name = {{dependency.name}};
+            packageId = {{dependency.package_id}};
+            {%- if dependency.optional %}
+            optional = true;
+            {%- endif -%}
+            {%- if not dependency.uses_default_features %}
+            usesDefaultFeatures = false;
+            {%- endif -%}
+            {%- if dependency.target %}
+            target = {target, features}: {{dependency.target | cfg_to_nix_expr | safe }};
+            {%- endif %}
+            {%- if dependency.features %}
+            features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
+            {%- endif %}
+          }
+        {%- endfor %}
+        ];
+        {%- endif -%}
+
+        {#- #}
+        {% if crate.features|length > 0 -%}
+        features = {
+        {%- for feature, features in crate.features -%}
+          {% if features|length > 0 %}
+          {{feature}} = [ {% for feature in features %}{{feature}} {% endfor %}];
+          {%- endif %}
+        {%- endfor %}
+        };
+        {%- endif %}
+        {%- if crate.resolved_default_features|length > 0 %}
+        resolvedDefaultFeatures = [ {% for feature in crate.resolved_default_features %}{{feature}} {% endfor %}];
         {%- endif %}
       };
-      {%- else %}
-      # ERROR: Could not resolve source: {{crate.source | safe | json_encode()}}
-      {%- endif -%}
-
-      {%- if crate.proc_macro %}
-      procMacro = true;
-      {%- endif -%}
-
-      {%- if crate.build.src_path and crate.build.src_path != "build.rs" -%}
-      {#- This defaults to "build.rs". #}
-      build = {{crate.build.src_path}};
-      {%- endif -%}
-
-      {%- if crate.lib and crate.lib.name and crate.lib.name != crate.crate_name -%}
-      {#- This defaults to crateName. #}
-      libName = {{crate.lib.name}};
-      {%- endif -%}
-
-      {%- if crate.lib and crate.lib.src_path and crate.lib.src_path != "src/lib.rs" -%}
-      {#- This defaults to empty which triggers some auto-probing. #}
-      libPath = {{crate.lib.src_path}};
-      {%- endif -%}
-
-      {%- if not crate.proc_macro -%}
-      {#- Omitting []. -#}
-      {%- if crate.lib_crate_types|length > 0 -%}
-      {#- Omitting [ "lib" ]. -#}
-      {%- if crate.lib_crate_types|length != 1 or crate.lib_crate_types[0] != "lib" -%}
-      type = [{%- for crate_type in crate.lib_crate_types %} {{ crate_type }}{%- endfor %} ];
-      {%- endif -%}
-      {%- endif -%}
-      {%- endif -%}
-
-      {%- if crate.authors|length > 0 %}
-      authors = [
-      {%- for author in crate.authors %}
-        {{author}}
-      {%- endfor %}
-      ];
-      {%- endif -%}
-
-      {%- if crate.dependencies|length > 0 %}
-      dependencies = [
-      {%- for dependency in crate.dependencies %}
-        {
-          name = {{dependency.name}};
-          packageId = {{dependency.package_id}};
-          {%- if dependency.rename %}
-          rename = {{dependency.rename}};
-          {%- endif %}
-          {%- if dependency.optional %}
-          optional = true;
-          {%- endif -%}
-          {%- if not dependency.uses_default_features %}
-          usesDefaultFeatures = false;
-          {%- endif -%}
-          {%- if dependency.target %}
-          target = { target, features }: {{dependency.target | cfg_to_nix_expr | safe }};
-          {%- endif %}
-          {%- if dependency.features %}
-          features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
-          {%- endif %}
-        }
-      {%- endfor %}
-      ];
-      {%- endif -%}
-
-      {%- if crate.build_dependencies|length > 0 %}
-      buildDependencies = [
-      {%- for dependency in crate.build_dependencies %}
-        {
-          name = {{dependency.name}};
-          packageId = {{dependency.package_id}};
-          {%- if dependency.optional %}
-          optional = true;
-          {%- endif -%}
-          {%- if dependency.rename %}
-          rename = {{dependency.rename}};
-          {%- endif %}
-          {%- if not dependency.uses_default_features %}
-          usesDefaultFeatures = false;
-          {%- endif -%}
-          {%- if dependency.target %}
-          target = {target, features}: {{dependency.target | cfg_to_nix_expr | safe }};
-          {%- endif %}
-          {%- if dependency.features %}
-          features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
-          {%- endif %}
-        }
-      {%- endfor %}
-      ];
-      {%- endif -%}
-      {%- if crate.dev_dependencies|length > 0 %}
-      devDependencies = [
-      {%- for dependency in crate.dev_dependencies %}
-        {
-          name = {{dependency.name}};
-          packageId = {{dependency.package_id}};
-          {%- if dependency.optional %}
-          optional = true;
-          {%- endif -%}
-          {%- if not dependency.uses_default_features %}
-          usesDefaultFeatures = false;
-          {%- endif -%}
-          {%- if dependency.target %}
-          target = {target, features}: {{dependency.target | cfg_to_nix_expr | safe }};
-          {%- endif %}
-          {%- if dependency.features %}
-          features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
-          {%- endif %}
-        }
-      {%- endfor %}
-      ];
-      {%- endif -%}
-
-      {#- #}
-      {% if crate.features|length > 0 -%}
-      features = {
-      {%- for feature, features in crate.features -%}
-        {% if features|length > 0 %}
-        {{feature}} = [ {% for feature in features %}{{feature}} {% endfor %}];
-        {%- endif %}
-      {%- endfor %}
-      };
-      {%- endif %}
-      {%- if crate.resolved_default_features|length > 0 %}
-      resolvedDefaultFeatures = [ {% for feature in crate.resolved_default_features %}{{feature}} {% endfor %}];
-      {%- endif %}
+    {%- endfor %}
     };
-  {%- endfor %}
-  };
 
-  {% include "nix/crate2nix/default.nix" %}
+    {% include "nix/crate2nix/default.nix" %}
+  };
 }

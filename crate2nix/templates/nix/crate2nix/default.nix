@@ -1,7 +1,15 @@
 #
 # crate2nix/default.nix (excerpt start)
 #{#
-{ pkgs, lib, stdenv, buildRustCrate, defaultCrateOverrides, crates ? {}, rootFeatures ? [] }:
+{ pkgs
+, lib
+, stdenv
+, buildRustCrate
+, defaultCrateOverrides
+, strictDeprecation ? true
+, crates ? {}
+, rootFeatures ? []
+}:
 rec {
   # #}
 
@@ -506,6 +514,11 @@ rec {
       outFeaturesUnique = builtins.attrNames outFeaturesSet;
     in
       builtins.sort (a: b: a < b) outFeaturesUnique;
+
+  deprecationWarning = message: value:
+    if strictDeprecation
+    then builtins.throw "strictDeprecation enabled, aborting: ${message}"
+    else builtins.trace message value;
 
   #
   # crate2nix/default.nix (excerpt end)

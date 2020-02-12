@@ -11,6 +11,8 @@
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
   # The features to enable for the root_crate or the workspace_members.
 , rootFeatures ? [ "default" ]
+  # If true, throw errors instead of issueing deprecation warnings.
+, strictDeprecation ? false
 }:
 
 rec {
@@ -23,34 +25,35 @@ rec {
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
-    build = buildRustCrateWithFeatures {
+    build = internal.buildRustCrateWithFeatures {
       inherit packageId;
     };
 
     # Debug support which might change between releases.
     # File a bug if you depend on any for non-debug work!
-    debug = debugCrate { inherit packageId; };
+    debug = internal.debugCrate { inherit packageId; };
   };
   root_crate =
-    builtins.trace "root_crate is deprecated since crate2nix 0.4. Please use rootCrate instead." rootCrate.build;
+    internal.deprecationWarning 
+      "root_crate is deprecated since crate2nix 0.4. Please use rootCrate instead." 
+      rootCrate.build;
   # Refer your crate build derivation by name here.
   # You can override the features with
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "bin_with_lib_git_dep" = rec {
       packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
-      build = buildRustCrateWithFeatures {
+      build = internal.buildRustCrateWithFeatures {
         packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
-        features = rootFeatures;
       };
 
       # Debug support which might change between releases.
       # File a bug if you depend on any for non-debug work!
-      debug = debugCrate { inherit packageId; };
+      debug = internal.debugCrate { inherit packageId; };
     };
   };
   workspace_members =
-    builtins.trace
+    internal.deprecationWarning
       "workspace_members is deprecated in crate2nix 0.4. Please use workspaceMembers instead."
       lib.mapAttrs (n: v: v.build) workspaceMembers;
 
@@ -58,54 +61,55 @@ rec {
   # "internal" ("private") attributes that may change in every new version of crate2nix.
   #
 
-  # Build and dependency information for crates.
-  # Many of the fields are passed one-to-one to buildRustCrate.
-  #
-  # Noteworthy:
-  # * `crateBin = [{name = ","; path = ",";}];`: a hack to disable building the binary.
-  # * `dependencies`/`buildDependencies`: similar to the corresponding fields for buildRustCrate.
-  #   but with additional information which is used during dependency/feature resolution.
-  # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.
-  # * `devDependencies` as of now not used by `buildRustCrate` but used to
-  #   inject test dependencies into the build
+  internal = rec {
+    # Build and dependency information for crates.
+    # Many of the fields are passed one-to-one to buildRustCrate.
+    #
+    # Noteworthy:
+    # * `crateBin = [{name = ","; path = ",";}];`: a hack to disable building the binary.
+    # * `dependencies`/`buildDependencies`: similar to the corresponding fields for buildRustCrate.
+    #   but with additional information which is used during dependency/feature resolution.
+    # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.
+    # * `devDependencies` as of now not used by `buildRustCrate` but used to
+    #   inject test dependencies into the build
 
-  crates = {
-    "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)" = rec {
-      crateName = "bin_with_lib_git_dep";
-      version = "0.1.0";
-      edition = "2018";
-      crateBin = [
-        { name = "bin_with_lib_git_dep"; path = "src/main.rs"; }
-      ];
-      src = (builtins.filterSource sourceFilter ./.);
-      authors = [
-        "Peter Kolloch <info@eigenvalue.net>"
-      ];
-      dependencies = [
-        {
-          name = "nix-base32";
-          packageId = "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?branch=branch-for-test#42f5544e51187f0c7535d453fcffb4b524c99eb2)";
-        }
-      ];
-      
-    };
-    "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?branch=branch-for-test#42f5544e51187f0c7535d453fcffb4b524c99eb2)" = rec {
-      crateName = "nix-base32";
-      version = "0.1.2-alpha.0";
-      edition = "2018";
-      src = pkgs.fetchgit {
-        url = "https://github.com/kolloch/nix-base32";
-        rev = "42f5544e51187f0c7535d453fcffb4b524c99eb2";
-        sha256 = "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw";
+    crates = {
+      "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)" = rec {
+        crateName = "bin_with_lib_git_dep";
+        version = "0.1.0";
+        edition = "2018";
+        crateBin = [
+          { name = "bin_with_lib_git_dep"; path = "src/main.rs"; }
+        ];
+        src = (builtins.filterSource sourceFilter ./.);
+        authors = [
+          "Peter Kolloch <info@eigenvalue.net>"
+        ];
+        dependencies = [
+          {
+            name = "nix-base32";
+            packageId = "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?branch=branch-for-test#42f5544e51187f0c7535d453fcffb4b524c99eb2)";
+          }
+        ];
+        
       };
-      authors = [
-        "Peter Kolloch <info@eigenvalue.net>"
-      ];
-      
+      "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?branch=branch-for-test#42f5544e51187f0c7535d453fcffb4b524c99eb2)" = rec {
+        crateName = "nix-base32";
+        version = "0.1.2-alpha.0";
+        edition = "2018";
+        src = pkgs.fetchgit {
+          url = "https://github.com/kolloch/nix-base32";
+          rev = "42f5544e51187f0c7535d453fcffb4b524c99eb2";
+          sha256 = "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw";
+        };
+        authors = [
+          "Peter Kolloch <info@eigenvalue.net>"
+        ];
+        
+      };
     };
-  };
 
-  #
+    #
 # crate2nix/default.nix (excerpt start)
 #
 
@@ -611,8 +615,14 @@ rec {
     in
       builtins.sort (a: b: a < b) outFeaturesUnique;
 
+  deprecationWarning = message: value:
+    if strictDeprecation
+    then builtins.throw "strictDeprecation enabled, aborting: ${message}"
+    else builtins.trace message value;
+
   #
   # crate2nix/default.nix (excerpt end)
   #
 
+  };
 }
