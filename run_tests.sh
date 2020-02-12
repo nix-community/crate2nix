@@ -17,7 +17,7 @@ cd "$top"/crate2nix
 # Add other files when we adopt nixpkgs-fmt for them.
 cd "$top"
 ./nixpkgs-fmt.sh \
-    ./{tests,tools}.nix \
+    ./*.nix \
     ./crate2nix/templates/nix/crate2nix/{*.nix,tests/*.nix} \
     ./sample_projects/*/[[:lower:]]*.nix
 
