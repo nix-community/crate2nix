@@ -37,6 +37,10 @@ New features and improvements:
   Thank you, @jamii!
 * [Issue #94](https://github.com/kolloch/crate2nix/issues/94): The `defaultCrateOverrides`
   argument to the build file has finally the desired effect again.
+* [#75](https://github.com/kolloch/crate2nix/issues/75): Cleanly separate
+  internal API by `internal.` attribute path element. Formally, this is no
+  breaking change if it only effects private API but still. I will mitigate by
+  allowing the old paths for a release and issue a warning.
 
 Thank you to everyone who contributed with awesomely detailed issues, PRs or
 otherwise. You are amazing! Please let me know if I forgot something or forgot
@@ -59,12 +63,10 @@ Heads up! Feel free to discuss these planned changes in future releases with me:
 
 * [#77](https://github.com/kolloch/crate2nix/issues/77): New/better override behavior that
   also allows overriding `buildRustCrate` more easily.
-* [#75](https://github.com/kolloch/crate2nix/issues/75): Cleanly separate
-  internal API by `internal.` attribute path element. Formally, this is no
-  breaking change if it only effects private API but still. I will mitigate by
-  allowing the old paths for a release and issue a warning.
 * [#82](https://github.com/kolloch/crate2nix/issues/82): Use a new file name for
   `crate-hashes.json` every time to prevent merge issues.
+* [#102](https://github.com/kolloch/crate2nix/issues/102): Convenient support for out-of-tree sources 
+  (e.g. for nixpkgs)
 
 # 0.6.0 - 0.6.1
 
