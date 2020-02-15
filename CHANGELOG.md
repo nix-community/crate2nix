@@ -1,4 +1,4 @@
-# 0.6.x - 0.7.x (unreleased)
+# 0.6.x - 0.7.1
 
 New features and improvements:
 

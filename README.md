@@ -54,7 +54,7 @@ Then
 
 ```bash
 # Install the stable version to your user env (with shell completions):
-nix-env -i -f https://github.com/kolloch/crate2nix/tarball/0.6.1
+nix-env -i -f https://github.com/kolloch/crate2nix/tarball/0.7.1
 ```
 
 NOTE: You can use [eigenvalue.cachix.org](https://eigenvalue.cachix.org/) to
