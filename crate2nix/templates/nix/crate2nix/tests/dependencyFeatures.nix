@@ -19,7 +19,7 @@ let
     }
   ];
 in
-lib.runTests {
+{
 
   testStringDependency = {
     expr = crate2nix.dependencyFeatures [] { name = "my_dep"; packageId = "pkg_id"; };
@@ -46,7 +46,6 @@ lib.runTests {
       { name = "my_dep"; usesDefaultFeatures = false; };
     expected = [];
   };
-
 
   testDependencyFeature = {
     expr = crate2nix.dependencyFeatures [ "my_dep/feature1" ] { name = "my_dep"; packageId = "pkg_id"; };

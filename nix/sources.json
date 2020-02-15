@@ -1,4 +1,28 @@
 {
+    "cachix": {
+        "branch": "master",
+        "description": "Command line client for Nix binary cache hosting:",
+        "homepage": "https://cachix.org",
+        "owner": "cachix",
+        "repo": "cachix",
+        "rev": "4e6d75d21e45352479c9da1a8e1102f1b1de01d4",
+        "sha256": "17sshlp5qq2h18sssimf6bmv3gfbwmxva9ivlh2p6sqg293fivv0",
+        "type": "tarball",
+        "url": "https://github.com/cachix/cachix/archive/4e6d75d21e45352479c9da1a8e1102f1b1de01d4.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "crate2nix": {
+        "branch": "master",
+        "description": "nix build file generator for rust crates",
+        "homepage": "",
+        "owner": "kolloch",
+        "repo": "crate2nix",
+        "rev": "a76b8d3dfb63271dc82fba1743482ac648ca1f39",
+        "sha256": "0ll3cpkh93vqaf21hs8c4avrzjb53vm6akj12d45llh5mnbz58cw",
+        "type": "tarball",
+        "url": "https://github.com/kolloch/crate2nix/archive/a76b8d3dfb63271dc82fba1743482ac648ca1f39.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "niv": {
         "branch": "master",
         "description": "Easy dependency management for Nix projects",
@@ -9,6 +33,18 @@
         "sha256": "01j6727cws8blg1npp54b4w6xa0gpgyzhyws2vqgp8clnlnmqqhi",
         "type": "tarball",
         "url": "https://github.com/nmattia/niv/archive/2ecfd86b631714b457e56d70dd83fa60435baeb6.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nix-test-runner": {
+        "branch": "master",
+        "description": "Test runner for nix expressions",
+        "homepage": "",
+        "owner": "stoeffel",
+        "repo": "nix-test-runner",
+        "rev": "dbaf9a39f6efc8c3bcbe2277676886ec7c751ed9",
+        "sha256": "1ifnzpllnywnsw634pgf1f5dml33s092hxh0x3jq17v7brffakx2",
+        "type": "tarball",
+        "url": "https://github.com/stoeffel/nix-test-runner/archive/dbaf9a39f6efc8c3bcbe2277676886ec7c751ed9.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {

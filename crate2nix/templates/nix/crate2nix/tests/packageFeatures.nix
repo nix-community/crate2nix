@@ -94,7 +94,7 @@ let
           inherit crateConfigs packageId features;
         };
 in
-lib.runTests {
+{
 
   testNumDependencies = {
     expr = packageFeatures "pkg_num" [ "default" ];

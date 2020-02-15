@@ -25,7 +25,7 @@ let
     }
   ];
 in
-lib.runTests {
+{
   testEmpty = {
     expr = crate2nix.expandFeatures featureMap [];
     expected = [];

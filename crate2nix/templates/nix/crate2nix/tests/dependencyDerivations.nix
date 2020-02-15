@@ -29,7 +29,7 @@ let
       inherit features dependencies;
     };
 in
-lib.runTests {
+{
 
   testForDefaultAndIgnored = {
     expr = dependencyDerivations [ "default" "ignored" ] fakeDependencies;

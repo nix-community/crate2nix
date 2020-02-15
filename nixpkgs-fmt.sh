@@ -6,6 +6,11 @@
 
 set -Eeuo pipefail
 
-mydir=$(dirname "$0")
+top=$(dirname "$0")
 
-nix run "(import $mydir/nixpkgs.nix { config = {}; }).nixpkgs-fmt" -c nixpkgs-fmt "$@"
+if [ -z "${IN_CRATE2NIX_SHELL:-}" ]; then
+  echo "=== Entering $top/shell.nix"
+  exec nix-shell --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")" 
+fi
+
+nixpkgs-fmt "$@"

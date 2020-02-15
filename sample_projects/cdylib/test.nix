@@ -1,4 +1,4 @@
-{ pkgs ? import ../../nixpkgs.nix { config = {}; }, generatedCargoNix }:
+{ pkgs ? import ../../nix/nixpkgs.nix { config = {}; }, generatedCargoNix }:
 let
   basePackage = pkgs.callPackage generatedCargoNix {};
   lib = basePackage.rootCrate.build.lib;

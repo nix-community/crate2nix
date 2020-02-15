@@ -1,4 +1,4 @@
-{ pkgs ? import ./nixpkgs.nix { config = {}; }
+{ pkgs ? import ./nix/nixpkgs.nix { config = {}; }
 , lib ? pkgs.lib
 , cargo ? pkgs.cargo
 , nix ? pkgs.nix
