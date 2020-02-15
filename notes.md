@@ -11,3 +11,4 @@
 - [ ] Bump versions in README.md
 - [ ] Tag version
 - [ ] Push
+- [ ] `cargo release Minor/Major`
