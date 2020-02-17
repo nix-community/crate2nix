@@ -5,4 +5,7 @@
 let
   instantiatedBuild = pkgs.callPackage generatedCargoNix {};
 in
-instantiatedBuild.rootCrate.build.override { runTests = true; }
+instantiatedBuild.rootCrate.build.override {
+  runTests = true;
+  testInputs = [ pkgs.cowsay ];
+}
