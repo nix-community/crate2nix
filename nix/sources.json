@@ -41,10 +41,10 @@
         "homepage": "",
         "owner": "stoeffel",
         "repo": "nix-test-runner",
-        "rev": "dbaf9a39f6efc8c3bcbe2277676886ec7c751ed9",
-        "sha256": "1ifnzpllnywnsw634pgf1f5dml33s092hxh0x3jq17v7brffakx2",
+        "rev": "f7e4a5cc0782ba36a3064d60037b3b9cea1831fe",
+        "sha256": "1m5vz8f42cp2jvawmmbhgqj348yvsrqjmm6p99yljvz5dk3wnkws",
         "type": "tarball",
-        "url": "https://github.com/stoeffel/nix-test-runner/archive/dbaf9a39f6efc8c3bcbe2277676886ec7c751ed9.tar.gz",
+        "url": "https://github.com/stoeffel/nix-test-runner/archive/f7e4a5cc0782ba36a3064d60037b3b9cea1831fe.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
