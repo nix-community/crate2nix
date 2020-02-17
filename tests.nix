@@ -181,6 +181,7 @@ let
       expectedTestOutputs = [
         "test echo_foo_test ... ok"
         "test lib_test ... ok"
+        "test in_source_dir ... ok"
       ];
       customBuild = "sample_projects/cfg-test/test.nix";
     }
