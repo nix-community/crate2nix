@@ -1,4 +1,4 @@
-//! Code for invoking nix_build.
+//! Code for invoking `nix-build`.
 
 use std::io::BufRead;
 use std::io::Write;
