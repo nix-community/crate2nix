@@ -158,13 +158,23 @@ fn prefetch_and_fill_crates_sha256(
         *hash = nix_base32::to_nix_base32(&bytes);
     }
 
-    let prefetched = prefetch::prefetch(config, &from_lock_file, &default_nix.crates)
-        .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
+    let prefetched = prefetch::prefetch(
+        config,
+        &from_lock_file,
+        &default_nix.crates,
+        &default_nix.indexed_metadata.id_shortener,
+    )
+    .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
 
     for package in default_nix.crates.iter_mut() {
         if package.source.sha256().is_none() {
             if let Some(hash) = prefetched
-                .get(&package.package_id)
+                .get(
+                    default_nix
+                        .indexed_metadata
+                        .id_shortener
+                        .lengthen_ref(&package.package_id),
+                )
                 .or_else(|| from_lock_file.get(&package.package_id))
             {
                 package.source = package.source.with_sha256(hash.clone());
@@ -190,9 +200,22 @@ fn extract_hashes_from_lockfile(
         .get_hashes_by_package_id()
         .context("while parsing checksums from Lockfile")?;
 
+    let hashes_with_shortened_ids: HashMap<PackageId, String> = hashes
+        .into_iter()
+        .map(|(package_id, hash)| {
+            (
+                default_nix
+                    .indexed_metadata
+                    .id_shortener
+                    .shorten_owned(package_id),
+                hash,
+            )
+        })
+        .collect();
+
     let mut missing_hashes = Vec::new();
     for package in default_nix.crates.iter_mut().filter(|c| match &c.source {
-        ResolvedSource::CratesIo { .. } => !hashes.contains_key(&c.package_id),
+        ResolvedSource::CratesIo { .. } => !hashes_with_shortened_ids.contains_key(&c.package_id),
         _ => false,
     }) {
         missing_hashes.push(format!("{} {}", package.crate_name, package.version));
@@ -204,7 +227,7 @@ fn extract_hashes_from_lockfile(
             missing_hashes.iter().take(10).join(", ")
         );
     }
-    Ok(hashes)
+    Ok(hashes_with_shortened_ids)
 }
 
 /// Some info about the crate2nix invocation.

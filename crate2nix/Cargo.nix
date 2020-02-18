@@ -21,7 +21,7 @@ rec {
   #
 
   rootCrate = rec {
-    packageId = "crate2nix 0.8.0-alpha.0 (path+file:///home/peter/projects/crate2nix/crate2nix)";
+    packageId = "crate2nix";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
@@ -42,9 +42,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "crate2nix" = rec {
-      packageId = "crate2nix 0.8.0-alpha.0 (path+file:///home/peter/projects/crate2nix/crate2nix)";
+      packageId = "crate2nix";
       build = internal.buildRustCrateWithFeatures {
-        packageId = "crate2nix 0.8.0-alpha.0 (path+file:///home/peter/projects/crate2nix/crate2nix)";
+        packageId = "crate2nix";
       };
 
       # Debug support which might change between releases.
@@ -74,7 +74,7 @@ rec {
     #   inject test dependencies into the build
 
     crates = {
-      "aho-corasick 0.7.8 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "aho-corasick" = rec {
         crateName = "aho-corasick";
         version = "0.7.8";
         edition = "2015";
@@ -86,7 +86,7 @@ rec {
         dependencies = [
           {
             name = "memchr";
-            packageId = "memchr 2.3.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "memchr";
             usesDefaultFeatures = false;
           }
         ];
@@ -96,7 +96,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
-      "ansi_term 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "ansi_term" = rec {
         crateName = "ansi_term";
         version = "0.11.0";
         edition = "2015";
@@ -109,14 +109,14 @@ rec {
         dependencies = [
           {
             name = "winapi";
-            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi";
             target = { target, features }: (target."os" == "windows");
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];
         
       };
-      "atty 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "atty" = rec {
         crateName = "atty";
         version = "0.2.14";
         edition = "2015";
@@ -127,25 +127,25 @@ rec {
         dependencies = [
           {
             name = "hermit-abi";
-            packageId = "hermit-abi 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "hermit-abi";
             target = { target, features }: (target."os" == "hermit");
           }
           {
             name = "libc";
-            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc";
             usesDefaultFeatures = false;
             target = { target, features }: target."unix";
           }
           {
             name = "winapi";
-            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi";
             target = { target, features }: target."windows";
             features = [ "consoleapi" "processenv" "minwinbase" "minwindef" "winbase" ];
           }
         ];
         
       };
-      "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "autocfg" = rec {
         crateName = "autocfg";
         version = "0.1.7";
         edition = "2015";
@@ -155,7 +155,7 @@ rec {
         ];
         
       };
-      "backtrace 0.3.44 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "backtrace" = rec {
         crateName = "backtrace";
         version = "0.3.44";
         edition = "2018";
@@ -166,21 +166,21 @@ rec {
         dependencies = [
           {
             name = "backtrace-sys";
-            packageId = "backtrace-sys 0.1.32 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "backtrace-sys";
             optional = true;
           }
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if";
           }
           {
             name = "libc";
-            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc";
             usesDefaultFeatures = false;
           }
           {
             name = "rustc-demangle";
-            packageId = "rustc-demangle 0.1.16 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "rustc-demangle";
           }
         ];
         features = {
@@ -194,7 +194,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "backtrace-sys" "dbghelp" "default" "dladdr" "libbacktrace" "libunwind" "std" ];
       };
-      "backtrace-sys 0.1.32 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "backtrace-sys" = rec {
         crateName = "backtrace-sys";
         version = "0.1.32";
         edition = "2015";
@@ -205,21 +205,21 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc";
             usesDefaultFeatures = false;
           }
         ];
         buildDependencies = [
           {
             name = "cc";
-            packageId = "cc 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cc";
           }
         ];
         features = {
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
       };
-      "bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "bitflags" = rec {
         crateName = "bitflags";
         version = "1.2.1";
         edition = "2015";
@@ -231,7 +231,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "block-buffer 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "block-buffer" = rec {
         crateName = "block-buffer";
         version = "0.7.3";
         edition = "2015";
@@ -242,25 +242,25 @@ rec {
         dependencies = [
           {
             name = "block-padding";
-            packageId = "block-padding 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "block-padding";
           }
           {
             name = "byte-tools";
-            packageId = "byte-tools 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "byte-tools";
           }
           {
             name = "byteorder";
-            packageId = "byteorder 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "byteorder";
             usesDefaultFeatures = false;
           }
           {
             name = "generic-array";
-            packageId = "generic-array 0.12.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "generic-array";
           }
         ];
         
       };
-      "block-padding 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "block-padding" = rec {
         crateName = "block-padding";
         version = "0.1.5";
         edition = "2015";
@@ -271,12 +271,12 @@ rec {
         dependencies = [
           {
             name = "byte-tools";
-            packageId = "byte-tools 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "byte-tools";
           }
         ];
         
       };
-      "bstr 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "bstr" = rec {
         crateName = "bstr";
         version = "0.2.11";
         edition = "2015";
@@ -287,7 +287,7 @@ rec {
         dependencies = [
           {
             name = "memchr";
-            packageId = "memchr 2.3.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "memchr";
             usesDefaultFeatures = false;
           }
         ];
@@ -300,7 +300,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "std" ];
       };
-      "byte-tools 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "byte-tools" = rec {
         crateName = "byte-tools";
         version = "0.3.1";
         edition = "2015";
@@ -310,7 +310,7 @@ rec {
         ];
         
       };
-      "byteorder 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "byteorder" = rec {
         crateName = "byteorder";
         version = "1.3.4";
         edition = "2015";
@@ -322,7 +322,7 @@ rec {
           "default" = [ "std" ];
         };
       };
-      "cargo_metadata 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "cargo_metadata" = rec {
         crateName = "cargo_metadata";
         version = "0.9.1";
         edition = "2015";
@@ -333,27 +333,27 @@ rec {
         dependencies = [
           {
             name = "semver";
-            packageId = "semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "semver";
             features = [ "serde" ];
           }
           {
             name = "serde";
-            packageId = "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde";
           }
           {
             name = "serde_derive";
-            packageId = "serde_derive 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_derive";
           }
           {
             name = "serde_json";
-            packageId = "serde_json 1.0.48 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_json";
           }
         ];
         features = {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "cc 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "cc" = rec {
         crateName = "cc";
         version = "1.0.50";
         edition = "2018";
@@ -367,7 +367,7 @@ rec {
           "parallel" = [ "jobserver" ];
         };
       };
-      "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "cfg-if" = rec {
         crateName = "cfg-if";
         version = "0.1.10";
         edition = "2018";
@@ -379,7 +379,7 @@ rec {
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
       };
-      "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "clap" = rec {
         crateName = "clap";
         version = "2.33.0";
         edition = "2015";
@@ -390,35 +390,35 @@ rec {
         dependencies = [
           {
             name = "ansi_term";
-            packageId = "ansi_term 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "ansi_term";
             optional = true;
             target = { target, features }: (!target."windows");
           }
           {
             name = "atty";
-            packageId = "atty 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "atty";
             optional = true;
           }
           {
             name = "bitflags";
-            packageId = "bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "bitflags";
           }
           {
             name = "strsim";
-            packageId = "strsim 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "strsim";
             optional = true;
           }
           {
             name = "textwrap";
-            packageId = "textwrap 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "textwrap";
           }
           {
             name = "unicode-width";
-            packageId = "unicode-width 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "unicode-width";
           }
           {
             name = "vec_map";
-            packageId = "vec_map 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "vec_map";
             optional = true;
           }
         ];
@@ -433,7 +433,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "ansi_term" "atty" "color" "default" "strsim" "suggestions" "vec_map" ];
       };
-      "clap-verbosity-flag 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "clap-verbosity-flag" = rec {
         crateName = "clap-verbosity-flag";
         version = "0.2.0";
         edition = "2015";
@@ -444,24 +444,24 @@ rec {
         dependencies = [
           {
             name = "env_logger";
-            packageId = "env_logger 0.5.13 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "env_logger";
           }
           {
             name = "failure";
-            packageId = "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "failure";
           }
           {
             name = "log";
-            packageId = "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "log";
           }
           {
             name = "structopt";
-            packageId = "structopt 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "structopt 0.2.18";
           }
         ];
         
       };
-      "colored-diff 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "colored-diff" = rec {
         crateName = "colored-diff";
         version = "0.2.2";
         edition = "2015";
@@ -472,21 +472,21 @@ rec {
         dependencies = [
           {
             name = "ansi_term";
-            packageId = "ansi_term 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "ansi_term";
           }
           {
             name = "difference";
-            packageId = "difference 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "difference";
           }
           {
             name = "itertools";
-            packageId = "itertools 0.7.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "itertools 0.7.11";
             usesDefaultFeatures = false;
           }
         ];
         
       };
-      "crate2nix 0.8.0-alpha.0 (path+file:///home/peter/projects/crate2nix/crate2nix)" = rec {
+      "crate2nix" = rec {
         crateName = "crate2nix";
         version = "0.8.0-alpha.0";
         edition = "2018";
@@ -500,89 +500,89 @@ rec {
         dependencies = [
           {
             name = "cargo_metadata";
-            packageId = "cargo_metadata 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cargo_metadata";
           }
           {
             name = "failure";
-            packageId = "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "failure";
           }
           {
             name = "hex";
-            packageId = "hex 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "hex";
           }
           {
             name = "itertools";
-            packageId = "itertools 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "itertools 0.8.2";
           }
           {
             name = "lazy_static";
-            packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "lazy_static";
           }
           {
             name = "nix-base32";
-            packageId = "nix-base32 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "nix-base32";
           }
           {
             name = "pathdiff";
-            packageId = "pathdiff 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "pathdiff";
           }
           {
             name = "quicli";
-            packageId = "quicli 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quicli";
             usesDefaultFeatures = false;
           }
           {
             name = "semver";
-            packageId = "semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "semver";
           }
           {
             name = "serde";
-            packageId = "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde";
             features = [ "derive" ];
           }
           {
             name = "serde_json";
-            packageId = "serde_json 1.0.48 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_json";
           }
           {
             name = "structopt";
-            packageId = "structopt 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "structopt 0.3.9";
           }
           {
             name = "tera";
-            packageId = "tera 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tera";
             usesDefaultFeatures = false;
           }
           {
             name = "toml";
-            packageId = "toml 0.5.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "toml";
           }
           {
             name = "url";
-            packageId = "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "url";
           }
           {
             name = "url_serde";
-            packageId = "url_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "url_serde";
           }
         ];
         devDependencies = [
           {
             name = "colored-diff";
-            packageId = "colored-diff 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "colored-diff";
           }
           {
             name = "fs_extra";
-            packageId = "fs_extra 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "fs_extra";
           }
           {
             name = "tempdir";
-            packageId = "tempdir 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "tempdir";
           }
         ];
         
       };
-      "crossbeam-channel 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "crossbeam-channel" = rec {
         crateName = "crossbeam-channel";
         version = "0.4.0";
         edition = "2015";
@@ -593,12 +593,12 @@ rec {
         dependencies = [
           {
             name = "crossbeam-utils";
-            packageId = "crossbeam-utils 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "crossbeam-utils";
           }
         ];
         
       };
-      "crossbeam-utils 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "crossbeam-utils" = rec {
         crateName = "crossbeam-utils";
         version = "0.7.0";
         edition = "2015";
@@ -609,18 +609,18 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if";
           }
           {
             name = "lazy_static";
-            packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "lazy_static";
             optional = true;
           }
         ];
         buildDependencies = [
           {
             name = "autocfg";
-            packageId = "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "autocfg";
           }
         ];
         features = {
@@ -629,7 +629,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "lazy_static" "std" ];
       };
-      "difference 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "difference" = rec {
         crateName = "difference";
         version = "2.0.0";
         edition = "2015";
@@ -644,7 +644,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "digest 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "digest" = rec {
         crateName = "digest";
         version = "0.8.1";
         edition = "2015";
@@ -655,14 +655,14 @@ rec {
         dependencies = [
           {
             name = "generic-array";
-            packageId = "generic-array 0.12.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "generic-array";
           }
         ];
         features = {
           "dev" = [ "blobby" ];
         };
       };
-      "either 1.5.3 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "either" = rec {
         crateName = "either";
         version = "1.5.3";
         edition = "2015";
@@ -674,7 +674,7 @@ rec {
           "default" = [ "use_std" ];
         };
       };
-      "env_logger 0.5.13 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "env_logger" = rec {
         crateName = "env_logger";
         version = "0.5.13";
         edition = "2015";
@@ -685,25 +685,25 @@ rec {
         dependencies = [
           {
             name = "atty";
-            packageId = "atty 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "atty";
           }
           {
             name = "humantime";
-            packageId = "humantime 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "humantime";
           }
           {
             name = "log";
-            packageId = "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "log";
             features = [ "std" ];
           }
           {
             name = "regex";
-            packageId = "regex 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "regex";
             optional = true;
           }
           {
             name = "termcolor";
-            packageId = "termcolor 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "termcolor";
           }
         ];
         features = {
@@ -711,7 +711,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "regex" ];
       };
-      "exitfailure 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "exitfailure" = rec {
         crateName = "exitfailure";
         version = "0.5.1";
         edition = "2015";
@@ -722,12 +722,12 @@ rec {
         dependencies = [
           {
             name = "failure";
-            packageId = "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "failure";
           }
         ];
         
       };
-      "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "failure" = rec {
         crateName = "failure";
         version = "0.1.6";
         edition = "2015";
@@ -738,12 +738,12 @@ rec {
         dependencies = [
           {
             name = "backtrace";
-            packageId = "backtrace 0.3.44 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "backtrace";
             optional = true;
           }
           {
             name = "failure_derive";
-            packageId = "failure_derive 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "failure_derive";
             optional = true;
           }
         ];
@@ -754,7 +754,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "backtrace" "default" "derive" "failure_derive" "std" ];
       };
-      "failure_derive 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "failure_derive" = rec {
         crateName = "failure_derive";
         version = "0.1.6";
         edition = "2015";
@@ -766,25 +766,25 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 1.0.2";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.14";
           }
           {
             name = "synstructure";
-            packageId = "synstructure 0.12.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "synstructure";
           }
         ];
         features = {
         };
       };
-      "fake-simd 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "fake-simd" = rec {
         crateName = "fake-simd";
         version = "0.1.2";
         edition = "2015";
@@ -794,7 +794,7 @@ rec {
         ];
         
       };
-      "fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "fnv" = rec {
         crateName = "fnv";
         version = "1.0.6";
         edition = "2015";
@@ -805,7 +805,7 @@ rec {
         ];
         
       };
-      "fs_extra 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "fs_extra" = rec {
         crateName = "fs_extra";
         version = "1.1.0";
         edition = "2015";
@@ -815,7 +815,7 @@ rec {
         ];
         
       };
-      "fuchsia-cprng 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "fuchsia-cprng" = rec {
         crateName = "fuchsia-cprng";
         version = "0.1.1";
         edition = "2018";
@@ -825,7 +825,7 @@ rec {
         ];
         
       };
-      "generic-array 0.12.3 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "generic-array" = rec {
         crateName = "generic-array";
         version = "0.12.3";
         edition = "2015";
@@ -838,12 +838,12 @@ rec {
         dependencies = [
           {
             name = "typenum";
-            packageId = "typenum 1.11.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "typenum";
           }
         ];
         
       };
-      "globset 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "globset" = rec {
         crateName = "globset";
         version = "0.4.4";
         edition = "2015";
@@ -854,31 +854,31 @@ rec {
         dependencies = [
           {
             name = "aho-corasick";
-            packageId = "aho-corasick 0.7.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "aho-corasick";
           }
           {
             name = "bstr";
-            packageId = "bstr 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "bstr";
             usesDefaultFeatures = false;
             features = [ "std" ];
           }
           {
             name = "fnv";
-            packageId = "fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "fnv";
           }
           {
             name = "log";
-            packageId = "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "log";
           }
           {
             name = "regex";
-            packageId = "regex 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "regex";
           }
         ];
         features = {
         };
       };
-      "globwalk 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "globwalk" = rec {
         crateName = "globwalk";
         version = "0.7.1";
         edition = "2015";
@@ -889,16 +889,16 @@ rec {
         dependencies = [
           {
             name = "ignore";
-            packageId = "ignore 0.4.11 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "ignore";
           }
           {
             name = "walkdir";
-            packageId = "walkdir 2.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "walkdir";
           }
         ];
         
       };
-      "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "heck" = rec {
         crateName = "heck";
         version = "0.3.1";
         edition = "2015";
@@ -909,12 +909,12 @@ rec {
         dependencies = [
           {
             name = "unicode-segmentation";
-            packageId = "unicode-segmentation 1.6.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "unicode-segmentation";
           }
         ];
         
       };
-      "hermit-abi 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "hermit-abi" = rec {
         crateName = "hermit-abi";
         version = "0.1.7";
         edition = "2015";
@@ -925,7 +925,7 @@ rec {
         dependencies = [
           {
             name = "libc";
-            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc";
             usesDefaultFeatures = false;
           }
         ];
@@ -934,7 +934,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "hex 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "hex" = rec {
         crateName = "hex";
         version = "0.4.1";
         edition = "2018";
@@ -947,7 +947,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
-      "humantime 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "humantime" = rec {
         crateName = "humantime";
         version = "1.3.0";
         edition = "2015";
@@ -958,12 +958,12 @@ rec {
         dependencies = [
           {
             name = "quick-error";
-            packageId = "quick-error 1.2.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quick-error";
           }
         ];
         
       };
-      "idna 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "idna" = rec {
         crateName = "idna";
         version = "0.1.5";
         edition = "2015";
@@ -974,20 +974,20 @@ rec {
         dependencies = [
           {
             name = "matches";
-            packageId = "matches 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "matches";
           }
           {
             name = "unicode-bidi";
-            packageId = "unicode-bidi 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "unicode-bidi";
           }
           {
             name = "unicode-normalization";
-            packageId = "unicode-normalization 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "unicode-normalization";
           }
         ];
         
       };
-      "ignore 0.4.11 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "ignore" = rec {
         crateName = "ignore";
         version = "0.4.11";
         edition = "2015";
@@ -998,43 +998,43 @@ rec {
         dependencies = [
           {
             name = "crossbeam-channel";
-            packageId = "crossbeam-channel 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "crossbeam-channel";
           }
           {
             name = "globset";
-            packageId = "globset 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "globset";
           }
           {
             name = "lazy_static";
-            packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "lazy_static";
           }
           {
             name = "log";
-            packageId = "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "log";
           }
           {
             name = "memchr";
-            packageId = "memchr 2.3.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "memchr";
           }
           {
             name = "regex";
-            packageId = "regex 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "regex";
           }
           {
             name = "same-file";
-            packageId = "same-file 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "same-file";
           }
           {
             name = "thread_local";
-            packageId = "thread_local 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "thread_local";
           }
           {
             name = "walkdir";
-            packageId = "walkdir 2.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "walkdir";
           }
           {
             name = "winapi-util";
-            packageId = "winapi-util 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi-util";
             target = { target, features }: target."windows";
           }
         ];
@@ -1042,7 +1042,7 @@ rec {
           "simd-accel" = [ "globset/simd-accel" ];
         };
       };
-      "itertools 0.7.11 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "itertools 0.7.11" = rec {
         crateName = "itertools";
         version = "0.7.11";
         edition = "2015";
@@ -1053,7 +1053,7 @@ rec {
         dependencies = [
           {
             name = "either";
-            packageId = "either 1.5.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "either";
             usesDefaultFeatures = false;
           }
         ];
@@ -1061,7 +1061,7 @@ rec {
           "default" = [ "use_std" ];
         };
       };
-      "itertools 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "itertools 0.8.2" = rec {
         crateName = "itertools";
         version = "0.8.2";
         edition = "2015";
@@ -1072,7 +1072,7 @@ rec {
         dependencies = [
           {
             name = "either";
-            packageId = "either 1.5.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "either";
             usesDefaultFeatures = false;
           }
         ];
@@ -1081,7 +1081,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "use_std" ];
       };
-      "itoa 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "itoa" = rec {
         crateName = "itoa";
         version = "0.4.5";
         edition = "2015";
@@ -1093,7 +1093,7 @@ rec {
           "default" = [ "std" ];
         };
       };
-      "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "lazy_static" = rec {
         crateName = "lazy_static";
         version = "1.4.0";
         edition = "2015";
@@ -1105,7 +1105,7 @@ rec {
           "spin_no_std" = [ "spin" ];
         };
       };
-      "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "libc" = rec {
         crateName = "libc";
         version = "0.2.66";
         edition = "2015";
@@ -1120,7 +1120,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
-      "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "log" = rec {
         crateName = "log";
         version = "0.4.8";
         edition = "2015";
@@ -1131,7 +1131,7 @@ rec {
         dependencies = [
           {
             name = "cfg-if";
-            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "cfg-if";
           }
         ];
         features = {
@@ -1139,7 +1139,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "std" ];
       };
-      "maplit 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "maplit" = rec {
         crateName = "maplit";
         version = "1.0.2";
         edition = "2015";
@@ -1149,7 +1149,7 @@ rec {
         ];
         
       };
-      "matches 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "matches" = rec {
         crateName = "matches";
         version = "0.1.8";
         edition = "2015";
@@ -1160,7 +1160,7 @@ rec {
         ];
         
       };
-      "memchr 2.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "memchr" = rec {
         crateName = "memchr";
         version = "2.3.2";
         edition = "2015";
@@ -1175,7 +1175,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" "use_std" ];
       };
-      "nix-base32 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "nix-base32" = rec {
         crateName = "nix-base32";
         version = "0.1.1";
         edition = "2018";
@@ -1185,7 +1185,7 @@ rec {
         ];
         
       };
-      "opaque-debug 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "opaque-debug" = rec {
         crateName = "opaque-debug";
         version = "0.2.3";
         edition = "2015";
@@ -1195,7 +1195,7 @@ rec {
         ];
         
       };
-      "pathdiff 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "pathdiff" = rec {
         crateName = "pathdiff";
         version = "0.1.0";
         edition = "2015";
@@ -1205,7 +1205,7 @@ rec {
         ];
         
       };
-      "percent-encoding 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "percent-encoding" = rec {
         crateName = "percent-encoding";
         version = "1.0.1";
         edition = "2015";
@@ -1216,7 +1216,7 @@ rec {
         ];
         
       };
-      "pest 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "pest" = rec {
         crateName = "pest";
         version = "2.1.2";
         edition = "2015";
@@ -1227,14 +1227,14 @@ rec {
         dependencies = [
           {
             name = "ucd-trie";
-            packageId = "ucd-trie 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "ucd-trie";
           }
         ];
         features = {
           "pretty-print" = [ "serde" "serde_json" ];
         };
       };
-      "pest_derive 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "pest_derive" = rec {
         crateName = "pest_derive";
         version = "2.1.0";
         edition = "2015";
@@ -1246,16 +1246,16 @@ rec {
         dependencies = [
           {
             name = "pest";
-            packageId = "pest 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "pest";
           }
           {
             name = "pest_generator";
-            packageId = "pest_generator 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "pest_generator";
           }
         ];
         
       };
-      "pest_generator 2.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "pest_generator" = rec {
         crateName = "pest_generator";
         version = "2.1.1";
         edition = "2015";
@@ -1266,28 +1266,28 @@ rec {
         dependencies = [
           {
             name = "pest";
-            packageId = "pest 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "pest";
           }
           {
             name = "pest_meta";
-            packageId = "pest_meta 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "pest_meta";
           }
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 1.0.2";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.14";
           }
         ];
         
       };
-      "pest_meta 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "pest_meta" = rec {
         crateName = "pest_meta";
         version = "2.1.2";
         edition = "2015";
@@ -1298,23 +1298,23 @@ rec {
         dependencies = [
           {
             name = "maplit";
-            packageId = "maplit 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "maplit";
           }
           {
             name = "pest";
-            packageId = "pest 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "pest";
           }
         ];
         buildDependencies = [
           {
             name = "sha-1";
-            packageId = "sha-1 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "sha-1";
             usesDefaultFeatures = false;
           }
         ];
         
       };
-      "proc-macro-error 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "proc-macro-error" = rec {
         crateName = "proc-macro-error";
         version = "0.4.9";
         edition = "2018";
@@ -1325,37 +1325,37 @@ rec {
         dependencies = [
           {
             name = "proc-macro-error-attr";
-            packageId = "proc-macro-error-attr 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro-error-attr";
           }
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 1.0.2";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.14";
             usesDefaultFeatures = false;
           }
         ];
         buildDependencies = [
           {
             name = "rustversion";
-            packageId = "rustversion 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "rustversion";
           }
         ];
         devDependencies = [
           {
             name = "rustversion";
-            packageId = "rustversion 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "rustversion";
           }
         ];
         
       };
-      "proc-macro-error-attr 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "proc-macro-error-attr" = rec {
         crateName = "proc-macro-error-attr";
         version = "0.4.9";
         edition = "2018";
@@ -1367,30 +1367,30 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 1.0.2";
           }
           {
             name = "rustversion";
-            packageId = "rustversion 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "rustversion";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.14";
             usesDefaultFeatures = false;
             features = [ "derive" "parsing" "proc-macro" ];
           }
           {
             name = "syn-mid";
-            packageId = "syn-mid 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn-mid";
           }
         ];
         
       };
-      "proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "proc-macro2 0.4.30" = rec {
         crateName = "proc-macro2";
         version = "0.4.30";
         edition = "2015";
@@ -1401,7 +1401,7 @@ rec {
         dependencies = [
           {
             name = "unicode-xid";
-            packageId = "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "unicode-xid 0.1.0";
           }
         ];
         features = {
@@ -1409,7 +1409,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "proc-macro" ];
       };
-      "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "proc-macro2 1.0.8" = rec {
         crateName = "proc-macro2";
         version = "1.0.8";
         edition = "2018";
@@ -1420,7 +1420,7 @@ rec {
         dependencies = [
           {
             name = "unicode-xid";
-            packageId = "unicode-xid 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "unicode-xid 0.2.0";
           }
         ];
         features = {
@@ -1428,7 +1428,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "proc-macro" ];
       };
-      "quick-error 1.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "quick-error" = rec {
         crateName = "quick-error";
         version = "1.2.3";
         edition = "2015";
@@ -1439,7 +1439,7 @@ rec {
         ];
         
       };
-      "quicli 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "quicli" = rec {
         crateName = "quicli";
         version = "0.4.0";
         edition = "2018";
@@ -1450,23 +1450,23 @@ rec {
         dependencies = [
           {
             name = "clap-verbosity-flag";
-            packageId = "clap-verbosity-flag 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "clap-verbosity-flag";
           }
           {
             name = "exitfailure";
-            packageId = "exitfailure 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "exitfailure";
           }
           {
             name = "failure";
-            packageId = "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "failure";
           }
           {
             name = "failure_derive";
-            packageId = "failure_derive 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "failure_derive";
           }
           {
             name = "log";
-            packageId = "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "log";
           }
         ];
         features = {
@@ -1474,7 +1474,7 @@ rec {
           "full-throttle" = [ "serde" "serde_derive" "globwalk" "rayon" "remove_dir_all" ];
         };
       };
-      "quote 0.6.13 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "quote 0.6.13" = rec {
         crateName = "quote";
         version = "0.6.13";
         edition = "2015";
@@ -1485,7 +1485,7 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 0.4.30";
             usesDefaultFeatures = false;
           }
         ];
@@ -1495,7 +1495,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "proc-macro" ];
       };
-      "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "quote 1.0.2" = rec {
         crateName = "quote";
         version = "1.0.2";
         edition = "2018";
@@ -1506,7 +1506,7 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
             usesDefaultFeatures = false;
           }
         ];
@@ -1516,7 +1516,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "proc-macro" ];
       };
-      "rand 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "rand" = rec {
         crateName = "rand";
         version = "0.4.6";
         edition = "2015";
@@ -1527,29 +1527,29 @@ rec {
         dependencies = [
           {
             name = "fuchsia-cprng";
-            packageId = "fuchsia-cprng 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "fuchsia-cprng";
             target = { target, features }: (target."os" == "fuchsia");
           }
           {
             name = "libc";
-            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "libc";
             optional = true;
             target = { target, features }: target."unix";
           }
           {
             name = "rand_core";
-            packageId = "rand_core 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "rand_core 0.3.1";
             usesDefaultFeatures = false;
             target = { target, features }: (target."env" == "sgx");
           }
           {
             name = "rdrand";
-            packageId = "rdrand 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "rdrand";
             target = { target, features }: (target."env" == "sgx");
           }
           {
             name = "winapi";
-            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi";
             target = { target, features }: target."windows";
             features = [ "minwindef" "ntsecapi" "profileapi" "winnt" ];
           }
@@ -1561,7 +1561,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "libc" "std" ];
       };
-      "rand_core 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "rand_core 0.3.1" = rec {
         crateName = "rand_core";
         version = "0.3.1";
         edition = "2015";
@@ -1573,7 +1573,7 @@ rec {
         dependencies = [
           {
             name = "rand_core";
-            packageId = "rand_core 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "rand_core 0.4.2";
           }
         ];
         features = {
@@ -1583,7 +1583,7 @@ rec {
           "std" = [ "rand_core/std" ];
         };
       };
-      "rand_core 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "rand_core 0.4.2" = rec {
         crateName = "rand_core";
         version = "0.4.2";
         edition = "2015";
@@ -1597,7 +1597,7 @@ rec {
           "std" = [ "alloc" ];
         };
       };
-      "rdrand 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "rdrand" = rec {
         crateName = "rdrand";
         version = "0.4.0";
         edition = "2015";
@@ -1608,7 +1608,7 @@ rec {
         dependencies = [
           {
             name = "rand_core";
-            packageId = "rand_core 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "rand_core 0.3.1";
             usesDefaultFeatures = false;
           }
         ];
@@ -1617,7 +1617,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
-      "regex 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "regex" = rec {
         crateName = "regex";
         version = "1.3.4";
         edition = "2015";
@@ -1628,22 +1628,22 @@ rec {
         dependencies = [
           {
             name = "aho-corasick";
-            packageId = "aho-corasick 0.7.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "aho-corasick";
             optional = true;
           }
           {
             name = "memchr";
-            packageId = "memchr 2.3.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "memchr";
             optional = true;
           }
           {
             name = "regex-syntax";
-            packageId = "regex-syntax 0.6.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "regex-syntax";
             usesDefaultFeatures = false;
           }
           {
             name = "thread_local";
-            packageId = "thread_local 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "thread_local";
             optional = true;
           }
         ];
@@ -1665,7 +1665,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "aho-corasick" "default" "memchr" "perf" "perf-cache" "perf-dfa" "perf-inline" "perf-literal" "std" "thread_local" "unicode" "unicode-age" "unicode-bool" "unicode-case" "unicode-gencat" "unicode-perl" "unicode-script" "unicode-segment" ];
       };
-      "regex-syntax 0.6.14 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "regex-syntax" = rec {
         crateName = "regex-syntax";
         version = "0.6.14";
         edition = "2015";
@@ -1679,7 +1679,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "unicode-age" "unicode-bool" "unicode-case" "unicode-gencat" "unicode-perl" "unicode-script" "unicode-segment" ];
       };
-      "remove_dir_all 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "remove_dir_all" = rec {
         crateName = "remove_dir_all";
         version = "0.5.2";
         edition = "2015";
@@ -1690,14 +1690,14 @@ rec {
         dependencies = [
           {
             name = "winapi";
-            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi";
             target = { target, features }: target."windows";
             features = [ "std" "errhandlingapi" "winerror" "fileapi" "winbase" ];
           }
         ];
         
       };
-      "rustc-demangle 0.1.16 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "rustc-demangle" = rec {
         crateName = "rustc-demangle";
         version = "0.1.16";
         edition = "2015";
@@ -1709,7 +1709,7 @@ rec {
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
       };
-      "rustversion 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "rustversion" = rec {
         crateName = "rustversion";
         version = "1.0.2";
         edition = "2018";
@@ -1722,21 +1722,21 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 1.0.2";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.14";
             features = [ "full" ];
           }
         ];
         
       };
-      "ryu 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "ryu" = rec {
         crateName = "ryu";
         version = "1.0.2";
         edition = "2015";
@@ -1747,7 +1747,7 @@ rec {
         features = {
         };
       };
-      "same-file 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "same-file" = rec {
         crateName = "same-file";
         version = "1.0.6";
         edition = "2018";
@@ -1758,13 +1758,13 @@ rec {
         dependencies = [
           {
             name = "winapi-util";
-            packageId = "winapi-util 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi-util";
             target = { target, features }: target."windows";
           }
         ];
         
       };
-      "semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "semver" = rec {
         crateName = "semver";
         version = "0.9.0";
         edition = "2015";
@@ -1776,11 +1776,11 @@ rec {
         dependencies = [
           {
             name = "semver-parser";
-            packageId = "semver-parser 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "semver-parser";
           }
           {
             name = "serde";
-            packageId = "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde";
             optional = true;
           }
         ];
@@ -1789,7 +1789,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "serde" ];
       };
-      "semver-parser 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "semver-parser" = rec {
         crateName = "semver-parser";
         version = "0.7.0";
         edition = "2015";
@@ -1799,7 +1799,7 @@ rec {
         ];
         
       };
-      "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "serde" = rec {
         crateName = "serde";
         version = "1.0.104";
         edition = "2015";
@@ -1811,14 +1811,14 @@ rec {
         dependencies = [
           {
             name = "serde_derive";
-            packageId = "serde_derive 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_derive";
             optional = true;
           }
         ];
         devDependencies = [
           {
             name = "serde_derive";
-            packageId = "serde_derive 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_derive";
           }
         ];
         features = {
@@ -1827,7 +1827,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "derive" "serde_derive" "std" ];
       };
-      "serde_derive 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "serde_derive" = rec {
         crateName = "serde_derive";
         version = "1.0.104";
         edition = "2015";
@@ -1840,15 +1840,15 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 1.0.2";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.14";
             features = [ "visit" ];
           }
         ];
@@ -1856,7 +1856,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "serde_json 1.0.48 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "serde_json" = rec {
         crateName = "serde_json";
         version = "1.0.48";
         edition = "2018";
@@ -1868,16 +1868,16 @@ rec {
         dependencies = [
           {
             name = "itoa";
-            packageId = "itoa 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "itoa";
             usesDefaultFeatures = false;
           }
           {
             name = "ryu";
-            packageId = "ryu 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "ryu";
           }
           {
             name = "serde";
-            packageId = "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde";
             usesDefaultFeatures = false;
           }
         ];
@@ -1889,7 +1889,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
-      "sha-1 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "sha-1" = rec {
         crateName = "sha-1";
         version = "0.8.2";
         edition = "2015";
@@ -1901,25 +1901,25 @@ rec {
         dependencies = [
           {
             name = "block-buffer";
-            packageId = "block-buffer 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "block-buffer";
           }
           {
             name = "digest";
-            packageId = "digest 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "digest";
           }
           {
             name = "fake-simd";
-            packageId = "fake-simd 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "fake-simd";
           }
           {
             name = "opaque-debug";
-            packageId = "opaque-debug 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "opaque-debug";
           }
         ];
         devDependencies = [
           {
             name = "digest";
-            packageId = "digest 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "digest";
             features = [ "dev" ];
           }
         ];
@@ -1930,7 +1930,7 @@ rec {
           "std" = [ "digest/std" ];
         };
       };
-      "smallvec 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "smallvec" = rec {
         crateName = "smallvec";
         version = "1.2.0";
         edition = "2018";
@@ -1942,7 +1942,7 @@ rec {
         features = {
         };
       };
-      "strsim 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "strsim" = rec {
         crateName = "strsim";
         version = "0.8.0";
         edition = "2015";
@@ -1952,7 +1952,7 @@ rec {
         ];
         
       };
-      "structopt 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "structopt 0.2.18" = rec {
         crateName = "structopt";
         version = "0.2.18";
         edition = "2015";
@@ -1964,12 +1964,12 @@ rec {
         dependencies = [
           {
             name = "clap";
-            packageId = "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "clap";
             usesDefaultFeatures = false;
           }
           {
             name = "structopt-derive";
-            packageId = "structopt-derive 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "structopt-derive 0.2.18";
           }
         ];
         features = {
@@ -1987,7 +1987,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "structopt 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "structopt 0.3.9" = rec {
         crateName = "structopt";
         version = "0.3.9";
         edition = "2018";
@@ -1999,16 +1999,16 @@ rec {
         dependencies = [
           {
             name = "clap";
-            packageId = "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "clap";
             usesDefaultFeatures = false;
           }
           {
             name = "lazy_static";
-            packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "lazy_static";
           }
           {
             name = "structopt-derive";
-            packageId = "structopt-derive 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "structopt-derive 0.4.2";
           }
         ];
         features = {
@@ -2025,7 +2025,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "structopt-derive 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "structopt-derive 0.2.18" = rec {
         crateName = "structopt-derive";
         version = "0.2.18";
         edition = "2015";
@@ -2037,26 +2037,26 @@ rec {
         dependencies = [
           {
             name = "heck";
-            packageId = "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "heck";
           }
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 0.4.30";
           }
           {
             name = "quote";
-            packageId = "quote 0.6.13 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 0.6.13";
           }
           {
             name = "syn";
-            packageId = "syn 0.15.44 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 0.15.44";
           }
         ];
         features = {
           "nightly" = [ "proc-macro2/nightly" ];
         };
       };
-      "structopt-derive 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "structopt-derive 0.4.2" = rec {
         crateName = "structopt-derive";
         version = "0.4.2";
         edition = "2018";
@@ -2068,23 +2068,23 @@ rec {
         dependencies = [
           {
             name = "heck";
-            packageId = "heck 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "heck";
           }
           {
             name = "proc-macro-error";
-            packageId = "proc-macro-error 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro-error";
           }
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 1.0.2";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.14";
             usesDefaultFeatures = false;
             features = [ "derive" "parsing" "proc-macro" ];
           }
@@ -2092,7 +2092,7 @@ rec {
         features = {
         };
       };
-      "syn 0.15.44 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "syn 0.15.44" = rec {
         crateName = "syn";
         version = "0.15.44";
         edition = "2015";
@@ -2103,18 +2103,18 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 0.4.30";
             usesDefaultFeatures = false;
           }
           {
             name = "quote";
-            packageId = "quote 0.6.13 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 0.6.13";
             optional = true;
             usesDefaultFeatures = false;
           }
           {
             name = "unicode-xid";
-            packageId = "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "unicode-xid 0.1.0";
           }
         ];
         features = {
@@ -2124,7 +2124,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "clone-impls" "default" "derive" "parsing" "printing" "proc-macro" "quote" ];
       };
-      "syn 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "syn 1.0.14" = rec {
         crateName = "syn";
         version = "1.0.14";
         edition = "2018";
@@ -2135,18 +2135,18 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
             usesDefaultFeatures = false;
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 1.0.2";
             optional = true;
             usesDefaultFeatures = false;
           }
           {
             name = "unicode-xid";
-            packageId = "unicode-xid 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "unicode-xid 0.2.0";
           }
         ];
         features = {
@@ -2156,7 +2156,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "clone-impls" "default" "derive" "extra-traits" "full" "parsing" "printing" "proc-macro" "quote" "visit" ];
       };
-      "syn-mid 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "syn-mid" = rec {
         crateName = "syn-mid";
         version = "0.5.0";
         edition = "2018";
@@ -2167,15 +2167,15 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 1.0.2";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.14";
             usesDefaultFeatures = false;
             features = [ "parsing" "printing" "derive" ];
           }
@@ -2184,7 +2184,7 @@ rec {
           "clone-impls" = [ "syn/clone-impls" ];
         };
       };
-      "synstructure 0.12.3 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "synstructure" = rec {
         crateName = "synstructure";
         version = "0.12.3";
         edition = "2018";
@@ -2195,23 +2195,23 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "proc-macro2 1.0.8";
             usesDefaultFeatures = false;
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "quote 1.0.2";
             usesDefaultFeatures = false;
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "syn 1.0.14";
             usesDefaultFeatures = false;
             features = [ "derive" "parsing" "printing" "clone-impls" "visit" "extra-traits" ];
           }
           {
             name = "unicode-xid";
-            packageId = "unicode-xid 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "unicode-xid 0.2.0";
           }
         ];
         features = {
@@ -2220,7 +2220,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "proc-macro" ];
       };
-      "tempdir 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "tempdir" = rec {
         crateName = "tempdir";
         version = "0.3.7";
         edition = "2015";
@@ -2231,16 +2231,16 @@ rec {
         dependencies = [
           {
             name = "rand";
-            packageId = "rand 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "rand";
           }
           {
             name = "remove_dir_all";
-            packageId = "remove_dir_all 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "remove_dir_all";
           }
         ];
         
       };
-      "tera 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "tera" = rec {
         crateName = "tera";
         version = "1.0.2";
         edition = "2018";
@@ -2251,31 +2251,31 @@ rec {
         dependencies = [
           {
             name = "globwalk";
-            packageId = "globwalk 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "globwalk";
           }
           {
             name = "lazy_static";
-            packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "lazy_static";
           }
           {
             name = "pest";
-            packageId = "pest 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "pest";
           }
           {
             name = "pest_derive";
-            packageId = "pest_derive 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "pest_derive";
           }
           {
             name = "regex";
-            packageId = "regex 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "regex";
           }
           {
             name = "serde";
-            packageId = "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde";
           }
           {
             name = "serde_json";
-            packageId = "serde_json 1.0.48 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde_json";
           }
         ];
         features = {
@@ -2284,7 +2284,7 @@ rec {
           "preserve_order" = [ "serde_json/preserve_order" ];
         };
       };
-      "termcolor 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "termcolor" = rec {
         crateName = "termcolor";
         version = "1.1.0";
         edition = "2018";
@@ -2295,13 +2295,13 @@ rec {
         dependencies = [
           {
             name = "winapi-util";
-            packageId = "winapi-util 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi-util";
             target = { target, features }: target."windows";
           }
         ];
         
       };
-      "textwrap 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "textwrap" = rec {
         crateName = "textwrap";
         version = "0.11.0";
         edition = "2015";
@@ -2312,12 +2312,12 @@ rec {
         dependencies = [
           {
             name = "unicode-width";
-            packageId = "unicode-width 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "unicode-width";
           }
         ];
         
       };
-      "thread_local 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "thread_local" = rec {
         crateName = "thread_local";
         version = "1.0.1";
         edition = "2015";
@@ -2328,12 +2328,12 @@ rec {
         dependencies = [
           {
             name = "lazy_static";
-            packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "lazy_static";
           }
         ];
         
       };
-      "toml 0.5.6 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "toml" = rec {
         crateName = "toml";
         version = "0.5.6";
         edition = "2018";
@@ -2344,7 +2344,7 @@ rec {
         dependencies = [
           {
             name = "serde";
-            packageId = "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde";
           }
         ];
         features = {
@@ -2352,7 +2352,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "typenum 1.11.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "typenum" = rec {
         crateName = "typenum";
         version = "1.11.2";
         edition = "2015";
@@ -2365,7 +2365,7 @@ rec {
         features = {
         };
       };
-      "ucd-trie 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "ucd-trie" = rec {
         crateName = "ucd-trie";
         version = "0.1.2";
         edition = "2015";
@@ -2378,7 +2378,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
-      "unicode-bidi 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "unicode-bidi" = rec {
         crateName = "unicode-bidi";
         version = "0.3.4";
         edition = "2015";
@@ -2390,7 +2390,7 @@ rec {
         dependencies = [
           {
             name = "matches";
-            packageId = "matches 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "matches";
           }
         ];
         features = {
@@ -2399,7 +2399,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "unicode-normalization 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "unicode-normalization" = rec {
         crateName = "unicode-normalization";
         version = "0.1.12";
         edition = "2015";
@@ -2410,12 +2410,12 @@ rec {
         dependencies = [
           {
             name = "smallvec";
-            packageId = "smallvec 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "smallvec";
           }
         ];
         
       };
-      "unicode-segmentation 1.6.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "unicode-segmentation" = rec {
         crateName = "unicode-segmentation";
         version = "1.6.0";
         edition = "2015";
@@ -2427,7 +2427,7 @@ rec {
         features = {
         };
       };
-      "unicode-width 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "unicode-width" = rec {
         crateName = "unicode-width";
         version = "0.1.7";
         edition = "2015";
@@ -2441,7 +2441,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "unicode-xid 0.1.0" = rec {
         crateName = "unicode-xid";
         version = "0.1.0";
         edition = "2015";
@@ -2454,7 +2454,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "unicode-xid 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "unicode-xid 0.2.0" = rec {
         crateName = "unicode-xid";
         version = "0.2.0";
         edition = "2015";
@@ -2467,7 +2467,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "url" = rec {
         crateName = "url";
         version = "1.7.2";
         edition = "2015";
@@ -2478,15 +2478,15 @@ rec {
         dependencies = [
           {
             name = "idna";
-            packageId = "idna 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "idna";
           }
           {
             name = "matches";
-            packageId = "matches 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "matches";
           }
           {
             name = "percent-encoding";
-            packageId = "percent-encoding 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "percent-encoding";
           }
         ];
         features = {
@@ -2494,7 +2494,7 @@ rec {
           "query_encoding" = [ "encoding" ];
         };
       };
-      "url_serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "url_serde" = rec {
         crateName = "url_serde";
         version = "0.2.0";
         edition = "2015";
@@ -2505,16 +2505,16 @@ rec {
         dependencies = [
           {
             name = "serde";
-            packageId = "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "serde";
           }
           {
             name = "url";
-            packageId = "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "url";
           }
         ];
         
       };
-      "vec_map 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "vec_map" = rec {
         crateName = "vec_map";
         version = "0.8.1";
         edition = "2015";
@@ -2551,7 +2551,7 @@ rec {
           "eders" = [ "serde" ];
         };
       };
-      "walkdir 2.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "walkdir" = rec {
         crateName = "walkdir";
         version = "2.3.1";
         edition = "2018";
@@ -2562,23 +2562,23 @@ rec {
         dependencies = [
           {
             name = "same-file";
-            packageId = "same-file 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "same-file";
           }
           {
             name = "winapi";
-            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi";
             target = { target, features }: target."windows";
             features = [ "std" "winnt" ];
           }
           {
             name = "winapi-util";
-            packageId = "winapi-util 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi-util";
             target = { target, features }: target."windows";
           }
         ];
         
       };
-      "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "winapi" = rec {
         crateName = "winapi";
         version = "0.3.8";
         edition = "2015";
@@ -2589,12 +2589,12 @@ rec {
         dependencies = [
           {
             name = "winapi-i686-pc-windows-gnu";
-            packageId = "winapi-i686-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi-i686-pc-windows-gnu";
             target = { target, features }: (stdenv.hostPlatform.config == "i686-pc-windows-gnu");
           }
           {
             name = "winapi-x86_64-pc-windows-gnu";
-            packageId = "winapi-x86_64-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi-x86_64-pc-windows-gnu";
             target = { target, features }: (stdenv.hostPlatform.config == "x86_64-pc-windows-gnu");
           }
         ];
@@ -2603,7 +2603,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "consoleapi" "errhandlingapi" "fileapi" "minwinbase" "minwindef" "ntsecapi" "processenv" "profileapi" "std" "winbase" "wincon" "winerror" "winnt" ];
       };
-      "winapi-i686-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "winapi-i686-pc-windows-gnu" = rec {
         crateName = "winapi-i686-pc-windows-gnu";
         version = "0.4.0";
         edition = "2015";
@@ -2613,7 +2613,7 @@ rec {
         ];
         
       };
-      "winapi-util 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "winapi-util" = rec {
         crateName = "winapi-util";
         version = "0.1.3";
         edition = "2018";
@@ -2624,14 +2624,14 @@ rec {
         dependencies = [
           {
             name = "winapi";
-            packageId = "winapi 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)";
+            packageId = "winapi";
             target = { target, features }: target."windows";
             features = [ "std" "consoleapi" "errhandlingapi" "fileapi" "minwindef" "processenv" "winbase" "wincon" "winerror" "winnt" ];
           }
         ];
         
       };
-      "winapi-x86_64-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
+      "winapi-x86_64-pc-windows-gnu" = rec {
         crateName = "winapi-x86_64-pc-windows-gnu";
         version = "0.4.0";
         edition = "2015";

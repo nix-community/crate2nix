@@ -21,7 +21,7 @@ rec {
   #
 
   rootCrate = rec {
-    packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+    packageId = "bin_with_lib_git_dep";
 
     # Use this attribute to refer to the derivation building your root crate package.
     # You can override the features with rootCrate.build.override { features = [ "default" "feature1" ... ]; }.
@@ -42,9 +42,9 @@ rec {
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
   workspaceMembers = {
     "bin_with_lib_git_dep" = rec {
-      packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+      packageId = "bin_with_lib_git_dep";
       build = internal.buildRustCrateWithFeatures {
-        packageId = "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)";
+        packageId = "bin_with_lib_git_dep";
       };
 
       # Debug support which might change between releases.
@@ -74,7 +74,7 @@ rec {
     #   inject test dependencies into the build
 
     crates = {
-      "bin_with_lib_git_dep 0.1.0 (path+file:///home/peter/projects/crate2nix/sample_projects/bin_with_git_branch_dep)" = rec {
+      "bin_with_lib_git_dep" = rec {
         crateName = "bin_with_lib_git_dep";
         version = "0.1.0";
         edition = "2018";
@@ -88,12 +88,12 @@ rec {
         dependencies = [
           {
             name = "nix-base32";
-            packageId = "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?branch=branch-for-test#42f5544e51187f0c7535d453fcffb4b524c99eb2)";
+            packageId = "nix-base32";
           }
         ];
         
       };
-      "nix-base32 0.1.2-alpha.0 (git+https://github.com/kolloch/nix-base32?branch=branch-for-test#42f5544e51187f0c7535d453fcffb4b524c99eb2)" = rec {
+      "nix-base32" = rec {
         crateName = "nix-base32";
         version = "0.1.2-alpha.0";
         edition = "2018";

@@ -3,6 +3,7 @@
 use std::io::Write;
 use std::process::Command;
 
+use crate::metadata::PackageIdShortener;
 use crate::resolve::{CrateDerivation, CratesIoSource, GitSource, ResolvedSource};
 use crate::GenerateConfig;
 use cargo_metadata::PackageId;
@@ -41,6 +42,7 @@ pub fn prefetch(
     config: &GenerateConfig,
     from_lock_file: &HashMap<PackageId, String>,
     crate_derivations: &[CrateDerivation],
+    id_shortener: &PackageIdShortener,
 ) -> Result<BTreeMap<PackageId, String>, Error> {
     let hashes_string: String = if config.read_crate_hashes {
         std::fs::read_to_string(&config.crate_hashes_json).unwrap_or_else(|_| "{}".to_string())
@@ -86,7 +88,7 @@ pub fn prefetch(
                         })
                         .or_else(|| {
                             old_prefetched_hashes
-                                .get(&p.package_id)
+                                .get(id_shortener.lengthen_ref(&p.package_id))
                                 .map(|hash| HashWithSource {
                                     sha256: hash.clone(),
                                     source: HashSource::Prefetched,
@@ -130,7 +132,10 @@ pub fn prefetch(
 
         for package in packages {
             if hash_source == HashSource::Prefetched {
-                hashes.insert(package.package_id.clone(), sha256.clone());
+                hashes.insert(
+                    id_shortener.lengthen_ref(&package.package_id).clone(),
+                    sha256.clone(),
+                );
             }
         }
     }
