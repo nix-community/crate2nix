@@ -627,6 +627,7 @@ rec {
           {
             name = "quicli";
             packageId = "quicli 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
+            usesDefaultFeatures = false;
           }
           {
             name = "semver";
@@ -693,99 +694,6 @@ rec {
           }
         ];
         
-      };
-      "crossbeam-deque 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
-        crateName = "crossbeam-deque";
-        version = "0.7.2";
-        edition = "2015";
-        sha256 = "1jm3rqb3qfpfywrakyy81f61xnl4jsim7lam9digw6w6cdfr9an3";
-        authors = [
-          "The Crossbeam Project Developers"
-        ];
-        dependencies = [
-          {
-            name = "crossbeam-epoch";
-            packageId = "crossbeam-epoch 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "crossbeam-utils";
-            packageId = "crossbeam-utils 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-        ];
-        
-      };
-      "crossbeam-epoch 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
-        crateName = "crossbeam-epoch";
-        version = "0.8.0";
-        edition = "2015";
-        sha256 = "1b2mgc2gxxvyzyxgd5wvn9k42gr6f9phi2swwjawpqswy3dynr2h";
-        authors = [
-          "The Crossbeam Project Developers"
-        ];
-        dependencies = [
-          {
-            name = "cfg-if";
-            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "crossbeam-utils";
-            packageId = "crossbeam-utils 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)";
-            usesDefaultFeatures = false;
-          }
-          {
-            name = "lazy_static";
-            packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-          }
-          {
-            name = "memoffset";
-            packageId = "memoffset 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "scopeguard";
-            packageId = "scopeguard 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)";
-            usesDefaultFeatures = false;
-          }
-        ];
-        buildDependencies = [
-          {
-            name = "autocfg";
-            packageId = "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-        ];
-        features = {
-          "alloc" = [ "crossbeam-utils/alloc" ];
-          "default" = [ "std" ];
-          "nightly" = [ "crossbeam-utils/nightly" ];
-          "std" = [ "crossbeam-utils/std" "lazy_static" ];
-        };
-        resolvedDefaultFeatures = [ "default" "lazy_static" "std" ];
-      };
-      "crossbeam-queue 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
-        crateName = "crossbeam-queue";
-        version = "0.2.1";
-        edition = "2015";
-        sha256 = "1nwkjh185bdwjrv1zj2g7an9lglv8sp4459268m4fwvi3v5fx5f6";
-        authors = [
-          "The Crossbeam Project Developers"
-        ];
-        dependencies = [
-          {
-            name = "cfg-if";
-            packageId = "cfg-if 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "crossbeam-utils";
-            packageId = "crossbeam-utils 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)";
-            usesDefaultFeatures = false;
-          }
-        ];
-        features = {
-          "alloc" = [ "crossbeam-utils/alloc" ];
-          "default" = [ "std" ];
-          "std" = [ "crossbeam-utils/std" ];
-        };
-        resolvedDefaultFeatures = [ "default" "std" ];
       };
       "crossbeam-utils 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
         crateName = "crossbeam-utils";
@@ -1140,26 +1048,6 @@ rec {
         features = {
         };
       };
-      "globwalk 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
-        crateName = "globwalk";
-        version = "0.3.1";
-        edition = "2015";
-        sha256 = "1fvvc7hpyhzxjiwn71yd0wnjk1ah5nzjpjdy5ixm0nzkikd08pff";
-        authors = [
-          "Gilad Naaman <gilad.naaman@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "ignore";
-            packageId = "ignore 0.4.11 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "walkdir";
-            packageId = "walkdir 2.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-        ];
-        
-      };
       "globwalk 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
         crateName = "globwalk";
         version = "0.7.1";
@@ -1467,22 +1355,6 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" "use_std" ];
       };
-      "memoffset 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
-        crateName = "memoffset";
-        version = "0.5.3";
-        edition = "2015";
-        sha256 = "1fblqzc25hfaym8m0pj112s66pqq87avvaqm5hp5rskib2w9w63m";
-        authors = [
-          "Gilad Naaman <gilad.naaman@gmail.com>"
-        ];
-        buildDependencies = [
-          {
-            name = "rustc_version";
-            packageId = "rustc_version 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-        ];
-        
-      };
       "nix-base32 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
         crateName = "nix-base32";
         version = "0.1.1";
@@ -1537,27 +1409,6 @@ rec {
         features = {
           "default" = [ "std" ];
         };
-      };
-      "num_cpus 1.12.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
-        crateName = "num_cpus";
-        version = "1.12.0";
-        edition = "2015";
-        sha256 = "1riw641hsmp2vwb9wz7d26dsycrjbw3zf4nd6p18kzw5y1a3a826";
-        authors = [
-          "Sean McArthur <sean@seanmonstar.com>"
-        ];
-        dependencies = [
-          {
-            name = "hermit-abi";
-            packageId = "hermit-abi 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
-            target = { target, features }: (((target."arch" == "x86_64") || (target."arch" == "aarch64")) && (target."os" == "hermit"));
-          }
-          {
-            name = "libc";
-            packageId = "libc 0.2.66 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-        ];
-        
       };
       "opaque-debug 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
         crateName = "opaque-debug";
@@ -1805,40 +1656,14 @@ rec {
             packageId = "failure_derive 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)";
           }
           {
-            name = "globwalk";
-            packageId = "globwalk 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-          }
-          {
             name = "log";
             packageId = "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "rayon";
-            packageId = "rayon 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-          }
-          {
-            name = "remove_dir_all";
-            packageId = "remove_dir_all 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-          }
-          {
-            name = "serde";
-            packageId = "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
-          }
-          {
-            name = "serde_derive";
-            packageId = "serde_derive 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)";
-            optional = true;
           }
         ];
         features = {
           "default" = [ "full-throttle" ];
           "full-throttle" = [ "serde" "serde_derive" "globwalk" "rayon" "remove_dir_all" ];
         };
-        resolvedDefaultFeatures = [ "default" "full-throttle" "globwalk" "rayon" "remove_dir_all" "serde" "serde_derive" ];
       };
       "quote 0.6.13 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
         crateName = "quote";
@@ -2087,65 +1912,6 @@ rec {
         ];
         
       };
-      "rayon 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
-        crateName = "rayon";
-        version = "1.3.0";
-        edition = "2018";
-        sha256 = "1650g13bxlmywhdlw65q3g1zyyb7l0wcm35v45kf31cwgwly6v6v";
-        authors = [
-          "Niko Matsakis <niko@alum.mit.edu>"
-          "Josh Stone <cuviper@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "crossbeam-deque";
-            packageId = "crossbeam-deque 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "either";
-            packageId = "either 1.5.3 (registry+https://github.com/rust-lang/crates.io-index)";
-            usesDefaultFeatures = false;
-          }
-          {
-            name = "rayon-core";
-            packageId = "rayon-core 1.7.0 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-        ];
-        
-      };
-      "rayon-core 1.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
-        crateName = "rayon-core";
-        version = "1.7.0";
-        edition = "2018";
-        sha256 = "1ac55kpnh2390ah7r071vnjbiy308qpznql0n597x5dgxx39pa08";
-        authors = [
-          "Niko Matsakis <niko@alum.mit.edu>"
-          "Josh Stone <cuviper@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "crossbeam-deque";
-            packageId = "crossbeam-deque 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "crossbeam-queue";
-            packageId = "crossbeam-queue 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "crossbeam-utils";
-            packageId = "crossbeam-utils 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "lazy_static";
-            packageId = "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-          {
-            name = "num_cpus";
-            packageId = "num_cpus 1.12.0 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-        ];
-        
-      };
       "rdrand 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
         crateName = "rdrand";
         version = "0.4.0";
@@ -2269,22 +2035,6 @@ rec {
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
       };
-      "rustc_version 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
-        crateName = "rustc_version";
-        version = "0.2.3";
-        edition = "2015";
-        sha256 = "02h3x57lcr8l2pm0a645s9whdh33pn5cnrwvn5cb57vcrc53x3hk";
-        authors = [
-          "Marvin Löbel <loebel.marvin@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "semver";
-            packageId = "semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)";
-          }
-        ];
-        
-      };
       "ryu 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
         crateName = "ryu";
         version = "1.0.2";
@@ -2312,18 +2062,6 @@ rec {
           }
         ];
         
-      };
-      "scopeguard 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
-        crateName = "scopeguard";
-        version = "1.0.0";
-        edition = "2015";
-        sha256 = "03aay84r1f6w87ckbpj6cc4rnsxkxcfs13n5ynxjia0qkgjiabml";
-        authors = [
-          "bluss"
-        ];
-        features = {
-          "default" = [ "use_std" ];
-        };
       };
       "semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = rec {
         crateName = "semver";
