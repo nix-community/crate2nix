@@ -1,3 +1,5 @@
+//! Code for extracting hashes and more from Cargo.lock
+
 use cargo_metadata::PackageId;
 use failure::{format_err, Error};
 use serde::{de, ser, Deserialize, Serialize};

@@ -1,3 +1,5 @@
+//! Homeless code. Usually abstract and algorithmic.
+
 use std::collections::BTreeSet;
 
 /// Return all occurrences of each item after the first.

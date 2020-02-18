@@ -1,4 +1,5 @@
 //! "Render" files using tera templates.
+
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -13,6 +14,7 @@ use crate::BuildInfo;
 use std::collections::HashMap;
 use std::str::FromStr;
 
+/// Renders the build file for the given `BuildInfo` as a `String`.
 pub fn render_build_file(metadata: &BuildInfo) -> Result<String, Error> {
     Ok(TERA
         .render("build.nix.tera", &Context::from_serialize(metadata)?)
@@ -25,6 +27,7 @@ pub fn render_build_file(metadata: &BuildInfo) -> Result<String, Error> {
         })?)
 }
 
+/// Writes the given `contents` to a file at the given `path`.
 pub fn write_to_file(path: impl AsRef<Path>, contents: &str) -> Result<(), Error> {
     let mut output_file = File::create(&path)?;
     output_file.write_all(contents.as_bytes())?;

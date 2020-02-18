@@ -2,8 +2,11 @@
 //!
 //! Internal library for the crate2nix binary. This is not meant to be used separately, I just enjoy
 //! writing doc tests ;)
+//!
+//! [Repository](https://github.com/kolloch/crate2nix)
 
-//#![deny(missing_docs)]
+#![forbid(unsafe_code)]
+#![deny(missing_docs)]
 
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::env;
@@ -33,17 +36,17 @@ pub mod util;
 /// The resolved build info and the input for rendering the build.nix.tera template.
 #[derive(Debug, Deserialize, Serialize)]
 pub struct BuildInfo {
-    // The package ID of the root crate.
+    /// The package ID of the root crate.
     pub root_package_id: Option<PackageId>,
-    // Workspaces member package IDs by package names.
+    /// Workspaces member package IDs by package names.
     pub workspace_members: BTreeMap<String, PackageId>,
-    // Build info for all crates needed for this build.
+    /// Build info for all crates needed for this build.
     pub crates: Vec<CrateDerivation>,
-    // For convenience include the source for tests.
+    /// For convenience include the source for tests.
     pub indexed_metadata: IndexedMetadata,
-    // The generation configuration.
+    /// The generation configuration.
     pub info: GenerateInfo,
-    // The generation configuration.
+    /// The generation configuration.
     pub config: GenerateConfig,
 }
 
@@ -207,7 +210,9 @@ fn extract_hashes_from_lockfile(
 /// Some info about the crate2nix invocation.
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct GenerateInfo {
+    /// The version of this `crate2nix` instance.
     pub crate2nix_version: String,
+    /// The arguments that were passed to `crate2nix`.
     pub crate2nix_arguments: Vec<String>,
 }
 
@@ -223,11 +228,19 @@ impl Default for GenerateInfo {
 /// Configuration for the default.nix generation.
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct GenerateConfig {
+    /// The path to `Cargo.toml`.
     pub cargo_toml: PathBuf,
+    /// Whether to inspect `Cargo.lock` for checksums so that we do not need to prefetch them.
     pub use_cargo_lock_checksums: bool,
+    /// The path of the generated `Cargo.nix` file.
     pub output: PathBuf,
+    /// The path of the `crate-hashes.json` file which is used to look up hashes and/or store
+    /// prefetched hashes at.
     pub crate_hashes_json: PathBuf,
+    /// The nix expression for the nixpkgs path to use.
     pub nixpkgs_path: String,
+    /// Additional arguments to pass to `cargo metadata`.
     pub other_metadata_options: Vec<String>,
+    /// Whether to read a `crate-hashes.json` file.
     pub read_crate_hashes: bool,
 }
