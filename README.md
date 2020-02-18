@@ -3,7 +3,7 @@
 crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) crates
 using [cargo](https://crates.io/).
 
-![tests-nix workflow status](https://github.com/kolloch/crate2nix/workflows/tests-nix/badge.svg)
+[![tests-nix workflow status](https://github.com/kolloch/crate2nix/workflows/tests-nix/badge.svg)](https://github.com/kolloch/crate2nix/actions?query=workflow%3Atests-nix)
 [![Crate](https://img.shields.io/crates/v/crate2nix.svg)](https://crates.io/crates/crate2nix)
 
 **Same dependency tree as cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the
@@ -32,7 +32,7 @@ crate2nix generate
 ```
 
 Here is a more elaborate example that uses `<nixos-unstable>` as the default `pkgs` path (instead of `<nixpkgs>`) and specifies both the path
-to the `Cargo.toml` file (`-f`) and the output (`-o`) file explicitly.
+to the `Cargo.toml` file (`-f`) and the output (`-o`) file explicitly (usually not needed).
 
 ```bash
 crate2nix generate \
