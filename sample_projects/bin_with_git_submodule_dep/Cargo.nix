@@ -1358,10 +1358,15 @@ rec {
         || baseName == "tests.nix"
       );
 
-  /* Returns a crate which depends on successful test execution 
-     of crate given as the second argument. 
+  /* Returns a crate which depends on successful test execution
+     of crate given as the second argument.
+
+     testCrateFlags: list of flags to pass to the test exectuable
+     testInputs: list of packages that should be available during test execution
   */
-  crateWithTest = crate: testCrate: testCrateFlags:
+  crateWithTest = { crate, testCrate, testCrateFlags, testInputs}:
+    assert builtins.typeOf testCrateFlags == "list";
+    assert builtins.typeOf testInputs == "list";
     let
       # override the `crate` so that it will build and execute tests instead of
       # building the actual lib and bin targets We just have to pass `--test`
@@ -1376,6 +1381,7 @@ rec {
       in
         pkgs.runCommand "run-tests-${testCrate.name}" {
           inherit testCrateFlags;
+          buildInputs = testInputs;
         } ''
           set -ex
           cd ${crate.src}
@@ -1409,10 +1415,11 @@ rec {
       )
     , runTests ? false
     , testCrateFlags ? []
+    , testInputs ? []
     }:
       lib.makeOverridable
         (
-          { features, crateOverrides, runTests, testCrateFlags }:
+          { features, crateOverrides, runTests, testCrateFlags, testInputs }:
             let
               builtRustCrates = builtRustCratesWithFeatures {
                 inherit packageId features buildRustCrateFunc;
@@ -1425,9 +1432,15 @@ rec {
               drv = builtRustCrates.${packageId};
               testDrv = builtTestRustCrates.${packageId};
             in
-              if runTests then crateWithTest drv testDrv testCrateFlags else drv
+              if runTests then
+                crateWithTest {
+                  crate = drv;
+                  testCrate = testDrv;
+                  inherit testCrateFlags testInputs;
+                }
+              else drv
         )
-        { inherit features crateOverrides runTests testCrateFlags; };
+        { inherit features crateOverrides runTests testCrateFlags testInputs; };
 
   /* Returns an attr set with packageId mapped to the result of buildRustCrateFunc 
      for the corresponding crate. 
