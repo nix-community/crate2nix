@@ -222,7 +222,8 @@ NixOS that crate2nix uses.
 
 There is some experimental support for running tests of your rust crates. All
 of the crates in the workspace will have their tests executed. When enabling
-test execution (`runTests = true;`) thests are a mandatory part of the build.
+test execution (`runTests = true;`), failing tests will make the whole build
+fail.
 
 ```nix
       let cargo_nix = callPackage ./Cargo.nix {};
@@ -236,7 +237,6 @@ test execution (`runTests = true;`) thests are a mandatory part of the build.
 `testInputs` is optional and allows passing inputs to the test execution that
 should be in scope. Defaults to an empty list and is ignored when `runTests`
 equals `false`.
-
 
 ## Known Restrictions
 
