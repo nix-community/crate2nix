@@ -182,6 +182,7 @@ let
         "test echo_foo_test ... ok"
         "test lib_test ... ok"
         "test in_source_dir ... ok"
+        "test exec_cowsay ... ok"
       ];
       customBuild = "sample_projects/cfg-test/test.nix";
     }
