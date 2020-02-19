@@ -218,6 +218,26 @@ able to add patches and the like! (I didn't try that, though.)
 `crateOverrides` are a feature of the underlying `buildRustCrate` support in
 NixOS that crate2nix uses.
 
+## Running rust tests
+
+There is some experimental support for running tests of your rust crates. All
+of the crates in the workspace will have their tests executed. When enabling
+test execution (`runTests = true;`) thests are a mandatory part of the build.
+
+```nix
+      let cargo_nix = callPackage ./Cargo.nix {};
+          crate2nix = cargo_nix.rootCrate.build.override {
+	    runTests = true;
+	    testInputs = [ pkgs.cowsay ];
+	  };
+      in ...
+```
+
+`testInputs` is optional and allows passing inputs to the test execution that
+should be in scope. Defaults to an empty list and is ignored when `runTests`
+equals `false`.
+
+
 ## Known Restrictions
 
 `crate2nix` makes heavy use of `buildRustCrate` in `nixpkgs`. So we potentially depend on features in a recent version
