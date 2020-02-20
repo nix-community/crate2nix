@@ -314,26 +314,32 @@ If you want to hack on this, it is useful to know that build file generation is 
 
 ## Contributions
 
-Contributions in the form of documentation and bug fixes are highly welcome. Please start a discussion with me before
-working on larger features.
+Contributions in the form of documentation and bug fixes are highly welcome.
+Please start a discussion with me before working on larger features.
 
-I'd really appreciate tests for all new features. Please run `./run_tests.sh` before submitting a pull request.
+I'd really appreciate tests for all new features. Please run `./run_tests.sh`
+before submitting a pull request.
 
-Feature ideas are also welcome -- just know that this is a pure hobby side project and I will not allocate a lot of
-bandwidth to this. Therefore, important bug fixes are always prioritised.
+Feature ideas are also welcome -- just know that this is a pure hobby side
+project and I will not allocate a lot of bandwidth to this. Therefore, important
+bug fixes are always prioritised.
 
-By submitting a pull request, you agree to license your changes via all the current licenses of the project.
+By submitting a pull request, you agree to license your changes via all the
+current licenses of the project.
 
 ### Regenerating Cargo.nix files for tests
 
-If you change `crate2nix` such that it will produce a different output, you may need to regenerate some of the 
-Cargo.toml files. Not all `Cargo.toml` files can be generated during test time because crate2nix does not
-work in sandboxes in some cases where cargo needs to write to lock files (I should file bugs for this).
+If you change `crate2nix` such that it will produce a different output, you may
+need to regenerate some of the Cargo.toml files. Not all `Cargo.toml` files can
+be generated during test time because crate2nix needs to vendor the dependencies
+for this to work and support for git submodules is not working yet, see
+[#101](https://github.com/kolloch/crate2nix/issues/101).
 
-`regenerate_cargo_nix.sh` should do what you want. Additional diffs in packageIds are, unfortunately, expected.
+`regenerate_cargo_nix.sh` should do what you want and is run as part of
+`run_tests.sh` (see below).
 
 ### Running tests
 
-`run_tests.sh` will regenerate build files AND run cargo test for you. It will call out to nix to build the
-sample projects -- so a considerable number of dependencies will be fetched and built. Consecutive runs
-are much faster.
+`run_tests.sh` will regenerate build files AND run cargo test for you. It will
+call out to nix to build the sample projects -- so a considerable number of
+dependencies will be fetched and built. Consecutive runs are much faster.
