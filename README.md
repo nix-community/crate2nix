@@ -79,16 +79,6 @@ cd crate2nix
 nix-env -i -f .
 ```
 
-### Nixpkgs Version
-
-This uses a pinned version nixos-unstable because at the time of writing this, it contains a necessary fix.
-
-If that doesn't work for you, you can override the `pkgs` argument, e.g.:
-
-```bash
-nix-env --arg pkgs 'import <nixos> {config = {}; }' -i -f https://github.com/kolloch/crate2nix/tarball/master
-```
-
 ## Generating build files
 
 The `crate2nix generate` command generates a nix file. You can specify the output file with `-o`. E.g.
@@ -142,6 +132,65 @@ derivation like this:
 ```nix
 let cargo_nix = callPackage ./Cargo.nix {};
 in cargo_nix.workspaceMembers."${your_crate_name}".build
+```
+
+## Choosing a Rust Version
+
+If you want to compile your code with a different rust version than is currently
+available in your nixpkgs, you can use the awesome overlays of the 
+[nixpkgs-mozilla](https://github.com/mozilla/nixpkgs-mozilla).
+
+For managing the git dependencies, I recommend
+[niv](https://github.com/nmattia/niv). To create an initial "sources.nix" in the
+nix directory run:
+
+```shell
+niv init
+niv add mozilla/nixpkgs-mozilla
+```
+
+Later on, you can update you dependencies with `niv update`.
+
+To pin your nixpkgs with the appropriate overlays, place a `nixpkgs.nix` file into
+you `nix` directory that was created by `niv` (if necessary):
+
+```nix
+let
+  # Manage this with https://github.com/nmattia/niv
+  # or define { nixpkgs = ...; nixpkgs-mozilla = ...; }
+  # yourself.
+  sources = import ./sources.nix;
+  
+  rustChannelsOverlay = import "${sources.nixpkgs-mozilla}/rust-overlay.nix";
+  # Useful if you also want to provide that in a nix-shell since some rust tools depend
+  # on that.
+  rustChannelsSrcOverlay = import "${sources.nixpkgs-mozilla}/rust-src-overlay.nix";
+
+in import sources.nixpkgs { 
+    overlays = [ 
+      rustChannelsOverlay 
+      rustChannelsSrcOverlay
+      (self: super: {
+        # Replace "latest.rustChannels.stable" with the version of the rust tools that
+        # you would like. Look at the documentation of nixpkgs-mozilla for examples.
+        #
+        # NOTE: "rust" instead of "rustc" is not a typo: It will include more than needed
+        # but also the much needed "rust-std".
+        rustc = super.latest.rustChannels.stable.rust;
+        inherit (super.latest.rustChannels.stable) cargo rust rust-fmt rust-std clippy;
+      })
+    ]; 
+  }
+```
+
+In your `default.nix` or other nix files, you can use the following to refer to
+that pinned `pkgs` with the rust version of your choice:
+
+```nix
+{ pkgs ? import ./nix/nixpkgs.nix }:
+
+let cargoNix = pkgs.callPackage ./Cargo.nix {};
+in cargoNix.rootCrate.build
 ```
 
 ## Dynamic feature resolution
