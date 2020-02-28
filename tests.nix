@@ -18,6 +18,7 @@ let
     , src
     , cargoToml ? "Cargo.toml"
     , features ? [ "default" ]
+    , skip ? false
     , expectedOutput
     , expectedTestOutputs ? []
     , pregeneratedBuild ? null
@@ -68,17 +69,16 @@ let
             pkgs.callPackage (./. + "/${customBuild}") {
               inherit generatedCargoNix;
             };
+        debug = derivationAttr.debug.internal;
+        # We could easily use a mapAttrs here but then the error
+        # output is aweful if things go wrong :(
+        debugFile =
+          attrName: pkgs.writeTextFile {
+            name = "${name}_${attrName}.json";
+            text = builtins.toJSON debug."${attrName}";
+          };
       in
-        let
-          debug = derivationAttr.debug.internal;
-          # We could easily use a mapAttrs here but then the error
-          # output is aweful if things go wrong :(
-          debugFile =
-            attrName: pkgs.writeTextFile {
-              name = "${name}_${attrName}.json";
-              text = builtins.toJSON debug."${attrName}";
-            };
-        in
+        if skip then {} else
           pkgs.stdenv.mkDerivation {
             name = "${name}_buildTest";
             phases = [ "buildPhase" ];
@@ -256,6 +256,8 @@ let
       src = ./sample_projects/cdylib;
       customBuild = "sample_projects/cdylib/test.nix";
       expectedOutput = "cdylib test";
+      # Disable this on Mac OS https://github.com/kolloch/crate2nix/issues/116
+      skip = stdenv.hostPlatform.isDarwin;
     }
 
     {
