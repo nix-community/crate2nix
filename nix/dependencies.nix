@@ -13,6 +13,7 @@
       binutils
       nixpkgs-fmt jq
       nix
+      git
       ;
 
     nixTest = let

@@ -4,8 +4,8 @@ set -Eeuo pipefail
 
 top="$(readlink -f "$(dirname "$0")")"
 
-if [ -z "${IN_CRATE2NIX_SHELL:-}" ]; then
-  export CACHIX="$(which cachix || echo "")"
+if [ -z "${IN_CRATE2NIX_SHELL:-}" -o "$IN_NIX_SHELL" = "impure" ]; then
+  export CACHIX="$(which cachix 2>/dev/null || echo "")"
   echo -e "\e[1m=== Entering $top/shell.nix\e[0m" >&2
   exec nix-shell --keep CACHIX --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")" 
 fi
@@ -53,14 +53,21 @@ echo -e "\e[1m=== Running cargo test\e[0m" >&2
 
 cd "$top"
 echo -e "\e[1m=== Building ./tests.nix (= Running Integration Tests)\e[0m" >&2
-nix-build ./tests.nix || {
+nix-build --out-link ./target/nix-result ./tests.nix || {
     echo "==================" >&2
     echo "cd $top; nix-build ./tests.nix: FAILED" >&2
-    exit 4
+    exit 5
 }
 
+echo -e "\e[1m=== Checking for uncomitted changes\e[0m" >&2
+if test -n "$(git status --porcelain)"; then
+    echo "!!! repository has uncomitted changes" >&2
+    echo "Otherwise, things look good :)"
+    exit 6
+fi
+
 # Crude hack: check if we have the right to push to the cache
-cd "$top"/crate2nix
+cd "$top"
 if test -n "${CACHIX:-}" && test -r ~/.config/cachix/cachix.dhall &&\
  grep -q '"eigenvalue"' ~/.config/cachix/cachix.dhall; then
     echo -e "\e[1m=== Pushing artifacts to eigenvalue.cachix.org \e[0m" >&2
