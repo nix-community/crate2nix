@@ -13,7 +13,7 @@ let
             (with pkgs.darwin.apple_sdk.frameworks; [ Security ]);
       };
 
-      rust_cssparser-macros = attrs: {
+      cssparser-macros = attrs: {
         buildInputs =
           (attrs.buildInputs or [])
           ++ stdenv.lib.optionals
