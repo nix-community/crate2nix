@@ -1,8 +1,8 @@
 { nixpkgs ? ./nix/nixpkgs.nix
 , pkgs ? import nixpkgs { config = {}; }
-# Path to nixpkgs for running/building the integration tests
-# created with the "buildTest" function (e.g. those in the buildTestConfigs array)
-# and not for building crate2nix etc itself.
+  # Path to nixpkgs for running/building the integration tests
+  # created with the "buildTest" function (e.g. those in the buildTestConfigs array)
+  # and not for building crate2nix etc itself.
 , buildTestNixpkgs ? nixpkgs
 , buildTestPkgs ? import buildTestNixpkgs { config = {}; }
 , lib ? pkgs.lib
