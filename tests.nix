@@ -354,6 +354,7 @@ let
       name = "with_problematic_crates";
       src = ./sample_projects/with_problematic_crates;
       expectedOutput = "Hello, with_problematic_crates!";
+      customBuild = "sample_projects/with_problematic_crates/default.nix";
     }
 
   ];
