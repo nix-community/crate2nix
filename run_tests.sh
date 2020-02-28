@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#
+# Regenerates build files and runs tests on them.
+# Please use this to validate your pull requests!
+#
 
 set -Eeuo pipefail
 
