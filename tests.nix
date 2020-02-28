@@ -257,7 +257,7 @@ let
       src = ./sample_projects/cdylib;
       customBuild = "sample_projects/cdylib/test.nix";
       expectedOutput = "cdylib test";
-      # Disable this on Mac OS https://github.com/kolloch/crate2nix/issues/116
+      # Disable this on Mac OS. FIXME: https://github.com/kolloch/crate2nix/issues/116
       skip = stdenv.hostPlatform.isDarwin;
     }
 
@@ -356,6 +356,8 @@ let
       src = ./sample_projects/with_problematic_crates;
       expectedOutput = "Hello, with_problematic_crates!";
       customBuild = "sample_projects/with_problematic_crates/default.nix";
+      # Disable this on Mac OS. FIXME: https://github.com/kolloch/crate2nix/issues/116
+      skip = stdenv.hostPlatform.isDarwin;
     }
 
   ];
