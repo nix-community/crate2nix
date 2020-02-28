@@ -190,7 +190,7 @@ rec {
      testCrateFlags: list of flags to pass to the test exectuable
      testInputs: list of packages that should be available during test execution
   */
-  crateWithTest = { crate, testCrate, testCrateFlags, testInputs}:
+  crateWithTest = { crate, testCrate, testCrateFlags, testInputs }:
     assert builtins.typeOf testCrateFlags == "list";
     assert builtins.typeOf testInputs == "list";
     let
