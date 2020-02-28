@@ -55,10 +55,13 @@ let
               )
           else
             ./. + "/${pregeneratedBuild}";
+        derivationAttr =
+          lib.attrByPath
+            derivationAttrPath null (pkgs.callPackage generatedCargoNix {});
         derivation =
           if builtins.isNull customBuild
           then
-            (lib.attrByPath derivationAttrPath null (pkgs.callPackage generatedCargoNix {})).build.override {
+            derivationAttr.build.override {
               inherit features;
             }
           else
@@ -66,35 +69,55 @@ let
               inherit generatedCargoNix;
             };
       in
-        assert lib.length expectedTestOutputs > 0 -> derivation ? test;
-        pkgs.stdenv.mkDerivation {
-          name = "buildTest_${name}";
-          phases = [ "buildPhase" ];
-          buildInputs = [ derivation ];
-          buildPhase = ''
-            mkdir -p $out
-            ${derivation.crateName} >$out/run.log
-            echo grepping
-            grep '${expectedOutput}' $out/run.log || {
-              echo '${expectedOutput}' not found in:
-              cat $out/run.log
-              exit 23
-            }
+        let
+          debug = derivationAttr.debug.internal;
+          # We could easily use a mapAttrs here but then the error
+          # output is aweful if things go wrong :(
+          debugFile =
+            attrName: pkgs.writeTextFile {
+              name = "${name}_${attrName}.json";
+              text = builtins.toJSON debug."${attrName}";
+            };
+        in
+          pkgs.stdenv.mkDerivation {
+            name = "${name}_buildTest";
+            phases = [ "buildPhase" ];
+            buildInputs = [ derivation ];
+            buildPhase =
+              assert lib.length expectedTestOutputs > 0 -> derivation ? test;
+              ''
+                echo === DEBUG INFO
+                echo ${debugFile "sanitizedBuildTree"}
+                echo ${debugFile "dependencyTree"}
+                echo ${debugFile "mergedPackageFeatures"}
+                echo ${debugFile "diffedDefaultPackageFeatures"}
 
-            ${lib.optionalString (lib.length expectedTestOutputs > 0) ''
-            cp ${derivation.test} $out/tests.log
-          ''}
-            ${lib.concatMapStringsSep "\n" (
-            output: ''
-              grep '${output}' $out/tests.log || {
-                echo '${output}' not found in:
-                cat $out/tests.log
-                exit 23
-              }
-            ''
-          ) expectedTestOutputs}
-          '';
-        };
+                echo === RUNNING
+                mkdir -p $out
+                ${derivation.crateName} | tee $out/run.log
+                echo === VERIFYING expectedOutput
+                grep '${expectedOutput}' $out/run.log || {
+                  echo '${expectedOutput}' not found in:
+                  cat $out/run.log
+                  exit 23
+                }
+
+                echo === RUNNING TESTS
+                ${lib.optionalString (lib.length expectedTestOutputs > 0) ''
+                cp ${derivation.test} $out/tests.log
+                echo === VERIFYING expectedTestOutputs
+              ''}
+                ${lib.concatMapStringsSep "\n" (
+                output: ''
+                  grep '${output}' $out/tests.log || {
+                    echo '${output}' not found in:
+                    cat $out/tests.log
+                    exit 23
+                  }
+                ''
+              ) expectedTestOutputs}
+              '';
+          };
 
   buildTestConfigs = [
 

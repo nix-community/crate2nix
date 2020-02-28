@@ -1556,7 +1556,7 @@ rec {
     else val;
 
   /* Returns various tools to debug a crate. */
-  debugCrate = { packageId, target }:
+  debugCrate = { packageId, target ? defaultTarget }:
     assert (builtins.isString packageId);
 
     let
@@ -1582,8 +1582,7 @@ rec {
           inherit packageId target;
         };
         diffedDefaultPackageFeatures = diffDefaultPackageFeatures {
-          features = rootFeatures;
-          inherit packageId;
+          inherit packageId target;
         };
       };
     in
