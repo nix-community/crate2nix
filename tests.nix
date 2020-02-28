@@ -1,5 +1,10 @@
 { nixpkgs ? ./nix/nixpkgs.nix
 , pkgs ? import nixpkgs { config = {}; }
+# Path to nixpkgs for running/building the integration tests
+# created with the "buildTest" function (e.g. those in the buildTestConfigs array)
+# and not for building crate2nix etc itself.
+, buildTestNixpkgs ? nixpkgs
+, buildTestPkgs ? import buildTestNixpkgs { config = {}; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
 }:
@@ -59,7 +64,7 @@ let
             ./. + "/${pregeneratedBuild}";
         derivationAttr =
           lib.attrByPath
-            derivationAttrPath null (pkgs.callPackage generatedCargoNix {});
+            derivationAttrPath null (buildTestPkgs.callPackage generatedCargoNix {});
         derivation =
           if builtins.isNull customBuild
           then
@@ -67,7 +72,7 @@ let
               inherit features;
             }
           else
-            pkgs.callPackage (./. + "/${customBuild}") {
+            buildTestPkgs.callPackage (./. + "/${customBuild}") {
               inherit generatedCargoNix;
             };
         debug = derivationAttr.debug.internal;
