@@ -3,7 +3,8 @@
 #   "generate" "-f" "sample_projects/bin_with_git_submodule_dep/Cargo.toml" "-o" "sample_projects/bin_with_git_submodule_dep/Cargo.nix"
 # See https://github.com/kolloch/crate2nix for more info.
 
-{ pkgs ? import <nixpkgs> { config = {}; }
+{ nixpkgs ? <nixpkgs>
+, pkgs ? import nixpkgs { config = {}; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
 , buildRustCrate ? pkgs.buildRustCrate
