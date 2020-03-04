@@ -15,6 +15,7 @@
 , rootFeatures ? [ "default" ]
   # If true, throw errors instead of issueing deprecation warnings.
 , strictDeprecation ? false
+, getCleanedSource ? null
 }:
 
 rec {
@@ -102,7 +103,7 @@ rec {
         {%- if crate.source.CratesIo.sha256 %}
         sha256 = {{crate.source.CratesIo.sha256}};
         {%- elif crate.source.LocalDirectory.path %}
-        src = (builtins.filterSource sourceFilter {{crate.source.LocalDirectory.path | safe}});
+        src = getLocalSource {{crate.source.LocalDirectory.path | safe}};
         {%- elif crate.source.Git %}
         src = pkgs.fetchgit {
           url = {{crate.source.Git.url}};

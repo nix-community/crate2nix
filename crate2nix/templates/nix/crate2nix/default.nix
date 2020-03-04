@@ -38,6 +38,10 @@ rec {
     debug_assertions = false;
   };
 
+  getLocalSource = if getCleanedSource == null
+    then builtins.filterSource sourceFilter
+    else getCleanedSource;
+
   /* Filters common temp files and build files. */
   # TODO(pkolloch): Substitute with gitignore filter
   sourceFilter = name: type:
