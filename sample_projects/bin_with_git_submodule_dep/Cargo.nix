@@ -736,6 +736,7 @@ rec {
         crateName = "librocksdb-sys";
         version = "6.2.4";
         edition = "2015";
+        workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
           rev = "64bd09899306d23dfd1504465bd1e9adb15fb9ca";
@@ -980,6 +981,7 @@ rec {
         crateName = "rocksdb";
         version = "0.13.0";
         edition = "2015";
+        workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
           rev = "64bd09899306d23dfd1504465bd1e9adb15fb9ca";

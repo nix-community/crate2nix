@@ -89,6 +89,9 @@ let
             name = "${name}_buildTest";
             phases = [ "buildPhase" ];
             buildInputs = [ derivation ];
+            inherit derivation generatedCargoNix;
+
+            sanitizedBuildTree = debugFile "sanitizedBuildTree";
             buildPhase =
               assert lib.length expectedTestOutputs > 0 -> derivation ? test;
               ''
@@ -193,6 +196,13 @@ let
       src = ./sample_projects;
       cargoToml = "bin_with_rerenamed_lib_dep/Cargo.toml";
       expectedOutput = "Hello, bin_with_rerenamed_lib_dep!";
+    }
+
+    {
+      name = "sub_dir_crates";
+      src = ./sample_projects/sub_dir_crates;
+      expectedOutput = "main with lib1 lib2";
+      pregeneratedBuild = "sample_projects/sub_dir_crates/Cargo.nix";
     }
 
     {

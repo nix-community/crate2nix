@@ -105,6 +105,7 @@ rec {
         {%- elif crate.source.LocalDirectory.path %}
         src = (builtins.filterSource sourceFilter {{crate.source.LocalDirectory.path | safe}});
         {%- elif crate.source.Git %}
+        workspace_member = null;
         src = pkgs.fetchgit {
           url = {{crate.source.Git.url}};
           rev = {{crate.source.Git.rev}};
