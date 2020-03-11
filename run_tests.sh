@@ -8,7 +8,7 @@ set -Eeuo pipefail
 
 top="$(readlink -f "$(dirname "$0")")"
 
-if [ -z "${IN_CRATE2NIX_SHELL:-}" -o "$IN_NIX_SHELL" = "impure" ]; then
+if [ -z "${IN_CRATE2NIX_SHELL:-}" -o "${IN_NIX_SHELL:-}" = "impure" ]; then
   export CACHIX="$(which cachix 2>/dev/null || echo "")"
   echo -e "\e[1m=== Entering $top/shell.nix\e[0m" >&2
   exec nix-shell --keep CACHIX --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")" 
