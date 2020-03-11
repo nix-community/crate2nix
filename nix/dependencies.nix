@@ -14,6 +14,7 @@
       nixpkgs-fmt jq
       nix
       git
+      utillinux
       ;
 
     nixTest = let

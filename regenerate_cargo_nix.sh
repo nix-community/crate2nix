@@ -8,6 +8,27 @@ if [ -z "${IN_CRATE2NIX_SHELL:-}" ]; then
   exec nix-shell --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")" 
 fi
 
+options=$(getopt -o '' --long offline -- "$@")
+[ $? -eq 0 ] || { 
+    echo "Incorrect options provided. Available:"
+    echo "   --offline Enable offline friendly operations with out substituters"
+    exit 1
+}
+eval set -- "$options"
+NIX_OPTIONS=""
+while true; do
+    case "$1" in
+    --offline)
+        NIX_OPTIONS="--option substitute false"
+        ;;
+    --)
+        shift
+        break
+        ;;
+    esac
+    shift
+done
+
 echo "================ Regenerating ./Cargo.nix =================="
 
 cd "${top}"
@@ -16,11 +37,11 @@ cd "${top}"
   -f ./Cargo.toml -o ./Cargo.nix)  ||\
      { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-nix run -c crate2nix generate -n ../nix/nixpkgs.nix \
+nix run $NIX_OPTIONS -c crate2nix generate -n ../nix/nixpkgs.nix \
   -f ./crate2nix/Cargo.toml -o ./crate2nix/Cargo.nix || \
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-nix build
+nix build $NIX_OPTIONS
 
 crate2nix="$(pwd)"/result/bin/crate2nix
 

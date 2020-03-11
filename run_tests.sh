@@ -14,6 +14,37 @@ if [ -z "${IN_CRATE2NIX_SHELL:-}" -o "${IN_NIX_SHELL:-}" = "impure" ]; then
   exec nix-shell --keep CACHIX --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")" 
 fi
 
+echo -e "\e[1m=== Parsing opts for $top/run_tests.sh\e[0m" >&2
+options=$(getopt -o '' --long offline,build-test-nixpkgs: -- "$@") || { 
+    echo "" >&2
+    echo "Available options:" >&2
+    echo "   --offline            Enable offline friendly operations with out substituters" >&2
+    echo "   --build-test-nixpkgs Path to nixpkgs used for the build tests." >&2
+    exit 1
+}
+eval set -- "$options"
+NIX_OPTIONS=""
+REGENERATE_OPTIONS=""
+NIX_TESTS_OPTIONS="--out-link ./target/nix-result"
+while true; do
+    case "$1" in
+    --offline)
+        NIX_OPTIONS="$NIX_OPTIONS --option substitute false"
+        REGENERATE_OPTIONS="$REGENERATE_OPTIONS --offline"
+        CACHIX=""
+        ;;
+    --build-test-nixpkgs)
+        shift
+        NIX_TESTS_OPTIONS="$NIX_TESTS_OPTIONS --arg buildTestNixpkgs $1"
+        ;;
+    --)
+        shift
+        break
+        ;;
+    esac
+    shift
+done
+
 # Add other files when we adopt nixpkgs-fmt for them.
 cd "$top"
 echo -e "\e[1m=== Reformatting nix code\e[0m" >&2
@@ -42,9 +73,9 @@ echo -e "\e[1m=== Running cargo clippy\e[0m" >&2
     exit 2
 }
 
-../regenerate_cargo_nix.sh || {
+../regenerate_cargo_nix.sh $REGENERATE_OPTIONS || {
     echo "==================" >&2
-    echo "$top/regenerate_cargo_nix.sh: FAILED" >&2
+    echo "$top/regenerate_cargo_nix.sh $REGENERATE_OPTIONS: FAILED" >&2
     exit 3
 }
 
@@ -57,9 +88,12 @@ echo -e "\e[1m=== Running cargo test\e[0m" >&2
 
 cd "$top"
 echo -e "\e[1m=== Building ./tests.nix (= Running Integration Tests)\e[0m" >&2
-nix-build --out-link ./target/nix-result ./tests.nix || {
+nix-build $NIX_OPTIONS $NIX_TESTS_OPTIONS ./tests.nix || {
     echo "==================" >&2
-    echo "cd $top; nix-build ./tests.nix: FAILED" >&2
+    echo "cd $top" >&2
+    echo "nix-build \\" >&2
+    echo "  $NIX_OPTIONS $NIX_TESTS_OPTIONS \\" >&2
+    echo "   ./tests.nix: FAILED" >&2
     exit 5
 }
 
