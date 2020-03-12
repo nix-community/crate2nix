@@ -7,6 +7,7 @@
 
 { pkgs ? import ./nix/nixpkgs.nix { config = {}; }
 , lib ? pkgs.lib
+, stdenv ? pkgs.stdenv
 , strictDeprecation ? true
 }:
 
@@ -34,14 +35,26 @@ rec {
     }:
 
       let
-        cargoLock = (dirOf "${src}/${cargoToml}") + "/Cargo.lock";
+        crateDir = dirOf "${src}/${cargoToml}";
+
+        # Support automatic unpacking for ".tar.gz" files as src
+        unpackedCrateDir = pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) {}
+          ''
+            mkdir -p $out
+            tar -xzf ${crateDir} --strip-components=1 -C $out
+          '';
+        unpackedSrc =
+          if (builtins.match ''.*\.tar\.gz$'' crateDir) != null
+          then unpackedCrateDir
+          else crateDir;
+
+        cargoLock = "${unpackedSrc}/Cargo.lock";
         vendor = internal.vendorSupport { inherit cargoLock; };
       in
-        pkgs.stdenv.mkDerivation {
+        stdenv.mkDerivation {
           name = "${name}-crate2nix";
 
           buildInputs = [ pkgs.cargo crate2nix ];
-
           preferLocalBuild = true;
           buildCommand = ''
             set -e
@@ -54,14 +67,14 @@ rec {
             cp ${vendor.cargoConfig} $out/cargo/config
 
             crate_hashes="$out/crate-hashes.json"
-            if test -r "${src}/crate-hashes.json" ; then
-              cp "${src}/crate-hashes.json" "$crate_hashes"
+            if test -r "${unpackedSrc}/crate-hashes.json" ; then
+              cp "${unpackedSrc}/crate-hashes.json" "$crate_hashes"
               chmod +w "$crate_hashes"
             fi
 
             set -x
             crate2nix generate \
-              -f ${src}/${cargoToml} \
+              -f ${unpackedSrc}/${baseNameOf cargoToml} \
               -h "$crate_hashes" \
               -o $out/default.nix \
               ${lib.escapeShellArgs additionalCargoNixArgs} || {
@@ -80,9 +93,9 @@ rec {
             }
             { set +x; } 2>/dev/null 
 
-            if test -r "${src}/crate-hashes.json" ; then
+            if test -r "${unpackedSrc}/crate-hashes.json" ; then
               set -x
-              diff -u "${src}/crate-hashes.json" $crate_hashes
+              diff -u "${unpackedSrc}/crate-hashes.json" $crate_hashes
              { set +x; } 2>/dev/null 
             fi
           '';
