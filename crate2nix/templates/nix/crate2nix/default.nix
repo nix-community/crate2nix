@@ -9,6 +9,7 @@
 , strictDeprecation ? true
 , crates ? {}
 , rootFeatures ? []
+, release ? true
 }:
 rec {
   # #}
@@ -243,7 +244,7 @@ rec {
                     sha256 = crateConfig.sha256;
                   }
                 );
-                inherit features dependencies buildDependencies crateRenames;
+                inherit features dependencies buildDependencies crateRenames release;
               }
             );
       in

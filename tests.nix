@@ -64,7 +64,8 @@ let
             ./. + "/${pregeneratedBuild}";
         derivationAttr =
           lib.attrByPath
-            derivationAttrPath null (buildTestPkgs.callPackage generatedCargoNix {});
+            derivationAttrPath null
+            (buildTestPkgs.callPackage generatedCargoNix { release = false; });
         derivation =
           if builtins.isNull customBuild
           then
