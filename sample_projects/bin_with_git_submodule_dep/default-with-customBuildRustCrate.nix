@@ -1,7 +1,6 @@
 { pkgs ? import ../../nix/nixpkgs.nix { config = {}; }
 , generatedCargoNix ? ./Cargo.nix
 }:
-
 let
   customBuildRustCrate = pkgs.buildRustCrate.override {
     defaultCrateOverrides = pkgs.defaultCrateOverrides // {

@@ -8,7 +8,6 @@
 , stdenv ? pkgs.stdenv
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
 }:
-
 let
   cargo_nix = callPackage ./crate2nix/Cargo.nix {};
   crate2nix = cargo_nix.rootCrate.build.override {

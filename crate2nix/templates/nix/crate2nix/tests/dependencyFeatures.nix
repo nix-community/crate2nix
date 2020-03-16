@@ -1,5 +1,4 @@
 { lib, crate2nix }:
-
 let
   dependencies = [
     {

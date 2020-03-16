@@ -288,7 +288,6 @@ rec {
       assert (builtins.isList features);
       assert (builtins.isAttrs target);
       assert (builtins.isBool runTests);
-
       let
         rootPackageId = packageId;
         mergedFeatures = mergePackageFeatures (
@@ -371,7 +370,6 @@ rec {
       assert (builtins.isList features);
       assert (builtins.isList dependencies);
       assert (builtins.isAttrs target);
-
       let
         enabledDependencies = filterEnabledDependencies {
           inherit dependencies features target;
@@ -395,7 +393,6 @@ rec {
   /* Returns various tools to debug a crate. */
   debugCrate = { packageId, target ? defaultTarget }:
     assert (builtins.isString packageId);
-
     let
       debug = rec {
         # The built tree as passed to buildRustCrate.
@@ -436,7 +433,6 @@ rec {
     , target
     }:
       assert (builtins.isAttrs crateConfigs);
-
       let
         prefixValues = prefix: lib.mapAttrs (n: v: { "${prefix}" = v; });
         mergedFeatures =
@@ -489,7 +485,6 @@ rec {
       assert (builtins.isAttrs featuresByPackageId);
       assert (builtins.isAttrs target);
       assert (builtins.isBool runTests);
-
       let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
         expandedFeatures = expandFeatures (crateConfig.features or {}) features;
@@ -504,7 +499,6 @@ rec {
         resolveDependencies = cache: path: dependencies:
           assert (builtins.isAttrs cache);
           assert (builtins.isList dependencies);
-
           let
             enabledDependencies = filterEnabledDependencies {
               inherit dependencies target;
@@ -550,7 +544,6 @@ rec {
           resolveDependencies
             cacheWithDependencies "build"
             (crateConfig.buildDependencies or []);
-
       in
         cacheWithAll;
 
@@ -594,7 +587,6 @@ rec {
   expandFeatures = featureMap: inputFeatures:
     assert (builtins.isAttrs featureMap);
     assert (builtins.isList inputFeatures);
-
     let
       expandFeature = feature:
         assert (builtins.isString feature);
@@ -611,7 +603,6 @@ rec {
   dependencyFeatures = features: dependency:
     assert (builtins.isList features);
     assert (builtins.isAttrs dependency);
-
     let
       defaultOrNil = if dependency.usesDefaultFeatures or true
       then [ "default" ]
@@ -631,7 +622,6 @@ rec {
   sortedUnique = features:
     assert (builtins.isList features);
     assert (builtins.all builtins.isString features);
-
     let
       outFeaturesSet = lib.foldl (set: feature: set // { "${feature}" = 1; }) {} features;
       outFeaturesUnique = builtins.attrNames outFeaturesSet;

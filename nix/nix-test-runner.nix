@@ -4,7 +4,6 @@
   # so that it works even if we have broken stuff!
 , tools ? pkgs.callPackage "${sources.crate2nix}/tools.nix" {}
 }:
-
 let
   nixTestRunner = tools.appliedCargoNix {
     name = "nix-test-runner";

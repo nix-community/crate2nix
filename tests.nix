@@ -8,7 +8,6 @@
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
 }:
-
 let
   crate2nix = pkgs.callPackage ./default.nix {};
   nixTest = pkgs.callPackage ./nix/nix-test-runner.nix {};
@@ -400,7 +399,6 @@ let
           buildTestConfigs;
     in
       builtins.listToAttrs buildTestDerivations;
-
 in
 {
   help = pkgs.stdenv.mkDerivation {

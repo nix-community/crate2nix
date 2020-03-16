@@ -10,11 +10,9 @@
 , stdenv ? pkgs.stdenv
 , strictDeprecation ? true
 }:
-
 let
   cargoNix = pkgs.callPackage ./crate2nix/Cargo.nix { inherit strictDeprecation; };
   crate2nix = cargoNix.rootCrate.build;
-
 in
 rec {
 
@@ -33,7 +31,6 @@ rec {
     , cargoToml ? "Cargo.toml"
     , additionalCargoNixArgs ? []
     }:
-
       let
         crateDir = dirOf "${src}/${cargoToml}";
 
@@ -149,7 +146,6 @@ rec {
     # Crude, should be more robust :(
     parseGitSource = source:
       assert builtins.isString source;
-
       let
         withoutGitPlus = lib.removePrefix "git+" source;
         splitHash = lib.splitString "#" withoutGitPlus;
@@ -201,7 +197,6 @@ rec {
               source:
 
                 assert builtins.isString source;
-
                 let
                   parsed = parseGitSource source;
                 in
@@ -232,7 +227,6 @@ rec {
         fetchers = {
           "crates-io" = { name, version, source, ... } @ package:
             assert (sourceType package) == "crates-io";
-
             let
               sha256 =
                 package.checksum
@@ -250,7 +244,6 @@ rec {
 
           "git" = { name, version, source, ... } @ package:
             assert (sourceType package) == "git";
-
             let
               packageId = "${name} ${version} (${source})";
               sha256 =

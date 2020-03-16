@@ -1,5 +1,4 @@
 { lib, crate2nix }:
-
 let
   fakeCrates = {
     "pkg_id1" = "pkg_id1";
