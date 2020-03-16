@@ -356,6 +356,13 @@ let
     }
 
     {
+      name = "codegen";
+      src = ./sample_projects/codegen;
+      expectedOutput = "Hello, World!";
+      pregeneratedBuild = "sample_projects/codegen/Cargo.nix";
+    }
+
+    {
       name = "dependency_issue_65_all_features";
       src = ./sample_projects/dependency_issue_65;
       # This will not work with only default features.
