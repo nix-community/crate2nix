@@ -324,11 +324,18 @@ rec {
                 dependencies = crateConfig.buildDependencies or [];
               };
 
+            filterEnabledDependenciesForThis = dependencies: filterEnabledDependencies {
+              inherit dependencies features target;
+            };
+
             dependenciesWithRenames =
               lib.filter (d: d ? "rename") (
-                (crateConfig.buildDependencies or [])
-                ++ (crateConfig.dependencies or [])
-                ++ devDependencies
+                filterEnabledDependenciesForThis
+                  (
+                    (crateConfig.buildDependencies or [])
+                    ++ (crateConfig.dependencies or [])
+                    ++ devDependencies
+                  )
               );
 
             crateRenames =
@@ -571,7 +578,7 @@ rec {
       len = builtins.stringLength prefix;
       startsWithPrefix = builtins.substring 0 len feature == prefix;
     in
-      feature == name
+      (rename == null && feature == name)
       || (rename != null && rename == feature)
       || startsWithPrefix;
 
@@ -594,7 +601,7 @@ rec {
       sortedUnique outFeatures;
 
   /*
-     Returns the actual dependencies for the given dependency.
+     Returns the actual features for the given dependency.
     
      features: The features of the crate that refers this dependency.
   */
@@ -609,7 +616,7 @@ rec {
       explicitFeatures = dependency.features or [];
       additionalDependencyFeatures =
         let
-          dependencyPrefix = dependency.name + "/";
+          dependencyPrefix = (dependency.rename or dependency.name) + "/";
           dependencyFeatures =
             builtins.filter (f: lib.hasPrefix dependencyPrefix f) features;
         in

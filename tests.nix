@@ -340,6 +340,12 @@ let
     }
 
     {
+      name = "renaming";
+      src = ./sample_projects/renaming;
+      expectedOutput = "Hello, world!";
+    }
+
+    {
       name = "dependency_issue_65_all_features";
       src = ./sample_projects/dependency_issue_65;
       # This will not work with only default features.

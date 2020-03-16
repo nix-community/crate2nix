@@ -11,6 +11,17 @@ let
       packageId = "pkgid_extra";
     }
     {
+      name = "optional_crate";
+      packageId = "pkgid_optional";
+      optional = true;
+    }
+    {
+      name = "optional_crate";
+      rename = "optional_crate2";
+      packageId = "pkgid_optional2";
+      optional = true;
+    }
+    {
       name = "with_target";
       target_cfg = true;
       optional = false;
