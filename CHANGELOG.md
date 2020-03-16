@@ -1,3 +1,41 @@
+# 0.7.x - 0.8.0
+
+Organizational: @andir is now an additional official maintainer of `crate2nix`. 
+Welcome!
+
+Breaking change:
+
+* If you are building crates with git dependencies, you will now need to update
+  to a recent version of `nixpkgs-unstable`. On the upside, crates in sub
+  directories of git repositories will now work!
+
+New features:
+
+* [Issue #53](https://github.com/kolloch/crate2nix/issues/53): Search for
+  matching Cargo.toml for git dependencies.
+* Running tests is now documented in the README.
+* Add `testInputs` to test execution. This allows users to add `buildInputs` to
+  the test execution. This might be required as during test execution external
+  programs will be called on generated output or in cases where the rust
+  application is just a wrapper around some other tool (in some way or another).
+* [Issue #47](https://github.com/kolloch/crate2nix/issues/47) Shorter package
+  IDs: Use the crate name or the crate name together with the version as package
+  ID if that is unique. That shortens the generated files, makes them more
+  readable and also strips local paths from the package IDs in most cases. The
+  last point means that you do not have an unncessary diff in you generated
+  Cargo.nix because someone else was regenerating it.
+
+Under the hood:
+
+* Trimmed down the dependency tree of `crate2nix` itself by disabling some
+  features.
+* At least some smoke tests for debug functionality.
+
+If you are interested in hacking on `crate2nix` and `buildRustCrate`: There are
+now some convenience flags for the `./run_tests.sh` script for offline mode and
+running the tests against your own modified version of `nixpkgs`. Check out the
+README section "Hacking on `buildRustCrate` in nixpkgs".
+
 # 0.6.x - 0.7.1
 
 New features and improvements:
