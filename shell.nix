@@ -1,5 +1,8 @@
 #
-# Crates a shell with crate2nix installed.
+# A development shell environment for crate2nix.
+#
+# This can be used for interactive development.
+# A pure version of this is used for "run_tests.sh" and "regenerate_cargo.sh".
 #
 
 # Use pinned version of nixos-unstable by default to make sure this works.

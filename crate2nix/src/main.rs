@@ -42,7 +42,8 @@ pub enum Opt {
 
         #[structopt(
             long = "default-features",
-            help = "Enables the default default features. 
+            help = "Enables the default default features \
+                    (instead of all features as is the default). \
                     Often combined with --features to add selected features on top."
         )]
         default_features: bool,
@@ -57,7 +58,7 @@ pub enum Opt {
         #[structopt(
             long = "features",
             help = "Resolve project dependencies additionally with these features enabled. \
-                    By default, only the default features are resolved."
+                    By default, all features are resolved."
         )]
         features: Vec<String>,
 
@@ -177,13 +178,23 @@ fn main() -> CliResult {
                 // "cargo metadata" will default to the "default features".
                 // crate2nix defaults to "--all-features" since this allows users to choose
                 // any set of features at evaluation time.
+                let all_features = !no_default_features && !default_features;
                 if no_default_features {
                     options.push("--no-default-features".to_string());
                 } else if !default_features {
+                    assert!(all_features);
                     options.push("--all-features".to_string());
                 }
 
                 if !features.is_empty() {
+                    if all_features {
+                        bail!(
+                            "You specified --features but --all-features was already selected. \
+                               Use --no-default-features or --default-features to only select \
+                               some features as a basis and then use --features to add additional \
+                               features on top."
+                        )
+                    }
                     options.push("--features".to_string());
                     options.push(features.join(" "));
                 }

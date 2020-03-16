@@ -14,6 +14,8 @@
 , rootFeatures ? [ "default" ]
   # If true, throw errors instead of issueing deprecation warnings.
 , strictDeprecation ? false
+  # Whether to perform release builds: longer compile times, faster binaries.
+, release ? true
 }:
 
 rec {
@@ -2885,7 +2887,7 @@ rec {
                     sha256 = crateConfig.sha256;
                   }
                 );
-                inherit features dependencies buildDependencies crateRenames;
+                inherit features dependencies buildDependencies crateRenames release;
               }
             );
       in

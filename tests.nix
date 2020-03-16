@@ -64,7 +64,8 @@ let
             ./. + "/${pregeneratedBuild}";
         derivationAttr =
           lib.attrByPath
-            derivationAttrPath null (buildTestPkgs.callPackage generatedCargoNix {});
+            derivationAttrPath null
+            (buildTestPkgs.callPackage generatedCargoNix { release = false; });
         derivation =
           if builtins.isNull customBuild
           then
@@ -355,8 +356,16 @@ let
     }
 
     {
-      name = "dependency_issue_65_sqlite_feature";
-      additionalCargoNixArgs = [ "--features" "sqlite" ];
+      name = "dependency_issue_65_sqlite_no_default_feature";
+      additionalCargoNixArgs = [ "--no-default-features" "--features" "sqlite" ];
+      src = ./sample_projects/dependency_issue_65;
+      customBuild = "sample_projects/dependency_issue_65/default.nix";
+      expectedOutput = "Hello, dependency_issue_65";
+    }
+
+    {
+      name = "dependency_issue_65_sqlite_default_features";
+      additionalCargoNixArgs = [ "--default-features" "--features" "sqlite" ];
       src = ./sample_projects/dependency_issue_65;
       customBuild = "sample_projects/dependency_issue_65/default.nix";
       expectedOutput = "Hello, dependency_issue_65";
