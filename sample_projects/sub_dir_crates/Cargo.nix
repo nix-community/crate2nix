@@ -69,7 +69,6 @@ rec {
     # Many of the fields are passed one-to-one to buildRustCrate.
     #
     # Noteworthy:
-    # * `crateBin = [{name = ","; path = ",";}];`: a hack to disable building the binary.
     # * `dependencies`/`buildDependencies`: similar to the corresponding fields for buildRustCrate.
     #   but with additional information which is used during dependency/feature resolution.
     # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.

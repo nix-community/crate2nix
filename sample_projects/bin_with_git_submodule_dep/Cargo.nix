@@ -69,7 +69,6 @@ rec {
     # Many of the fields are passed one-to-one to buildRustCrate.
     #
     # Noteworthy:
-    # * `crateBin = [{name = ","; path = ",";}];`: a hack to disable building the binary.
     # * `dependencies`/`buildDependencies`: similar to the corresponding fields for buildRustCrate.
     #   but with additional information which is used during dependency/feature resolution.
     # * `resolvedDependencies`: the selected default features reported by cargo - only included for debugging.
@@ -231,8 +230,7 @@ rec {
         crateName = "bindgen";
         version = "0.49.2";
         edition = "2015";
-        # Hack to suppress building binaries
-        crateBin = [ { name = ","; path = ","; } ];
+        crateBin = [];
         sha256 = "1mnbdk2anyk23if5r0sxbhpa3ykm087v3xky900jldimcnx1ysl4";
         authors = [
           "Jyun-Yan You <jyyou.tw@gmail.com>"
@@ -352,8 +350,7 @@ rec {
         crateName = "cc";
         version = "1.0.47";
         edition = "2018";
-        # Hack to suppress building binaries
-        crateBin = [ { name = ","; path = ","; } ];
+        crateBin = [];
         sha256 = "1f08560cwbalni1fc2jcmh1dszl3rc31azvr45bgz8vhrs6hb1xa";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
