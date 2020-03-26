@@ -78,9 +78,9 @@ rec {
     crates = {
       "aho-corasick" = rec {
         crateName = "aho-corasick";
-        version = "0.7.8";
+        version = "0.7.10";
         edition = "2015";
-        sha256 = "048q5vr1qac4lf90z80lw8kcya6qmlxw857xhwxsssk832jdafkl";
+        sha256 = "1nka9509afjgal6lpymn8w2lq11dmjwxs8yjcmzys966if5l05l7";
         libName = "aho_corasick";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
@@ -149,9 +149,9 @@ rec {
       };
       "autocfg" = rec {
         crateName = "autocfg";
-        version = "0.1.7";
+        version = "1.0.0";
         edition = "2015";
-        sha256 = "1chwgimpx5z7xbag7krr9d8asxfqbh683qhgl9kn3hxk2l0djj8x";
+        sha256 = "17cv6pwb4q08s0ynpr4n8hv5299hcmhdgvdchzixfpw8y5qcgapq";
         authors = [
           "Josh Stone <cuviper@gmail.com>"
         ];
@@ -159,9 +159,9 @@ rec {
       };
       "backtrace" = rec {
         crateName = "backtrace";
-        version = "0.3.44";
+        version = "0.3.46";
         edition = "2018";
-        sha256 = "0djmbf6caj7qm2p7jw6wzjxc83sji9gdd8vjp9mg2g0gyjdnn0z4";
+        sha256 = "17hh1vrhfd01qpjilrdpy7q0lf2j2qv36achpg37q92rff4r5rmi";
         authors = [
           "The Rust Project Developers"
         ];
@@ -170,6 +170,7 @@ rec {
             name = "backtrace-sys";
             packageId = "backtrace-sys";
             optional = true;
+            usesDefaultFeatures = false;
           }
           {
             name = "cfg-if";
@@ -188,7 +189,7 @@ rec {
         features = {
           "default" = [ "std" "libunwind" "libbacktrace" "dladdr" "dbghelp" ];
           "gimli-symbolize" = [ "addr2line" "findshlibs" "memmap" "goblin" ];
-          "libbacktrace" = [ "backtrace-sys" ];
+          "libbacktrace" = [ "backtrace-sys/backtrace-sys" ];
           "rustc-dep-of-std" = [ "backtrace-sys/rustc-dep-of-std" "cfg-if/rustc-dep-of-std" "core" "compiler_builtins" "libc/rustc-dep-of-std" "rustc-demangle/rustc-dep-of-std" ];
           "serialize-rustc" = [ "rustc-serialize" ];
           "serialize-serde" = [ "serde" ];
@@ -198,9 +199,9 @@ rec {
       };
       "backtrace-sys" = rec {
         crateName = "backtrace-sys";
-        version = "0.1.32";
+        version = "0.1.35";
         edition = "2015";
-        sha256 = "14c406z8bdmms8a5l8cv79jfkz1mk10qk5p97izf4vai53qparax";
+        sha256 = "066iviphi72mx9hd3njzsplk5v45jhi10mrccbbyij391ahsps3x";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -218,8 +219,10 @@ rec {
           }
         ];
         features = {
+          "default" = [ "backtrace-sys" ];
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
+        resolvedDefaultFeatures = [ "backtrace-sys" ];
       };
       "bitflags" = rec {
         crateName = "bitflags";
@@ -280,9 +283,9 @@ rec {
       };
       "bstr" = rec {
         crateName = "bstr";
-        version = "0.2.11";
+        version = "0.2.12";
         edition = "2015";
-        sha256 = "0j1cki9nmplv99gdwrdlj8z4kf8ncid9b99qpn7xnnha392f2ajh";
+        sha256 = "0hazfback6i2k3vhhwyj8h46id3y58zxqh22pz46hj9r1zayd298";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -547,7 +550,7 @@ rec {
           }
           {
             name = "structopt";
-            packageId = "structopt 0.3.9";
+            packageId = "structopt 0.3.12";
           }
           {
             name = "tera";
@@ -585,9 +588,9 @@ rec {
       };
       "crossbeam-channel" = rec {
         crateName = "crossbeam-channel";
-        version = "0.4.0";
+        version = "0.4.2";
         edition = "2015";
-        sha256 = "135ncx9680afs8jkjz8g3iq3naay9rn7942gxrdg2n9m1cxrmv5c";
+        sha256 = "0qd05n5bcwafkmbzq1lspwrfi29xnzlw46qarg1sl0lwj68qdvfc";
         authors = [
           "The Crossbeam Project Developers"
         ];
@@ -596,14 +599,18 @@ rec {
             name = "crossbeam-utils";
             packageId = "crossbeam-utils";
           }
+          {
+            name = "maybe-uninit";
+            packageId = "maybe-uninit";
+          }
         ];
         
       };
       "crossbeam-utils" = rec {
         crateName = "crossbeam-utils";
-        version = "0.7.0";
+        version = "0.7.2";
         edition = "2015";
-        sha256 = "1x1rn35q2v05qif14ijfg7800d3rf3ji2cg79awnacfw5jq6si6f";
+        sha256 = "1a31wbrda1320gj2a6az1lin2d34xfc3xf88da4c17qy5lxcgiy3";
         authors = [
           "The Crossbeam Project Developers"
         ];
@@ -729,9 +736,9 @@ rec {
       };
       "failure" = rec {
         crateName = "failure";
-        version = "0.1.6";
+        version = "0.1.7";
         edition = "2015";
-        sha256 = "1nay5c2cgi40kp84rbiir1dgwlh9aap9jazbnxfmqrkpr49ky9zq";
+        sha256 = "0js6i6mb42q1g6q3csfbmi6q40s64k96705xbim0d8zg44j9qlmq";
         authors = [
           "Without Boats <boats@mozilla.com>"
         ];
@@ -756,9 +763,9 @@ rec {
       };
       "failure_derive" = rec {
         crateName = "failure_derive";
-        version = "0.1.6";
+        version = "0.1.7";
         edition = "2015";
-        sha256 = "022xfb9wcs1bdssfm2airsrfxpn2ccpbyh1ld2wf9483isvjbhhb";
+        sha256 = "0cfjz0c9szqpxn43b2r722p6m3swzxj7aj6xhqw23ml7h8y762h3";
         procMacro = true;
         authors = [
           "Without Boats <woboats@gmail.com>"
@@ -766,15 +773,15 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
+            packageId = "proc-macro2 1.0.9";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2";
+            packageId = "quote 1.0.3";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14";
+            packageId = "syn 1.0.17";
           }
           {
             name = "synstructure";
@@ -845,9 +852,9 @@ rec {
       };
       "globset" = rec {
         crateName = "globset";
-        version = "0.4.4";
+        version = "0.4.5";
         edition = "2015";
-        sha256 = "1wnqxq91liknmr2w93wjq2spyxbrd1pmnhd4nbi3921dr35a4nlj";
+        sha256 = "0841ihdg1ps2618cs0kjbr3pn3rzrj24rx3n4pg1sa6p1d1xmlbs";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -876,13 +883,14 @@ rec {
           }
         ];
         features = {
+          "serde1" = [ "serde" ];
         };
       };
       "globwalk" = rec {
         crateName = "globwalk";
-        version = "0.7.1";
+        version = "0.7.3";
         edition = "2015";
-        sha256 = "0yr6kcm2izsjicisjk5dzy00wh7jmh823zxqlfq9fs2rd01wzjsk";
+        sha256 = "17f9czz46ww5f2qk9349jax7wc38bdmp46cv469plsc6qnp1gnyr";
         authors = [
           "Gilad Naaman <gilad@naaman.io>"
         ];
@@ -916,9 +924,9 @@ rec {
       };
       "hermit-abi" = rec {
         crateName = "hermit-abi";
-        version = "0.1.7";
+        version = "0.1.8";
         edition = "2015";
-        sha256 = "0rxvb73c6fny5xpncx8qginph8ygfhnzw9z4fyyc1yqr74a5zig2";
+        sha256 = "1n7g3bkd0hh9gnnmdzdzrrywqqb0hq8ypaxfkxg87zmv4qdmj40h";
         authors = [
           "Stefan Lankes"
         ];
@@ -936,9 +944,9 @@ rec {
       };
       "hex" = rec {
         crateName = "hex";
-        version = "0.4.1";
+        version = "0.4.2";
         edition = "2018";
-        sha256 = "1bqlm4cbbpw37jdvdj5nxyw8cp4k6wmyw54gkq62l1i5ymmxmkbn";
+        sha256 = "0dbf00j3h3pz0lw8jp245rwypna6i23l4cpvym8gsczin9c92kv4";
         authors = [
           "KokaKiwi <kokakiwi@kokakiwi.net>"
         ];
@@ -989,9 +997,9 @@ rec {
       };
       "ignore" = rec {
         crateName = "ignore";
-        version = "0.4.11";
+        version = "0.4.13";
         edition = "2015";
-        sha256 = "07js5k91v870b2i5rl5shg37214yzwl0p6fjqy06y0v97gyawbaj";
+        sha256 = "1fmbrhjv51xrimkm34il2cqhvmf4r4zvwgadrcbsszx6nzyz34nn";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -999,6 +1007,10 @@ rec {
           {
             name = "crossbeam-channel";
             packageId = "crossbeam-channel";
+          }
+          {
+            name = "crossbeam-utils";
+            packageId = "crossbeam-utils";
           }
           {
             name = "globset";
@@ -1107,9 +1119,9 @@ rec {
       };
       "libc" = rec {
         crateName = "libc";
-        version = "0.2.66";
+        version = "0.2.68";
         edition = "2015";
-        sha256 = "0n0mwry21fxfwc063k33mvxk8xj7ia5ar8m42c9ymbam2ksb25fm";
+        sha256 = "1w6z9krcqn7p200sb80dxx76iyvw3jdz949zxr1sgfr3a50c186y";
         authors = [
           "The Rust Project Developers"
         ];
@@ -1160,11 +1172,22 @@ rec {
         ];
         
       };
+      "maybe-uninit" = rec {
+        crateName = "maybe-uninit";
+        version = "2.0.0";
+        edition = "2015";
+        sha256 = "004y0nzmpfdrhz251278341z6ql34iv1k6dp1h6af7d6nd6jwc30";
+        authors = [
+          "est31 <MTest31@outlook.com>"
+          "The Rust Project Developers"
+        ];
+        
+      };
       "memchr" = rec {
         crateName = "memchr";
-        version = "2.3.2";
+        version = "2.3.3";
         edition = "2015";
-        sha256 = "0y1rjc2afcxdf8lg4h31ivlfil242s2ivilpfiwkdx51h7imsi2k";
+        sha256 = "0074pvsfl938ndl5js14ibc7i9q0k3zp390z843w8nlyv4bxha1p";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
           "bluss"
@@ -1218,9 +1241,9 @@ rec {
       };
       "pest" = rec {
         crateName = "pest";
-        version = "2.1.2";
+        version = "2.1.3";
         edition = "2015";
-        sha256 = "0jl9nv6jx1jy3fz2j49nw7jkh9z5igvrbvsgnbc5aan2ql0v4kvy";
+        sha256 = "0lry80bm90x47nq71wxq83kjrm9ashpz4kbm92p90ysdx4m8gx0h";
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
@@ -1257,9 +1280,9 @@ rec {
       };
       "pest_generator" = rec {
         crateName = "pest_generator";
-        version = "2.1.1";
+        version = "2.1.3";
         edition = "2015";
-        sha256 = "1h3z8jccki87mn7gppy4292s1ah98z4md998w5pd04jpkclwz7vv";
+        sha256 = "0mfgl0p6v91ywdqr9i8w053v70cnfqjk8y5rhwbvir9idridpf4r";
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
@@ -1274,24 +1297,24 @@ rec {
           }
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
+            packageId = "proc-macro2 1.0.9";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2";
+            packageId = "quote 1.0.3";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14";
+            packageId = "syn 1.0.17";
           }
         ];
         
       };
       "pest_meta" = rec {
         crateName = "pest_meta";
-        version = "2.1.2";
+        version = "2.1.3";
         edition = "2015";
-        sha256 = "0iymvrh7lcfi8iarkgq0hwgarr00np3l4xg4bx42rmvgi6czshyz";
+        sha256 = "07d1jbbbpxpchk0j37ljas46sdyyg599z3zw2ac0f5sk9x06xgjl";
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
@@ -1316,9 +1339,9 @@ rec {
       };
       "proc-macro-error" = rec {
         crateName = "proc-macro-error";
-        version = "0.4.9";
+        version = "0.4.12";
         edition = "2018";
-        sha256 = "0hpjjci16x9j1h7b9p5fbwlfn6bx90q0b0jz4ja5wzlwyfd3qaq5";
+        sha256 = "1rvpaadwv7vmsp142qqh2axqrr9v78f1nvdsi9nhmfhy10kk1wqq";
         authors = [
           "CreepySkeleton <creepy-skeleton@yandex.ru>"
         ];
@@ -1329,37 +1352,32 @@ rec {
           }
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
+            packageId = "proc-macro2 1.0.9";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2";
+            packageId = "quote 1.0.3";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14";
+            packageId = "syn 1.0.17";
             usesDefaultFeatures = false;
+            features = [ "derive" "parsing" "proc-macro" "printing" ];
           }
         ];
         buildDependencies = [
           {
-            name = "rustversion";
-            packageId = "rustversion";
-          }
-        ];
-        devDependencies = [
-          {
-            name = "rustversion";
-            packageId = "rustversion";
+            name = "version_check";
+            packageId = "version_check";
           }
         ];
         
       };
       "proc-macro-error-attr" = rec {
         crateName = "proc-macro-error-attr";
-        version = "0.4.9";
+        version = "0.4.12";
         edition = "2018";
-        sha256 = "0lwjv931536h8bpx6hy0dbq04dgz7w92fmhnwdijx467h7sbwxfi";
+        sha256 = "1pk9mwcfnpf8favgc2cl4sqlmi818p96hg8pfb51wg5nzmvlnnwa";
         procMacro = true;
         authors = [
           "CreepySkeleton <creepy-skeleton@yandex.ru>"
@@ -1367,25 +1385,27 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
+            packageId = "proc-macro2 1.0.9";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2";
-          }
-          {
-            name = "rustversion";
-            packageId = "rustversion";
+            packageId = "quote 1.0.3";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14";
+            packageId = "syn 1.0.17";
             usesDefaultFeatures = false;
-            features = [ "derive" "parsing" "proc-macro" ];
+            features = [ "derive" "parsing" "proc-macro" "printing" ];
           }
           {
             name = "syn-mid";
             packageId = "syn-mid";
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "version_check";
+            packageId = "version_check";
           }
         ];
         
@@ -1409,11 +1429,11 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "proc-macro" ];
       };
-      "proc-macro2 1.0.8" = rec {
+      "proc-macro2 1.0.9" = rec {
         crateName = "proc-macro2";
-        version = "1.0.8";
+        version = "1.0.9";
         edition = "2018";
-        sha256 = "0j45p176fnw0d02dzcky9sxyr4fadiggq07skmblwspqdxy33jrs";
+        sha256 = "0d9lr9h0rpa4gi78ha37zqbmkdhrpyjvb5ia94m3ljc1cwf742bc";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -1495,18 +1515,18 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "proc-macro" ];
       };
-      "quote 1.0.2" = rec {
+      "quote 1.0.3" = rec {
         crateName = "quote";
-        version = "1.0.2";
+        version = "1.0.3";
         edition = "2018";
-        sha256 = "1zkc46ryacf2jdkc6krsy2z615xbk1x8kp1830rcxz3irj5qqfh5";
+        sha256 = "0zwd6fp74xfg4jnnnwj4v84lkzif2giwj4ch1hka9g35ghc6rp1b";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
+            packageId = "proc-macro2 1.0.9";
             usesDefaultFeatures = false;
           }
         ];
@@ -1619,9 +1639,9 @@ rec {
       };
       "regex" = rec {
         crateName = "regex";
-        version = "1.3.4";
+        version = "1.3.6";
         edition = "2015";
-        sha256 = "1a1mh9mgr8jipnxdaykla6xlw4a6kjn2bzkq3cifx8xy4ivzjb1j";
+        sha256 = "1cx4lcgy7vdi2kij2n1dp2whl33d7974g1kxwiklhs192nclcsbz";
         authors = [
           "The Rust Project Developers"
         ];
@@ -1667,9 +1687,9 @@ rec {
       };
       "regex-syntax" = rec {
         crateName = "regex-syntax";
-        version = "0.6.14";
+        version = "0.6.17";
         edition = "2015";
-        sha256 = "01myl8xqpbnird23xnsb92sjmz1cmp69r6m7y3dwbpmsx4zzx3dj";
+        sha256 = "1blmlgzcg7in3kcxqabpfzzrbnamr2i671flbrmlqhfps5bvvrbz";
         authors = [
           "The Rust Project Developers"
         ];
@@ -1709,38 +1729,11 @@ rec {
           "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
       };
-      "rustversion" = rec {
-        crateName = "rustversion";
-        version = "1.0.2";
-        edition = "2018";
-        sha256 = "1xkr1g792w728py2qpg2zj0vfviv2xzmxkkd9w6035l9d5ss3fxk";
-        procMacro = true;
-        build = "build/build.rs";
-        authors = [
-          "David Tolnay <dtolnay@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
-          }
-          {
-            name = "quote";
-            packageId = "quote 1.0.2";
-          }
-          {
-            name = "syn";
-            packageId = "syn 1.0.14";
-            features = [ "full" ];
-          }
-        ];
-        
-      };
       "ryu" = rec {
         crateName = "ryu";
-        version = "1.0.2";
+        version = "1.0.3";
         edition = "2015";
-        sha256 = "1j0h74f1xqf9hjkhanp8i20mqc1aw35kr1iq9i79q7713mn51a5z";
+        sha256 = "0xlx9ybzncrb7d6r9533g8ydlg6mr252pfzl4g9cqaqkpvk24mjk";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
@@ -1801,9 +1794,9 @@ rec {
       };
       "serde" = rec {
         crateName = "serde";
-        version = "1.0.104";
+        version = "1.0.105";
         edition = "2015";
-        sha256 = "0ja4mgw4p42syjk7jkzwhj2yg6llfrfm7vn8rvy7v3c1bzr1aha1";
+        sha256 = "1zrj157dxvmymp5ii60anap2qqks4pkr3fwsp71wi3sv4nzzn1z7";
         authors = [
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
@@ -1829,9 +1822,9 @@ rec {
       };
       "serde_derive" = rec {
         crateName = "serde_derive";
-        version = "1.0.104";
+        version = "1.0.105";
         edition = "2015";
-        sha256 = "0r7gjlwfry44b4ylz524ynjp9v3qiwdj4c588lh94aas78q9x3qj";
+        sha256 = "1y5gzwpy8yjv9pwh1js11vr18nfz4gg1g2kmyr6p58hvavy00pdc";
         procMacro = true;
         authors = [
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
@@ -1840,15 +1833,15 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
+            packageId = "proc-macro2 1.0.9";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2";
+            packageId = "quote 1.0.3";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14";
+            packageId = "syn 1.0.17";
             features = [ "visit" ];
           }
         ];
@@ -1987,11 +1980,11 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "structopt 0.3.9" = rec {
+      "structopt 0.3.12" = rec {
         crateName = "structopt";
-        version = "0.3.9";
+        version = "0.3.12";
         edition = "2018";
-        sha256 = "160f06f9k7b7jbm53d51w0ym2lxmxmdbkil0bnxzqml9skbvxg51";
+        sha256 = "178m7wxnjyy9a8a961z74nazjsg79rfv3gv9g3bykfrrjmqs5yn8";
         authors = [
           "Guillaume Pinot <texitoi@texitoi.eu>"
           "others"
@@ -2008,7 +2001,7 @@ rec {
           }
           {
             name = "structopt-derive";
-            packageId = "structopt-derive 0.4.2";
+            packageId = "structopt-derive 0.4.5";
           }
         ];
         features = {
@@ -2056,11 +2049,11 @@ rec {
           "nightly" = [ "proc-macro2/nightly" ];
         };
       };
-      "structopt-derive 0.4.2" = rec {
+      "structopt-derive 0.4.5" = rec {
         crateName = "structopt-derive";
-        version = "0.4.2";
+        version = "0.4.5";
         edition = "2018";
-        sha256 = "0r2zkrk5v3yk103rkzd082p4630lry25c2jxcd7d352v3ym68l09";
+        sha256 = "0c04bbzc5bmr2ns6qy35yz55nn3xvlq4dpwxdynnljb9ikhvi21z";
         procMacro = true;
         authors = [
           "Guillaume Pinot <texitoi@texitoi.eu>"
@@ -2076,17 +2069,16 @@ rec {
           }
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
+            packageId = "proc-macro2 1.0.9";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2";
+            packageId = "quote 1.0.3";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14";
-            usesDefaultFeatures = false;
-            features = [ "derive" "parsing" "proc-macro" ];
+            packageId = "syn 1.0.17";
+            features = [ "full" ];
           }
         ];
         features = {
@@ -2124,23 +2116,23 @@ rec {
         };
         resolvedDefaultFeatures = [ "clone-impls" "default" "derive" "parsing" "printing" "proc-macro" "quote" ];
       };
-      "syn 1.0.14" = rec {
+      "syn 1.0.17" = rec {
         crateName = "syn";
-        version = "1.0.14";
+        version = "1.0.17";
         edition = "2018";
-        sha256 = "1xf8g9a3yl41027g5napiwfd7r87y734lf2dqdyyzyfzv183avxg";
+        sha256 = "00xvf772ys4fj9fr8kplmsqb9if215dsipi3nv54aw9q7xkfpw0d";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
+            packageId = "proc-macro2 1.0.9";
             usesDefaultFeatures = false;
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2";
+            packageId = "quote 1.0.3";
             optional = true;
             usesDefaultFeatures = false;
           }
@@ -2167,15 +2159,15 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
+            packageId = "proc-macro2 1.0.9";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2";
+            packageId = "quote 1.0.3";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14";
+            packageId = "syn 1.0.17";
             usesDefaultFeatures = false;
             features = [ "parsing" "printing" "derive" ];
           }
@@ -2195,17 +2187,17 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.8";
+            packageId = "proc-macro2 1.0.9";
             usesDefaultFeatures = false;
           }
           {
             name = "quote";
-            packageId = "quote 1.0.2";
+            packageId = "quote 1.0.3";
             usesDefaultFeatures = false;
           }
           {
             name = "syn";
-            packageId = "syn 1.0.14";
+            packageId = "syn 1.0.17";
             usesDefaultFeatures = false;
             features = [ "derive" "parsing" "printing" "clone-impls" "visit" "extra-traits" ];
           }
@@ -2242,9 +2234,9 @@ rec {
       };
       "tera" = rec {
         crateName = "tera";
-        version = "1.0.2";
+        version = "1.1.0";
         edition = "2018";
-        sha256 = "0sn8jkzkxzp1wxla5s4f1li8j56137cmkhpk5662wb8w9l1sw0c5";
+        sha256 = "13f9syjxf4kcq9pp8vnaad6y5z7wksxav5f8y1izqhx22hazh8jl";
         authors = [
           "Vincent Prouillet <hello@prouilletvincent.com>"
         ];
@@ -2367,9 +2359,9 @@ rec {
       };
       "ucd-trie" = rec {
         crateName = "ucd-trie";
-        version = "0.1.2";
-        edition = "2015";
-        sha256 = "1hh6kyzh5xygwy96wfmsf8v8czlzhps2lgbcyhj1xzy1w1xys04g";
+        version = "0.1.3";
+        edition = "2018";
+        sha256 = "072cblf8v3wzyaz3lhbpzgil4s03dpzg1ppy3gqx2l4v622y3pjn";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -2550,6 +2542,16 @@ rec {
         features = {
           "eders" = [ "serde" ];
         };
+      };
+      "version_check" = rec {
+        crateName = "version_check";
+        version = "0.9.1";
+        edition = "2015";
+        sha256 = "1kikqlnggii1rvnxrbls55sc46lxvinz5k3giscgncjj4p87b1q7";
+        authors = [
+          "Sergio Benitez <sb@sergio.bz>"
+        ];
+        
       };
       "walkdir" = rec {
         crateName = "walkdir";
