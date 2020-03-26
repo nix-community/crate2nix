@@ -15,6 +15,7 @@
       nix
       git
       utillinux
+      cacert
       ;
 
     nixTest = let
