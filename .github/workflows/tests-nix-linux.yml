@@ -1,0 +1,19 @@
+name: "tests-nix-linux"
+on:
+  pull_request:
+  push:
+jobs:
+  tests:
+    strategy:
+      matrix:
+        platform: 
+          - ubuntu-latest 
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: actions/checkout@v1
+    - uses: cachix/install-nix-action@releases/v7
+    - uses: cachix/cachix-action@releases/v4
+      with:
+        name: eigenvalue
+        file: 'tests.nix'
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
