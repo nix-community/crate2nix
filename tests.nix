@@ -64,7 +64,7 @@ let
         derivationAttr =
           lib.attrByPath
             derivationAttrPath null
-            (buildTestPkgs.callPackage generatedCargoNix { release = false; });
+            (buildTestPkgs.callPackage generatedCargoNix { release = true; });
         derivation =
           if builtins.isNull customBuild
           then
