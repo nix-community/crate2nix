@@ -19,11 +19,19 @@
       ;
 
     nixTest = let
-      nixTestRunnerCargoNix = tools.appliedCargoNix {
+      cargoNix = tools.appliedCargoNix rec {
         name = "nix-test-runner";
-        src = sources."nix-test-runner";
+        src = sources."${name}";
       };
     in
-      nixTestRunnerCargoNix.rootCrate.build;
+      cargoNix.rootCrate.build;
+
+    cargoRelease = let
+      cargoNix = tools.appliedCargoNix rec {
+        name = "cargo-release";
+        src = sources."${name}";
+      };
+    in
+      cargoNix.rootCrate.build;
   };
 }

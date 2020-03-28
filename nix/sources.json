@@ -11,6 +11,18 @@
         "url": "https://github.com/cachix/cachix/archive/267c1173b0c743f8cefe442f381fc7989736135f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "cargo-release": {
+        "branch": "master",
+        "description": "Cargo subcommand \"release\": everything about releasing a rust crate.",
+        "homepage": "",
+        "owner": "sunng87",
+        "repo": "cargo-release",
+        "rev": "4027cefd4f4a93d4ec130941c7343604ce8e9a8b",
+        "sha256": "0w536a3r6kgk8saz59cad7y8a1pg2flwxkc92kd9jcds2hgv90qk",
+        "type": "tarball",
+        "url": "https://github.com/sunng87/cargo-release/archive/4027cefd4f4a93d4ec130941c7343604ce8e9a8b.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "crate2nix": {
         "branch": "master",
         "description": "nix build file generator for rust crates",
