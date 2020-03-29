@@ -27,7 +27,7 @@ impl IndexedMetadata {
         let resolve = metadata
             .resolve
             .as_ref()
-            .ok_or_else(|| format_err!("no root in metadata"))?;
+            .ok_or_else(|| format_err!("no resolve in metadata"))?;
 
         let id_shortener = PackageIdShortener::new(metadata.packages.iter());
 

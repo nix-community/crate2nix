@@ -2,29 +2,71 @@
 use cargo_metadata::Node;
 use cargo_metadata::Package;
 use cargo_metadata::{Metadata, Resolve};
+use tempdir::TempDir;
+
+/// Returns bogus crate::GenerateConfig.
+pub fn generate_config() -> crate::GenerateConfig {
+    crate::GenerateConfig {
+        cargo_toml: "Cargo.toml".into(),
+        crate_hashes_json: "crate-hashes.json".into(),
+        nixpkgs_path: "bogus-nixpkgs-path".into(),
+        other_metadata_options: vec![],
+        output: "Cargo.nix".into(),
+        use_cargo_lock_checksums: true,
+        read_crate_hashes: true,
+    }
+}
+
+#[derive(Debug)]
+#[must_use = "Please close."]
+pub struct TestPackage {
+    inner: Package,
+    crate_dir: tempdir::TempDir,
+}
+
+impl TestPackage {
+    pub fn close(self) -> Result<(), std::io::Error> {
+        self.crate_dir.close()
+    }
+}
+
+impl std::ops::Deref for TestPackage {
+    type Target = Package;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
 
 /// Returns a package with minimal bogus data necessary so that
 /// this is a valid package.
-pub fn package(name: &str, version: &str) -> Package {
+pub fn package(name: &str, version: &str) -> TestPackage {
     use serde_json::{from_value, json, to_string_pretty};
 
     semver::Version::parse(version).expect("invalid version");
+    let crate_dir: TempDir =
+        TempDir::new(&format!("crate2nix_crate_{}_{}", name, version)).expect("test dir creation");
     let package_json = || {
         json!({
             "name": name,
             "version": version,
             "id": &format!("{} {} (registry+https://github.com/rust-lang/crates.io-index)", name, version),
             "manifest_path":
-                &format!("/home/peter/.cargo/registry/src/github.com-hash/{}-{}/Cargo.toml", name, version),
+                &format!("{}/Cargo.toml", crate_dir.path().to_str().unwrap()),
             "dependencies": [],
             "targets": [],
             "features": {},
         })
     };
-    from_value(package_json()).expect(&format!(
+    let package = from_value(package_json()).expect(&format!(
         "package_json invalid: {}",
         to_string_pretty(&package_json()).unwrap()
-    ))
+    ));
+
+    TestPackage {
+        inner: package,
+        crate_dir,
+    }
 }
 
 #[test]

@@ -17,6 +17,8 @@ use std::convert::Into;
 use std::path::{Path, PathBuf};
 
 use crate::metadata::IndexedMetadata;
+#[cfg(test)]
+use crate::test;
 use crate::GenerateConfig;
 use itertools::Itertools;
 use std::collections::btree_map::BTreeMap;
@@ -144,6 +146,47 @@ impl CrateDerivation {
             is_root_or_workspace_member,
         })
     }
+}
+
+#[test]
+pub fn minimal_resolve() {
+    use cargo_metadata::{Metadata, Resolve};
+
+    let config = test::generate_config();
+
+    let package = test::package("main", "1.2.3");
+    let node = test::node(&package.id.repr);
+
+    let mut resolve: Resolve = test::empty_resolve();
+    resolve.root = Some(package.id.clone());
+    resolve.nodes = vec![node];
+
+    let mut metadata: Metadata = test::empty_metadata();
+    metadata.packages = vec![package.clone()];
+    metadata.resolve = Some(resolve);
+
+    let indexed = IndexedMetadata::new_from(metadata).unwrap();
+
+    println!("indexed: {:#?}", indexed);
+
+    let root_package = &indexed
+        .pkgs_by_id
+        .get(indexed.root.as_ref().expect("root"))
+        .expect("package");
+    let crate_derivation = CrateDerivation::resolve(&config, &indexed, root_package).unwrap();
+
+    println!("crate_derivation: {:#?}", crate_derivation);
+
+    assert_eq!(crate_derivation.crate_name, "main");
+    assert_eq!(
+        crate_derivation.version,
+        semver::Version::parse("1.2.3").unwrap()
+    );
+    assert_eq!(crate_derivation.is_root_or_workspace_member, true);
+    let empty: Vec<String> = vec![];
+    assert_eq!(crate_derivation.lib_crate_types, empty);
+
+    package.close().unwrap();
 }
 
 /// A build target of a crate.
