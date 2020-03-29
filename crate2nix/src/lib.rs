@@ -31,6 +31,8 @@ mod prefetch;
 pub mod render;
 mod resolve;
 mod target_cfg;
+#[cfg(test)]
+pub mod test;
 pub mod util;
 
 /// The resolved build info and the input for rendering the build.nix.tera template.
