@@ -1400,7 +1400,9 @@ rec {
 
           # executables of the crate
           # we copy to prevent std::env::current_exe() to resolve to a store location
-          cp -r ${crate}/bin/* $testRoot
+          for i in ${crate}/bin/*; do
+            cp "$i" "$testRoot"
+          done
           chmod +w -R .
 
           # test harness executables are suffixed with a hash, like cargo does
