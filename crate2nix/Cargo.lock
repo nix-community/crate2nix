@@ -151,7 +151,7 @@ dependencies = [
 
 [[package]]
 name = "crate2nix"
-version = "0.8.0"
+version = "0.9.0-alpha.1"
 dependencies = [
  "cargo_metadata 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "colored-diff 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
