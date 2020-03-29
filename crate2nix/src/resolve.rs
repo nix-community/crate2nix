@@ -169,10 +169,7 @@ pub fn minimal_resolve() {
 
     println!("indexed: {:#?}", indexed);
 
-    let root_package = &indexed
-        .pkgs_by_id
-        .get(indexed.root.as_ref().expect("root"))
-        .expect("package");
+    let root_package = &indexed.root_package().expect("root package");
     let crate_derivation = CrateDerivation::resolve(&config, &indexed, root_package).unwrap();
 
     println!("crate_derivation: {:#?}", crate_derivation);

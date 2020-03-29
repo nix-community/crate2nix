@@ -91,6 +91,12 @@ impl IndexedMetadata {
             id_shortener,
         })
     }
+
+    #[cfg(test)]
+    pub fn root_package(&self) -> Option<&Package> {
+        let root = self.root.as_ref()?;
+        self.pkgs_by_id.get(&root)
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
