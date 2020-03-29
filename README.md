@@ -47,8 +47,6 @@ Use `crate2nix help` to show all commands and options.
 
 ## Installation
 
-NOTE: It is only tested on Linux for now!
-
 If you are not running, install a recent version of nix by running `curl https://nixos.org/nix/install | sh` or following
 the instructions on [https://nixos.org/nix/](https://nixos.org/nix/).
 
