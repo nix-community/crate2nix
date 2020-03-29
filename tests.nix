@@ -396,6 +396,14 @@ let
       skip = stdenv.hostPlatform.isDarwin;
     }
 
+    {
+      name = "future_util_multi_version";
+      src = ./sample_projects/future_util_multi_version;
+      expectedOutput = "Hello, world!";
+      # FIXME: https://github.com/kolloch/crate2nix/issues/83
+      skip = true;
+    }
+
   ];
 
   buildTestDerivationAttrSet =
