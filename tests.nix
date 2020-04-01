@@ -282,6 +282,18 @@ let
       expectedOutput = "Hello from numtest, world!";
     }
 
+    {
+      name = "integration_test";
+      src = ./sample_projects/integration_test;
+      cargoToml = "Cargo.toml";
+      customBuild = "sample_projects/integration_test/test.nix";
+      expectedOutput = "expected one argument";
+      expectedTestOutputs = [
+        "test read_source_file ... ok"
+        "test write_output_file ... ok"
+      ];
+    }
+
     #
     # Prefetch tests
     #

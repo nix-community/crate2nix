@@ -1,3 +1,9 @@
+# 0.8.x - 0.9.0
+
+Under the hood:
+
+* Test execution is now closer to what `cargo test` does. Thank you, @symphorien!
+
 # 0.7.x - 0.8.0
 
 Organizational: @andir is now an additional official maintainer of `crate2nix`. 

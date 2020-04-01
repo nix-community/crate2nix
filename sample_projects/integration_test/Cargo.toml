@@ -1,0 +1,8 @@
+[package]
+name = "integration_test"
+version = "0.1.0"
+authors = ["Symphorien Gibol <symphorien+git@xlumurb.eu>"]
+edition = "2018"
+
+[dev-dependencies]
+cli_test_dir = "0.1"
