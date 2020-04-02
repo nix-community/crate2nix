@@ -60,21 +60,41 @@ impl CrateDerivation {
     ) -> Result<CrateDerivation, Error> {
         let resolved_dependencies = ResolvedDependencies::new(metadata, package)?;
 
-        let build_dependencies =
-            resolved_dependencies.filtered_dependencies(|d| d.kind == DependencyKind::Build);
-        let dependencies = resolved_dependencies.filtered_dependencies(|d| {
-            d.kind == DependencyKind::Normal || d.kind == DependencyKind::Unknown
+        let build_dependencies = resolved_dependencies
+            .filtered_dependencies(|d| d.kind == DependencyKind::Build)
+            .map_err(|e| {
+                format_err!(
+                    "while resolving build_dependencies for {}: {}",
+                    package.id,
+                    e
+                )
+            })?;
+
+        let dependencies = resolved_dependencies
+            .filtered_dependencies(|d| {
+                d.kind == DependencyKind::Normal || d.kind == DependencyKind::Unknown
+            })
+            .map_err(|e| format_err!("while resolving dependencies for {}: {}", package.id, e))?;
+
+        let dev_dependencies = resolved_dependencies
+            .filtered_dependencies(|d| d.kind == DependencyKind::Development)
+            .map_err(|e| {
+                format_err!("while resolving dev_dependencies for {}: {}", package.id, e)
+            })?;
+
+        let package_path = package.manifest_path.parent().unwrap_or_else(|| {
+            panic!(
+                "WUUT? No parent directory of manifest at {}?",
+                package.manifest_path.to_str().unwrap()
+            )
         });
-
-        let dev_dependencies =
-            resolved_dependencies.filtered_dependencies(|d| d.kind == DependencyKind::Development);
-
-        let package_path = package
-            .manifest_path
-            .parent()
-            .expect("WUUT? No parent directory of manifest?")
-            .canonicalize()
-            .expect("Cannot canonicalize package path");
+        let package_path = package_path.canonicalize().map_err(|e| {
+            format_err!(
+                "while canonicalizing crate path path {}: {}",
+                package_path.to_str().unwrap(),
+                e
+            )
+        })?;
 
         let lib = package
             .targets
@@ -184,6 +204,37 @@ pub fn minimal_resolve() {
     assert_eq!(crate_derivation.lib_crate_types, empty);
 
     package.close().unwrap();
+}
+
+#[test]
+pub fn double_crate_with_rename() {
+    let mut env = test::MetadataEnv::default();
+    let config = test::generate_config();
+
+    let mut main = env.add_package_and_node("main");
+    main.make_root();
+    main.add_dependency("futures")
+        .version_and_package_id("0.1.0")
+        .update_package_dep(|d| d.rename = Some("futures01".to_string()))
+        .update_node_dep(|n| n.name = "futures01".to_string());
+    main.add_dependency("futures")
+        .version_and_package_id("0.3.0")
+        .update_package_dep(|d| {
+            d.uses_default_features = false;
+            d.features = vec!["compat".to_string()];
+        });
+
+    let indexed = env.indexed_metadata();
+
+    let root_package = &indexed.root_package().expect("root package");
+
+    let crate_derivation = CrateDerivation::resolve(&config, &indexed, root_package).unwrap();
+
+    println!("crate_derivation: {:#?}", crate_derivation);
+
+    assert_eq!(crate_derivation.dependencies.len(), 2);
+
+    env.close();
 }
 
 /// A build target of a crate.
@@ -453,12 +504,22 @@ impl ToString for LocalDirectorySource {
     }
 }
 
-/// The resolved dependencies of one package/crate.
+/// Normalize a package name such as cargo does.
+fn normalize_package_name(package_name: &str) -> String {
+    package_name.replace('-', "_")
+}
+
+#[derive(Debug)]
+/// Helper to retrieve the `ResolvedDependency` structs for a package/crate.
+///
+/// For this, we need to join the information from `Dependency`, which contains
+/// the dependency requirements as specified in `Cargo.toml`, and `NodeDep` which
+/// contains the resolved package to use. Unfortunately, there is no simply key
+/// on which to perform the join in the general case.
 struct ResolvedDependencies<'a> {
-    /// The corresponding packages for the dependencies.
-    packages: Vec<&'a Package>,
-    /// The dependencies of the package/crate.
-    dependencies: Vec<&'a Dependency>,
+    package: &'a Package,
+    /// Packages references in the NodeDeps of this package.
+    resolved_packages_by_crate_name: HashMap<String, Vec<&'a Package>>,
 }
 
 impl<'a> ResolvedDependencies<'a> {
@@ -474,73 +535,187 @@ impl<'a> ResolvedDependencies<'a> {
             )
         })?;
 
-        let mut packages: Vec<&Package> =
-            node
-                .deps
-                .iter()
-                .map(|d| {
-                    metadata.pkgs_by_id.get(&d.pkg).ok_or_else(|| {
-                        format_err!(
-                            "No matching package for dependency with package id {} in {}.\n-- Package\n{}\n-- Node\n{}",
-                            d.pkg,
-                            package.id,
-                            to_string_pretty(&package).unwrap_or_else(|_| "ERROR".to_string()),
-                            to_string_pretty(&node).unwrap_or_else(|_| "ERROR".to_string()),
-                        )
-                    })
-                })
-                .collect::<Result<_, Error>>()?;
-        packages.sort_by(|p1, p2| p1.id.cmp(&p2.id));
-
+        let mut resolved_packages_by_crate_name: HashMap<String, Vec<&'a Package>> = HashMap::new();
+        for node_dep in &node.deps {
+            let package = metadata.pkgs_by_id.get(&node_dep.pkg).ok_or_else(|| {
+                format_err!(
+                    "No matching package for dependency with package id {} in {}.\n-- Package\n{}\n-- Node\n{}",
+                    node_dep.pkg,
+                    package.id,
+                    to_string_pretty(&package).unwrap_or_else(|_| "ERROR".to_string()),
+                    to_string_pretty(&node).unwrap_or_else(|_| "ERROR".to_string()),
+                )
+            })?;
+            let packages = resolved_packages_by_crate_name
+                .entry(normalize_package_name(&package.name))
+                .or_default();
+            packages.push(package);
+        }
         Ok(ResolvedDependencies {
-            packages,
-            dependencies: package.dependencies.iter().collect(),
+            package,
+            resolved_packages_by_crate_name,
         })
     }
 
     fn filtered_dependencies(
         &self,
         filter: impl Fn(&Dependency) -> bool,
-    ) -> Vec<ResolvedDependency> {
-        /// Normalize a package name such as cargo does.
-        fn normalize_package_name(package_name: &str) -> String {
-            package_name.replace('-', "_")
-        }
+    ) -> Result<Vec<ResolvedDependency>, Error> {
+        let ResolvedDependencies {
+            package,
+            resolved_packages_by_crate_name,
+        } = self;
 
-        // A map from the normalised name (used by features) to a vector of dependencies associated
-        // with that name. There can be multiple dependencies because some might be behind
-        // different targets (including no target at all).
-        let mut names: HashMap<String, Vec<&Dependency>> = HashMap::new();
-        for d in self.dependencies.iter().filter(|d| (filter(**d))) {
-            let normalized = normalize_package_name(&d.name);
-            names
-                .entry(normalized)
-                .and_modify(|v| v.push(d))
-                .or_insert_with(|| vec![d]);
-        }
-
-        self.packages
+        let mut resolved = package
+            .dependencies
             .iter()
-            .flat_map(|d| {
-                let normalized_package_name = normalize_package_name(&d.name);
-                names
-                    .get(&normalized_package_name)
-                    .into_iter()
-                    .flat_map(|dependencies| {
-                        dependencies.iter().map(|dependency| ResolvedDependency {
-                            name: dependency.name.clone(),
-                            rename: dependency.rename.clone(),
-                            package_id: d.id.clone(),
-                            target: dependency.target.as_ref().map(|t| t.to_string()),
-                            optional: dependency.optional,
-                            uses_default_features: dependency.uses_default_features,
-                            features: dependency.features.clone(),
+            .filter(|package_dep| filter(package_dep))
+            .flat_map(|package_dep| {
+                let name: String = normalize_package_name(&package_dep.name);
+                let resolved = resolved_packages_by_crate_name
+                    .get(&name)
+                    .and_then(|packages| {
+                        let exact_match = packages
+                            .iter()
+                            .find(|p| package_dep.req.matches(&p.version));
+
+                        // Strip prerelease/build info from versions if we
+                        // did not find an exact match.
+                        //
+                        // E.g. "*" does not match a prerelease version in this
+                        // library but cargo thinks differently.
+
+                        exact_match.or_else(|| {
+                            packages.iter().find(|p| {
+                                let without_metadata = {
+                                    let mut version = p.version.clone();
+                                    version.pre = vec![];
+                                    version.build = vec![];
+                                    version
+                                };
+                                package_dep.req.matches(&without_metadata)
+                            })
                         })
-                    })
-                    .collect::<Vec<_>>()
+                    });
+
+                let dep_package = resolved?;
+
+                Some(ResolvedDependency {
+                    name: package_dep.name.clone(),
+                    rename: package_dep.rename.clone(),
+                    package_id: dep_package.id.clone(),
+                    target: package_dep.target.as_ref().map(|t| t.to_string()),
+                    optional: package_dep.optional,
+                    uses_default_features: package_dep.uses_default_features,
+                    features: package_dep.features.clone(),
+                })
             })
-            .collect()
+            .collect::<Vec<ResolvedDependency>>();
+
+        resolved.sort_by(|d1, d2| d1.package_id.cmp(&d2.package_id));
+        Ok(resolved)
     }
+}
+
+/// Converts one type into another by serializing/deserializing it.
+///
+/// Therefore, the output json of `I` must be deserializable to `O`.
+#[allow(unused)]
+#[cfg(test)]
+fn serialize_deserialize<I: Serialize, O>(input: &I) -> O
+where
+    for<'d> O: Deserialize<'d>,
+{
+    let json_string = serde_json::to_string(input).expect("serialize");
+    let deserialized: Result<O, _> = serde_json::from_str(&json_string);
+    deserialized.expect("deserialize")
+}
+
+#[test]
+pub fn resolved_dependencies_new_with_double_crate() {
+    let mut env = test::MetadataEnv::default();
+
+    let mut main = env.add_package_and_node("main");
+    main.make_root();
+    main.add_dependency("futures")
+        .version_and_package_id("0.1.0")
+        .update_package_dep(|d| d.rename = Some("futures01".to_string()))
+        .update_node_dep(|n| n.name = "futures01".to_string());
+    main.add_dependency("futures")
+        .version_and_package_id("0.3.0")
+        .update_package_dep(|d| {
+            d.uses_default_features = false;
+            d.features = vec!["compat".to_string()];
+        });
+
+    let indexed = env.indexed_metadata();
+
+    let root_package = &indexed.root_package().expect("root package");
+    let resolved_deps = ResolvedDependencies::new(&indexed, root_package).unwrap();
+
+    assert_eq!(
+        resolved_deps.resolved_packages_by_crate_name.len(),
+        1,
+        "unexpected packages_by_crate_name: {}",
+        serde_json::to_string_pretty(&resolved_deps.resolved_packages_by_crate_name).unwrap()
+    );
+    assert!(
+        resolved_deps
+            .resolved_packages_by_crate_name
+            .contains_key("futures"),
+        "unexpected packages_by_crate_name: {}",
+        serde_json::to_string_pretty(&resolved_deps.resolved_packages_by_crate_name).unwrap()
+    );
+    assert_eq!(
+        resolved_deps
+            .resolved_packages_by_crate_name
+            .get("futures")
+            .unwrap()
+            .len(),
+        2,
+        "unexpected packages_by_crate_name: {}",
+        serde_json::to_string_pretty(&resolved_deps.resolved_packages_by_crate_name).unwrap()
+    );
+
+    env.close();
+}
+
+#[test]
+pub fn resolved_dependencies_filtered_dependencies_with_double_crate() {
+    let mut env = test::MetadataEnv::default();
+
+    let mut main = env.add_package_and_node("main");
+    main.make_root();
+    main.add_dependency("futures")
+        .version_and_package_id("0.1.0")
+        .update_package_dep(|d| d.rename = Some("futures01".to_string()))
+        .update_node_dep(|n| n.name = "futures01".to_string());
+    main.add_dependency("futures")
+        .version_and_package_id("0.3.0")
+        .update_package_dep(|d| {
+            d.uses_default_features = false;
+            d.features = vec!["compat".to_string()];
+        });
+
+    let indexed = env.indexed_metadata();
+
+    let root_package = &indexed.root_package().expect("root package");
+    let resolved_deps = ResolvedDependencies::new(&indexed, root_package).unwrap();
+
+    let filtered_deps = resolved_deps
+        .filtered_dependencies(|d| {
+            d.kind == DependencyKind::Normal || d.kind == DependencyKind::Unknown
+        })
+        .unwrap();
+
+    assert_eq!(
+        filtered_deps.len(),
+        2,
+        "unexpected resolved dependencies: {}",
+        serde_json::to_string_pretty(&filtered_deps).unwrap()
+    );
+
+    env.close();
 }
 
 #[derive(Debug, Deserialize, Serialize)]
