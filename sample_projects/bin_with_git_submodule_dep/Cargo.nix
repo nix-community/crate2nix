@@ -1555,9 +1555,27 @@ rec {
                       ++ devDependencies
                     )
                 );
+            # Crate renames have the form:
+            #
+            # {
+            #    crate_name = [
+            #       { version = "1.2.3"; rename = "crate_name01"; }
+            #    ];
+            #    # ...
+            # }
             crateRenames =
-              builtins.listToAttrs
-                (map (d: { name = d.name; value = d.rename; }) dependenciesWithRenames);
+              let
+                grouped =
+                  lib.groupBy
+                    (dependency: dependency.name)
+                    dependenciesWithRenames;
+                versionAndRename = dep:
+                  let
+                    package = builtByPackageId."${dep.packageId}";
+                  in
+                  { inherit (dep) rename; version = package.version; };
+              in
+              lib.mapAttrs (name: choices: builtins.map versionAndRename choices) grouped;
           in
           buildRustCrateFunc
             (

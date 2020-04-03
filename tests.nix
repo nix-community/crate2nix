@@ -359,6 +359,13 @@ let
     }
 
     {
+      name = "futures_util_multiple_version";
+      src = ./sample_projects/futures_compat;
+      cargoToml = "Cargo.toml";
+      expectedOutput = "Hello, futures_compat!";
+    }
+
+    {
       name = "numtest";
       src = ./sample_projects/numtest;
       expectedOutput = "Hello from numtest, world!";
