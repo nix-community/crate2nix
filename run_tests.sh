@@ -23,7 +23,7 @@ options=$(getopt -o '' --long offline,build-test-nixpkgs: -- "$@") || {
     exit 1
 }
 eval set -- "$options"
-NIX_OPTIONS=""
+NIX_OPTIONS="--option log-lines 100 --show-trace"
 REGENERATE_OPTIONS=""
 NIX_TESTS_OPTIONS="--out-link ./target/nix-result"
 while true; do

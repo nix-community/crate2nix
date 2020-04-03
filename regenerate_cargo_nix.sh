@@ -15,7 +15,7 @@ options=$(getopt -o '' --long offline -- "$@")
     exit 1
 }
 eval set -- "$options"
-NIX_OPTIONS=""
+NIX_OPTIONS="--option log-lines 100 --show-trace"
 while true; do
     case "$1" in
     --offline)
