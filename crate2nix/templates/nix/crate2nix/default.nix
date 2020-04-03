@@ -61,7 +61,7 @@ rec {
           )
         )
 
-        # Filter out nix-build result symlinks        
+        # Filter out nix-build result symlinks
         || (
           type == "symlink" && lib.hasPrefix "result" baseName
         )
@@ -193,8 +193,8 @@ rec {
         )
         { inherit features crateOverrides runTests testCrateFlags testInputs; };
 
-  /* Returns an attr set with packageId mapped to the result of buildRustCrateFunc 
-     for the corresponding crate. 
+  /* Returns an attr set with packageId mapped to the result of buildRustCrateFunc
+     for the corresponding crate.
   */
   builtRustCratesWithFeatures =
     { packageId
@@ -260,10 +260,26 @@ rec {
                     ++ devDependencies
                   )
               );
-
+            # Crate renames have the form:
+            #
+            # {
+            #    crate_name = [
+            #       { version = "1.2.3"; rename = "crate_name01"; }
+            #    ];
+            #    # ...
+            # }
             crateRenames =
-              builtins.listToAttrs
-                (map (d: { name = d.name; value = d.rename; }) dependenciesWithRenames);
+              let
+                grouped =
+                  lib.groupBy
+                    (dependency: dependency.name)
+                    dependenciesWithRenames;
+                versionAndRename = dep:
+                  let
+                    package = builtByPackageId."${dep.packageId}";
+                  in
+                    { inherit (dep) rename; version = package.version; };
+              in lib.mapAttrs (name: choices: builtins.map versionAndRename choices) grouped;
           in
             buildRustCrateFunc (
               crateConfig // {
@@ -300,7 +316,7 @@ rec {
         map depDerivation enabledDependencies;
 
   /* Returns a sanitized version of val with all values substituted that cannot
-     be serialized as JSON. 
+     be serialized as JSON.
   */
   sanitizeForJson = val:
     if builtins.isAttrs val
@@ -345,7 +361,7 @@ rec {
 
   /* Returns differences between cargo default features and crate2nix default
      features.
-   
+
      This is useful for verifying the feature resolution in crate2nix.
   */
   diffDefaultPackageFeatures =
@@ -518,7 +534,7 @@ rec {
 
   /*
      Returns the actual features for the given dependency.
-    
+
      features: The features of the crate that refers this dependency.
   */
   dependencyFeatures = features: dependency:
