@@ -512,7 +512,7 @@ rec {
       expandFeature = feature:
         assert (builtins.isString feature);
         [ feature ] ++ (expandFeatures featureMap (featureMap."${feature}" or []));
-      outFeatures = builtins.concatMap expandFeature inputFeatures;
+      outFeatures = lib.concatMap expandFeature inputFeatures;
     in
       sortedUnique outFeatures;
 
