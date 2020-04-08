@@ -37,7 +37,7 @@ fn self_up_to_date() {
         },
     )
     .unwrap();
-    let rerendered_default_nix = render::render_build_file(&metadata).unwrap();
+    let rerendered_default_nix = render::BUILD_NIX.render(&metadata).unwrap();
     let actual_default_nix = std::fs::read_to_string("./Cargo.nix").unwrap();
     assert_eq!(actual_default_nix, rerendered_default_nix);
 
@@ -97,7 +97,7 @@ fn assert_up_to_date(project_dir: &Path) {
         &config,
     )
     .unwrap();
-    let rerendered_default_nix = render::render_build_file(&metadata).unwrap();
+    let rerendered_default_nix = render::BUILD_NIX.render(&metadata).unwrap();
     let actual_default_nix = std::fs::read_to_string(&config.output).unwrap();
 
     assert_eq!(

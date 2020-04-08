@@ -212,8 +212,7 @@ fn main() -> CliResult {
                 read_crate_hashes: !dont_read_crate_hashes,
             };
             let build_info = crate2nix::BuildInfo::for_config(&generate_info, &generate_config)?;
-            let nix_string = render::render_build_file(&build_info)?;
-            render::write_to_file(&output, &nix_string)?;
+            render::BUILD_NIX.write_to_file(&output, &build_info)?;
         }
         Opt::Completions { shell, output } => {
             let shell = FromStr::from_str(&shell).map_err(|s| format_err!("{}", s))?;

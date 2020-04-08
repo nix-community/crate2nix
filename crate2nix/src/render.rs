@@ -4,59 +4,119 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+use crate::target_cfg::{Cfg, CfgExpr};
+use crate::BuildInfo;
 use failure::format_err;
 use failure::Error;
 use lazy_static::lazy_static;
+use serde::Serialize;
+use std::collections::HashMap;
+use std::{fmt::Debug, marker::PhantomData, str::FromStr};
 use tera::{Context, Tera};
 
-use crate::target_cfg::{Cfg, CfgExpr};
-use crate::BuildInfo;
-use std::collections::HashMap;
-use std::str::FromStr;
-
-/// Renders the build file for the given `BuildInfo` as a `String`.
-pub fn render_build_file(metadata: &BuildInfo) -> Result<String, Error> {
-    Ok(TERA
-        .render("build.nix.tera", &Context::from_serialize(metadata)?)
-        .map_err(|e| {
-            format_err!(
-                "while rendering default.nix: {:?}\nMetadata: {:?}",
-                e,
-                metadata
-            )
-        })?)
+macro_rules! template {
+    ($x:expr) => {
+        Template {
+            template: $x,
+            #[cfg(not(debug_assertions))]
+            content: include_str!(concat!("../templates/", $x)),
+            context: PhantomData,
+        }
+    };
 }
 
-/// Writes the given `contents` to a file at the given `path`.
-pub fn write_to_file(path: impl AsRef<Path>, contents: &str) -> Result<(), Error> {
-    let mut output_file = File::create(&path)?;
-    output_file.write_all(contents.as_bytes())?;
-    println!(
-        "Generated {} successfully.",
-        path.as_ref().to_string_lossy()
-    );
-    Ok(())
+/// The template for generating Cargo.nix.
+pub const BUILD_NIX: Template<BuildInfo> = template!("build.nix.tera");
+
+/// Included in build.nix.tera
+const DEFAULT_NIX: Template<()> = template!("nix/crate2nix/default.nix");
+
+/// A predefined template.
+#[derive(Debug)]
+pub struct Template<C: Serialize + Debug> {
+    /// Relative path in the templates directory and template name.
+    template: &'static str,
+    /// The whole content of the template file in release builds.
+    #[cfg(not(debug_assertions))]
+    content: &'static str,
+    context: PhantomData<C>,
+}
+
+impl<C: Serialize + Debug> Template<C> {
+    /// Returns the rendered template as a string.
+    pub fn render(&self, context: &C) -> Result<String, Error> {
+        Ok(TERA
+            .render(self.template, &Context::from_serialize(context)?)
+            .map_err(|e| {
+                format_err!(
+                    "while rendering {}: {:#?}\nContext: {:#?}",
+                    self.template,
+                    e,
+                    context
+                )
+            })?)
+    }
+
+    /// Writes the rendered template to the given file path.
+    pub fn write_to_file(&self, path: impl AsRef<Path>, context: &C) -> Result<(), Error> {
+        let mut output_file = File::create(&path)?;
+        output_file.write_all(self.render(context)?.as_bytes())?;
+        println!(
+            "Generated {} successfully.",
+            path.as_ref().to_string_lossy()
+        );
+        Ok(())
+    }
+}
+
+trait AbstractTemplate {
+    fn template(&self) -> &'static str;
+    #[cfg(not(debug_assertions))]
+    fn template_content(&self) -> &'static str;
+}
+
+impl<C: Serialize + Debug> AbstractTemplate for Template<C> {
+    fn template(&self) -> &'static str {
+        self.template
+    }
+
+    #[cfg(not(debug_assertions))]
+    fn template_content(&self) -> &'static str {
+        self.content
+    }
+}
+
+const TEMPLATES: &[&'static dyn AbstractTemplate] = &[&BUILD_NIX, &DEFAULT_NIX];
+
+fn create_tera() -> Tera {
+    let mut tera = Tera::default();
+
+    // For debug builds, we load the templates from the files during runtime.
+    #[cfg(debug_assertions)]
+    for template in TEMPLATES.iter() {
+        let path = Path::new("templates").join(template.template());
+        tera.add_template_file(path, Some(template.template()))
+            .expect("adding template to succeed");
+    }
+
+    // For release builds, we compile the template definitions into the binary.
+    #[cfg(not(debug_assertions))]
+    tera.add_raw_templates(
+        TEMPLATES
+            .iter()
+            .map(|template| (template.template(), template.template_content()))
+            .collect(),
+    )
+    .expect("adding templats to succeed");
+
+    tera.autoescape_on(vec![".nix.tera", ".nix"]);
+    tera.set_escape_fn(escape_nix_string);
+    tera.register_filter("cfg_to_nix_expr", cfg_to_nix_expr_filter);
+    tera
 }
 
 lazy_static! {
-    static ref TERA: Tera = {
-        let mut tera = Tera::default();
-        tera.add_raw_templates(vec![
-            (
-                "build.nix.tera",
-                include_str!("../templates/build.nix.tera"),
-            ),
-            (
-                "nix/crate2nix/default.nix",
-                include_str!("../templates/nix/crate2nix/default.nix"),
-            ),
-        ])
-        .expect("while adding template");
-        tera.autoescape_on(vec![".nix.tera", ".nix"]);
-        tera.set_escape_fn(escape_nix_string);
-        tera.register_filter("cfg_to_nix_expr", cfg_to_nix_expr_filter);
-        tera
-    };
+    static ref TERA: Tera = create_tera();
 }
 
 fn cfg_to_nix_expr_filter(
