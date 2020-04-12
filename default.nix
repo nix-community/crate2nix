@@ -7,19 +7,36 @@
 , darwin ? pkgs.darwin
 , stdenv ? pkgs.stdenv
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
+, release ? true
 }:
 let
-  cargo_nix = callPackage ./crate2nix/Cargo.nix {};
-  crate2nix = cargo_nix.rootCrate.build.override {
+  cargoNix = callPackage ./crate2nix/Cargo.nix { inherit release; };
+  withoutTemplates = name: type:
+    let
+      baseName = builtins.baseNameOf (builtins.toString name);
+    in
+      !(baseName == "templates" && type == "directory");
+
+  crate2nix = cargoNix.rootCrate.build.override {
     testCrateFlags = [
       "--skip nix_integration_tests"
     ];
     crateOverrides = defaultCrateOverrides // {
-      cssparser-macros = attrs: {
+      crate2nix = { src, ... }: {
+        src =
+          if release
+          then src
+          else lib.cleanSourceWith {
+            filter = withoutTemplates;
+            inherit src;
+          };
+      };
+      cssparser-macros = attrs: assert builtins.trace "cssparser" true;{
         buildInputs = stdenv.lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.Security ];
       };
     };
   };
+  set_templates = if release then "" else "--set TEMPLATES_DIR ${./crate2nix/templates}";
 in
 pkgs.symlinkJoin {
   name = crate2nix.name;
@@ -27,7 +44,7 @@ pkgs.symlinkJoin {
   buildInputs = [ makeWrapper cargo ];
   postBuild = ''
     # Fallback to built dependencies for cargo and nix-prefetch-url
-    wrapProgram $out/bin/crate2nix \
+    wrapProgram $out/bin/crate2nix ${set_templates}\
        --suffix PATH ":" ${lib.makeBinPath [ cargo nix pkgs.nix-prefetch-git ]}
     rm -rf $out/lib $out/bin/crate2nix.d
     mkdir -p \

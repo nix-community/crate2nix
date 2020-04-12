@@ -83,7 +83,7 @@ rec {
         crateBin = [
           { name = "bin_with_lib_git_dep"; path = "src/main.rs"; }
         ];
-        src = (builtins.filterSource sourceFilter ./.);
+        src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];

@@ -93,8 +93,11 @@ fn create_tera() -> Tera {
 
     // For debug builds, we load the templates from the files during runtime.
     #[cfg(debug_assertions)]
+    let template_dir = std::env::var("TEMPLATES_DIR")
+        .expect("TEMPLATES_DIR environment variable when running in debug mode");
+    #[cfg(debug_assertions)]
     for template in TEMPLATES.iter() {
-        let path = Path::new("templates").join(template.template());
+        let path = Path::new(&template_dir).join(template.template());
         tera.add_template_file(path, Some(template.template()))
             .expect("adding template to succeed");
     }

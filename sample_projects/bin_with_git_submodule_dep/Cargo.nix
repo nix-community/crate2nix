@@ -213,7 +213,7 @@ rec {
         crateBin = [
           { name = "bin_with_git_submodule_dep"; path = "src/main.rs"; }
         ];
-        src = (builtins.filterSource sourceFilter ./.);
+        src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
         authors = [
           "Phillip Cloud <cloud@standard.ai>"
         ];

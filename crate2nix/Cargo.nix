@@ -497,7 +497,7 @@ rec {
         crateBin = [
           { name = "crate2nix"; path = "src/main.rs"; }
         ];
-        src = (builtins.filterSource sourceFilter ./.);
+        src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];

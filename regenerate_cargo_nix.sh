@@ -5,11 +5,11 @@ set -Eeuo pipefail
 top="$(readlink -f "$(dirname "$0")")"
 
 if [ -z "${IN_CRATE2NIX_SHELL:-}" ]; then
-  exec nix-shell --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")" 
+  exec nix-shell --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")"
 fi
 
 options=$(getopt -o '' --long offline -- "$@")
-[ $? -eq 0 ] || { 
+[ $? -eq 0 ] || {
     echo "Incorrect options provided. Available:"
     echo "   --offline Enable offline friendly operations with out substituters"
     exit 1
@@ -37,11 +37,11 @@ cd "${top}"
   -f ./Cargo.toml -o ./Cargo.nix)  ||\
      { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-nix run $NIX_OPTIONS -c crate2nix generate -n ../nix/nixpkgs.nix \
+nix run --arg release false $NIX_OPTIONS -c crate2nix generate -n ../nix/nixpkgs.nix \
   -f ./crate2nix/Cargo.toml -o ./crate2nix/Cargo.nix || \
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-nix build $NIX_OPTIONS
+nix build --arg release false $NIX_OPTIONS
 
 crate2nix="$(pwd)"/result/bin/crate2nix
 

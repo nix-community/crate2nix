@@ -103,7 +103,7 @@ rec {
         {%- if crate.source.CratesIo.sha256 %}
         sha256 = {{crate.source.CratesIo.sha256}};
         {%- elif crate.source.LocalDirectory.path %}
-        src = (builtins.filterSource sourceFilter {{crate.source.LocalDirectory.path | safe}});
+        src = lib.cleanSourceWith { filter = sourceFilter;  src = {{crate.source.LocalDirectory.path | safe}}; };
         {%- elif crate.source.Git %}
         workspace_member = null;
         src = pkgs.fetchgit {
