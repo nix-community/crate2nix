@@ -33,19 +33,26 @@ echo "================ Regenerating ./Cargo.nix =================="
 
 cd "${top}"
 
-(cd crate2nix; ./cargo.sh run -- generate -n ../nix/nixpkgs.nix \
+function noisily {
+  set -x
+  "$@"
+  { set +x; } 2>/dev/null
+  exit $?
+}
+
+(cd crate2nix; noisily ./cargo.sh run -- generate -n ../nix/nixpkgs.nix \
   -f ./Cargo.toml -o ./Cargo.nix)  ||\
      { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-nix run --arg release false $NIX_OPTIONS -c crate2nix generate -n ../nix/nixpkgs.nix \
+noisily nix run --arg release false $NIX_OPTIONS -c crate2nix generate -n ../nix/nixpkgs.nix \
   -f ./crate2nix/Cargo.toml -o ./crate2nix/Cargo.nix || \
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-nix build --arg release false $NIX_OPTIONS
+noisily nix build --arg release false $NIX_OPTIONS
 
 crate2nix="$(pwd)"/result/bin/crate2nix
 
-nix eval --json -f ./tests.nix buildTestConfigs | \
+noisily nix eval --json -f ./tests.nix buildTestConfigs | \
  jq -r .[].pregeneratedBuild | \
  while read cargo_nix; do
    if [ "$cargo_nix" = "null" ]; then

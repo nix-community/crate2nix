@@ -2696,7 +2696,7 @@ rec {
           )
         )
 
-        # Filter out nix-build result symlinks        
+        # Filter out nix-build result symlinks
         || (
           type == "symlink" && lib.hasPrefix "result" baseName
         )
@@ -2792,27 +2792,37 @@ rec {
     { packageId
     , features ? rootFeatures
     , crateOverrides ? defaultCrateOverrides
-    , buildRustCrateFunc ? (
-        if crateOverrides == pkgs.defaultCrateOverrides
-        then buildRustCrate
-        else buildRustCrate.override {
-          defaultCrateOverrides = crateOverrides;
-        }
-      )
+    , buildRustCrateFunc ? null
     , runTests ? false
     , testCrateFlags ? []
     , testInputs ? []
     }:
       lib.makeOverridable
         (
-          { features, crateOverrides, runTests, testCrateFlags, testInputs }:
+          { features
+          , crateOverrides
+          , runTests
+          , testCrateFlags
+          , testInputs
+          }:
             let
+              buildRustCrateFuncOverriden = if buildRustCrateFunc != null
+              then buildRustCrateFunc
+              else (
+                if crateOverrides == pkgs.defaultCrateOverrides
+                then buildRustCrate
+                else buildRustCrate.override {
+                  defaultCrateOverrides = crateOverrides;
+                }
+              );
               builtRustCrates = builtRustCratesWithFeatures {
-                inherit packageId features buildRustCrateFunc;
+                inherit packageId features;
+                buildRustCrateFunc = buildRustCrateFuncOverriden;
                 runTests = false;
               };
               builtTestRustCrates = builtRustCratesWithFeatures {
-                inherit packageId features buildRustCrateFunc;
+                inherit packageId features;
+                buildRustCrateFunc = buildRustCrateFuncOverriden;
                 runTests = true;
               };
               drv = builtRustCrates.${packageId};
