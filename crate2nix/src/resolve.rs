@@ -21,7 +21,7 @@ use crate::metadata::IndexedMetadata;
 use crate::test;
 use crate::GenerateConfig;
 use itertools::Itertools;
-use std::collections::btree_map::BTreeMap;
+use std::{collections::btree_map::BTreeMap, fmt::Display};
 use url::Url;
 
 /// All data necessary for creating a derivation for a crate.
@@ -48,13 +48,14 @@ pub struct CrateDerivation {
     pub lib: Option<BuildTarget>,
     pub binaries: Vec<BuildTarget>,
     pub proc_macro: bool,
-    // This derivation builds the root crate or a workspace member.
+    /// This derivation builds the root crate or a workspace member.
     pub is_root_or_workspace_member: bool,
 }
 
 impl CrateDerivation {
     pub fn resolve(
         config: &GenerateConfig,
+        crate2nix_json: &crate::config::Config,
         metadata: &IndexedMetadata,
         package: &Package,
     ) -> Result<CrateDerivation, Error> {
@@ -82,12 +83,49 @@ impl CrateDerivation {
                 format_err!("while resolving dev_dependencies for {}: {}", package.id, e)
             })?;
 
+        let is_root_or_workspace_member = metadata
+            .root
+            .iter()
+            .chain(metadata.workspace_members.iter())
+            .any(|pkg_id| *pkg_id == package.id);
+
         let package_path = package.manifest_path.parent().unwrap_or_else(|| {
             panic!(
                 "WUUT? No parent directory of manifest at {}?",
                 package.manifest_path.to_str().unwrap()
             )
         });
+
+        // This depends on the non-cananocalized package_path (without symlinks
+        // resolved).
+        let configured_source = if is_root_or_workspace_member {
+            // In the resolved data, we don't have the link to the workspace member
+            // name anymore. So we need to extract it from the path.
+            let configured_source = package_path.file_name().and_then(|file_name| {
+                crate2nix_json
+                    .sources
+                    .get(&file_name.to_string_lossy().to_string())
+                    .cloned()
+            });
+
+            if !crate2nix_json.sources.is_empty() && configured_source.is_none() {
+                eprintln!(
+                    "warning: Could not find configured source for workspace member {:?}",
+                    package_path
+                );
+            }
+
+            configured_source
+        } else {
+            None
+        };
+
+        let source = if let Some(configured) = configured_source {
+            configured.into()
+        } else {
+            ResolvedSource::new(&config, &package, &package_path)?
+        };
+
         let package_path = package_path.canonicalize().map_err(|e| {
             format_err!(
                 "while canonicalizing crate path path {}: {}",
@@ -125,19 +163,13 @@ impl CrateDerivation {
             })
             .collect();
 
-        let is_root_or_workspace_member = metadata
-            .root
-            .iter()
-            .chain(metadata.workspace_members.iter())
-            .any(|pkg_id| *pkg_id == package.id);
-
         Ok(CrateDerivation {
             crate_name: package.name.clone(),
             edition: package.edition.clone(),
             authors: package.authors.clone(),
             package_id: package.id.clone(),
             version: package.version.clone(),
-            source: ResolvedSource::new(&config, &package, &package_path)?,
+            source,
             features: package
                 .features
                 .iter()
@@ -190,7 +222,13 @@ pub fn minimal_resolve() {
     println!("indexed: {:#?}", indexed);
 
     let root_package = &indexed.root_package().expect("root package");
-    let crate_derivation = CrateDerivation::resolve(&config, &indexed, root_package).unwrap();
+    let crate_derivation = CrateDerivation::resolve(
+        &config,
+        &crate::config::Config::default(),
+        &indexed,
+        root_package,
+    )
+    .unwrap();
 
     println!("crate_derivation: {:#?}", crate_derivation);
 
@@ -204,6 +242,61 @@ pub fn minimal_resolve() {
     assert_eq!(crate_derivation.lib_crate_types, empty);
 
     package.close().unwrap();
+}
+
+#[test]
+pub fn configured_source_is_used_instead_of_local_directory() {
+    use std::str::FromStr;
+
+    let mut env = test::MetadataEnv::default();
+    let config = test::generate_config();
+
+    // crate2nix creates a "virtual" workspace which consists of symlinks to the member sources.
+    // The symlinks use the source names and this is how we detect that we use a workspace member
+    // source.
+    // By simulating this layout, we ensure that we do not canonicalize paths at the "wrong"
+    // moment.
+    let simulated_store_path = env.temp_dir();
+    std::fs::File::create(&simulated_store_path.join("Cargo.toml")).expect("File creation failed");
+    let workspace_with_symlink = env.temp_dir();
+    std::os::unix::fs::symlink(
+        &simulated_store_path,
+        workspace_with_symlink.join("some_crate"),
+    )
+    .expect("could not create symlink");
+    let manifest_path = workspace_with_symlink.join("some_crate").join("Cargo.toml");
+
+    let mut main = env.add_package_and_node("main");
+    main.update_package(|p| p.manifest_path = manifest_path);
+    main.make_root();
+
+    let indexed = env.indexed_metadata();
+
+    let root_package = &indexed.root_package().expect("root package");
+
+    let mut crate2nix_json = crate::config::Config::default();
+    let source = crate::config::Source::CratesIo {
+        name: "some_crate".to_string(),
+        version: semver::Version::from_str("1.2.3").unwrap(),
+        sha256: "123".to_string(),
+    };
+    crate2nix_json.upsert_source(None, source.clone());
+    let crate_derivation =
+        CrateDerivation::resolve(&config, &crate2nix_json, &indexed, root_package).unwrap();
+
+    println!("crate_derivation: {:#?}", crate_derivation);
+
+    assert!(crate_derivation.is_root_or_workspace_member);
+    assert_eq!(
+        crate_derivation.source,
+        ResolvedSource::CratesIo(CratesIoSource {
+            name: "some_crate".to_string(),
+            version: semver::Version::from_str("1.2.3").unwrap(),
+            sha256: Some("123".to_string()),
+        })
+    );
+
+    env.close();
 }
 
 #[test]
@@ -228,7 +321,13 @@ pub fn double_crate_with_rename() {
 
     let root_package = &indexed.root_package().expect("root package");
 
-    let crate_derivation = CrateDerivation::resolve(&config, &indexed, root_package).unwrap();
+    let crate_derivation = CrateDerivation::resolve(
+        &config,
+        &crate::config::Config::default(),
+        &indexed,
+        root_package,
+    )
+    .unwrap();
 
     println!("crate_derivation: {:#?}", crate_derivation);
 
@@ -265,6 +364,32 @@ pub enum ResolvedSource {
     CratesIo(CratesIoSource),
     Git(GitSource),
     LocalDirectory(LocalDirectorySource),
+    Nix(NixSource),
+}
+
+impl From<crate::config::Source> for ResolvedSource {
+    fn from(source: crate::config::Source) -> Self {
+        match source {
+            crate::config::Source::Git { url, rev, sha256 } => ResolvedSource::Git(GitSource {
+                url,
+                rev,
+                r#ref: None,
+                sha256: Some(sha256),
+            }),
+            crate::config::Source::CratesIo {
+                name,
+                version,
+                sha256,
+            } => ResolvedSource::CratesIo(CratesIoSource {
+                name,
+                version,
+                sha256: Some(sha256),
+            }),
+            crate::config::Source::Nix { file, attr } => {
+                ResolvedSource::Nix(NixSource { file, attr })
+            }
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
@@ -286,6 +411,12 @@ pub struct GitSource {
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct LocalDirectorySource {
     path: PathBuf,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
+pub struct NixSource {
+    file: crate::config::NixFile,
+    attr: Option<String>,
 }
 
 const GIT_SOURCE_PREFIX: &str = "git+";
@@ -469,6 +600,7 @@ impl ToString for ResolvedSource {
             Self::CratesIo(source) => source.to_string(),
             Self::Git(source) => source.to_string(),
             Self::LocalDirectory(source) => source.to_string(),
+            Self::Nix(source) => source.to_string(),
         }
     }
 }
@@ -482,25 +614,36 @@ impl CratesIoSource {
     }
 }
 
-impl ToString for CratesIoSource {
-    fn to_string(&self) -> String {
-        self.url()
+impl Display for CratesIoSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.url())
     }
 }
 
-impl ToString for GitSource {
-    fn to_string(&self) -> String {
-        let mut ret = format!("{}#{}", self.url, self.rev);
+impl Display for GitSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let base = format!("{}#{}", self.url, self.rev);
         if let Some(branch) = self.r#ref.as_ref() {
-            ret = format!("{} branch: {}", ret, branch);
+            write!(f, "{} branch: {}", base, branch)
+        } else {
+            write!(f, "{}", base)
         }
-        ret
     }
 }
 
-impl ToString for LocalDirectorySource {
-    fn to_string(&self) -> String {
-        self.path.to_str().unwrap().to_owned()
+impl Display for LocalDirectorySource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.path.to_str().unwrap())
+    }
+}
+
+impl Display for NixSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if let Some(attr) = self.attr.as_ref() {
+            write!(f, "({}).{}", self.file, attr)
+        } else {
+            write!(f, "{}", self.file)
+        }
     }
 }
 

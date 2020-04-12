@@ -18,6 +18,11 @@
 , strictDeprecation ? false
   # Whether to perform release builds: longer compile times, faster binaries.
 , release ? true
+  # Additional crate2nix configuration if it exists.
+, crateConfig
+  ? if builtins.pathExists ./crate-config.nix
+    then pkgs.callPackage ./crate-config.nix {}
+    else {}
 }:
 
 rec {
@@ -94,6 +99,14 @@ rec {
 
         {%- if crate.source.CratesIo.sha256 %}
         sha256 = {{crate.source.CratesIo.sha256}};
+        {%- elif crate.source.Nix.import and crate.source.Nix.attr %}
+        src = (import {{crate.source.Nix.import | safe}}).{{crate.source.Nix.attr | safe}};
+        {%- elif crate.source.Nix.package and crate.source.Nix.attr %}
+        src = (pkgs.callPackage {{crate.source.Nix.package | safe}} {}).{{crate.source.Nix.attr | safe}};
+        {%- elif crate.source.Nix.import %}
+        src = import {{crate.source.Nix.import | safe}};
+        {%- elif crate.source.Nix.package %}
+        src = pkgs.callPackage {{crate.source.Nix.package | safe}} {};
         {%- elif crate.source.LocalDirectory.path %}
         src = lib.cleanSourceWith { filter = sourceFilter;  src = {{crate.source.LocalDirectory.path | safe}}; };
         {%- elif crate.source.Git %}

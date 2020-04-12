@@ -3,9 +3,7 @@
 use std::io::BufRead;
 use std::io::Write;
 use std::path::Path;
-use std::path::PathBuf;
 use std::process::Command;
-use std::process::Stdio;
 
 use failure::bail;
 use failure::format_err;
@@ -17,46 +15,37 @@ pub fn nix_build(
     nix_attr: &str,
     features: &[&str],
 ) -> Result<(), Error> {
-    let project_dir = project_dir.as_ref().to_string_lossy().to_string();
-    println!("Building {}.", project_dir);
-    let status = Command::new("nix")
-        .current_dir(&project_dir)
-        .args(&[
-            "--show-trace",
-            "build",
-            "-f",
-            "default.nix",
-            nix_attr,
-            "--arg",
-            "rootFeatures",
-        ])
-        .arg(format!(
-            "[ {} ]",
-            features
-                .iter()
-                .map(|s| crate::render::escape_nix_string(s))
-                .collect::<Vec<_>>()
-                .join(" ")
-        ))
-        .stdin(Stdio::null())
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .status()
-        .map_err(|e| format_err!("while spawning nix-build for {}: {}", project_dir, e))?;
-    //    let default_nix = PathBuf::from(&project_dir).join("default.nix");
-    //    dump_with_lines(&default_nix)?;
-    if !status.success() {
-        let default_nix = PathBuf::from(&project_dir).join("default.nix");
-        dump_with_lines(&default_nix)?;
-        bail!(
-            "nix-build {}\n=> exited with: {}",
-            project_dir,
-            status.code().unwrap_or(-1)
-        );
-    }
-    println!("Built {} successfully.", project_dir);
+    let project_dir_path = project_dir.as_ref();
+    let project_dir = project_dir_path.to_string_lossy().to_string();
 
-    Ok(())
+    let result = crate::command::run(
+        &format!("Building {}", project_dir),
+        Command::new("nix")
+            .current_dir(&project_dir)
+            .args(&[
+                "--show-trace",
+                "build",
+                "-f",
+                "default.nix",
+                nix_attr,
+                "--arg",
+                "rootFeatures",
+            ])
+            .arg(format!(
+                "[ {} ]",
+                features
+                    .iter()
+                    .map(|s| crate::render::escape_nix_string(s))
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            )),
+    );
+
+    if result.is_err() {
+        dump_with_lines(&project_dir_path.join("default.nix"))?;
+    }
+
+    result
 }
 
 /// Dump the content of the specified file with line numbers to stdout.

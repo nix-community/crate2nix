@@ -23,13 +23,17 @@ use serde::Serialize;
 use crate::metadata::IndexedMetadata;
 use crate::resolve::{CrateDerivation, ResolvedSource};
 use itertools::Itertools;
+use resolve::CratesIoSource;
 
+mod command;
+pub mod config;
 mod lock;
 mod metadata;
 pub mod nix_build;
 mod prefetch;
 pub mod render;
 mod resolve;
+pub mod sources;
 mod target_cfg;
 #[cfg(test)]
 pub mod test;
@@ -107,6 +111,14 @@ impl BuildInfo {
         config: &GenerateConfig,
         metadata: IndexedMetadata,
     ) -> Result<BuildInfo, Error> {
+        let crate2nix_json = crate::config::Config::read_from_or_default(
+            &config
+                .cargo_toml
+                .parent()
+                .expect("Cargo.toml has parent dir")
+                .join("crate2nix.json"),
+        )?;
+
         Ok(BuildInfo {
             root_package_id: metadata.root.clone(),
             workspace_members: metadata
@@ -122,7 +134,9 @@ impl BuildInfo {
             crates: metadata
                 .pkgs_by_id
                 .values()
-                .map(|package| CrateDerivation::resolve(config, &metadata, package))
+                .map(|package| {
+                    CrateDerivation::resolve(config, &crate2nix_json, &metadata, package)
+                })
                 .collect::<Result<_, Error>>()?,
             indexed_metadata: metadata,
             info: info.clone(),
@@ -217,7 +231,9 @@ fn extract_hashes_from_lockfile(
 
     let mut missing_hashes = Vec::new();
     for package in default_nix.crates.iter_mut().filter(|c| match &c.source {
-        ResolvedSource::CratesIo { .. } => !hashes_with_shortened_ids.contains_key(&c.package_id),
+        ResolvedSource::CratesIo(CratesIoSource { sha256, .. }) if sha256.is_none() => {
+            !hashes_with_shortened_ids.contains_key(&c.package_id)
+        }
         _ => false,
     }) {
         missing_hashes.push(format!("{} {}", package.crate_name, package.version));

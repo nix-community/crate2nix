@@ -5,7 +5,7 @@ use std::io::Write;
 use std::path::Path;
 
 use crate::target_cfg::{Cfg, CfgExpr};
-use crate::BuildInfo;
+use crate::{BuildInfo, GenerateInfo};
 use failure::format_err;
 use failure::Error;
 use lazy_static::lazy_static;
@@ -30,6 +30,28 @@ pub const CARGO_NIX: Template<BuildInfo> = template!("Cargo.nix.tera");
 
 /// Included in build.nix.tera
 const DEFAULT_NIX: Template<()> = template!("nix/crate2nix/default.nix");
+
+/// The template for generating workspace.nix.
+pub const WORKSPACE_NIX: Template<GenerateInfo> = template!("workspace.nix.tera");
+
+/// The template for generating Cargo.toml for virtual workspaces.
+pub const CARGO_TOML_FOR_WORKSPACE: Template<CargoTomlForWorkspace> =
+    template!("Cargo-workspace.toml.tera");
+
+/// Context argument for the `CARGO_TOML_FOR_WORKSPACE` template.
+///
+/// This is used to render a `Cargo.toml` for a workspace which
+/// is build via nix.
+#[derive(Debug, Serialize)]
+pub struct CargoTomlForWorkspace {
+    /// The generate info for this invocation.
+    pub info: GenerateInfo,
+    /// The symlink to the workspace member dir derivation output.
+    pub workspace_member_dir: String,
+    /// The names of the members of this workspace - which are
+    /// equal to the names of the subdirectory symlinks.
+    pub members: Vec<String>,
+}
 
 /// A predefined template.
 #[derive(Debug)]
@@ -86,7 +108,12 @@ impl<C: Serialize + Debug> AbstractTemplate for Template<C> {
     }
 }
 
-const TEMPLATES: &[&'static dyn AbstractTemplate] = &[&CARGO_NIX, &DEFAULT_NIX];
+const TEMPLATES: &[&'static dyn AbstractTemplate] = &[
+    &CARGO_NIX,
+    &DEFAULT_NIX,
+    &WORKSPACE_NIX,
+    &CARGO_TOML_FOR_WORKSPACE,
+];
 
 fn create_tera() -> Tera {
     let mut tera = Tera::default();

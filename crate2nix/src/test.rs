@@ -1,5 +1,6 @@
 ///! Constructor functions for test data.
 use cargo_metadata::{Dependency, Metadata, Node, NodeDep, Package, PackageId, Resolve};
+use std::path::PathBuf;
 use tempdir::TempDir;
 
 /// Returns bogus crate::GenerateConfig.
@@ -43,6 +44,13 @@ impl Default for MetadataEnv {
 }
 
 impl MetadataEnv {
+    pub fn temp_dir(&mut self) -> PathBuf {
+        let temp_dir = TempDir::new("crate2nix_test").expect("temp dir creation failed");
+        let path = temp_dir.path().to_path_buf();
+        self.temp_dirs.push(temp_dir);
+        path
+    }
+
     fn resolve(&mut self) -> &mut Resolve {
         self.metadata.resolve.get_or_insert_with(|| empty_resolve())
     }

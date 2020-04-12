@@ -16,6 +16,11 @@
 , strictDeprecation ? false
   # Whether to perform release builds: longer compile times, faster binaries.
 , release ? true
+  # Additional crate2nix configuration if it exists.
+, crateConfig
+  ? if builtins.pathExists ./crate-config.nix
+    then pkgs.callPackage ./crate-config.nix {}
+    else {}
 }:
 
 rec {
@@ -305,19 +310,20 @@ rec {
               };
               drv = builtRustCrates.${packageId};
               testDrv = builtTestRustCrates.${packageId};
-            in
-              if runTests then
+              derivation = if runTests then
                 crateWithTest {
                   crate = drv;
                   testCrate = testDrv;
                   inherit testCrateFlags testInputs;
                 }
-              else drv
+              else drv;
+            in
+              derivation
         )
         { inherit features crateOverrides runTests testCrateFlags testInputs; };
 
-  /* Returns an attr set with packageId mapped to the result of buildRustCrateFunc 
-     for the corresponding crate. 
+  /* Returns an attr set with packageId mapped to the result of buildRustCrateFunc
+     for the corresponding crate.
   */
   builtRustCratesWithFeatures =
     { packageId
@@ -423,7 +429,7 @@ rec {
         map depDerivation enabledDependencies;
 
   /* Returns a sanitized version of val with all values substituted that cannot
-     be serialized as JSON. 
+     be serialized as JSON.
   */
   sanitizeForJson = val:
     if builtins.isAttrs val
@@ -468,7 +474,7 @@ rec {
 
   /* Returns differences between cargo default features and crate2nix default
      features.
-   
+
      This is useful for verifying the feature resolution in crate2nix.
   */
   diffDefaultPackageFeatures =
@@ -641,7 +647,7 @@ rec {
 
   /*
      Returns the actual features for the given dependency.
-    
+
      features: The features of the crate that refers this dependency.
   */
   dependencyFeatures = features: dependency:
