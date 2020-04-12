@@ -37,7 +37,7 @@ function noisily {
   set -x
   "$@"
   { set +x; } 2>/dev/null
-  exit $?
+  return $?
 }
 
 (cd crate2nix; noisily ./cargo.sh run -- generate -n ../nix/nixpkgs.nix \
@@ -52,7 +52,7 @@ noisily nix build --arg release false $NIX_OPTIONS
 
 crate2nix="$(pwd)"/result/bin/crate2nix
 
-noisily nix eval --json -f ./tests.nix buildTestConfigs | \
+nix eval --json -f ./tests.nix buildTestConfigs | \
  jq -r .[].pregeneratedBuild | \
  while read cargo_nix; do
    if [ "$cargo_nix" = "null" ]; then
@@ -63,6 +63,6 @@ noisily nix eval --json -f ./tests.nix buildTestConfigs | \
 
    echo "=============== Regenerating ${cargo_nix} ================"
 
-   "$crate2nix" generate -f "$dir/Cargo.toml" -o "$cargo_nix" ||\
+   noisily "$crate2nix" generate -f "$dir/Cargo.toml" -o "$cargo_nix" ||\
      { echo "Regeneration of ${cargo_nix} failed." >&2 ; exit 1; }
  done
