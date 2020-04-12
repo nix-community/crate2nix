@@ -30,6 +30,7 @@ let
             filter = withoutTemplates;
             inherit src;
           };
+        dontFixup = !release;
       };
       cssparser-macros = attrs: assert builtins.trace "cssparser" true;{
         buildInputs = stdenv.lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.Security ];

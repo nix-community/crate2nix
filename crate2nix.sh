@@ -8,4 +8,4 @@ set -Eeuo pipefail
 
 mydir=$(dirname "$0")
 
-nix run -f "${mydir}" -c crate2nix "$@"
+nix run -f "${mydir}" --arg release "${RELEASE:-true}" -c crate2nix "$@"

@@ -7,9 +7,11 @@
 , buildTestPkgs ? import buildTestNixpkgs { config = {}; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
+  # Whether to build crate2nix with relase=true
+, crate2NixRelease ? true
 }:
 let
-  crate2nix = pkgs.callPackage ./default.nix {};
+  crate2nix = pkgs.callPackage ./default.nix { release = crate2NixRelease; };
   nixTest = pkgs.callPackage ./nix/nix-test-runner.nix {};
   nodes = {
     dev = { pkgs, ... }: {
@@ -456,4 +458,218 @@ in
   };
 
   inherit buildTestConfigs;
+}
+// {
+  #
+  # "source add" tests
+  #
+
+  sourceAddGit = pkgs.stdenv.mkDerivation {
+    name = "source_add_git";
+    src = pkgs.symlinkJoin { name = "empty"; paths = []; };
+    buildInputs = [
+      crate2nix
+      pkgs.jq
+      (
+        pkgs.writeShellScriptBin "nix-prefetch-git" ''
+          case "$@" in
+            "--url https://github.com/kolloch/nix-base32.git --fetch-submodules --rev 42f5544e51187f0c7535d453fcffb4b524c99eb2")
+              echo '
+              {
+                "url": "https://github.com/kolloch/nix-base32.git",
+                "rev": "42f5544e51187f0c7535d453fcffb4b524c99eb2",
+                "date": "2019-11-29T22:22:24+01:00",
+                "sha256": "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw",
+                "fetchSubmodules": true
+              }
+              '
+              ;;
+            *)
+              echo -e "\e[31mUnrecognized fetch:\e[0m $(basename $0) $@" >&2
+              exit 1
+              ;;
+          esac
+        ''
+      )
+    ];
+    phases = [ "buildPhase" ];
+    expectedSources = pkgs.writeTextFile {
+      name = "expected-sources.json";
+      text = ''
+        {
+          "nix-base32": {
+            "type": "Git",
+            "url": "https://github.com/kolloch/nix-base32.git",
+            "rev": "42f5544e51187f0c7535d453fcffb4b524c99eb2",
+            "sha256": "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw"
+          }
+        }
+      '';
+    };
+    buildPhase = ''
+      mkdir $out
+      jq . $expectedSources >$out/expected-sources.json
+
+      crate2nix source add git https://github.com/kolloch/nix-base32.git \
+        --rev 42f5544e51187f0c7535d453fcffb4b524c99eb2
+
+      jq .sources <crate2nix.json >$out/sources.json
+      diff -u $out/expected-sources.json $out/sources.json
+    '';
+  };
+
+  sourceAddCratesIo = pkgs.stdenv.mkDerivation {
+    name = "source_add_crates_io";
+    src = pkgs.symlinkJoin { name = "empty"; paths = []; };
+    buildInputs = [
+      crate2nix
+      pkgs.jq
+      (
+        pkgs.writeShellScriptBin "nix-prefetch-url" ''
+          case "$@" in
+            "https://crates.io/api/v1/crates/ripgrep/12.0.1/download --name ripgrep-12.0.1")
+              echo "1arw9pk1qiih0szd26wq76bc0wwbcmhyyy3d4dnwcflka8kfkikx"
+              ;;
+            *)
+              echo -e "\e[31mUnrecognized fetch:\e[0m $(basename $0) $@" >&2
+              exit 1
+              ;;
+          esac
+        ''
+      )
+    ];
+    phases = [ "buildPhase" ];
+    expectedSources = pkgs.writeTextFile {
+      name = "expected-sources.json";
+      text = ''
+        {
+          "ripgrep": {
+            "type": "CratesIo",
+            "name": "ripgrep",
+            "version": "12.0.1",
+            "sha256": "1arw9pk1qiih0szd26wq76bc0wwbcmhyyy3d4dnwcflka8kfkikx"
+          }
+        }
+      '';
+    };
+    buildPhase = ''
+      mkdir $out
+      jq . $expectedSources >$out/expected-sources.json
+
+      crate2nix source add cratesIo ripgrep 12.0.1
+
+      jq .sources <crate2nix.json >$out/sources.json
+      diff -u $out/expected-sources.json $out/sources.json
+    '';
+  };
+}
+// rec {
+  #
+  # "cargo-files" tests
+  #
+  cargoFilesUpdate = pkgs.stdenv.mkDerivation {
+    name = "cargo_files_update";
+    src = pkgs.symlinkJoin {
+      name = "cargo_files_update_src";
+      paths = [
+        cargoConfigWithLocalRegistry
+        crate2nixJsonWithRipgrep
+      ];
+    };
+    buildInputs = [
+      pkgs.cargo
+      crate2nix
+      (
+        pkgs.writeShellScriptBin "nix" ''
+          set -x
+          case "$@" in
+            *)
+              echo -e "\e[31mUnrecognized cmd:\e[0m $(basename $0) $@" >&2
+              exit 1
+              ;;
+          esac
+        ''
+      )
+    ];
+
+    phases = [ "buildPhase" ];
+    buildPhase = ''
+      set -x
+      ln -s $src/.cargo $src/crate2nix.json .
+      crate2nix cargo-files update --prebuilt-workspace-member-dir "${workspaceMemberDirectory}";
+      mkdir $out
+      ln -s ${workspaceMemberDirectory} $out/workspace_members
+      ln -s $src/.cargo $src/crate2nix.json $out
+      cp Cargo.* $out
+      { set +x; } 2>/dev/null
+    '';
+  };
+
+  generatedCargoFilesUpdateProject = tools.generatedCargoNix {
+    name = "buildCargoFilesUpdateProject";
+    src = cargoFilesUpdate;
+  };
+
+  buildCargoFilesUpdateProject =
+    (pkgs.callPackage generatedCargoFilesUpdateProject {}).workspaceMembers.ripgrep;
+
+  # Test support
+  #
+  # It is to have them directly as attributes for testing.
+
+  registryGit = pkgs.fetchgit {
+    url = "https://github.com/rust-lang/crates.io-index";
+    rev = "18e3f063f594fc08a078f0de2bb3f94beed16ae2";
+    sha256 = "0rpv12ifgnni55phlkb5ppmala7y3zrsc9dl8l99pbsjpqx95vmj";
+  };
+
+  registry = pkgs.linkFarm "crates.io-index" [
+    { name = "index"; path = registryGit; }
+  ];
+
+  cargoConfigWithLocalRegistry = pkgs.writeTextFile {
+    name = "cargo_config";
+    destination = "/.cargo/config";
+    text = ''
+      [source]
+      [source.crates-io]
+      replace-with = "local-copy"
+      [source.local-copy]
+      local-registry = "${registry}"
+    '';
+  };
+
+  crate2nixJsonWithRipgrep = pkgs.writeTextFile {
+    name = "crate2nix_json";
+    destination = "/crate2nix.json";
+    text = ''
+      {
+        "sources": {
+          "ripgrep": {
+            "type": "CratesIo",
+            "name": "ripgrep",
+            "version": "12.0.1",
+            "sha256": "1arw9pk1qiih0szd26wq76bc0wwbcmhyyy3d4dnwcflka8kfkikx"
+          }
+        }
+      }
+    '';
+  };
+
+  workspaceNix = pkgs.stdenv.mkDerivation {
+    name = "workspace_nix";
+    src = crate2nixJsonWithRipgrep;
+    buildInputs = [ crate2nix ];
+    phases = [ "buildPhase" ];
+    buildPhase = ''
+      ln -s $src/crate2nix.json .
+      crate2nix cargo-files generate-workspace-nix
+      mkdir $out
+      ln -s $src/crate2nix.json $out
+      cp workspace.nix $out/default.nix
+    '';
+  };
+
+  workspaceMemberDirectory = (pkgs.callPackage workspaceNix {}).workspaceMemberDirectory;
+
 } // buildTestDerivationAttrSet

@@ -18,7 +18,7 @@ use std::collections::{BTreeMap, HashMap};
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum HashSource {
     Prefetched,
-    CargoLock,
+    Existing,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -84,7 +84,7 @@ pub fn prefetch(
                         .get(&p.package_id)
                         .map(|hash| HashWithSource {
                             sha256: hash.clone(),
-                            source: HashSource::CargoLock,
+                            source: HashSource::Existing,
                         })
                         .or_else(|| {
                             old_prefetched_hashes
@@ -92,6 +92,17 @@ pub fn prefetch(
                                 .map(|hash| HashWithSource {
                                     sha256: hash.clone(),
                                     source: HashSource::Prefetched,
+                                })
+                        })
+                        .or_else(|| {
+                            // This happens e.g. if the sha256 comes from crate2nix.json.
+                            packages
+                                .iter()
+                                .filter_map(|p| p.source.sha256())
+                                .next()
+                                .map(|hash| HashWithSource {
+                                    sha256: hash.clone(),
+                                    source: HashSource::Existing,
                                 })
                         })
                 })
@@ -182,8 +193,12 @@ fn get_command_output(cmd: &str, args: &[&str]) -> Result<String, Error> {
         .map_err(|_e| format_err!("output of '{} {}' is not UTF8!", cmd, args.join(" ")))
 }
 
-trait PrefetchableSource: ToString {
+/// A crate source that potentially has a prefetchable hash.
+pub trait PrefetchableSource: ToString {
+    /// Returns whether we actually need a prefetch. `false` if
+    /// e.g. we already have the hash.
     fn needs_prefetch(&self) -> bool;
+    /// Prefetches the source and returns the hash.
     fn prefetch(&self) -> Result<String, Error>;
 }
 
