@@ -36,10 +36,6 @@ rec {
     # File a bug if you depend on any for non-debug work!
     debug = internal.debugCrate { inherit packageId; };
   };
-  root_crate =
-    internal.deprecationWarning 
-      "root_crate is deprecated since crate2nix 0.4. Please use rootCrate instead." 
-      rootCrate.build;
   # Refer your crate build derivation by name here.
   # You can override the features with
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
@@ -55,10 +51,6 @@ rec {
       debug = internal.debugCrate { inherit packageId; };
     };
   };
-  workspace_members =
-    internal.deprecationWarning
-      "workspace_members is deprecated in crate2nix 0.4. Please use workspaceMembers instead."
-      lib.mapAttrs (n: v: v.build) workspaceMembers;
 
   #
   # "internal" ("private") attributes that may change in every new version of crate2nix.

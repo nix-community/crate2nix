@@ -333,7 +333,7 @@ let
               "date": "2019-11-29T22:22:24+01:00",
               "sha256": "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw",
               "fetchSubmodules": true
-            }            
+            }
             '
             ;;
           *)
@@ -450,27 +450,6 @@ in
       grep USAGE $out/crate2nix.log
     '';
   };
-
-  bin_with_deprecated_alias =
-    let
-      bin_build = (
-        toolsAllowDeprecated.generated {
-          name = "bin_with_deprecated_alias";
-          src = ./sample_projects/bin;
-        }
-      ).root_crate;
-    in
-      pkgs.stdenv.mkDerivation {
-        name = "test_bin";
-        phases = [ "buildPhase" ];
-        buildInputs = [ bin_build ];
-        buildPhase = ''
-          mkdir -p $out
-          hello_world_bin >$out/test.log
-          echo grepping
-          grep 'Hello, world!' $out/test.log
-        '';
-      };
 
   buildNixTestWithLatestCrate2nix = pkgs.callPackage ./nix/nix-test-runner.nix {
     inherit tools;
