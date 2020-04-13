@@ -26,7 +26,7 @@ macro_rules! template {
 }
 
 /// The template for generating Cargo.nix.
-pub const BUILD_NIX: Template<BuildInfo> = template!("build.nix.tera");
+pub const CARGO_NIX: Template<BuildInfo> = template!("Cargo.nix.tera");
 
 /// Included in build.nix.tera
 const DEFAULT_NIX: Template<()> = template!("nix/crate2nix/default.nix");
@@ -86,7 +86,7 @@ impl<C: Serialize + Debug> AbstractTemplate for Template<C> {
     }
 }
 
-const TEMPLATES: &[&'static dyn AbstractTemplate] = &[&BUILD_NIX, &DEFAULT_NIX];
+const TEMPLATES: &[&'static dyn AbstractTemplate] = &[&CARGO_NIX, &DEFAULT_NIX];
 
 fn create_tera() -> Tera {
     let mut tera = Tera::default();
