@@ -3,6 +3,7 @@ target
 .idea
 *.iml
 /result*
+/sample_projects/*/result
 crate2nix/result*
 *.json
 *.log
