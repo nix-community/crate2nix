@@ -84,7 +84,7 @@ nix-env -i -f .
 The `crate2nix generate` command generates a nix file. You can specify the output file with `-o`. E.g.
 
 ```bash
-crate2nix generate -o Cargo.nix
+crate2nix generate
 ```
 
 generates Cargo.nix from the Cargo.lock in the current directory.
@@ -137,7 +137,7 @@ in cargo_nix.workspaceMembers."${your_crate_name}".build
 ## Choosing a Rust Version
 
 If you want to compile your code with a different rust version than is currently
-available in your nixpkgs, you can use the awesome overlays of the 
+available in your nixpkgs, you can use the awesome overlays of the
 [nixpkgs-mozilla](https://github.com/mozilla/nixpkgs-mozilla).
 
 For managing the git dependencies, I recommend
@@ -160,15 +160,15 @@ let
   # or define { nixpkgs = ...; nixpkgs-mozilla = ...; }
   # yourself.
   sources = import ./sources.nix;
-  
+
   rustChannelsOverlay = import "${sources.nixpkgs-mozilla}/rust-overlay.nix";
   # Useful if you also want to provide that in a nix-shell since some rust tools depend
   # on that.
   rustChannelsSrcOverlay = import "${sources.nixpkgs-mozilla}/rust-src-overlay.nix";
 
-in import sources.nixpkgs { 
-    overlays = [ 
-      rustChannelsOverlay 
+in import sources.nixpkgs {
+    overlays = [
+      rustChannelsOverlay
       rustChannelsSrcOverlay
       (self: super: {
         # Replace "latest.rustChannels.stable" with the version of the rust tools that
@@ -179,7 +179,7 @@ in import sources.nixpkgs {
         rustc = super.latest.rustChannels.stable.rust;
         inherit (super.latest.rustChannels.stable) cargo rust rust-fmt rust-std clippy;
       })
-    ]; 
+    ];
   }
 ```
 
@@ -237,7 +237,7 @@ covered, you can add additional `buildInputs` with the `crateOverride` parameter
 ```nix
 let generatedBuild = callPackage ./crate2nix/Cargo.nix {
     defaultCrateOverrides = pkgs.defaultCrateOverrides // {
-      funky-things = attrs: { 
+      funky-things = attrs: {
         buildInputs = [openssl]; \
       };
     };
@@ -250,11 +250,11 @@ Or obviously you can use the power of nix to add a dependency conditionally:
 ```nix
 let generatedBuild = callPackage ./crate2nix/Cargo.nix {
     defaultCrateOverrides = pkgs.defaultCrateOverrides // {
-      cssparser-macros = attrs: { 
-        buildInputs = 
-          stdenv.lib.optionals 
-            stdenv.isDarwin 
-            [ darwin.apple_sdk.frameworks.Security ]; 
+      cssparser-macros = attrs: {
+        buildInputs =
+          stdenv.lib.optionals
+            stdenv.isDarwin
+            [ darwin.apple_sdk.frameworks.Security ];
       };
     };
   };
@@ -293,13 +293,13 @@ equals `false`.
 of `nixpkgs`. Check [nix/sources.json](https://github.com/kolloch/crate2nix/blob/master/nix/sources.json) for the version
 of nixpkgs that `crate2nix` is tested against.
 
-If you feel limited by these restrictions, please do not hesitate to file an issue! That 
+If you feel limited by these restrictions, please do not hesitate to file an issue! That
 gives me a feeling of what is worth working on.
 
 * ~~Before 0.4.x: Only *default crate features* are supported. It should be easy to support a different feature set at
   build generation time since we can simply pass this set to `cargo metadata`. Feature selection during build time is
   out of scope for now.~~
-* There is only experimental support for running tests ~~Before 0.7.x: No support for building and running tests, see 
+* There is only experimental support for running tests ~~Before 0.7.x: No support for building and running tests, see
   [nixpkgs, issue 59177](https://github.com/NixOS/nixpkgs/issues/59177).~~
 * ~~Before 0.6.x: [Renamed crates](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#renaming-dependencies-in-cargotoml)
   with an explicit `package` name don't work yet.~~
@@ -309,13 +309,13 @@ gives me a feeling of what is worth working on.
   let me know if you hit problems. ~~Before 0.2.x: Filters all dependencies for the *hard-coded "Linux x86_64" target
   platform*. Again, it should be quite easy to support more platforms. To do so completely and at build time (vs build
   generation time) might be more involved.~~
-* Git sources are now also supported. Starting with 0.7 sub modules also work.    
+* Git sources are now also supported. Starting with 0.7 sub modules also work.
   Finding crates in arbitrary sub directories of git sources (which cargo supports!)is not supported, see #53.
 
-I consider this "Works as intended" but don't hesitate to tell me if you run into restrictions in popular crates because 
+I consider this "Works as intended" but don't hesitate to tell me if you run into restrictions in popular crates because
 of this:
 
-* A crate will only have access to its own source directory during build time and not e.g. to other directories in the 
+* A crate will only have access to its own source directory during build time and not e.g. to other directories in the
   same workspace. See [crate2nix, issue 17](https://github.com/kolloch/crate2nix/issues/17).
 
 ## Feedback: What is needed for a 1.0 release?
@@ -345,11 +345,11 @@ If you want to hack on this, it is useful to know that build file generation is 
 
 ## Related Projects
 
-* [carnix](https://nest.pijul.com/pmeunier/carnix:master) is already 
+* [carnix](https://nest.pijul.com/pmeunier/carnix:master) is already
   widely used in NixOS itself, yet it failed to
   generate correct builds for my rust projects. After some attempts to fix that, I gave up. That said, big kudos for
   all the work on buildRustCrate and showing the way!
-* [naersk](https://github.com/nmattia/naersk/) uses cargo to drive the   
+* [naersk](https://github.com/nmattia/naersk/) uses cargo to drive the
   entire build. It builds all dependencies in one derivation and the crate itself in another. Since it relies on hashes from the Cargo.lock
   file, I don't know how it handles git dependencies with sub modules.
 * [tenx-tech/cargo2nix](https://github.com/tenx-tech/cargo2nix): I
@@ -425,7 +425,7 @@ nix-build --arg nixpkgs ../nixpkgs \
 
 The problems is that this method will rebuild everything with your nixpkgs,
 including `crate2nix` itself. That can become severely annoying if you want
-to iterate on one special test case. 
+to iterate on one special test case.
 
 If you are fixing an issue in `buildRustCrate` that you can reproduce with a
 `buildTest` in `tests.nix`, then there is a much better way.
