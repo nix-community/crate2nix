@@ -1,6 +1,6 @@
+use anyhow::{bail, format_err, Error};
 use colored_diff::PrettyDifference;
 use crate2nix::{nix_build::dump_with_lines, render, BuildInfo, GenerateConfig, GenerateInfo};
-use failure::{bail, format_err, Error};
 use serde::Deserialize;
 use serde::Serialize;
 use std::io::Write;
