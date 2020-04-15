@@ -5,9 +5,9 @@ use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 
-use failure::bail;
-use failure::format_err;
-use failure::Error;
+use anyhow::bail;
+use anyhow::format_err;
+use anyhow::Error;
 
 /// Call `nix build` in the given directory on the `default.nix` in that directory.
 pub fn nix_build(

@@ -6,10 +6,10 @@ use std::process::Command;
 use crate::metadata::PackageIdShortener;
 use crate::resolve::{CrateDerivation, CratesIoSource, GitSource, ResolvedSource};
 use crate::GenerateConfig;
+use anyhow::bail;
+use anyhow::format_err;
+use anyhow::Error;
 use cargo_metadata::PackageId;
-use failure::bail;
-use failure::format_err;
-use failure::Error;
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashMap};
 

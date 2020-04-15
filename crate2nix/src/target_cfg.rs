@@ -26,9 +26,9 @@
 //IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 //DEALINGS IN THE SOFTWARE.
 
-use failure::bail;
-use failure::format_err;
-use failure::Error;
+use anyhow::bail;
+use anyhow::format_err;
+use anyhow::Error;
 use std::fmt;
 use std::iter;
 use std::str::{self, FromStr};

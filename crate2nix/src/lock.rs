@@ -1,7 +1,7 @@
 //! Code for extracting hashes and more from Cargo.lock
 
+use anyhow::{format_err, Error};
 use cargo_metadata::PackageId;
-use failure::{format_err, Error};
 use serde::{de, ser, Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
@@ -194,7 +194,7 @@ impl fmt::Display for EncodablePackageId {
 }
 
 impl FromStr for EncodablePackageId {
-    type Err = failure::Error;
+    type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<EncodablePackageId, Error> {
         let mut s = s.splitn(3, ' ');
@@ -205,7 +205,7 @@ impl FromStr for EncodablePackageId {
                 if s.starts_with('(') && s.ends_with(')') {
                     Some(String::from(&s[1..s.len() - 1]))
                 } else {
-                    failure::bail!("invalid serialized PackageId")
+                    anyhow::bail!("invalid serialized PackageId")
                 }
             }
             None => None,

@@ -2,12 +2,12 @@
 
 use std::collections::{BTreeMap, HashMap};
 
+use anyhow::format_err;
+use anyhow::Error;
 use cargo_metadata::Node;
 use cargo_metadata::Package;
 use cargo_metadata::PackageId;
 use cargo_metadata::{Metadata, NodeDep};
-use failure::format_err;
-use failure::Error;
 use itertools::Itertools;
 use serde::Deserialize;
 use serde::Serialize;

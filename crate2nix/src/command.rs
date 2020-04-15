@@ -1,6 +1,6 @@
 //! Utilities for dealing with spawned commands.
 
-use failure::{bail, format_err, Error};
+use anyhow::{bail, format_err, Error};
 use std::process::{Child, Stdio};
 use std::thread;
 use std::{

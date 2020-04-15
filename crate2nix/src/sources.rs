@@ -5,7 +5,7 @@ use crate::{
     prefetch::PrefetchableSource,
     resolve::{CratesIoSource, GitSource},
 };
-use failure::{bail, format_err, Error, ResultExt};
+use anyhow::{bail, format_err, Context, Error};
 use semver::Version;
 use std::{
     borrow::Cow,

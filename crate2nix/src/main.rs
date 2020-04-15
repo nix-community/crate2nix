@@ -1,14 +1,13 @@
-use quicli::prelude::CliResult;
 use std::path::{Path, PathBuf};
 use structopt::clap::ArgGroup;
 use structopt::StructOpt;
 
+use anyhow::format_err;
+use anyhow::{bail, Error};
 use crate2nix::{
     config::{Config, NixFile},
     render,
 };
-use failure::format_err;
-use failure::{bail, Error};
 use semver::Version;
 use serde::Deserialize;
 use serde::Serialize;
@@ -394,7 +393,7 @@ impl CargoFileCommands {
     }
 }
 
-fn main() -> CliResult {
+fn main() -> anyhow::Result<()> {
     let opt = Opt::from_args();
     match opt {
         Opt::Generate {

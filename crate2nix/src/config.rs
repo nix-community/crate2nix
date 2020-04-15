@@ -1,6 +1,6 @@
 //! Managing the `crate2nix.json` config.
 
-use failure::{bail, Error, ResultExt};
+use anyhow::{bail, Context, Error};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::BTreeMap,
@@ -232,7 +232,7 @@ pub enum SourceType {
 }
 
 impl FromStr for SourceType {
-    type Err = failure::Error;
+    type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "cratesIo" => Ok(SourceType::CratesIo),

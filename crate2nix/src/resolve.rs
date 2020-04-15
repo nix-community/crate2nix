@@ -1,12 +1,12 @@
 //! Resolve dependencies and other data for CrateDerivation.
 
+use anyhow::format_err;
+use anyhow::Error;
 use cargo_metadata::Node;
 use cargo_metadata::Package;
 use cargo_metadata::PackageId;
 use cargo_metadata::{Dependency, Source};
 use cargo_metadata::{DependencyKind, Target};
-use failure::format_err;
-use failure::Error;
 use pathdiff::diff_paths;
 use semver::Version;
 use serde::Deserialize;

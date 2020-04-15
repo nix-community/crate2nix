@@ -6,8 +6,8 @@ use std::path::Path;
 
 use crate::target_cfg::{Cfg, CfgExpr};
 use crate::{BuildInfo, GenerateInfo};
-use failure::format_err;
-use failure::Error;
+use anyhow::format_err;
+use anyhow::Error;
 use lazy_static::lazy_static;
 use serde::Serialize;
 use std::collections::HashMap;

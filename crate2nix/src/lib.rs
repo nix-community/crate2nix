@@ -12,11 +12,11 @@ use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::env;
 use std::path::PathBuf;
 
+use anyhow::format_err;
+use anyhow::Context;
+use anyhow::Error;
 use cargo_metadata::Metadata;
 use cargo_metadata::PackageId;
-use failure::format_err;
-use failure::Error;
-use failure::ResultExt;
 use serde::Deserialize;
 use serde::Serialize;
 

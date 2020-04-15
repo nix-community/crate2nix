@@ -115,6 +115,19 @@ rec {
         ];
         
       };
+      "anyhow" = rec {
+        crateName = "anyhow";
+        version = "1.0.28";
+        edition = "2018";
+        sha256 = "1zzvf2sj0n5z697ngqx1q4aficxw48djrzkxcp5hzhw099s0v9nr";
+        authors = [
+          "David Tolnay <dtolnay@gmail.com>"
+        ];
+        features = {
+          "default" = [ "std" ];
+        };
+        resolvedDefaultFeatures = [ "default" "std" ];
+      };
       "atty" = rec {
         crateName = "atty";
         version = "0.2.14";
@@ -434,34 +447,6 @@ rec {
         };
         resolvedDefaultFeatures = [ "ansi_term" "atty" "color" "default" "strsim" "suggestions" "vec_map" ];
       };
-      "clap-verbosity-flag" = rec {
-        crateName = "clap-verbosity-flag";
-        version = "0.2.0";
-        edition = "2015";
-        sha256 = "1p3nsjdf758nl5bjjz5wi107i43pmywbgi8857slgdxj4d9lz8dx";
-        authors = [
-          "Pascal Hertleif <killercup@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "env_logger";
-            packageId = "env_logger";
-          }
-          {
-            name = "failure";
-            packageId = "failure";
-          }
-          {
-            name = "log";
-            packageId = "log";
-          }
-          {
-            name = "structopt";
-            packageId = "structopt 0.2.18";
-          }
-        ];
-        
-      };
       "colored-diff" = rec {
         crateName = "colored-diff";
         version = "0.2.2";
@@ -500,6 +485,10 @@ rec {
         ];
         dependencies = [
           {
+            name = "anyhow";
+            packageId = "anyhow";
+          }
+          {
             name = "cargo_metadata";
             packageId = "cargo_metadata";
           }
@@ -528,11 +517,6 @@ rec {
             packageId = "pathdiff";
           }
           {
-            name = "quicli";
-            packageId = "quicli";
-            usesDefaultFeatures = false;
-          }
-          {
             name = "semver";
             packageId = "semver";
           }
@@ -547,7 +531,7 @@ rec {
           }
           {
             name = "structopt";
-            packageId = "structopt 0.3.12";
+            packageId = "structopt";
           }
           {
             name = "tera";
@@ -678,59 +662,6 @@ rec {
           "default" = [ "use_std" ];
         };
       };
-      "env_logger" = rec {
-        crateName = "env_logger";
-        version = "0.5.13";
-        edition = "2015";
-        sha256 = "0f0c4i4c65jh8lci0afl5yg74ac0lbnpxcp81chj114zwg9a9c0m";
-        authors = [
-          "The Rust Project Developers"
-        ];
-        dependencies = [
-          {
-            name = "atty";
-            packageId = "atty";
-          }
-          {
-            name = "humantime";
-            packageId = "humantime";
-          }
-          {
-            name = "log";
-            packageId = "log";
-            features = [ "std" ];
-          }
-          {
-            name = "regex";
-            packageId = "regex";
-            optional = true;
-          }
-          {
-            name = "termcolor";
-            packageId = "termcolor";
-          }
-        ];
-        features = {
-          "default" = [ "regex" ];
-        };
-        resolvedDefaultFeatures = [ "default" "regex" ];
-      };
-      "exitfailure" = rec {
-        crateName = "exitfailure";
-        version = "0.5.1";
-        edition = "2015";
-        sha256 = "0585wix3b3pjjj90fkqj9x4ar46d24x82k8rdin3czzk5a1vvx9g";
-        authors = [
-          "Toby Smith <toby@tismith.id.au>"
-        ];
-        dependencies = [
-          {
-            name = "failure";
-            packageId = "failure";
-          }
-        ];
-        
-      };
       "failure" = rec {
         crateName = "failure";
         version = "0.1.7";
@@ -770,15 +701,15 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.9";
+            packageId = "proc-macro2";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.3";
+            packageId = "quote";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.17";
+            packageId = "syn";
           }
           {
             name = "synstructure";
@@ -951,22 +882,6 @@ rec {
           "default" = [ "std" ];
         };
         resolvedDefaultFeatures = [ "default" "std" ];
-      };
-      "humantime" = rec {
-        crateName = "humantime";
-        version = "1.3.0";
-        edition = "2015";
-        sha256 = "0krwgbf35pd46xvkqg14j070vircsndabahahlv3rwhflpy4q06z";
-        authors = [
-          "Paul Colomiets <paul@colomiets.name>"
-        ];
-        dependencies = [
-          {
-            name = "quick-error";
-            packageId = "quick-error";
-          }
-        ];
-        
       };
       "idna" = rec {
         crateName = "idna";
@@ -1146,7 +1061,6 @@ rec {
         features = {
           "kv_unstable_sval" = [ "kv_unstable" "sval/fmt" ];
         };
-        resolvedDefaultFeatures = [ "std" ];
       };
       "maplit" = rec {
         crateName = "maplit";
@@ -1294,15 +1208,15 @@ rec {
           }
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.9";
+            packageId = "proc-macro2";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.3";
+            packageId = "quote";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.17";
+            packageId = "syn";
           }
         ];
         
@@ -1349,15 +1263,15 @@ rec {
           }
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.9";
+            packageId = "proc-macro2";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.3";
+            packageId = "quote";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.17";
+            packageId = "syn";
             usesDefaultFeatures = false;
             features = [ "derive" "parsing" "proc-macro" "printing" ];
           }
@@ -1382,15 +1296,15 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.9";
+            packageId = "proc-macro2";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.3";
+            packageId = "quote";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.17";
+            packageId = "syn";
             usesDefaultFeatures = false;
             features = [ "derive" "parsing" "proc-macro" "printing" ];
           }
@@ -1407,26 +1321,7 @@ rec {
         ];
         
       };
-      "proc-macro2 0.4.30" = rec {
-        crateName = "proc-macro2";
-        version = "0.4.30";
-        edition = "2015";
-        sha256 = "0nd71fl24sys066jrha6j7i34nfkjv44yzw8yww9742wmc8j0gfg";
-        authors = [
-          "Alex Crichton <alex@alexcrichton.com>"
-        ];
-        dependencies = [
-          {
-            name = "unicode-xid";
-            packageId = "unicode-xid 0.1.0";
-          }
-        ];
-        features = {
-          "default" = [ "proc-macro" ];
-        };
-        resolvedDefaultFeatures = [ "default" "proc-macro" ];
-      };
-      "proc-macro2 1.0.9" = rec {
+      "proc-macro2" = rec {
         crateName = "proc-macro2";
         version = "1.0.9";
         edition = "2018";
@@ -1437,7 +1332,7 @@ rec {
         dependencies = [
           {
             name = "unicode-xid";
-            packageId = "unicode-xid 0.2.0";
+            packageId = "unicode-xid";
           }
         ];
         features = {
@@ -1445,74 +1340,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "proc-macro" ];
       };
-      "quick-error" = rec {
-        crateName = "quick-error";
-        version = "1.2.3";
-        edition = "2015";
-        sha256 = "1q6za3v78hsspisc197bg3g7rpc989qycy8ypr8ap8igv10ikl51";
-        authors = [
-          "Paul Colomiets <paul@colomiets.name>"
-          "Colin Kiegel <kiegel@gmx.de>"
-        ];
-        
-      };
-      "quicli" = rec {
-        crateName = "quicli";
-        version = "0.4.0";
-        edition = "2018";
-        sha256 = "0v3gv1dcn437aa9rhibs0k9xgsj2jqzarvca76q3qpjsiplkk1cy";
-        authors = [
-          "Pascal Hertleif <killercup@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "clap-verbosity-flag";
-            packageId = "clap-verbosity-flag";
-          }
-          {
-            name = "exitfailure";
-            packageId = "exitfailure";
-          }
-          {
-            name = "failure";
-            packageId = "failure";
-          }
-          {
-            name = "failure_derive";
-            packageId = "failure_derive";
-          }
-          {
-            name = "log";
-            packageId = "log";
-          }
-        ];
-        features = {
-          "default" = [ "full-throttle" ];
-          "full-throttle" = [ "serde" "serde_derive" "globwalk" "rayon" "remove_dir_all" ];
-        };
-      };
-      "quote 0.6.13" = rec {
-        crateName = "quote";
-        version = "0.6.13";
-        edition = "2015";
-        sha256 = "1qgqq48jymp5h4y082aanf25hrw6bpb678xh3zw993qfhxmkpqkc";
-        authors = [
-          "David Tolnay <dtolnay@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "proc-macro2";
-            packageId = "proc-macro2 0.4.30";
-            usesDefaultFeatures = false;
-          }
-        ];
-        features = {
-          "default" = [ "proc-macro" ];
-          "proc-macro" = [ "proc-macro2/proc-macro" ];
-        };
-        resolvedDefaultFeatures = [ "default" "proc-macro" ];
-      };
-      "quote 1.0.3" = rec {
+      "quote" = rec {
         crateName = "quote";
         version = "1.0.3";
         edition = "2018";
@@ -1523,7 +1351,7 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.9";
+            packageId = "proc-macro2";
             usesDefaultFeatures = false;
           }
         ];
@@ -1830,15 +1658,15 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.9";
+            packageId = "proc-macro2";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.3";
+            packageId = "quote";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.17";
+            packageId = "syn";
             features = [ "visit" ];
           }
         ];
@@ -1942,42 +1770,7 @@ rec {
         ];
         
       };
-      "structopt 0.2.18" = rec {
-        crateName = "structopt";
-        version = "0.2.18";
-        edition = "2015";
-        sha256 = "1mvfv1l8vp3y402fkl2wcl34hi7gmr4bqha13dfz2xf3kjzwvhhn";
-        authors = [
-          "Guillaume Pinot <texitoi@texitoi.eu>"
-          "others"
-        ];
-        dependencies = [
-          {
-            name = "clap";
-            packageId = "clap";
-            usesDefaultFeatures = false;
-          }
-          {
-            name = "structopt-derive";
-            packageId = "structopt-derive 0.2.18";
-          }
-        ];
-        features = {
-          "color" = [ "clap/color" ];
-          "debug" = [ "clap/debug" ];
-          "default" = [ "clap/default" ];
-          "doc" = [ "clap/doc" ];
-          "lints" = [ "clap/lints" ];
-          "nightly" = [ "structopt-derive/nightly" ];
-          "no_cargo" = [ "clap/no_cargo" ];
-          "paw" = [ "structopt-derive/paw" ];
-          "suggestions" = [ "clap/suggestions" ];
-          "wrap_help" = [ "clap/wrap_help" ];
-          "yaml" = [ "clap/yaml" ];
-        };
-        resolvedDefaultFeatures = [ "default" ];
-      };
-      "structopt 0.3.12" = rec {
+      "structopt" = rec {
         crateName = "structopt";
         version = "0.3.12";
         edition = "2018";
@@ -1998,7 +1791,7 @@ rec {
           }
           {
             name = "structopt-derive";
-            packageId = "structopt-derive 0.4.5";
+            packageId = "structopt-derive";
           }
         ];
         features = {
@@ -2015,38 +1808,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "structopt-derive 0.2.18" = rec {
-        crateName = "structopt-derive";
-        version = "0.2.18";
-        edition = "2015";
-        sha256 = "01sis9z5kqmyhvzbnmlzpdxcry99a0b9blypksgnhdsbm1hh40ak";
-        procMacro = true;
-        authors = [
-          "Guillaume Pinot <texitoi@texitoi.eu>"
-        ];
-        dependencies = [
-          {
-            name = "heck";
-            packageId = "heck";
-          }
-          {
-            name = "proc-macro2";
-            packageId = "proc-macro2 0.4.30";
-          }
-          {
-            name = "quote";
-            packageId = "quote 0.6.13";
-          }
-          {
-            name = "syn";
-            packageId = "syn 0.15.44";
-          }
-        ];
-        features = {
-          "nightly" = [ "proc-macro2/nightly" ];
-        };
-      };
-      "structopt-derive 0.4.5" = rec {
+      "structopt-derive" = rec {
         crateName = "structopt-derive";
         version = "0.4.5";
         edition = "2018";
@@ -2066,54 +1828,22 @@ rec {
           }
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.9";
+            packageId = "proc-macro2";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.3";
+            packageId = "quote";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.17";
+            packageId = "syn";
             features = [ "full" ];
           }
         ];
         features = {
         };
       };
-      "syn 0.15.44" = rec {
-        crateName = "syn";
-        version = "0.15.44";
-        edition = "2015";
-        sha256 = "1id5g6x6zihv3j7hwrw3m1jp636bg8dpi671r7zy3jvpkavb794w";
-        authors = [
-          "David Tolnay <dtolnay@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "proc-macro2";
-            packageId = "proc-macro2 0.4.30";
-            usesDefaultFeatures = false;
-          }
-          {
-            name = "quote";
-            packageId = "quote 0.6.13";
-            optional = true;
-            usesDefaultFeatures = false;
-          }
-          {
-            name = "unicode-xid";
-            packageId = "unicode-xid 0.1.0";
-          }
-        ];
-        features = {
-          "default" = [ "derive" "parsing" "printing" "clone-impls" "proc-macro" ];
-          "printing" = [ "quote" ];
-          "proc-macro" = [ "proc-macro2/proc-macro" "quote/proc-macro" ];
-        };
-        resolvedDefaultFeatures = [ "clone-impls" "default" "derive" "parsing" "printing" "proc-macro" "quote" ];
-      };
-      "syn 1.0.17" = rec {
+      "syn" = rec {
         crateName = "syn";
         version = "1.0.17";
         edition = "2018";
@@ -2124,18 +1854,18 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.9";
+            packageId = "proc-macro2";
             usesDefaultFeatures = false;
           }
           {
             name = "quote";
-            packageId = "quote 1.0.3";
+            packageId = "quote";
             optional = true;
             usesDefaultFeatures = false;
           }
           {
             name = "unicode-xid";
-            packageId = "unicode-xid 0.2.0";
+            packageId = "unicode-xid";
           }
         ];
         features = {
@@ -2156,15 +1886,15 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.9";
+            packageId = "proc-macro2";
           }
           {
             name = "quote";
-            packageId = "quote 1.0.3";
+            packageId = "quote";
           }
           {
             name = "syn";
-            packageId = "syn 1.0.17";
+            packageId = "syn";
             usesDefaultFeatures = false;
             features = [ "parsing" "printing" "derive" ];
           }
@@ -2184,23 +1914,23 @@ rec {
         dependencies = [
           {
             name = "proc-macro2";
-            packageId = "proc-macro2 1.0.9";
+            packageId = "proc-macro2";
             usesDefaultFeatures = false;
           }
           {
             name = "quote";
-            packageId = "quote 1.0.3";
+            packageId = "quote";
             usesDefaultFeatures = false;
           }
           {
             name = "syn";
-            packageId = "syn 1.0.17";
+            packageId = "syn";
             usesDefaultFeatures = false;
             features = [ "derive" "parsing" "printing" "clone-impls" "visit" "extra-traits" ];
           }
           {
             name = "unicode-xid";
-            packageId = "unicode-xid 0.2.0";
+            packageId = "unicode-xid";
           }
         ];
         features = {
@@ -2272,23 +2002,6 @@ rec {
           "default" = [ "builtins" ];
           "preserve_order" = [ "serde_json/preserve_order" ];
         };
-      };
-      "termcolor" = rec {
-        crateName = "termcolor";
-        version = "1.1.0";
-        edition = "2018";
-        sha256 = "0pyp8vc0gx7124y80ixdl6plbfn1yjhw04i875k5fz2dk8lglsxv";
-        authors = [
-          "Andrew Gallant <jamslam@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "winapi-util";
-            packageId = "winapi-util";
-            target = { target, features }: target."windows";
-          }
-        ];
-        
       };
       "textwrap" = rec {
         crateName = "textwrap";
@@ -2430,20 +2143,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" ];
       };
-      "unicode-xid 0.1.0" = rec {
-        crateName = "unicode-xid";
-        version = "0.1.0";
-        edition = "2015";
-        sha256 = "1z57lqh4s18rr4x0j4fw4fmp9hf9346h0kmdgqsqx0fhjr3k0wpw";
-        authors = [
-          "erick.tryzelaar <erick.tryzelaar@gmail.com>"
-          "kwantam <kwantam@gmail.com>"
-        ];
-        features = {
-        };
-        resolvedDefaultFeatures = [ "default" ];
-      };
-      "unicode-xid 0.2.0" = rec {
+      "unicode-xid" = rec {
         crateName = "unicode-xid";
         version = "0.2.0";
         edition = "2015";

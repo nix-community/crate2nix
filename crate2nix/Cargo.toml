@@ -10,6 +10,7 @@ readme = "../README.md"
 keywords = ["nixos", "nix", "cargo", "build"]
 
 [dependencies]
+anyhow = "1.0.28"
 cargo_metadata = "0.9"
 failure = "0.1"
 hex = "0.4"
@@ -17,7 +18,6 @@ itertools = "0.8.2"
 lazy_static = "1"
 nix-base32 = "0.1"
 pathdiff = "0.1"
-quicli = { version = "0.4", default-features = false }
 structopt = "0.3"
 semver = "0.9"
 serde = { version = "1.0", features = ["derive"] }
