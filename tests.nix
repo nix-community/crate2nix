@@ -307,7 +307,7 @@ let
       expectedOutput = "Hello, simple_dep!";
       nixPrefetchUrl = ''
         case "$@" in
-          "https://crates.io/api/v1/crates/nix-base32/0.1.1/download --name nix-base32-0.1.1")
+          "https://static.crates.io/nix-base32/nix-base32-0.1.1.crate --name nix-base32-0.1.1")
             echo "04jnq6arig0amz0scadavbzn9bg9k4zphmrm1562n6ygfj1dnj45"
             ;;
           *)
@@ -527,7 +527,7 @@ in
       (
         pkgs.writeShellScriptBin "nix-prefetch-url" ''
           case "$@" in
-            "https://crates.io/api/v1/crates/ripgrep/12.0.1/download --name ripgrep-12.0.1")
+            "https://static.crates.io/ripgrep/ripgrep-12.0.1.crate --name ripgrep-12.0.1")
               echo "1arw9pk1qiih0szd26wq76bc0wwbcmhyyy3d4dnwcflka8kfkikx"
               ;;
             *)

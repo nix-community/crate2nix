@@ -607,9 +607,12 @@ impl ToString for ResolvedSource {
 
 impl CratesIoSource {
     pub fn url(&self) -> String {
+        // https://www.pietroalbini.org/blog/downloading-crates-io/
+        // Not rate-limited, CDN URL.
         format!(
-            "https://crates.io/api/v1/crates/{}/{}/download",
-            self.name, self.version
+            "https://static.crates.io/crates/{name}/{name}-{version}.crate",
+            name = self.name,
+            version = self.version
         )
     }
 }

@@ -281,7 +281,9 @@ rec {
                 src = crateConfig.src or (
                   pkgs.fetchurl {
                     name = "${crateConfig.crateName}-${crateConfig.version}.tar.gz";
-                    url = "https://crates.io/api/v1/crates/${crateConfig.crateName}/${crateConfig.version}/download";
+                    # https://www.pietroalbini.org/blog/downloading-crates-io/
+                    # Not rate-limited, CDN URL.
+                    url = "https://static.crates.io/crates/${crateConfig.crateName}/${crateConfig.crateName}-${crateConfig.version}.crate";
                     sha256 = crateConfig.sha256;
                   }
                 );
