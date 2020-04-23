@@ -1,4 +1,3 @@
-# Throws an error if any of our lib tests fail.
 let
   pkgs = import ../../../../../nix/nixpkgs.nix {};
   lib = pkgs.lib;
