@@ -49,6 +49,8 @@ if [ -n "${NO_CARGO_BUILD}" ]; then
   (cd crate2nix; noisily ./cargo.sh run -- generate -n ../nix/nixpkgs.nix \
     -f ./Cargo.toml -o ./Cargo.nix)  ||\
       { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
+else
+  echo "Skipping because of --no-cargo-build"
 fi
 
 noisily nix run --arg release false $NIX_OPTIONS -c crate2nix generate -n ../nix/nixpkgs.nix \

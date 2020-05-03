@@ -28,6 +28,7 @@ eval set -- "$options"
 NIX_OPTIONS="--option log-lines 100 --show-trace"
 REGENERATE_OPTIONS=""
 NIX_TESTS_OPTIONS="--out-link ./target/nix-result"
+NO_CARGO_BUILD=""
 while true; do
     case "$1" in
     --no-cargo-build)
@@ -72,11 +73,15 @@ echo -e "\e[1m=== Running nix unit tests\e[0m" >&2
 
 cd "$top"/crate2nix
 echo -e "\e[1m=== Running cargo clippy\e[0m" >&2
-./cargo.sh clippy || {
-    echo "==================" >&2
-    echo "$top/crate2nix/cargo.sh clippy: FAILED" >&2
-    exit 2
-}
+if [ -n "${NO_CARGO_BUILD}" ]; then
+    ./cargo.sh clippy || {
+        echo "==================" >&2
+        echo "$top/crate2nix/cargo.sh clippy: FAILED" >&2
+        exit 2
+    }
+else
+    echo "Skipping because of --no-cargo-build"
+fi
 
 ../regenerate_cargo_nix.sh $REGENERATE_OPTIONS || {
     echo "==================" >&2
