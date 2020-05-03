@@ -33,6 +33,7 @@ while true; do
     case "$1" in
     --no-cargo-build)
         REGENERATE_OPTIONS="$REGENERATE_OPTIONS --no-cargo-build"
+        NO_CARGO_BUILD="1"
         ;;
     --offline)
         NIX_OPTIONS="$NIX_OPTIONS --option substitute false"
@@ -73,7 +74,7 @@ echo -e "\e[1m=== Running nix unit tests\e[0m" >&2
 
 cd "$top"/crate2nix
 echo -e "\e[1m=== Running cargo clippy\e[0m" >&2
-if [ -n "${NO_CARGO_BUILD}" ]; then
+if [ -z "${NO_CARGO_BUILD}" ]; then
     ./cargo.sh clippy || {
         echo "==================" >&2
         echo "$top/crate2nix/cargo.sh clippy: FAILED" >&2
@@ -90,7 +91,7 @@ fi
 }
 
 echo -e "\e[1m=== Running cargo test\e[0m" >&2
-if [ -n "${NO_CARGO_BUILD}" ]; then
+if [ -z "${NO_CARGO_BUILD}" ]; then
     ./cargo.sh test || {
         echo "==================" >&2
         echo "$top/crate2nix/cargo.sh test: FAILED" >&2
