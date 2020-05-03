@@ -89,6 +89,7 @@ echo -e "\e[1m=== Running cargo test\e[0m" >&2
 
 cd "$top"
 echo -e "\e[1m=== Building ./tests.nix (= Running Integration Tests)\e[0m" >&2
+rm -rf target/nix-result*
 nix build -L $NIX_OPTIONS $NIX_TESTS_OPTIONS -f ./tests.nix || {
     echo "==================" >&2
     echo "cd $top" >&2
@@ -117,7 +118,7 @@ if test -n "${CACHIX:-}" && test -r ~/.config/cachix/cachix.dhall &&\
     echo -e "\e[1m=== Pushing artifacts to eigenvalue.cachix.org \e[0m" >&2
     # we filter for "rust_" to exclude some things that are in the
     # nixos cache anyways
-    nix-store -q -R --include-outputs $(nix-store -q -d target/nix-result*) |\
+    nix-store -q -R --include-outputs $(nix-store -q -d target/nix-result* | grep -v crates.io) |\
      grep -e "-rust_" |\
      $CACHIX push eigenvalue
 fi
