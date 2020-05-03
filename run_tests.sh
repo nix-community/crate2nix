@@ -99,6 +99,9 @@ nix build -L $NIX_OPTIONS $NIX_TESTS_OPTIONS -f ./tests.nix || {
 
 echo -e "\e[1m=== Checking for uncomitted changes\e[0m" >&2
 if test -n "$(git status --porcelain)"; then
+    echo ""
+    git --no-pager diff HEAD
+    echo ""
     echo "!!! repository has uncomitted changes" >&2
     echo "Otherwise, things look good :)"
     exit 6
