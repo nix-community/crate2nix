@@ -6,7 +6,8 @@
 
 set -Eeuo pipefail
 
-top="$(readlink -f "$(dirname "$0")")"
+top="$(dirname "$0")"
+top="$(cd "$top"; pwd)"
 
 if [ -z "${IN_CRATE2NIX_SHELL:-}" -o "${IN_NIX_SHELL:-}" = "impure" ]; then
   export CACHIX="$(which cachix 2>/dev/null || echo "")"
