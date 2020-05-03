@@ -24,6 +24,7 @@ jobs:
           signingKey: '${{ secrets.CACHING_SIGNING_KEY }}'
       - run: nix-env -iA nixpkgs.niv
       - run: niv update ${{matrix.source}}
+      - run: nix build -L -f tests.nix
       - name: Push Changes
         run: |
           if test -n "$(git status --porcelain)"; then
