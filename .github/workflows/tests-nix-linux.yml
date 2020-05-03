@@ -6,8 +6,8 @@ jobs:
   tests:
     strategy:
       matrix:
-        platform: 
-          - ubuntu-latest 
+        platform:
+          - ubuntu-latest
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v1
@@ -17,3 +17,4 @@ jobs:
         name: eigenvalue
         file: 'tests.nix'
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - run: "./run_tests.sh"
