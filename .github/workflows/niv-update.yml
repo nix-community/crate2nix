@@ -27,7 +27,7 @@ jobs:
             git fetch
             git reset --hard origin/master
             niv update $source
-            if test -n "$(git status)"; then
+            if test -n "$(git status --porcelain)"; then
               (
                 set -x
                 git --no-pager diff HEAD
