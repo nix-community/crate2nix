@@ -9,3 +9,5 @@ crate2nix/result*
 *.log
 *~
 
+# cachix tmp file
+store-path-pre-build
