@@ -16,8 +16,9 @@
       git
       utillinux
       cacert
-      niv
       ;
+
+    niv = (pkgs.callPackage sources.niv {}).niv;
 
     nixTest =
       let
