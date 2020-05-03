@@ -21,7 +21,7 @@ jobs:
       - uses: cachix/cachix-action@v6
         with:
           name: eigenvalue
-          signingKey: '${{ secrets.CACHING_SIGNING_KEY }}'
+          signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
       - run: nix-env -iA nixpkgs.niv
       - run: niv update ${{matrix.source}}
       - name: Build and push changes
