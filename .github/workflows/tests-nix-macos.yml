@@ -16,4 +16,4 @@ jobs:
       with:
         name: eigenvalue
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-    - run: "./run_tests.sh"
+    - run: "./run_tests.sh --no-cargo-build"

@@ -37,7 +37,7 @@ jobs:
                 until [ $n -ge 5 ]
                 do
                   git commit -m 'niv update ${{matrix.source}}' -a
-                  ./run_tests.sh || {
+                  ./run_tests.sh --no-cargo-build || {
                     echo "Tests failed. Skip updating $source."
                     break
                   }

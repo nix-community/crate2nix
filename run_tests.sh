@@ -16,11 +16,12 @@ if [ -z "${IN_CRATE2NIX_SHELL:-}" -o "${IN_NIX_SHELL:-}" = "impure" ]; then
 fi
 
 echo -e "\e[1m=== Parsing opts for $top/run_tests.sh\e[0m" >&2
-options=$(getopt -o '' --long offline,build-test-nixpkgs: -- "$@") || {
+options=$(getopt -o '' --long offline,build-test-nixpkgs:,no-cargo-build  -- "$@") || {
     echo "" >&2
     echo "Available options:" >&2
     echo "   --offline            Enable offline friendly operations with out substituters" >&2
     echo "   --build-test-nixpkgs Path to nixpkgs used for the build tests." >&2
+    echo "   --no-cargo-build     Skip local cargo build." >&2
     exit 1
 }
 eval set -- "$options"
@@ -29,6 +30,9 @@ REGENERATE_OPTIONS=""
 NIX_TESTS_OPTIONS="--out-link ./target/nix-result"
 while true; do
     case "$1" in
+    --no-cargo-build)
+        REGENERATE_OPTIONS="$REGENERATE_OPTIONS --no-cargo-build"
+        ;;
     --offline)
         NIX_OPTIONS="$NIX_OPTIONS --option substitute false"
         REGENERATE_OPTIONS="$REGENERATE_OPTIONS --offline"

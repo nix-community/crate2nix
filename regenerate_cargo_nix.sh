@@ -8,16 +8,21 @@ if [ -z "${IN_CRATE2NIX_SHELL:-}" ]; then
   exec nix-shell --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")"
 fi
 
-options=$(getopt -o '' --long offline -- "$@")
+options=$(getopt -o '' --long offline,no-cargo-build -- "$@")
 [ $? -eq 0 ] || {
     echo "Incorrect options provided. Available:"
     echo "   --offline Enable offline friendly operations with out substituters"
+    echo "   --no-cargo-build     Skip local cargo build." >&2
     exit 1
 }
 eval set -- "$options"
 NIX_OPTIONS="--option log-lines 100 --show-trace"
+NO_CARGO_BUILD=""
 while true; do
     case "$1" in
+    --no-cargo-build)
+        NO_CARGO_BUILD=1
+        ;;
     --offline)
         NIX_OPTIONS="--option substitute false"
         ;;
@@ -40,9 +45,11 @@ function noisily {
   return $?
 }
 
-(cd crate2nix; noisily ./cargo.sh run -- generate -n ../nix/nixpkgs.nix \
-  -f ./Cargo.toml -o ./Cargo.nix)  ||\
-     { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
+if [ -n "${NO_CARGO_BUILD}" ]; then
+  (cd crate2nix; noisily ./cargo.sh run -- generate -n ../nix/nixpkgs.nix \
+    -f ./Cargo.toml -o ./Cargo.nix)  ||\
+      { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
+fi
 
 noisily nix run --arg release false $NIX_OPTIONS -c crate2nix generate -n ../nix/nixpkgs.nix \
   -f ./crate2nix/Cargo.toml -o ./crate2nix/Cargo.nix || \
