@@ -1,0 +1,43 @@
+name: niv-update
+
+on:
+  push:
+  schedule:
+    - cron: '17 10-17 * * *'
+
+jobs:
+  niv-update:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        source:
+          - nixpkgs
+          - crate2nix
+          - nix-test-runner
+          - cargo-release
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v8
+      - uses: cachix/cachix-action@v6
+        with:
+          name: eigenvalue
+          signingKey: '${{ secrets.CACHING_SIGNING_KEY }}'
+      - run: nix-env -iA nixpkgs.niv
+      - run: niv update ${{matrix.source}}
+      - name: Push Changes
+        run: |
+          if test -n "$(git status --porcelain)"; then
+            git config --local user.email 'info@eigenvalue.net'
+            git config --local user.name 'Peter Kolloch, Bot'
+            git commit -m 'niv update ${{matrix.source}}' -a
+            n=0
+            until [ $n -ge 5 ]
+            do
+              git pull --rebase
+              git push && break
+              n=$[$n+1]
+              sleep 1
+            done
+          else
+            echo no changes
+          fi
