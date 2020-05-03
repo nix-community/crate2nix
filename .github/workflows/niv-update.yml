@@ -33,7 +33,7 @@ jobs:
             until [ $n -ge 5 ]
             do
               git fetch
-              git reset --hard origin/maser
+              git reset --hard origin/master
               # Do the update again to prevent merge conflicts
               niv update ${{matrix.source}}
               git commit -m 'niv update ${{matrix.source}}' -a
