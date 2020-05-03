@@ -90,11 +90,15 @@ fi
 }
 
 echo -e "\e[1m=== Running cargo test\e[0m" >&2
-./cargo.sh test || {
-    echo "==================" >&2
-    echo "$top/crate2nix/cargo.sh test: FAILED" >&2
-    exit 4
-}
+if [ -n "${NO_CARGO_BUILD}" ]; then
+    ./cargo.sh test || {
+        echo "==================" >&2
+        echo "$top/crate2nix/cargo.sh test: FAILED" >&2
+        exit 4
+    }
+else
+    echo "Skipping because of --no-cargo-build"
+fi
 
 cd "$top"
 echo -e "\e[1m=== Building ./tests.nix (= Running Integration Tests)\e[0m" >&2
