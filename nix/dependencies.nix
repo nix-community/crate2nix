@@ -18,7 +18,7 @@
       cacert
       ;
 
-    niv = (pkgs.callPackage sources.niv {}).niv;
+    niv = (pkgs.callPackage sources.niv { }).niv;
 
     nixTest =
       let
