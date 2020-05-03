@@ -23,7 +23,7 @@ jobs:
         run: nix-env -if ./nix/dependencies.nix -A dev.niv
       - name: Build and push changes
         run: |
-          for source in $sources;
+          for source in $sources; do
             git fetch
             git reset --hard origin/master
             niv update $source
