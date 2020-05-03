@@ -102,6 +102,8 @@ if test -n "$(git status --porcelain)"; then
     echo ""
     git --no-pager diff HEAD
     echo ""
+    git status --porcelain
+    echo ""
     echo "!!! repository has uncomitted changes" >&2
     echo "Otherwise, things look good :)"
     exit 6
