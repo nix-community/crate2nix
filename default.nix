@@ -43,6 +43,24 @@ pkgs.symlinkJoin {
   name = crate2nix.name;
   paths = [ crate2nix ];
   buildInputs = [ makeWrapper cargo ];
+  meta = {
+    description = "Nix build file generator for rust crates.";
+    longDescription = ''
+      Crate2nix generates nix files from Cargo.toml/lock files
+      so that you can build every crate individually in a nix sandbox.
+    '';
+    homepage = https://github.com/kolloch/crate2nix;
+    license = lib.licenses.asl20;
+    maintainers = [
+      {
+        github = "kolloch";
+        githubId = 339354;
+        name = "Peter Kolloch";
+      }
+      lib.maintainers.andir
+    ];
+    platforms = lib.platforms.all;
+  };
   postBuild = ''
     # Fallback to built dependencies for cargo and nix-prefetch-url
     wrapProgram $out/bin/crate2nix ${set_templates}\
