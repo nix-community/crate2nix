@@ -29,10 +29,10 @@
         "homepage": "",
         "owner": "kolloch",
         "repo": "crate2nix",
-        "rev": "91870aec3dfb12af62a013e725ce1009de1d90b8",
-        "sha256": "0qyffm4m013ig3aq80qrrqqs2mw4jw6y0f8lizlzms61wbh9aqiq",
+        "rev": "97391b8511d58a0553893cf19288982d1cb68f2a",
+        "sha256": "0nvlags0775a4rwsb21h4g7sx06dm61wp74aaf9xv4cbidgq6whq",
         "type": "tarball",
-        "url": "https://github.com/kolloch/crate2nix/archive/91870aec3dfb12af62a013e725ce1009de1d90b8.tar.gz",
+        "url": "https://github.com/kolloch/crate2nix/archive/97391b8511d58a0553893cf19288982d1cb68f2a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
