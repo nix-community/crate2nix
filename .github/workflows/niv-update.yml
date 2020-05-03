@@ -24,7 +24,7 @@ jobs:
       - name: Build and push changes
         run: |
           for source in $sources; do
-            git fetch
+            git fetch origin master
             git reset --hard origin/master
             niv update $source
             if test -n "$(git status --porcelain)"; then
