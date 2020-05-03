@@ -8,13 +8,10 @@ on:
 jobs:
   niv-update:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        source:
-          - nixpkgs
-          - crate2nix
-          - nix-test-runner
-          - cargo-release
+    env:
+      # Results in crate2nix being updated every hour!
+      # - crate2nix
+      sources: nixpkgs nix-test-runner cargo-release
     steps:
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v8
@@ -22,26 +19,38 @@ jobs:
         with:
           name: eigenvalue
           signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-      - run: nix-env -if ./nix/dependencies.nix -A dev.niv
-      - run: niv update ${{matrix.source}}
+      - name: Install niv
+        run: nix-env -if ./nix/dependencies.nix -A dev.niv
       - name: Build and push changes
         run: |
-          if test -n "$(git status)"; then
-            git config --local user.email 'info@eigenvalue.net'
-            git config --local user.name 'Peter Kolloch, Bot'
-            n=0
-            until [ $n -ge 5 ]
-            do
-              git fetch
-              git reset --hard origin/master
-              # Do the update again to prevent merge conflicts
-              niv update ${{matrix.source}}
-              git commit -m 'niv update ${{matrix.source}}' -a
-              ./run_tests.sh || break
-              git push && break
-              n=$[$n+1]
-              sleep 1
-            done
-          else
-            echo no changes
-          fi
+          for source in $sources;
+            git fetch
+            git reset --hard origin/master
+            niv update $source
+            if test -n "$(git status)"; then
+              git config --local user.email 'info@eigenvalue.net'
+              git config --local user.name 'Peter Kolloch, Bot'
+              n=0
+              until [ $n -ge 5 ]
+              do
+                git commit -m 'niv update ${{matrix.source}}' -a
+                ./run_tests.sh || {
+                  echo "Tests failed. Skip updating $source."
+                  break
+                }
+                git push && break
+                n=$[$n+1]
+                sleep 1
+                # Another try
+                git fetch
+                git reset --hard origin/master
+                niv update ${{matrix.source}}
+              done
+              if [ $n -ge 5 ]; then
+                echo "gave up after 5 tries"
+                exit 1
+              fi
+            else
+              echo "no change for $source"
+            fi
+          done
