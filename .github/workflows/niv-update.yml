@@ -11,7 +11,7 @@ jobs:
     env:
       # Results in crate2nix being updated every hour!
       # - crate2nix
-      sources: nixpkgs nix-test-runner cargo-release
+      sources: nixpkgs nix-test-runner cargo-release nixpkgs-mozilla
     steps:
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v8
