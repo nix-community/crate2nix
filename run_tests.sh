@@ -11,11 +11,11 @@ top="$(readlink -f "$(dirname "$0")")"
 if [ -z "${IN_CRATE2NIX_SHELL:-}" -o "${IN_NIX_SHELL:-}" = "impure" ]; then
   export CACHIX="$(which cachix 2>/dev/null || echo "")"
   echo -e "\e[1m=== Entering $top/shell.nix\e[0m" >&2
-  exec nix-shell --keep CACHIX --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")" 
+  exec nix-shell --keep CACHIX --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")"
 fi
 
 echo -e "\e[1m=== Parsing opts for $top/run_tests.sh\e[0m" >&2
-options=$(getopt -o '' --long offline,build-test-nixpkgs: -- "$@") || { 
+options=$(getopt -o '' --long offline,build-test-nixpkgs: -- "$@") || {
     echo "" >&2
     echo "Available options:" >&2
     echo "   --offline            Enable offline friendly operations with out substituters" >&2
@@ -88,7 +88,7 @@ echo -e "\e[1m=== Running cargo test\e[0m" >&2
 
 cd "$top"
 echo -e "\e[1m=== Building ./tests.nix (= Running Integration Tests)\e[0m" >&2
-nix-build $NIX_OPTIONS $NIX_TESTS_OPTIONS ./tests.nix || {
+nix build -L $NIX_OPTIONS $NIX_TESTS_OPTIONS -f ./tests.nix || {
     echo "==================" >&2
     echo "cd $top" >&2
     echo "nix-build \\" >&2
