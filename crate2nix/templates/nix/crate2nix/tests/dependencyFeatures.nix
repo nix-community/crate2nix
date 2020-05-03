@@ -32,29 +32,29 @@ in
 {
 
   testStringDependency = {
-    expr = crate2nix.dependencyFeatures [] { name = "my_dep"; packageId = "pkg_id"; };
+    expr = crate2nix.dependencyFeatures [ ] { name = "my_dep"; packageId = "pkg_id"; };
     expected = [ "default" ];
   };
 
   testWithDefaultUnsetDependency = {
     expr = crate2nix.dependencyFeatures
-      []
+      [ ]
       { name = "my_dep"; };
     expected = [ "default" ];
   };
 
   testWithDefaultDependency = {
     expr = crate2nix.dependencyFeatures
-      []
+      [ ]
       { name = "my_dep"; usesDefaultFeatures = true; };
     expected = [ "default" ];
   };
 
   testWithDefaultDisabledDependency = {
     expr = crate2nix.dependencyFeatures
-      []
+      [ ]
       { name = "my_dep"; usesDefaultFeatures = false; };
-    expected = [];
+    expected = [ ];
   };
 
   testDependencyFeature = {

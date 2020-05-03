@@ -1,4 +1,4 @@
-{ pkgs ? import ../../nix/nixpkgs.nix { config = {}; }
+{ pkgs ? import ../../nix/nixpkgs.nix { config = { }; }
 , stdenv ? pkgs.stdenv
 , generatedCargoNix
 }:
@@ -7,16 +7,16 @@ let
     defaultCrateOverrides = pkgs.defaultCrateOverrides // {
       pest_generator = attrs: {
         buildInputs =
-          (attrs.buildInputs or [])
-          ++ stdenv.lib.optionals
+          (attrs.buildInputs or [ ])
+            ++ stdenv.lib.optionals
             stdenv.isDarwin
             (with pkgs.darwin.apple_sdk.frameworks; [ Security ]);
       };
 
       cssparser-macros = attrs: {
         buildInputs =
-          (attrs.buildInputs or [])
-          ++ stdenv.lib.optionals
+          (attrs.buildInputs or [ ])
+            ++ stdenv.lib.optionals
             stdenv.isDarwin
             (with pkgs.darwin.apple_sdk.frameworks; [ Security ]);
       };

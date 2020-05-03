@@ -5,7 +5,7 @@
 # avoid breaking the API and/or mention breakages in the CHANGELOG.
 #
 
-{ pkgs ? import ./nix/nixpkgs.nix { config = {}; }
+{ pkgs ? import ./nix/nixpkgs.nix { config = { }; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
 , strictDeprecation ? true
@@ -29,75 +29,74 @@ rec {
     { name
     , src
     , cargoToml ? "Cargo.toml"
-    , additionalCargoNixArgs ? []
+    , additionalCargoNixArgs ? [ ]
     }:
-      let
-        crateDir = dirOf "${src}/${cargoToml}";
+    let
+      crateDir = dirOf "${src}/${cargoToml}";
 
-        # Support automatic unpacking for ".tar.gz" files as src
-        unpackedCrateDir = pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) {}
-          ''
-            mkdir -p $out
-            tar -xzf ${crateDir} --strip-components=1 -C $out
-          '';
-        unpackedSrc =
-          if (builtins.match ''.*\.tar\.gz$'' crateDir) != null
-          then unpackedCrateDir
-          else crateDir;
+      # Support automatic unpacking for ".tar.gz" files as src
+      unpackedCrateDir = pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
+        ''
+          mkdir -p $out
+          tar -xzf ${crateDir} --strip-components=1 -C $out
+        '';
+      unpackedSrc =
+        if (builtins.match ''.*\.tar\.gz$'' crateDir) != null
+        then unpackedCrateDir
+        else crateDir;
+      cargoLock = "${unpackedSrc}/Cargo.lock";
+      vendor = internal.vendorSupport { inherit cargoLock; };
+    in
+    stdenv.mkDerivation {
+      name = "${name}-crate2nix";
 
-        cargoLock = "${unpackedSrc}/Cargo.lock";
-        vendor = internal.vendorSupport { inherit cargoLock; };
-      in
-        stdenv.mkDerivation {
-          name = "${name}-crate2nix";
+      buildInputs = [ pkgs.cargo crate2nix ];
+      preferLocalBuild = true;
+      buildCommand = ''
+        set -e
 
-          buildInputs = [ pkgs.cargo crate2nix ];
-          preferLocalBuild = true;
-          buildCommand = ''
-            set -e
+        mkdir -p "$out/cargo"
 
-            mkdir -p "$out/cargo"
+        export CARGO_HOME="$out/cargo"
+        export HOME="$out"
 
-            export CARGO_HOME="$out/cargo"
-            export HOME="$out"
+        cp ${vendor.cargoConfig} $out/cargo/config
 
-            cp ${vendor.cargoConfig} $out/cargo/config
+        crate_hashes="$out/crate-hashes.json"
+        if test -r "${unpackedSrc}/crate-hashes.json" ; then
+          cp "${unpackedSrc}/crate-hashes.json" "$crate_hashes"
+          chmod +w "$crate_hashes"
+        fi
 
-            crate_hashes="$out/crate-hashes.json"
-            if test -r "${unpackedSrc}/crate-hashes.json" ; then
-              cp "${unpackedSrc}/crate-hashes.json" "$crate_hashes"
-              chmod +w "$crate_hashes"
-            fi
+        set -x
+        crate2nix generate \
+          -f ${unpackedSrc}/${baseNameOf cargoToml} \
+          -h "$crate_hashes" \
+          -o $out/default.nix \
+          ${lib.escapeShellArgs additionalCargoNixArgs} || {
+          { set +x; } 2>/dev/null
+          echo "crate2nix failed." >&2
+          echo "== cargo/config (BEGIN)" >&2
+          sed 's/^/    /' $out/cargo/config >&2
+          echo ""
+          echo "== cargo/config (END)" >&2
+          echo ""
+          echo "== crate-hashes.json (BEGIN)" >&2
+          sed 's/^/    /' $crate_hashes >&2
+          echo ""
+          echo "== crate-hashes.json (END)" >&2
+          exit 3
+        }
+        { set +x; } 2>/dev/null
 
-            set -x
-            crate2nix generate \
-              -f ${unpackedSrc}/${baseNameOf cargoToml} \
-              -h "$crate_hashes" \
-              -o $out/default.nix \
-              ${lib.escapeShellArgs additionalCargoNixArgs} || {
-              { set +x; } 2>/dev/null
-              echo "crate2nix failed." >&2
-              echo "== cargo/config (BEGIN)" >&2
-              sed 's/^/    /' $out/cargo/config >&2
-              echo ""
-              echo "== cargo/config (END)" >&2
-              echo ""
-              echo "== crate-hashes.json (BEGIN)" >&2
-              sed 's/^/    /' $crate_hashes >&2
-              echo ""
-              echo "== crate-hashes.json (END)" >&2
-              exit 3
-            }
-            { set +x; } 2>/dev/null
+        if test -r "${unpackedSrc}/crate-hashes.json" ; then
+          set -x
+          diff -u "${unpackedSrc}/crate-hashes.json" $crate_hashes
+         { set +x; } 2>/dev/null
+        fi
+      '';
 
-            if test -r "${unpackedSrc}/crate-hashes.json" ; then
-              set -x
-              diff -u "${unpackedSrc}/crate-hashes.json" $crate_hashes
-             { set +x; } 2>/dev/null
-            fi
-          '';
-
-        };
+    };
 
   # Applies the default arguments from pkgs to the generated `Cargo.nix` file.
   #
@@ -105,7 +104,7 @@ rec {
   # src: the source that is needed to build the crate, usually the crate/workspace root directory
   # cargoToml: Path to the Cargo.toml file relative to src, "Cargo.toml" by default.
   appliedCargoNix = { cargoToml ? "Cargo.toml", ... } @ args:
-    pkgs.callPackage (generatedCargoNix args) {};
+    pkgs.callPackage (generatedCargoNix args) { };
 
   generate =
     cargoNix.internal.deprecationWarning
@@ -122,7 +121,7 @@ rec {
       assert builtins.isString sha256;
       assert builtins.isAttrs src;
 
-      pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) {}
+      pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
         ''
           mkdir -p $out
           tar -xzf ${src} --strip-components=1 -C $out
@@ -151,10 +150,10 @@ rec {
         splitHash = lib.splitString "#" withoutGitPlus;
         splitQuestion = lib.concatMap (lib.splitString "?") splitHash;
       in
-        {
-          url = builtins.head splitQuestion;
-          rev = lib.last splitQuestion;
-        };
+      {
+        url = builtins.head splitQuestion;
+        rev = lib.last splitQuestion;
+      };
 
     vendorSupport = { cargoLock ? ./Cargo.lock, ... }:
       rec {
@@ -163,7 +162,7 @@ rec {
         hashes =
           if builtins.pathExists hashesFile
           then builtins.fromJSON (builtins.readFile hashesFile)
-          else {};
+          else { };
         packages = assert builtins.isList locked.package; locked.package;
         packagesWithType = builtins.filter (pkg: (sourceType pkg) != null) packages;
         packagesByType = lib.groupBy sourceType packagesWithType;
@@ -173,23 +172,22 @@ rec {
         vendoredSources =
           let
             support = vendorSupport { inherit cargoLock; };
-
             crateSources =
               builtins.map
                 (
                   package:
-                    let
-                      fetcher = fetchers.${sourceType package};
-                      source = fetcher package;
-                    in
-                      {
-                        name = builtins.baseNameOf source;
-                        path = source;
-                      }
+                  let
+                    fetcher = fetchers.${sourceType package};
+                    source = fetcher package;
+                  in
+                  {
+                    name = builtins.baseNameOf source;
+                    path = source;
+                  }
                 )
                 support.packagesWithType;
           in
-            pkgs.linkFarm "deps" crateSources;
+          pkgs.linkFarm "deps" crateSources;
 
         cargoConfig =
           let
@@ -200,28 +198,28 @@ rec {
                 let
                   parsed = parseGitSource source;
                 in
-                  ''
+                ''
 
               [source."${parsed.url}"]
               git = "${parsed.url}"
               rev = "${parsed.rev}"
               replace-with = "vendored-sources"
               '';
-            gitSources = builtins.map ({ source, ... }: source) packagesByType."git" or [];
+            gitSources = builtins.map ({ source, ... }: source) packagesByType."git" or [ ];
             gitSourcesUnique = lib.unique gitSources;
             gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
             gitSourceConfigsString = lib.concatStrings gitSourceConfigs;
           in
-            pkgs.writeText
-              "vendor-config"
-              ''
-                [source.crates-io]
-                replace-with = "vendored-sources"
-                ${gitSourceConfigsString}
+          pkgs.writeText
+            "vendor-config"
+            ''
+              [source.crates-io]
+              replace-with = "vendored-sources"
+              ${gitSourceConfigsString}
 
-                [source.vendored-sources]
-                directory = "${vendoredSources}"
-              '';
+              [source.vendored-sources]
+              directory = "${vendoredSources}"
+            '';
 
         # Fetchers by source type that can fetch the package source.
         fetchers = {
@@ -233,16 +231,16 @@ rec {
                   or locked.metadata."checksum ${name} ${version} (${source})"
                   or (builtins.throw "Checksum for ${name} ${version} (${source}) not found in Cargo.lock");
             in
-              unpacked {
-                src = pkgs.fetchurl {
-                  name = "crates-io-${name}-${version}.tar.gz";
-                  # https://www.pietroalbini.org/blog/downloading-crates-io/
-                  # Not rate-limited, CDN URL.
-                  url = "https://static.crates.io/crates/${name}/${name}-${version}.crate";
-                  inherit sha256;
-                };
+            unpacked {
+              src = pkgs.fetchurl {
+                name = "crates-io-${name}-${version}.tar.gz";
+                # https://www.pietroalbini.org/blog/downloading-crates-io/
+                # Not rate-limited, CDN URL.
+                url = "https://static.crates.io/crates/${name}/${name}-${version}.crate";
                 inherit sha256;
               };
+              inherit sha256;
+            };
 
           "git" = { name, version, source, ... } @ package:
             assert (sourceType package) == "git";
@@ -258,12 +256,12 @@ rec {
                 inherit (parsed) url rev;
               };
             in
-              pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) {}
-                ''
-                  mkdir -p $out
-                  cp -apR ${src}/* $out
-                  echo '{"package":null,"files":{}}' > $out/.cargo-checksum.json
-                '';
+            pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
+              ''
+                mkdir -p $out
+                cp -apR ${src}/* $out
+                echo '{"package":null,"files":{}}' > $out/.cargo-checksum.json
+              '';
 
         };
       };

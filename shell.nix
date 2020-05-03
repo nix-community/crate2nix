@@ -8,9 +8,9 @@
 # Use pinned version of nixos-unstable by default to make sure this works.
 # Override with e.g.
 #    nix-shell --arg pkgs 'import <nixos> {config = {}; }'
-{ pkgs ? import ./nix/nixpkgs.nix { config = {}; }
+{ pkgs ? import ./nix/nixpkgs.nix { config = { }; }
 , sources ? import ./nix/sources.nix
-, dependencies ? pkgs.callPackage ./nix/dependencies.nix {}
+, dependencies ? pkgs.callPackage ./nix/dependencies.nix { }
 , lib ? pkgs.lib
 }:
 

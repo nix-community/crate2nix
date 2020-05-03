@@ -1,6 +1,6 @@
-{ pkgs ? import ../../nix/nixpkgs.nix { config = {}; }, generatedCargoNix }:
+{ pkgs ? import ../../nix/nixpkgs.nix { config = { }; }, generatedCargoNix }:
 let
-  basePackage = pkgs.callPackage generatedCargoNix {};
+  basePackage = pkgs.callPackage generatedCargoNix { };
   lib = basePackage.rootCrate.build.lib;
   src = pkgs.writeText "main.c" ''
     extern void some_function(void);

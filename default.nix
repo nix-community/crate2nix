@@ -1,4 +1,4 @@
-{ pkgs ? import ./nix/nixpkgs.nix { config = {}; }
+{ pkgs ? import ./nix/nixpkgs.nix { config = { }; }
 , lib ? pkgs.lib
 , cargo ? pkgs.cargo
 , nix ? pkgs.nix
@@ -16,7 +16,6 @@ let
       baseName = builtins.baseNameOf (builtins.toString name);
     in
       !(baseName == "templates" && type == "directory");
-
   crate2nix = cargoNix.rootCrate.build.override {
     testCrateFlags = [
       "--skip nix_integration_tests"

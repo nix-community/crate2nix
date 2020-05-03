@@ -3,8 +3,8 @@ let
   featureMap = {
     default = [ "tls" ];
     resolvable = [ "feature1" "tls/extra_feature" ];
-    feature1 = [];
-    extra = [];
+    feature1 = [ ];
+    extra = [ ];
   };
   dependencies = [
     {
@@ -26,8 +26,8 @@ let
 in
 {
   testEmpty = {
-    expr = crate2nix.expandFeatures featureMap [];
-    expected = [];
+    expr = crate2nix.expandFeatures featureMap [ ];
+    expected = [ ];
   };
   testDefault = {
     expr = crate2nix.expandFeatures featureMap [ "default" ];

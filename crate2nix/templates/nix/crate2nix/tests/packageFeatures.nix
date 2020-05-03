@@ -4,7 +4,7 @@ let
     "pkg_root" = {
       crateName = "id1";
       features = {
-        "optional_id2" = [];
+        "optional_id2" = [ ];
       };
       dependencies = [
         {
@@ -41,16 +41,16 @@ let
     "pkg_id1" = {
       crateName = "id1";
       features = {
-        "default" = [];
+        "default" = [ ];
       };
     };
     "pkg_id2" = {
       crateName = "id2";
-      features = {};
+      features = { };
     };
     "pkg_id3" = {
       crateName = "id3";
-      features = {};
+      features = { };
     };
 
     "pkg_numtest" = {
@@ -85,13 +85,13 @@ let
   };
   packageFeatures =
     packageId: features:
-      crate2nix.mergePackageFeatures
-        {
-          target = crate2nix.defaultTarget;
-          runTests = false;
-          rootPackageId = packageId;
-          inherit crateConfigs packageId features;
-        };
+    crate2nix.mergePackageFeatures
+      {
+        target = crate2nix.defaultTarget;
+        runTests = false;
+        rootPackageId = packageId;
+        inherit crateConfigs packageId features;
+      };
 in
 {
 
@@ -113,9 +113,9 @@ in
   };
 
   testTerminalPackageDependency = {
-    expr = packageFeatures "pkg_id1" [];
+    expr = packageFeatures "pkg_id1" [ ];
     expected = {
-      "pkg_id1" = [];
+      "pkg_id1" = [ ];
     };
   };
 
@@ -131,7 +131,7 @@ in
     expected = {
       "pkg_root" = [ "default" ];
       "pkg_id1" = [ "default" ];
-      "pkg_id3" = [];
+      "pkg_id3" = [ ];
     };
   };
 
@@ -141,14 +141,14 @@ in
       "pkg_root" = [ "default" "optional_id2" ];
       "pkg_id1" = [ "default" ];
       "pkg_id2" = [ "default" ];
-      "pkg_id3" = [];
+      "pkg_id3" = [ ];
     };
   };
 
   testPackageWithFeatureClash = {
-    expr = packageFeatures "pkg_with_feature_clash" [];
+    expr = packageFeatures "pkg_with_feature_clash" [ ];
     expected = {
-      "pkg_with_feature_clash" = [];
+      "pkg_with_feature_clash" = [ ];
       "pkg_id1" = [ "default" "for_build" ];
     };
   };

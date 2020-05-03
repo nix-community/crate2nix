@@ -1,5 +1,5 @@
 let
-  tests = import ../nix/nixpkgs.nix { config = {}; };
+  tests = import ../nix/nixpkgs.nix { config = { }; };
 in
 {
   x86_64-linux = tests;
