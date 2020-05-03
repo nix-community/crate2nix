@@ -1,5 +1,5 @@
-{ pkgs ? import ./nixpkgs.nix { }
-, sources ? import ./sources.nix
+{ sources ? import ./sources.nix
+, pkgs ? import sources.nixpkgs { }
   # Use last pinned crate2nix packages to build the test runner
   # so that it works even if we have broken stuff!
 , tools ? pkgs.callPackage "${sources.crate2nix}/tools.nix" { }
@@ -16,6 +16,7 @@
       git
       utillinux
       cacert
+      niv
       ;
 
     nixTest =
