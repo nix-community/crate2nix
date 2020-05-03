@@ -21,8 +21,10 @@ jobs:
           signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
       - name: Install niv
         run: nix-env -if ./nix/dependencies.nix -A dev.niv
-      - name: Build and push changes
+      - name: Update each source and push changes
         run: |
+          failed=""
+
           for source in $sources; do
             git fetch origin master
             git reset --hard origin/master
@@ -39,6 +41,7 @@ jobs:
                   git commit -m 'niv update: updated $source' -a
                   ./run_tests.sh --no-cargo-build || {
                     echo "Tests failed. Skip updating $source."
+                    failed="$failed $source"
                     break
                   }
                   git push && break
@@ -58,3 +61,10 @@ jobs:
               echo "no change for $source"
             fi
           done
+
+          if [ -n "$failed" ]; then
+            echo "The following sources couldn't be updated "
+            echo "because of test failures:"
+            echo "$failed"
+            exit 3
+          fi
