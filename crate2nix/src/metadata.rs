@@ -1,6 +1,6 @@
 //! Indexing cargo metadata.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 
 use anyhow::format_err;
 use anyhow::{Error, Result};
@@ -25,7 +25,9 @@ impl MergedMetadata {
     pub fn merge(metadatas: Vec<Metadata>) -> Result<MergedMetadata> {
         assert!(!metadatas.is_empty());
         let mut workspace_members = Vec::new();
+        let mut package_ids = HashSet::new();
         let mut packages = Vec::new();
+        let mut node_package_ids = HashSet::new();
         let mut nodes = Vec::new();
 
         for metadata in metadatas.into_iter() {
@@ -40,8 +42,18 @@ impl MergedMetadata {
                 }
             }
             workspace_members.extend(metadata.workspace_members);
-            packages.extend(metadata.packages);
-            nodes.extend(resolve.nodes);
+            packages.extend(
+                metadata
+                    .packages
+                    .into_iter()
+                    .filter(|p| package_ids.insert(p.id.clone())),
+            );
+            nodes.extend(
+                resolve
+                    .nodes
+                    .into_iter()
+                    .filter(|p| node_package_ids.insert(p.id.clone())),
+            );
         }
 
         let root = if workspace_members.len() <= 1 {
@@ -53,7 +65,7 @@ impl MergedMetadata {
         Ok(MergedMetadata {
             packages,
             root,
-            workspace_members,
+            workspace_members: workspace_members.into_iter().unique().collect(),
             nodes,
         })
     }
@@ -160,6 +172,10 @@ impl PackageIdShortener {
             } else if packages.iter().map(|p| &p.version).unique().count() == packages.len() {
                 UniqueComponent::NameVersion
             } else {
+                eprintln!(
+                    "Using same version of crate from different sources: {:#?}",
+                    packages.iter().map(|p| &p.id.repr).collect::<Vec<_>>()
+                );
                 UniqueComponent::PackageId
             };
 
