@@ -59,11 +59,22 @@ pub struct BuildInfo {
 impl BuildInfo {
     /// Return the `NixBuildInfo` data ready for rendering the nix build file.
     pub fn for_config(info: &GenerateInfo, config: &GenerateConfig) -> Result<BuildInfo, Error> {
-        let metadata = cargo_metadata(config)?;
-        let indexed_metadata = IndexedMetadata::new_from(metadata).map_err(|e| {
+        let merged = {
+            let mut metadatas = Vec::new();
+            for cargo_toml in &config.cargo_toml {
+                metadatas.push(cargo_metadata(config, cargo_toml)?);
+            }
+            metadata::MergedMetadata::merge(metadatas)?
+        };
+
+        let indexed_metadata = IndexedMetadata::new_from_merged(merged).map_err(|e| {
             format_err!(
-                "while indexing metadata for {}: {}",
-                config.cargo_toml.to_string_lossy(),
+                "while indexing metadata for {:#?}: {}",
+                config
+                    .cargo_toml
+                    .iter()
+                    .map(|p| p.to_string_lossy())
+                    .collect::<Vec<_>>(),
                 e
             )
         })?;
@@ -113,9 +124,9 @@ impl BuildInfo {
     ) -> Result<BuildInfo, Error> {
         let crate2nix_json = crate::config::Config::read_from_or_default(
             &config
-                .cargo_toml
+                .crate_hashes_json
                 .parent()
-                .expect("Cargo.toml has parent dir")
+                .expect("crate-hashes.json has parent dir")
                 .join("crate2nix.json"),
         )?;
 
@@ -146,16 +157,15 @@ impl BuildInfo {
 }
 
 /// Call `cargo metadata` and return result.
-fn cargo_metadata(config: &GenerateConfig) -> Result<Metadata, Error> {
+fn cargo_metadata(config: &GenerateConfig, cargo_toml: &PathBuf) -> Result<Metadata, Error> {
     let mut cmd = cargo_metadata::MetadataCommand::new();
     let mut other_options = config.other_metadata_options.clone();
     other_options.push("--locked".into());
-    cmd.manifest_path(&config.cargo_toml)
-        .other_options(&other_options);
+    cmd.manifest_path(&cargo_toml).other_options(&other_options);
     cmd.exec().map_err(|e| {
         format_err!(
             "while retrieving metadata about {}: {}",
-            &config.cargo_toml.to_string_lossy(),
+            &cargo_toml.to_string_lossy(),
             e
         )
     })
@@ -209,12 +219,18 @@ fn extract_hashes_from_lockfile(
         return Ok(HashMap::new());
     }
 
-    let lock_file = crate::lock::EncodableResolve::load_lock_file(
-        &config.cargo_toml.parent().unwrap().join("Cargo.lock"),
-    )?;
-    let hashes = lock_file
-        .get_hashes_by_package_id()
-        .context("while parsing checksums from Lockfile")?;
+    let mut hashes: HashMap<PackageId, String> = HashMap::new();
+
+    for cargo_toml in &config.cargo_toml {
+        let lock_file_path = cargo_toml.parent().unwrap().join("Cargo.lock");
+        let lock_file = crate::lock::EncodableResolve::load_lock_file(&lock_file_path)?;
+        lock_file
+            .get_hashes_by_package_id(&mut hashes)
+            .context(format!(
+                "while parsing checksums from Lockfile {}",
+                &lock_file_path.to_string_lossy()
+            ))?;
+    }
 
     let hashes_with_shortened_ids: HashMap<PackageId, String> = hashes
         .into_iter()
@@ -270,7 +286,7 @@ impl Default for GenerateInfo {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct GenerateConfig {
     /// The path to `Cargo.toml`.
-    pub cargo_toml: PathBuf,
+    pub cargo_toml: Vec<PathBuf>,
     /// Whether to inspect `Cargo.lock` for checksums so that we do not need to prefetch them.
     pub use_cargo_lock_checksums: bool,
     /// The path of the generated `Cargo.nix` file.

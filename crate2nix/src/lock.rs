@@ -25,9 +25,10 @@ impl EncodableResolve {
         Ok(v)
     }
 
-    pub fn get_hashes_by_package_id(&self) -> Result<HashMap<PackageId, String>, Error> {
-        let mut hashes = HashMap::new();
-
+    pub fn get_hashes_by_package_id(
+        &self,
+        hashes: &mut HashMap<PackageId, String>,
+    ) -> Result<(), Error> {
         for EncodableDependency {
             name,
             version,
@@ -61,7 +62,7 @@ impl EncodableResolve {
             }
         }
 
-        Ok(hashes)
+        Ok(())
     }
 }
 
@@ -77,7 +78,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
     ]
 "#;
     let resolve = EncodableResolve::load_lock_string(Path::new("dummy"), config).unwrap();
-    assert_eq!(resolve.get_hashes_by_package_id().unwrap(), HashMap::new());
+    let mut hashes = HashMap::new();
+    resolve.get_hashes_by_package_id(&mut hashes).unwrap();
+    assert_eq!(hashes, HashMap::new());
 }
 
 #[test]
@@ -97,8 +100,10 @@ dependencies = [
 
 "#;
     let resolve = EncodableResolve::load_lock_string(Path::new("dummy"), config).unwrap();
+    let mut hashes = HashMap::new();
+    resolve.get_hashes_by_package_id(&mut hashes).unwrap();
     assert_eq!(
-        resolve.get_hashes_by_package_id().unwrap(),
+        hashes,
         vec![
             (
                 PackageId { repr: "structopt 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)".to_string() },
@@ -128,8 +133,10 @@ dependencies = [
 checksum = "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
 "#;
     let resolve = EncodableResolve::load_lock_string(Path::new("dummy"), config).unwrap();
+    let mut hashes = HashMap::new();
+    resolve.get_hashes_by_package_id(&mut hashes).unwrap();
     assert_eq!(
-        resolve.get_hashes_by_package_id().unwrap(),
+        hashes,
         vec![(
             PackageId {
                 repr: "aho-corasick 0.7.6 (registry+https://github.com/rust-lang/crates.io-index)"

@@ -27,7 +27,7 @@ fn self_up_to_date() {
             ..GenerateInfo::default()
         },
         &GenerateConfig {
-            cargo_toml: PathBuf::from("./Cargo.toml"),
+            cargo_toml: vec![PathBuf::from("./Cargo.toml")],
             output: PathBuf::from("./Cargo.nix"),
             nixpkgs_path: "../nix/nixpkgs.nix".to_string(),
             crate_hashes_json: PathBuf::from("./crate-hashes.json"),
@@ -70,7 +70,7 @@ fn assert_up_to_date(project_dir: &Path) {
     let output = project_dir.join("Cargo.nix");
     println!("Checking pregenerated {}", output.to_str().unwrap());
     let config = GenerateConfig {
-        cargo_toml: PathBuf::from("../").join(cargo_toml.clone()),
+        cargo_toml: vec![PathBuf::from("../").join(cargo_toml.clone())],
         output: PathBuf::from("../").join(output.clone()),
         nixpkgs_path: "<nixpkgs>".to_string(),
         crate_hashes_json: PathBuf::from("../")

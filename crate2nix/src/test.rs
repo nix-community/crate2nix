@@ -6,7 +6,7 @@ use tempdir::TempDir;
 /// Returns bogus crate::GenerateConfig.
 pub fn generate_config() -> crate::GenerateConfig {
     crate::GenerateConfig {
-        cargo_toml: "Cargo.toml".into(),
+        cargo_toml: vec!["Cargo.toml".into()],
         crate_hashes_json: "crate-hashes.json".into(),
         nixpkgs_path: "bogus-nixpkgs-path".into(),
         other_metadata_options: vec![],
@@ -51,7 +51,11 @@ impl MetadataEnv {
         path
     }
 
-    fn resolve(&mut self) -> &mut Resolve {
+    fn mut_metadata(&mut self) -> &mut Metadata {
+        &mut self.metadata
+    }
+
+    fn mut_resolve(&mut self) -> &mut Resolve {
         self.metadata.resolve.get_or_insert_with(|| empty_resolve())
     }
 
@@ -59,7 +63,7 @@ impl MetadataEnv {
         let package = package(name, "0.1.0");
         let package_idx = self.metadata.packages.len();
         self.metadata.packages.push(package.clone());
-        let nodes = &mut self.resolve().nodes;
+        let nodes = &mut self.mut_resolve().nodes;
         let node_idx = nodes.len();
         nodes.push(node(&package.id.repr));
         self.temp_dirs.push(package.crate_dir);
@@ -94,7 +98,12 @@ pub struct PackageAndNode<'a> {
 
 impl<'a> PackageAndNode<'a> {
     pub fn make_root(&mut self) -> &mut Self {
-        self.env.resolve().root = Some(self.get_mut_package().id.clone());
+        let package_id = self.get_mut_package().id.clone();
+        self.env
+            .mut_metadata()
+            .workspace_members
+            .push(package_id.clone());
+        self.env.mut_resolve().root = Some(package_id.clone());
         self
     }
 
@@ -109,10 +118,10 @@ impl<'a> PackageAndNode<'a> {
         self
     }
     pub fn get_mut_node(&mut self) -> &mut Node {
-        &mut self.env.resolve().nodes[self.node_idx]
+        &mut self.env.mut_resolve().nodes[self.node_idx]
     }
     pub fn get_node(&mut self) -> &Node {
-        &self.env.resolve().nodes[self.node_idx]
+        &self.env.mut_resolve().nodes[self.node_idx]
     }
     pub fn update_node(&mut self, f: impl FnOnce(&mut Node)) -> &mut Self {
         f(self.get_mut_node());
@@ -195,7 +204,7 @@ impl<'a> PackageAndNodeDep<'a> {
     }
     fn get_mut_parent_node(&mut self) -> &mut Node {
         let parent_node_idx = self.parent_node_idx;
-        &mut self.package_and_node.env.resolve().nodes[parent_node_idx]
+        &mut self.package_and_node.env.mut_resolve().nodes[parent_node_idx]
     }
     pub fn get_mut_node_dep(&mut self) -> &mut NodeDep {
         let node_dep_idx = self.node_dep_idx;

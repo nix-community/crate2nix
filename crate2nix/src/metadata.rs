@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, HashMap};
 
 use anyhow::format_err;
-use anyhow::Error;
+use anyhow::{Error, Result};
 use cargo_metadata::Node;
 use cargo_metadata::Package;
 use cargo_metadata::PackageId;
@@ -11,6 +11,53 @@ use cargo_metadata::{Metadata, NodeDep};
 use itertools::Itertools;
 use serde::Deserialize;
 use serde::Serialize;
+
+/// The merged metadata of potentially multiple sources.
+#[derive(Debug)]
+pub struct MergedMetadata {
+    workspace_members: Vec<PackageId>,
+    packages: Vec<Package>,
+    root: Option<PackageId>,
+    nodes: Vec<Node>,
+}
+
+impl MergedMetadata {
+    pub fn merge(metadatas: Vec<Metadata>) -> Result<MergedMetadata> {
+        assert!(!metadatas.is_empty());
+        let mut workspace_members = Vec::new();
+        let mut packages = Vec::new();
+        let mut nodes = Vec::new();
+
+        for metadata in metadatas.into_iter() {
+            let resolve = metadata
+                .resolve
+                .ok_or_else(|| format_err!("no resolve in metadata"))?;
+            if let Some(root) = resolve.root {
+                if metadata.workspace_members != vec![root.clone()] {
+                    // Usually, cargo metadata also puts the root into workspace_members.
+                    // Therefore, I only saw this warning in unit tests.
+                    eprintln!("WARNING: root missing from workspace_members.");
+                }
+            }
+            workspace_members.extend(metadata.workspace_members);
+            packages.extend(metadata.packages);
+            nodes.extend(resolve.nodes);
+        }
+
+        let root = if workspace_members.len() <= 1 {
+            workspace_members.get(0).cloned()
+        } else {
+            None
+        };
+
+        Ok(MergedMetadata {
+            packages,
+            root,
+            workspace_members,
+            nodes,
+        })
+    }
+}
 
 /// The metadata with maps indexed by {{PackageId}} instead of flat lists.
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -24,15 +71,21 @@ pub struct IndexedMetadata {
 
 impl IndexedMetadata {
     pub fn new_from(metadata: Metadata) -> Result<IndexedMetadata, Error> {
-        let resolve = metadata
-            .resolve
-            .as_ref()
-            .ok_or_else(|| format_err!("no resolve in metadata"))?;
+        let merged = MergedMetadata::merge(vec![metadata])?;
+        Self::new_from_merged(merged)
+    }
 
-        let id_shortener = PackageIdShortener::new(metadata.packages.iter());
+    pub fn new_from_merged(
+        MergedMetadata {
+            root,
+            workspace_members,
+            packages,
+            nodes,
+        }: MergedMetadata,
+    ) -> Result<IndexedMetadata, Error> {
+        let id_shortener = PackageIdShortener::new(packages.iter());
 
-        let pkgs_by_id: BTreeMap<PackageId, Package> = metadata
-            .packages
+        let pkgs_by_id: BTreeMap<PackageId, Package> = packages
             .iter()
             .map(|pkg| {
                 (
@@ -42,21 +95,7 @@ impl IndexedMetadata {
             })
             .collect();
 
-        if pkgs_by_id.len() != metadata.packages.len() {
-            let duplicate_ids = crate::util::find_duplicates(
-                metadata
-                    .packages
-                    .iter()
-                    .map(|p| &id_shortener.shorten_ref(&p.id).repr),
-            );
-            return Err(format_err!(
-                "detected duplicate package IDs in metadata.packages: {:?}",
-                duplicate_ids
-            ));
-        }
-
-        let nodes_by_id: BTreeMap<PackageId, Node> = resolve
-            .nodes
+        let nodes_by_id: BTreeMap<PackageId, Node> = nodes
             .iter()
             .map(|node| {
                 (
@@ -66,23 +105,9 @@ impl IndexedMetadata {
             })
             .collect();
 
-        if nodes_by_id.len() != resolve.nodes.len() {
-            let duplicate_ids = crate::util::find_duplicates(
-                resolve
-                    .nodes
-                    .iter()
-                    .map(|n| &id_shortener.shorten_ref(&n.id).repr),
-            );
-            return Err(format_err!(
-                "detected duplicate package IDs in nodes: {:?}",
-                duplicate_ids
-            ));
-        }
-
         Ok(IndexedMetadata {
-            root: resolve.root.as_ref().map(|id| id_shortener.shorten(&id)),
-            workspace_members: metadata
-                .workspace_members
+            root: root.as_ref().map(|id| id_shortener.shorten(&id)),
+            workspace_members: workspace_members
                 .iter()
                 .map(|id| id_shortener.shorten(&id))
                 .collect(),

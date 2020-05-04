@@ -42,7 +42,7 @@ pub enum Opt {
             help = "The path to the Cargo.toml of the project.",
             default_value = "./Cargo.toml"
         )]
-        cargo_toml: PathBuf,
+        cargo_toml: Vec<PathBuf>,
 
         #[structopt(
             long = "all-features",
@@ -417,7 +417,14 @@ fn main() -> anyhow::Result<()> {
             }
 
             let crate_hashes_json = crate_hashes.unwrap_or_else(|| {
-                cargo_toml
+                if cargo_toml.len() > 1 {
+                    panic!(
+                        "Please specify the --crate-hashes path/to/crate-hashes.json\n\
+                         output explicitly, if you merge multiple crates."
+                    );
+                }
+
+                cargo_toml[0]
                     .parent()
                     .expect("Cargo.toml has parent")
                     .join("crate-hashes.json")

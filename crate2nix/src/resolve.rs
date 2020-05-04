@@ -214,6 +214,7 @@ pub fn minimal_resolve() {
     resolve.nodes = vec![node];
 
     let mut metadata: Metadata = test::empty_metadata();
+    metadata.workspace_members = vec![package.id.clone()];
     metadata.packages = vec![package.clone()];
     metadata.resolve = Some(resolve);
 
