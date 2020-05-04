@@ -107,14 +107,14 @@ rec {
 
         {%- if crate.source.CratesIo.sha256 %}
         sha256 = {{crate.source.CratesIo.sha256}};
-        {%- elif crate.source.Nix.import and crate.source.Nix.attr %}
-        src = (import {{crate.source.Nix.import | safe}}).{{crate.source.Nix.attr | safe}};
-        {%- elif crate.source.Nix.package and crate.source.Nix.attr %}
-        src = (pkgs.callPackage {{crate.source.Nix.package | safe}} {}).{{crate.source.Nix.attr | safe}};
-        {%- elif crate.source.Nix.import %}
-        src = import {{crate.source.Nix.import | safe}};
-        {%- elif crate.source.Nix.package %}
-        src = pkgs.callPackage {{crate.source.Nix.package | safe}} {};
+        {%- elif crate.source.Nix.file.import and crate.source.Nix.attr %}
+        src = (import {{crate.source.Nix.file.import | safe}}).{{crate.source.Nix.attr | safe}};
+        {%- elif crate.source.Nix.file.package and crate.source.Nix.attr %}
+        src = (pkgs.callPackage {{crate.source.Nix.file.package | safe}} {}).{{crate.source.Nix.attr | safe}};
+        {%- elif crate.source.Nix.file.import %}
+        src = import {{crate.source.Nix.file.import | safe}};
+        {%- elif crate.source.Nix.file.package %}
+        src = pkgs.callPackage {{crate.source.Nix.file.package | safe}} {};
         {%- elif crate.source.LocalDirectory.path %}
         src = lib.cleanSourceWith { filter = sourceFilter;  src = {{crate.source.LocalDirectory.path | safe}}; };
         {%- elif crate.source.Git %}
@@ -127,7 +127,7 @@ rec {
           {%- endif %}
         };
         {%- else %}
-        # ERROR: Could not resolve source: {{crate.source | safe | json_encode()}}
+        src = builtins.throw ''ERROR: Could not resolve source: {{crate.source | json_encode() | safe}}'';
         {%- endif -%}
 
         {%- if crate.proc_macro %}
