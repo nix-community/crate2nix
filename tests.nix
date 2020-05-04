@@ -565,53 +565,21 @@ in
 }
 // rec {
   #
-  # "cargo-files" tests
+  # "source generate" tests
   #
-  cargoFilesUpdate = pkgs.stdenv.mkDerivation {
-    name = "cargo_files_update";
-    src = pkgs.symlinkJoin {
-      name = "cargo_files_update_src";
-      paths = [
-        cargoConfigWithLocalRegistry
-        crate2nixJsonWithRipgrep
-      ];
-    };
-    buildInputs = [
-      pkgs.cargo
-      crate2nix
-      (
-        pkgs.writeShellScriptBin "nix" ''
-          set -x
-          case "$@" in
-            *)
-              echo -e "\e[31mUnrecognized cmd:\e[0m $(basename $0) $@" >&2
-              exit 1
-              ;;
-          esac
-        ''
-      )
-    ];
+  withFetchedSources = pkgs.runCommandNoCCLocal "with-fetched-sources" { } ''
+    mkdir $out
+    ln -s ${crate2nixJsonWithRipgrep}/* $out
+    ln -s ${sourcesMemberDirectory} $out/crate2nix-sources
+  '';
 
-    phases = [ "buildPhase" ];
-    buildPhase = ''
-      set -x
-      ln -s $src/.cargo $src/crate2nix.json .
-      crate2nix cargo-files update --prebuilt-workspace-member-dir "${workspaceMemberDirectory}";
-      mkdir $out
-      ln -s ${workspaceMemberDirectory} $out/workspace_members
-      ln -s $src/.cargo $src/crate2nix.json $out
-      cp Cargo.* $out
-      { set +x; } 2>/dev/null
-    '';
+  generatedWithFetchedSources = tools.generatedCargoNix {
+    name = "generatedWithFetchedSources";
+    src = withFetchedSources;
   };
 
-  generatedCargoFilesUpdateProject = tools.generatedCargoNix {
-    name = "buildCargoFilesUpdateProject";
-    src = cargoFilesUpdate;
-  };
-
-  buildCargoFilesUpdateProject =
-    (pkgs.callPackage generatedCargoFilesUpdateProject { }).workspaceMembers.ripgrep;
+  # buildSourcesProject =
+  #   (pkgs.callPackage generatedCargoFilesUpdateProject { }).workspaceMembers.ripgrep;
 
   # Test support
   #
@@ -656,20 +624,20 @@ in
     '';
   };
 
-  workspaceNix = pkgs.stdenv.mkDerivation {
-    name = "workspace_nix";
+  sourcesMemberDirectory = (pkgs.callPackage sourcesNix { }).fetchedSources;
+
+  sourcesNix = pkgs.stdenv.mkDerivation {
+    name = "crate2nix-sources_nix";
     src = crate2nixJsonWithRipgrep;
     buildInputs = [ crate2nix ];
     phases = [ "buildPhase" ];
     buildPhase = ''
       ln -s $src/crate2nix.json .
-      crate2nix cargo-files generate-workspace-nix
+      crate2nix source generate
       mkdir $out
       ln -s $src/crate2nix.json $out
-      cp workspace.nix $out/default.nix
+      cp crate2nix-sources.nix $out/default.nix
     '';
   };
-
-  workspaceMemberDirectory = (pkgs.callPackage workspaceNix { }).workspaceMemberDirectory;
 
 } // buildTestDerivationAttrSet

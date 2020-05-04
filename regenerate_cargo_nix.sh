@@ -57,7 +57,7 @@ noisily nix run --arg release false $NIX_OPTIONS -c crate2nix generate -n ../nix
   -f ./crate2nix/Cargo.toml -o ./crate2nix/Cargo.nix || \
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-noisily nix build --arg release false $NIX_OPTIONS
+noisily nix build -L --arg release false $NIX_OPTIONS
 
 crate2nix="$(pwd)"/result/bin/crate2nix
 

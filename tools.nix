@@ -45,7 +45,7 @@ rec {
         then unpackedCrateDir
         else crateDir;
       cargoLock = "${unpackedSrc}/Cargo.lock";
-      vendor = internal.vendorSupport { inherit cargoLock; };
+      vendor = internal.vendorSupport { inherit crateDir; };
     in
     stdenv.mkDerivation {
       name = "${name}-crate2nix";
@@ -68,9 +68,24 @@ rec {
           chmod +w "$crate_hashes"
         fi
 
+        crate2nix_options=""
+        if [ -r ${unpackedSrc}/${baseNameOf cargoToml} ]; then
+          create2nix_options+=" -f ${unpackedSrc}/${baseNameOf cargoToml}"
+        fi
+
+        if test -r "${unpackedSrc}/crate2nix.json" ; then
+          cp "${unpackedSrc}/crate2nix.json" "$out/crate2nix.json"
+          create2nix_options+=" -c $out/crate2nix.json"
+        fi
+
+        if test -r "${unpackedSrc}/crate2nix-sources" ; then
+          ln -s "${unpackedSrc}/crate2nix-sources" "$out/crate2nix-sources"
+        fi
+
         set -x
+
         crate2nix generate \
-          -f ${unpackedSrc}/${baseNameOf cargoToml} \
+          $create2nix_options \
           -h "$crate_hashes" \
           -o $out/default.nix \
           ${lib.escapeShellArgs additionalCargoNixArgs} || {
@@ -80,11 +95,19 @@ rec {
           sed 's/^/    /' $out/cargo/config >&2
           echo ""
           echo "== cargo/config (END)" >&2
-          echo ""
-          echo "== crate-hashes.json (BEGIN)" >&2
-          sed 's/^/    /' $crate_hashes >&2
-          echo ""
+            echo ""
+            echo "== crate-hashes.json (BEGIN)" >&2
+          if [ -r $crate_hashes ]; then
+            sed 's/^/    /' $crate_hashes >&2
+            echo ""
+          else
+            echo "$crate_hashes missing"
+          fi
           echo "== crate-hashes.json (END)" >&2
+          echo ""
+          echo "== ls -la (BEGIN)" >&2
+          ls -la
+          echo "== ls -la (END)" >&2
           exit 3
         }
         { set +x; } 2>/dev/null
@@ -155,15 +178,63 @@ rec {
         rev = lib.last splitQuestion;
       };
 
-    vendorSupport = { cargoLock ? ./Cargo.lock, ... }:
+    vendorSupport = { crateDir ? ./., ... }:
       rec {
-        locked = builtins.fromTOML (builtins.readFile cargoLock);
-        hashesFile = "${dirOf cargoLock}/crate-hashes.json";
+        toPackageId = { name, version, source, ... }:
+          "${name} ${version} (${source})";
+
+        lockFiles =
+          let
+            fromCrateDir =
+              if builtins.pathExists "${crateDir}/Cargo.lock"
+              then [ "${crateDir}/Cargo.lock" ]
+              else [ ];
+            fromSources =
+              if builtins.pathExists "${crateDir}/crate2nix-sources"
+              then
+                let
+                  subdirsTypes = builtins.readDir "${crateDir}/crate2nix-sources";
+                  subdirs = builtins.attrNames subdirsTypes;
+                  toLockFile = subdir: "${crateDir}/crate2nix-sources/${subdir}/Cargo.lock";
+                in
+                builtins.map toLockFile subdirs
+              else [ ];
+          in
+          fromCrateDir ++ fromSources;
+
+        locked =
+          let
+            parseFile = cargoLock: builtins.fromTOML (builtins.readFile cargoLock);
+            allParsedFiles = builtins.map parseFile lockFiles;
+            merge = merged: lock:
+              {
+                package = merged.package ++ lock.package or [ ];
+                metadata = merged.metadata // lock.metadata or { };
+              };
+          in
+          lib.foldl merge { package = [ ]; metadata = { }; } allParsedFiles;
+
+        hashesFiles =
+          builtins.map
+            (cargoLock: "${dirOf cargoLock}/crate-hashes.json")
+            lockFiles;
         hashes =
-          if builtins.pathExists hashesFile
-          then builtins.fromJSON (builtins.readFile hashesFile)
-          else { };
-        packages = assert builtins.isList locked.package; locked.package;
+          let
+            parseFile = hashesFile:
+              if builtins.pathExists hashesFile
+              then builtins.fromJSON (builtins.readFile hashesFile)
+              else { };
+            parsedFiles = builtins.map parseFile hashesFiles;
+          in
+          lib.foldl (a: b: a // b) { } parsedFiles;
+        packages =
+          let
+            packagesWithDuplicates = assert builtins.isList locked.package; locked.package;
+            packagesWithoutLocal = builtins.filter (p: p ? source) packagesWithDuplicates;
+            packageById = package: { name = toPackageId package; value = package; };
+            packagesById = builtins.listToAttrs (builtins.map packageById packagesWithoutLocal);
+          in
+          builtins.attrValues packagesById;
         packagesWithType = builtins.filter (pkg: (sourceType pkg) != null) packages;
         packagesByType = lib.groupBy sourceType packagesWithType;
 
@@ -171,7 +242,6 @@ rec {
         # sub directories suitable for cargo vendoring.
         vendoredSources =
           let
-            support = vendorSupport { inherit cargoLock; };
             crateSources =
               builtins.map
                 (
@@ -185,7 +255,7 @@ rec {
                     path = source;
                   }
                 )
-                support.packagesWithType;
+                packagesWithType;
           in
           pkgs.linkFarm "deps" crateSources;
 
@@ -226,10 +296,11 @@ rec {
           "crates-io" = { name, version, source, ... } @ package:
             assert (sourceType package) == "crates-io";
             let
+              packageId = toPackageId package;
               sha256 =
                 package.checksum
-                  or locked.metadata."checksum ${name} ${version} (${source})"
-                  or (builtins.throw "Checksum for ${name} ${version} (${source}) not found in Cargo.lock");
+                  or locked.metadata."checksum ${packageId}"
+                  or (builtins.throw "Checksum for ${packageId} not found in Cargo.lock");
             in
             unpacked {
               src = pkgs.fetchurl {
@@ -245,7 +316,7 @@ rec {
           "git" = { name, version, source, ... } @ package:
             assert (sourceType package) == "git";
             let
-              packageId = "${name} ${version} (${source})";
+              packageId = toPackageId package;
               sha256 =
                 hashes.${packageId}
                   or (builtins.throw "Checksum for ${packageId} not found in crate-hashes.json");

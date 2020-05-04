@@ -57,6 +57,14 @@ rec {
     };
   };
 
+  # A derivation that joins the outputs of all workspace members together.
+  allWorkspaceMembers = pkgs.symlinkJoin {
+      name = "all-workspace-members";
+      paths =
+        let members = builtins.attrValues workspaceMembers;
+        in builtins.map (m: m.build) members;
+  };
+
   #
   # "internal" ("private") attributes that may change in every new version of crate2nix.
   #

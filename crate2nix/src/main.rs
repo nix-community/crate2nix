@@ -39,8 +39,7 @@ pub enum Opt {
             short = "f",
             long = "cargo-toml",
             parse(from_os_str),
-            help = "The path to the Cargo.toml of the project.",
-            default_value = "./Cargo.toml"
+            help = "The path to the Cargo.toml of the project."
         )]
         cargo_toml: Vec<PathBuf>,
 
@@ -95,7 +94,7 @@ pub enum Opt {
             long = "crate-hashes",
             parse(from_os_str),
             help = "The path to the crate hash cache file. \
-                    Uses 'crate-hashes.json' in the same directory as Cargo.toml by default."
+                    Uses 'crate-hashes.json' in the same directory as the Cargo.nix output by default."
         )]
         crate_hashes: Option<PathBuf>,
 
@@ -127,24 +126,6 @@ pub enum Opt {
 
         #[structopt(subcommand)]
         command: SourceCommands,
-    },
-
-    #[structopt(
-        name = "cargo-files",
-        about = "Generates/updates cargo files for out-of-tree sources."
-    )]
-    CargoFiles {
-        #[structopt(
-            short = "c",
-            long = "config",
-            parse(from_os_str),
-            help = "The path to the crate2nix.json file (same directory as Cargo.nix ...).",
-            default_value = "./crate2nix.json"
-        )]
-        crate2nix_json: PathBuf,
-
-        #[structopt(subcommand)]
-        command: CargoFileCommands,
     },
 
     #[structopt(
@@ -186,6 +167,19 @@ pub enum SourceCommands {
     },
     #[structopt(name = "list", about = "Lists all sources.")]
     List,
+
+    #[structopt(
+        name = "fetch",
+        about = "Fetch all sources with nix.\n\
+                 This is usually called automatically and mostly useful for testing."
+    )]
+    Fetch,
+    #[structopt(
+        name = "generate",
+        about = "Generate crate2nix-sources.nix.\n\
+                 This is usually called automatically and mostly useful for testing."
+    )]
+    Generate,
 }
 
 impl SourceCommands {
@@ -215,6 +209,16 @@ impl SourceCommands {
                     }
                 }
                 Ok(())
+            }
+            SourceCommands::Fetch => {
+                let sources = crate2nix::sources::FetchedSources::new(crate2nix_json);
+                let output = sources.fetch()?;
+                println!("Fetched sources into {}", output.to_string_lossy());
+                Ok(())
+            }
+            SourceCommands::Generate => {
+                let sources = crate2nix::sources::FetchedSources::new(crate2nix_json);
+                sources.regenerate_sources_nix()
             }
         }
     }
@@ -352,53 +356,12 @@ impl SourceAddingCommands {
     }
 }
 
-#[derive(Debug, StructOpt, Deserialize, Serialize)]
-#[structopt(
-    about = "(EXPERIMENTAL) Support for nix-generated Cargo workspaces with out-of-tree sources."
-)]
-pub enum CargoFileCommands {
-    #[structopt(
-        name = "generate-workspace-nix",
-        about = "Generate workspace.nix without building it.\n\n\
-                 Allows pregenerating and build workspace.nix for the update command.\n\
-                 Useful when running the update command in a nix sandbox."
-    )]
-    GenerateWorkspaceNix,
-
-    #[structopt(name = "update", about = "Update Cargo.toml/Cargo.lock.")]
-    Update {
-        #[structopt(
-            long = "prebuilt-workspace-member-dir",
-            about = "Use a prebuilt workspace member directory.\n\n\
-                     The member directory must contain a subdirectory for \
-                     every source with the same name.\n\
-                     Usually, you should obtain it by first generating a workspace.nix
-                     with generate-workspace-nix and then building the workspaceMemberDirectory
-                     derivation."
-        )]
-        prebuilt_workspace_member_dir: Option<PathBuf>,
-    },
-}
-
-impl CargoFileCommands {
-    pub fn execute(self, crate2nix_json: &Path) -> Result<(), Error> {
-        let workspace = crate2nix::sources::Workspace::new(crate2nix_json);
-
-        match self {
-            CargoFileCommands::GenerateWorkspaceNix => workspace.regenerate_workspace_nix(),
-            CargoFileCommands::Update {
-                prebuilt_workspace_member_dir,
-            } => workspace.update_cargo_files(prebuilt_workspace_member_dir),
-        }
-    }
-}
-
 fn main() -> anyhow::Result<()> {
     let opt = Opt::from_args();
     match opt {
         Opt::Generate {
             crate2nix_json,
-            cargo_toml,
+            mut cargo_toml,
             output: opt_output,
             nixpkgs_path,
             crate_hashes,
@@ -412,36 +375,30 @@ fn main() -> anyhow::Result<()> {
             let config = crate2nix::config::Config::read_from_or_default(&crate2nix_json)?;
 
             if !config.sources.is_empty() {
-                let workspace = crate2nix::sources::Workspace::new(&crate2nix_json);
-                workspace.update_cargo_files_if_inputs_modified(None)?;
+                let fetched_sources = crate2nix::sources::FetchedSources::new(&crate2nix_json);
+                let cargo_tomls = fetched_sources.get_cargo_tomls()?;
+                cargo_toml.extend(cargo_tomls);
             }
 
-            let crate_hashes_json = crate_hashes.unwrap_or_else(|| {
-                if cargo_toml.len() > 1 {
-                    panic!(
-                        "Please specify the --crate-hashes path/to/crate-hashes.json\n\
-                         output explicitly, if you merge multiple crates."
-                    );
-                }
+            if cargo_toml.is_empty() {
+                cargo_toml.push("./Cargo.toml".into());
+            }
 
-                cargo_toml[0]
+            let output: PathBuf = opt_output
+                .map(|v| Ok(v) as Result<_, Error>)
+                .unwrap_or_else(|| {
+                    crate2nix::render::check_generated_by_crate2nix(DEFAULT_OUTPUT)?;
+                    Ok(DEFAULT_OUTPUT.into())
+                })?;
+
+            let crate_hashes_json = crate_hashes.unwrap_or_else(|| {
+                output
                     .parent()
-                    .expect("Cargo.toml has parent")
+                    .expect("Cargo.nix has parent")
                     .join("crate-hashes.json")
             });
 
             let generate_info = crate2nix::GenerateInfo::default();
-            let output: PathBuf = opt_output
-                .map(|v| Ok(v) as Result<_, Error>)
-                .unwrap_or_else(|| {
-                    if Path::new("DEFAULT_OUTPUT").exists() {
-                        return Err(format_err!(
-                            "No explicit output given and {} already exists.",
-                            DEFAULT_OUTPUT
-                        ));
-                    }
-                    Ok(DEFAULT_OUTPUT.into())
-                })?;
 
             let feature_metadata_options = || {
                 let mut options = Vec::new();
@@ -502,12 +459,6 @@ fn main() -> anyhow::Result<()> {
             Opt::clap().gen_completions(env!("CARGO_PKG_NAME"), shell, output);
         }
         Opt::Source {
-            crate2nix_json,
-            command,
-        } => {
-            command.execute(&crate2nix_json)?;
-        }
-        Opt::CargoFiles {
             crate2nix_json,
             command,
         } => {

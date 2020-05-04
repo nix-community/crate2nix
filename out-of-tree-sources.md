@@ -2,16 +2,14 @@
 # Handling out-of-tree sources
 
 NOTE: This is work in progress, see
-[#102](https://github.com/kolloch/crate2nix/issues/102).
+[#102](https://github.com/kolloch/crate2nix/issues/102), the interface might
+still change.
 
 `crate2nix` has convenient support for managing out-of-tree sources: It will
-manage a nix-generated [Cargo
-Workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for
-you.
+manage a nix-generated directory of the source roots for you.
 
-Cargo will resolve dependency versions across all the binaries/libs in this
-workspace. Given lax enough version requirements, that makes it more likely that
-the dependency trees of your binaries/libraries will overlap.
+`crate2nix` will use the supplied `Cargo.lock` files in the sources to generate
+the binaries with the versions that the maintainers specified.
 
 ## Demo
 
@@ -60,11 +58,10 @@ Generating `Cargo.nix`, prefetching some indirect git dependencies:
 
 ```
 ❯ crate2nix generate
-Generated ./workspace.nix successfully.
-Building ./workspace.nix workspaceMemberDirectory: done.
-Generated ./Cargo.toml successfully.
-Updating Cargo.lock: done.
-Prefetching    1/2: https://github.com/rust-psutil/rust-psutil#e295e4f815942a5700d7bb11de2396906a8116bc
+Fetching sources.
+Generated ./crate2nix-sources.nix successfully.
+Fetching sources via ./crate2nix-sources.nix fetchedSources: done.
+Prefetching    1/2: https://github.com/rust-psutil/rust-psutil#6abe2de4409672c3f42b69db2b1ba45d73e78ee4
 Prefetching    2/2: https://github.com/cjbassi/tui-rs#aff0a4c40aff6e0962a2a935d4b21065298e329c
 Wrote hashes to ./crate-hashes.json.
 Generated ./Cargo.nix successfully.
@@ -112,29 +109,25 @@ As always, you can have a look at all available options and commands by using
 `crate2nix generate` will generally just do the right thing and pick up
 crate2nix.json file if necessary:
 
-* Build a workspace directory with all your sources as members.
-  It uses a generated `workspace.nix` in your project directory.
-* Generate a matching `Cargo.toml`.
-* Call`cargo generate-lockfile` to create a `Cargo.lock` file.
-
-## crate2nix cargo-files update
-
-`crate2nix cargo-files update` is what `crate2nix generate` calls under the hood
-to create a directory with all workspace members and to generate the appropriate
-`Cargo.toml`/`Cargo.lock` for your nix-generated workspace.
-
-If you do not use `crate2nix generate`, you can call this directly to prepare
-the sources for `appliedCargoNix` (see `tools.nix`) and friends.
+* Build a `crate-sources` directory with all of your sources.
+  It uses a generated `crate-sources.nix` in your project directory.
+* Call `cargo metadata` individually for all sources and concatenate the
+  results.
 
 ## What to check into version control
 
 For building the binaries, `Cargo.nix` is sufficient. But everyone regenerating
 it will appreciate if you also check in
 
-* crate2nix.json (the source configuration)
-* crate-hashes.json (the hashes for packages not in the lockfile)
-* Cargo.lock (required if you use import from derivation, otherwise it will
-  probably also save you time)
+* `crate2nix.json` (the source configuration)
+* `crate-hashes.json` (the hashes for packages not in the lockfile)
+
+The generated `crate-sources*` files should go into `.gitignore` or similar:
+
+```crate-sources*```
+
+* `crate-sources.nix` is the temporary nix expression to download the sources.
+* `crate-sources` is the temporary result symlink to the downloaded sources.
 
 ## Feature resolution
 

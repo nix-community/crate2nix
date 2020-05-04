@@ -107,9 +107,10 @@ rm -rf target/nix-result*
 nix build -L $NIX_OPTIONS $NIX_TESTS_OPTIONS -f ./tests.nix || {
     echo "==================" >&2
     echo "cd $top" >&2
-    echo "nix-build \\" >&2
+    echo "nix build -L \\" >&2
     echo "  $NIX_OPTIONS $NIX_TESTS_OPTIONS \\" >&2
-    echo "   ./tests.nix: FAILED" >&2
+    echo "   -f ./tests.nix"
+    echo "=> FAILED" >&2
     exit 5
 }
 
