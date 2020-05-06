@@ -50,7 +50,7 @@ impl Config {
         source: Source,
     ) -> Option<Source> {
         let name = explicit_name
-            .or(source.name().map(|s| s.to_string()))
+            .or_else(|| source.name().map(|s| s.to_string()))
             .expect("No name given");
         self.sources.insert(name, source)
     }
