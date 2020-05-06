@@ -502,6 +502,12 @@ in
             "url": "https://github.com/kolloch/nix-base32.git",
             "rev": "42f5544e51187f0c7535d453fcffb4b524c99eb2",
             "sha256": "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw"
+          },
+          "other-name": {
+            "type": "Git",
+            "url": "https://github.com/kolloch/nix-base32.git",
+            "rev": "42f5544e51187f0c7535d453fcffb4b524c99eb2",
+            "sha256": "011f945b48xkilkqbvbsxazspz5z23ka0s90ms4jiqjbhiwll1nw"
           }
         }
       '';
@@ -511,6 +517,8 @@ in
       jq . $expectedSources >$out/expected-sources.json
 
       crate2nix source add git https://github.com/kolloch/nix-base32.git \
+        --rev 42f5544e51187f0c7535d453fcffb4b524c99eb2
+      crate2nix source add git --name other-name https://github.com/kolloch/nix-base32.git \
         --rev 42f5544e51187f0c7535d453fcffb4b524c99eb2
 
       jq .sources <crate2nix.json >$out/sources.json
@@ -543,6 +551,12 @@ in
       name = "expected-sources.json";
       text = ''
         {
+          "other-name": {
+            "type": "CratesIo",
+            "name": "ripgrep",
+            "version": "12.0.1",
+            "sha256": "1arw9pk1qiih0szd26wq76bc0wwbcmhyyy3d4dnwcflka8kfkikx"
+          },
           "ripgrep": {
             "type": "CratesIo",
             "name": "ripgrep",
@@ -557,6 +571,66 @@ in
       jq . $expectedSources >$out/expected-sources.json
 
       crate2nix source add cratesIo ripgrep 12.0.1
+      crate2nix source add cratesIo --name other-name ripgrep 12.0.1
+
+      jq .sources <crate2nix.json >$out/sources.json
+      diff -u $out/expected-sources.json $out/sources.json
+    '';
+  };
+
+  sourceAddNix = pkgs.stdenv.mkDerivation {
+    name = "source_add_nix";
+    src = pkgs.symlinkJoin { name = "empty"; paths = [ ]; };
+    buildInputs = [
+      crate2nix
+      pkgs.jq
+    ];
+    phases = [ "buildPhase" ];
+    expectedSources = pkgs.writeTextFile {
+      name = "expected-sources.json";
+      text = ''
+        {
+          "import-sources": {
+            "type": "Nix",
+            "import": "sources.nix"
+          },
+          "import-sources-attr": {
+            "type": "Nix",
+            "import": "sources2.nix",
+            "attr": "attr.path"
+          },
+          "name-from-attr": {
+            "type": "Nix",
+            "package": "sources.nix",
+            "attr": "attr.path.name-from-attr"
+          },
+          "name-from-attr2": {
+            "type": "Nix",
+            "import": "sources.nix",
+            "attr": "attr.path.name-from-attr2"
+          },
+          "package-sources": {
+            "type": "Nix",
+            "package": "package.nix"
+          },
+          "package-sources-attr": {
+            "type": "Nix",
+            "package": "package2.nix",
+            "attr": "attr.path"
+          }
+        }
+      '';
+    };
+    buildPhase = ''
+      mkdir $out
+      jq . $expectedSources >$out/expected-sources.json
+
+      crate2nix source add nix --name import-sources --import sources.nix
+      crate2nix source add nix --name import-sources-attr --import sources2.nix attr.path
+      crate2nix source add nix --package sources.nix attr.path.name-from-attr
+      crate2nix source add nix --import sources.nix attr.path.name-from-attr2
+      crate2nix source add nix --name package-sources --package package.nix
+      crate2nix source add nix --name package-sources-attr --package package2.nix attr.path
 
       jq .sources <crate2nix.json >$out/sources.json
       diff -u $out/expected-sources.json $out/sources.json
