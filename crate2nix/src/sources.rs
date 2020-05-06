@@ -128,11 +128,21 @@ impl<'a> FetchedSources<'a> {
                 .and_then(|m| m.modified().ok())
         };
 
-        let symlink_generated =
-            last_modified(&fetched_sources_symlink).unwrap_or_else(|| SystemTime::UNIX_EPOCH);
-        let sources_modified =
-            last_modified(&self.crate2nix_json_path).unwrap_or_else(SystemTime::now);
-        if symlink_generated < sources_modified {
+        let has_nix_sources = {
+            let config = crate::config::Config::read_from_or_default(&self.crate2nix_json_path)?;
+            config.sources.values().any(|s| match s {
+                config::Source::Nix { .. } => true,
+                _ => false,
+            })
+        };
+        let outdated = || {
+            let symlink_generated =
+                last_modified(&fetched_sources_symlink).unwrap_or_else(|| SystemTime::UNIX_EPOCH);
+            let sources_modified =
+                last_modified(&self.crate2nix_json_path).unwrap_or_else(SystemTime::now);
+            symlink_generated < sources_modified
+        };
+        if has_nix_sources || outdated() {
             eprintln!("Fetching sources.");
             self.fetch()?;
         }
