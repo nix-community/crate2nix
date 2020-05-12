@@ -41,9 +41,13 @@ fn self_up_to_date() {
     let actual_default_nix = std::fs::read_to_string("./Cargo.nix").unwrap();
     assert_eq!(actual_default_nix, rerendered_default_nix);
 
-    if rerendered_default_nix.contains(" /home/") || rerendered_default_nix.contains(".cargo") {
+    if rerendered_default_nix.contains(" /home/") {
         dump_with_lines("./Cargo.nix").unwrap();
-        panic!("Build file contains forbidden strings.");
+        panic!("Build file contains forbidden string: ` /home/`");
+    }
+    if rerendered_default_nix.contains("/.cargo") {
+        dump_with_lines("./Cargo.nix").unwrap();
+        panic!("Build file contains forbidden string: `/.cargo`");
     }
 }
 
@@ -110,9 +114,13 @@ fn assert_up_to_date(project_dir: &Path) {
         }
     );
 
-    if rerendered_default_nix.contains(" /home/") || rerendered_default_nix.contains(".cargo") {
+    if rerendered_default_nix.contains(" /home/") {
         dump_with_lines("./Cargo.nix").unwrap();
-        panic!("Build file contains forbidden strings.");
+        panic!("Build file contains forbidden string: ` /home/`");
+    }
+    if rerendered_default_nix.contains("/.cargo") {
+        dump_with_lines("./Cargo.nix").unwrap();
+        panic!("Build file contains forbidden string: `/.cargo`");
     }
 }
 

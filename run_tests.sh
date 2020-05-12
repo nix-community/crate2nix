@@ -114,6 +114,14 @@ nix build -L $NIX_OPTIONS $NIX_TESTS_OPTIONS -f ./tests.nix || {
     exit 5
 }
 
+nix-shell $NIX_OPTIONS crate2nix/Cargo.nix -A shell --pure --run "rustc --version" || {
+    echo "==================" >&2
+    echo "cd $top" >&2
+    echo "nix-shell $NIX_OPTIONS crate2nix/Cargo.nix -A shell --pure --run \"rustc --version\"" >&2
+    echo "=> FAILED" >&2
+    exit 5
+}
+
 echo -e "\e[1m=== Checking for uncomitted changes\e[0m" >&2
 if test -n "$(git status --porcelain)"; then
     echo ""

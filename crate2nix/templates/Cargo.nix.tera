@@ -9,6 +9,8 @@
 , pkgs ? import nixpkgs { config = {}; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
+, rustc ? pkgs.rustc
+, cargo ? pkgs.cargo
 , buildRustCrate ? pkgs.buildRustCrate
   # This is used as the `crateOverrides` argument for `buildRustCrate`.
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
@@ -71,6 +73,12 @@ rec {
       paths =
         let members = builtins.attrValues workspaceMembers;
         in builtins.map (m: m.build) members;
+  };
+
+  # A development shell for the entire workspace
+  shell = internal.buildWorkspaceShell {
+    crateOverrides = defaultCrateOverrides;
+    inherit (internal) crates;
   };
 
   #
