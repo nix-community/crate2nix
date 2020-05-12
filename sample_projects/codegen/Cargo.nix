@@ -7,6 +7,8 @@
 , pkgs ? import nixpkgs { config = {}; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
+, rustc ? pkgs.rustc
+, cargo ? pkgs.cargo
 , buildRustCrate ? pkgs.buildRustCrate
   # This is used as the `crateOverrides` argument for `buildRustCrate`.
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
@@ -63,6 +65,12 @@ rec {
       paths =
         let members = builtins.attrValues workspaceMembers;
         in builtins.map (m: m.build) members;
+  };
+
+  # A development shell for the entire workspace
+  shell = internal.buildWorkspaceShell {
+    crateOverrides = defaultCrateOverrides;
+    inherit (internal) crates;
   };
 
   #
@@ -1029,6 +1037,46 @@ rec {
     if strictDeprecation
     then builtins.throw "strictDeprecation enabled, aborting: ${message}"
     else builtins.trace message value;
+
+  /* create a shell express for the given crates from the crateOverrides */
+  buildWorkspaceShell = {crateOverrides, crates}:
+    assert builtins.isAttrs crates;
+    assert builtins.isAttrs crateOverrides;
+    let
+
+      # attribute set containing all the overrides per package name
+      # the structure is roughly like this:
+      #  { packageA = { buildInputs = [ a b c]; SOME_ENV_VAR="bar"; ANOTHER="foo"; };
+      #    packageB = { buildInputs = [ x ]; };
+      #  }
+      overrides =
+        lib.attrValues
+          (
+            lib.mapAttrs (n: v: v { })
+              (lib.filterAttrs (a: _: builtins.hasAttr a crates) crateOverrides)
+          );
+
+      # Extract environment variables (~ upper case attributes) from the overrides.
+      # This will throw if there are conflicting definitions of one environment variable.
+      envVars =
+        let
+          throwErr = k: values:
+            builtins.throw
+              ("[buildWorkspaceShell]: The environment variable `${k}` has confliciting defintions:\n" +
+                lib.concatMapStringsSep "\n" (value: "  - `${toString value}`") values
+              );
+          getUniqueValue = k: list: (assert [ (lib.head list) ] != lib.unique list -> throwErr k list; lib.head list);
+          getEnvVars = attrs: lib.filterAttrs (k: _: k == lib.toUpper k) attrs;
+        in
+        lib.mapAttrs getUniqueValue (lib.zipAttrs (map getEnvVars overrides));
+      getInputs = attributeName: lib.flatten (lib.catAttrs attributeName overrides);
+    in
+    pkgs.mkShell
+      (envVars // {
+        nativeBuildInputs = getInputs "nativeBuildInputs";
+        buildInputs = getInputs "buildInputs" ++ [ rustc cargo ];
+      });
+
 
   #
   # crate2nix/default.nix (excerpt end)
