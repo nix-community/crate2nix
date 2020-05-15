@@ -2,8 +2,6 @@
 
 assert rustBuilder ? mkRustCrate;
 let
-  cargo2nix = import ../cargo2nix;
-  mkRustCrate = callPackage rustBuilder.mkRustCrate { inherit (rustBuilder) rustLib; };
   overridable =
     crate_:
     # The rust compiler to use.
@@ -185,7 +183,7 @@ let
             in
             { inherit name; value = dep; }
           ) dependencies;
-      madeCrate = mkRustCrate {
+      madeCrate = rustBuilder.mkRustCrate {
         name = crate.crateName;
         version = crate.version;
         src = crate.src or (fetchCrate { inherit (crate) crateName version sha256; });

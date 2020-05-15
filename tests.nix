@@ -1,10 +1,14 @@
 let
   cargo2nix = ../cargo2nix;
-  cargo2nixOverlay = import "${cargo2nix}/overlay";
   pkgs = import ./nix/nixpkgs.nix {
     system = builtins.currentSystem;
     overlays = [
-      cargo2nixOverlay
+      (self: super: {
+        rustBuilder = rec {
+          rustLib = pkgs.callPackage "${cargo2nix}/overlay/lib" { };
+          mkRustCrate = pkgs.callPackage "${cargo2nix}/overlay/mkcrate.nix" { inherit rustLib; };
+        };
+      })
       (self: super: { buildRustCrate = self.callPackage ./buildRustCrate-cargo2nix.nix { }; })
     ];
   };
