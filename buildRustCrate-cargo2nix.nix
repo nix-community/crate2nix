@@ -200,10 +200,12 @@ let
       };
     in
     madeCrate.overrideAttrs
-      (attrs: {
+      (attrs: extraDerivationAttrs // {
         libName = if crate ? libName then crate.libName else crate.crateName;
         libPath = if crate ? libPath then crate.libPath else "";
-        crateName = crate_.crateName;
+        crateName = crate.crateName;
+        buildInputs = (crate.buildInputs or [ ]) ++ buildInputs_;
+        rustcflags = extraRustcOpts;
         inherit
           preUnpack
           postUnpack
@@ -220,91 +222,6 @@ let
           ;
       });
 
-  # stdenv.mkDerivation (rec {
-
-  #     inherit (crate) crateName;
-  #     inherit
-  #       preUnpack
-  #       postUnpack
-  #       prePatch
-  #       patches
-  #       postPatch
-  #       preConfigure
-  #       postConfigure
-  #       preBuild
-  #       postBuild
-  #       preInstall
-  #       postInstall
-  #       buildTests
-  #     ;
-
-  #     depsBuildBuild = [ rust stdenv.cc cargo jq ];
-  #     buildInputs = (crate.buildInputs or []) ++ buildInputs_;
-  #     dependencies = map lib.getLib dependencies_;
-  #     buildDependencies = map lib.getLib buildDependencies_;
-
-  #     completeDeps = lib.unique (dependencies ++ lib.concatMap (dep: dep.completeDeps) dependencies);
-  #     completeBuildDeps = lib.unique (
-  #       buildDependencies
-  #       ++ lib.concatMap (dep: dep.completeBuildDeps ++ dep.completeDeps) buildDependencies
-  #     );
-
-  #     crateFeatures = lib.optionalString (crate ? features)
-  #       (lib.concatMapStringsSep " " (f: ''--cfg feature=\"${f}\"'') (crate.features ++ features));
-
-  # libName = if crate ? libName then crate.libName else crate.crateName;
-  # libPath = if crate ? libPath then crate.libPath else "";
-
-  #     # Seed the symbol hashes with something unique every time.
-  #     # https://doc.rust-lang.org/1.0.0/rustc/metadata/loader/index.html#frobbing-symbols
-  #     metadata = let
-  #       depsMetadata = lib.foldl' (str: dep: str + dep.metadata) "" (dependencies ++ buildDependencies);
-  #       hashedMetadata = builtins.hashString "sha256"
-  #         (crateName + "-" + crateVersion + "___" + toString crateFeatures + "___" + depsMetadata);
-  #       in lib.substring 0 10 hashedMetadata;
-
-  #     build = crate.build or "";
-  #     # Either set to a concrete sub path to the crate root
-  #     # or use `null` for auto-detect.
-  #     workspace_member = crate.workspace_member or ".";
-  #     crateVersion = crate.version;
-  #     crateDescription = crate.description or "";
-  #     crateAuthors = if crate ? authors && lib.isList crate.authors then crate.authors else [];
-  #     crateHomepage = crate.homepage or "";
-  #     crateType =
-  #       if lib.attrByPath ["procMacro"] false crate then ["proc-macro"] else
-  #       if lib.attrByPath ["plugin"] false crate then ["dylib"] else
-  #         (crate.type or ["lib"]);
-  #     colors = lib.attrByPath [ "colors" ] "always" crate;
-  #     extraLinkFlags = lib.concatStringsSep " " (crate.extraLinkFlags or []);
-  #     edition = crate.edition or null;
-  #     extraRustcOpts =
-  #       lib.optionals (crate ? extraRustcOpts) crate.extraRustcOpts
-  #       ++ extraRustcOpts_
-  #       ++ (lib.optional (edition != null) "--edition ${edition}");
-
-
-  #     configurePhase = configureCrate {
-  #       inherit crateName buildDependencies completeDeps completeBuildDeps crateDescription
-  #               crateFeatures crateRenames libName build workspace_member release libPath crateVersion
-  #               extraLinkFlags extraRustcOpts
-  #               crateAuthors crateHomepage verbose colors target_os;
-  #     };
-  #     buildPhase = buildCrate {
-  #       inherit crateName dependencies
-  #               crateFeatures crateRenames libName release libPath crateType
-  #               metadata hasCrateBin crateBin verbose colors
-  #               extraRustcOpts buildTests;
-  #     };
-  #     installPhase = installCrate crateName metadata buildTests;
-
-  #     # depending on the test setting we are either producing something with bins
-  #     # and libs or just test binaries
-  #     outputs = if buildTests then [ "out" ] else [ "out" "lib" ];
-  #     outputDev = if buildTests then [ "out" ] else  [ "lib" ];
-
-  # } // extraDerivationAttrs
-  # );
 in
   /* The overridable pkgs.buildRustCrate function.
    *

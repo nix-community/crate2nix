@@ -5,7 +5,11 @@ let
     overlays = [
       (self: super: {
         rustBuilder = rec {
-          rustLib = pkgs.callPackage "${cargo2nix}/overlay/lib" { };
+          rustLib = {
+            inherit (pkgs.callPackage "${cargo2nix}/overlay/lib/profiles.nix" { }) decideProfile genDrvsByProfile;
+            realHostTriple = import "${cargo2nix}/overlay/lib/real-host-triple.nix";
+          };
+
           mkRustCrate = pkgs.callPackage "${cargo2nix}/overlay/mkcrate.nix" { inherit rustLib; };
         };
       })
