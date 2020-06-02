@@ -5,10 +5,10 @@
         "homepage": "https://cachix.org",
         "owner": "cachix",
         "repo": "cachix",
-        "rev": "54e4e433fbda10d51f3149462d0fcf7e6088c044",
-        "sha256": "0cwa6d8gzz6zam55c2sbad0113w291fr7z04gsihyz7rgakns3l3",
+        "rev": "8eae443fab0b616477d83d5f2f5045299f589fc7",
+        "sha256": "1s42prdah4ybdc4mrjnab2b4y19cmp9v6bh1jrwmyz5iqdsavqmf",
         "type": "tarball",
-        "url": "https://github.com/cachix/cachix/archive/54e4e433fbda10d51f3149462d0fcf7e6088c044.tar.gz",
+        "url": "https://github.com/cachix/cachix/archive/8eae443fab0b616477d83d5f2f5045299f589fc7.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "cargo-release": {
