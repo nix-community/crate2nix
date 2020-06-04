@@ -16,7 +16,7 @@ version in `Cargo.lock`.
 Compare that to docker layers...
 
 **Nix ecosystem goodness**: You can use all things that make the nix/NixOS ecosystem great, e.g. distributed/remote builds,
-build minimal docker images, deploy your binary as a service to the the cloud with [NixOps](https://nixos.org/nixops/), ...
+build minimal docker images, deploy your binary as a service to the cloud with [NixOps](https://nixos.org/nixops/), ...
 
 **Out of the box support for libraries with non-rust dependencies**: It builds on top of the `buildRustCrate`
 function from [NixOS](https://nixos.org/) so that native dependencies of
@@ -89,7 +89,7 @@ crate2nix generate
 
 generates Cargo.nix from the Cargo.lock in the current directory.
 
-Look at the [./crate2nix/Cargo.nix](_) file of this project for a non-trivial example. (How meta!)
+Look at the [./crate2nix/Cargo.nix](./crate2nix/Cargo.nix) file of this project for a non-trivial example. (How meta!)
 
 ## Using build files (single binaries)
 
@@ -149,7 +149,7 @@ niv init
 niv add mozilla/nixpkgs-mozilla
 ```
 
-Later on, you can update you dependencies with `niv update`.
+Later on, you can update your dependencies with `niv update`.
 
 To pin your nixpkgs with the appropriate overlays, place a `nixpkgs.nix` file into
 you `nix` directory that was created by `niv` (if necessary):
