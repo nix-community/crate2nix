@@ -14,6 +14,8 @@
 , rootFeatures ? [ "default" ]
   # If true, throw errors instead of issueing deprecation warnings.
 , strictDeprecation ? false
+  # Used for conditional compilation based on CPU feature detection.
+, targetFeatures ? []
   # Whether to perform release builds: longer compile times, faster binaries.
 , release ? true
   # Additional crate2nix configuration if it exists.
@@ -1591,6 +1593,7 @@ rec {
                       crateConfig.sha256;
                   }
                 );
+                extraRustcOpts = lib.lists.optional (targetFeatures != [ ]) "-C target-feature=${stdenv.lib.concatMapStringsSep "," (x: "+${x}") targetFeatures}";
                 inherit features dependencies buildDependencies crateRenames release;
               }
             );
