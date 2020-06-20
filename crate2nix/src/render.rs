@@ -210,6 +210,8 @@ fn cfg_to_nix_expr(cfg: &CfgExpr) -> String {
                 let escaped_value = escape_nix_string(value);
                 result.push_str(&if key == "feature" {
                     format!("(builtins.elem {} features)", escaped_value)
+                } else if key == "target_feature" {
+                    format!("(builtins.elem {} targetFeatures)", escaped_value)
                 } else {
                     format!("(target.{} == {})", target(key), escaped_value)
                 });
@@ -257,6 +259,13 @@ fn test_render_cfg_to_nix_expr() {
     }
 
     assert_eq!("target.\"unix\"", &cfg_to_nix_expr(&name("unix")));
+    assert_eq!(
+        "((builtins.elem \"aes\" targetFeatures) && (builtins.elem \"foo\" features))",
+        &cfg_to_nix_expr(&CfgExpr::All(vec![
+            kv("target_feature", "aes"),
+            kv("feature", "foo")
+        ]))
+    );
     assert_eq!(
         "(target.\"os\" == \"linux\")",
         &cfg_to_nix_expr(&kv("target_os", "linux"))

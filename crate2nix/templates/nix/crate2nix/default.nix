@@ -9,6 +9,7 @@
 , strictDeprecation ? true
 , crates ? { }
 , rootFeatures ? [ ]
+, targetFeatures ? [ ]
 , release ? true
 }:
 rec {
@@ -311,6 +312,7 @@ rec {
                       crateConfig.sha256;
                   }
                 );
+                extraRustcOpts = lib.lists.optional (targetFeatures != [ ]) "-C target-feature=${stdenv.lib.concatMapStringsSep "," (x: "+${x}") targetFeatures}";
                 inherit features dependencies buildDependencies crateRenames release;
               }
             );

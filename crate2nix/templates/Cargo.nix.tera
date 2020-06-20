@@ -16,6 +16,8 @@
 , rootFeatures ? [ "default" ]
   # If true, throw errors instead of issueing deprecation warnings.
 , strictDeprecation ? false
+  # Used for conditional compilation based on CPU feature detection.
+, targetFeatures ? []
   # Whether to perform release builds: longer compile times, faster binaries.
 , release ? true
   # Additional crate2nix configuration if it exists.
