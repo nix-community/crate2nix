@@ -2302,17 +2302,15 @@ rec {
           done
         '';
     in
-    crate.overrideAttrs
-      (
-        old: {
-          checkPhase = ''
-            test -e ${test}
-          '';
-          passthru = (old.passthru or { }) // {
-            inherit test;
-          };
-        }
-      );
+    pkgs.runCommand "${crate.name}-linked" {
+      inherit (crate) outputs crateName;
+      passthru = (crate.passthru or { }) // {
+        inherit test;
+      };
+    } ''
+      echo tested by ${test}
+      ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
+    '';
 
   /* A restricted overridable version of builtRustCratesWithFeatures. */
   buildRustCrateWithFeatures =
