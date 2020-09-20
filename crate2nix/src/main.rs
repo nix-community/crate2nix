@@ -439,6 +439,12 @@ fn main() -> anyhow::Result<()> {
                     options.push(features.join(" "));
                 }
 
+                options.push("-Z".to_string());
+                options.push("unstable-options".to_string());
+
+                options.push("-Z".to_string());
+                options.push("config-include".to_string());
+
                 Ok(options)
             };
 
