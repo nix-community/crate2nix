@@ -20,7 +20,9 @@ let
     inherit checksum;
   }) lock.metadata or {});
 
-  prefetch-crate = crate: fetchurl {
+  prefetch-crate = crate: fetchurl rec {
+    # We use .tar.gz here instead of .crate because this allows Nix to reuse this source for the actual build
+    name = "${crate.name}-${crate.version}.tar.gz";
     url = "https://static.crates.io/crates/${crate.name}/${crate.name}-${crate.version}.crate";
     sha256 = crate.checksum;
   };
@@ -33,7 +35,7 @@ let
   (''
     mkdir $out
     cp ${crates-io-index} -r $out/index
-  '' + lib.concatMapStringsSep "\n" (crate: "cp ${crate} $out/${crate.name}") crates);
+  '' + lib.concatMapStringsSep "\n" (crate: "cp ${crate} $out/${builtins.replaceStrings [".tar.gz"] [".crate"] crate.name}") crates);
 
   cargoConfig = writeText "config.toml" ''
     [source.crates-io]
