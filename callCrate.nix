@@ -20,7 +20,7 @@ let
     inherit checksum;
   }) lock.metadata or {});
 
-  prefetch-crate = crate: fetchurl rec {
+  prefetchCrate = crate: fetchurl rec {
     # We use .tar.gz here instead of .crate because this allows Nix to reuse this source for the actual build
     name = "${crate.name}-${crate.version}.tar.gz";
     url = "https://static.crates.io/crates/${crate.name}/${crate.name}-${crate.version}.crate";
@@ -29,7 +29,7 @@ let
 
   tarballToCrate = crate: { path = crate; name = replaceStrings [".tar.gz"] [".crate"] crate.name; };
 
-  crates = map prefetch-crate (filter fetchable lock.package) ++ map prefetch-crate parsedMetadata;
+  crates = map prefetchCrate (filter fetchable lock.package) ++ map prefetchCrate parsedMetadata;
 
   fetchable = crate: crate ? checksum;
 
@@ -37,7 +37,7 @@ let
     ([ { path = crates-io-index; name = "index"; } ]
     ++ map tarballToCrate crates);
 
-  cargoConfig = writeText "config.toml" ''
+  cargo-config = writeText "config.toml" ''
     [source.crates-io]
     replace-with = "nix-crates-registry"
 
@@ -56,7 +56,7 @@ let
     buildInputs = [ crate2nix ];
     buildPhase = ''
       mkdir $CARGO_HOME
-      cp ${cargoConfig} $CARGO_HOME/config.toml
+      cp ${cargo-config} $CARGO_HOME/config.toml
       crate2nix generate
       cp -r . $out
     '';
