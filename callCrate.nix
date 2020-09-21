@@ -27,20 +27,22 @@ let
     sha256 = crate.checksum;
   };
 
+  tarballToCrate = crate: { path = crate; name = replaceStrings [".tar.gz"] [".crate"] crate.name; };
+
   crates = map prefetch-crate (filter fetchable lock.package) ++ map prefetch-crate parsedMetadata;
 
   fetchable = crate: crate ? checksum;
 
-  source-repository = linkFarm "cargo-source-repository"
+  local-registry = linkFarm "cargo-local-registry"
     ([ { path = crates-io-index; name = "index"; } ]
-    ++ map (crate: { path = crate; name = replaceStrings [".tar.gz"] [".crate"] crate.name; }) crates);
+    ++ map tarballToCrate crates);
 
   cargoConfig = writeText "config.toml" ''
     [source.crates-io]
     replace-with = "nix-crates-registry"
 
     [source.nix-crates-registry]
-    local-registry = "${source-repository}"
+    local-registry = "${local-registry}"
   '';
 
   cargo-nix = stdenv.mkDerivation {
