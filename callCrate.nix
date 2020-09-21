@@ -1,11 +1,9 @@
 { stdenv, crate2nix, callPackage, fetchurl, writeText, lib, linkFarm, crates-io-index }:
-{ src
-, cargoLock ? src + "/Cargo.lock"
-, overrides ? { } }:
+src:
 let
   inherit (builtins) filter match elemAt replaceStrings;
 
-  lock = builtins.fromTOML (builtins.readFile cargoLock);
+  lock = builtins.fromTOML (builtins.readFile (src + "/Cargo.lock"));
 
   parseMetadataKey = key:
   let m = match "checksum ([A-Za-z0-9_-]*) ([A-Za-z0-9_.+-]*) \\(([A-Za-z0-9./_+:-]*)\\)" key;
@@ -61,4 +59,4 @@ let
       cp -r . $out
     '';
   };
-in callPackage "${cargo-nix}/Cargo.nix" overrides
+in callPackage "${cargo-nix}/Cargo.nix"
