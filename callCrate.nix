@@ -1,9 +1,9 @@
-{ stdenv, crate2nix, callPackage, fetchurl, writeText, lib, runCommand, crates-io-index }:
+{ stdenv, crate2nix, callPackage, fetchurl, writeText, lib, linkFarm, crates-io-index }:
 { src
 , cargoLock ? src + "/Cargo.lock"
 , overrides ? { } }:
 let
-  inherit (builtins) filter match elemAt;
+  inherit (builtins) filter match elemAt replaceStrings;
 
   lock = builtins.fromTOML (builtins.readFile cargoLock);
 
@@ -31,11 +31,9 @@ let
 
   fetchable = crate: crate ? checksum;
 
-  source-repository = runCommand "cargo-source-repository" { }
-  (''
-    mkdir $out
-    cp ${crates-io-index} -r $out/index
-  '' + lib.concatMapStringsSep "\n" (crate: "cp ${crate} $out/${builtins.replaceStrings [".tar.gz"] [".crate"] crate.name}") crates);
+  source-repository = linkFarm "cargo-source-repository"
+    ([ { path = crates-io-index; name = "index"; } ]
+    ++ map (crate: { path = crate; name = replaceStrings [".tar.gz"] [".crate"] crate.name; }) crates);
 
   cargoConfig = writeText "config.toml" ''
     [source.crates-io]
