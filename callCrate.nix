@@ -43,6 +43,9 @@ let
 
     [source.nix-crates-registry]
     local-registry = "${local-registry}"
+
+    [net]
+    offline = true
   '';
 
   cargo-nix = stdenv.mkDerivation {
