@@ -1,13 +1,22 @@
-{ callPackage, stdenv, lib, darwin
-, defaultCrateOverrides, cargo, nix, nix-prefetch-git, makeWrapper, symlinkJoin
-, release ? true}:
+{ callPackage
+, stdenv
+, lib
+, darwin
+, defaultCrateOverrides
+, cargo
+, nix
+, nix-prefetch-git
+, makeWrapper
+, symlinkJoin
+, release ? true
+}:
 let
   cargoNix = callPackage ./crate2nix/Cargo.nix { inherit release; };
   withoutTemplates = name: type:
-  let
-    baseName = builtins.baseNameOf (builtins.toString name);
-  in
-  !(baseName == "templates" && type == "directory");
+    let
+      baseName = builtins.baseNameOf (builtins.toString name);
+    in
+      !(baseName == "templates" && type == "directory");
   crate2nix = cargoNix.rootCrate.build.override {
     testCrateFlags = [
       "--skip nix_integration_tests"
@@ -21,7 +30,7 @@ let
             filter = withoutTemplates;
             inherit src;
           };
-          dontFixup = !release;
+        dontFixup = !release;
       };
       cssparser-macros = attrs: assert builtins.trace "cssparser" true;{
         buildInputs = stdenv.lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.Security ];
