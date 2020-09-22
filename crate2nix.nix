@@ -54,7 +54,7 @@ symlinkJoin {
   };
   postBuild = ''
     # Fallback to built dependencies for cargo and nix-prefetch-url
-    wrapProgram $out/bin/crate2nix ${set_templates}\
+    wrapProgram $out/bin/crate2nix ${set_templates} \
     --suffix PATH ":" ${lib.makeBinPath [ cargo nix nix-prefetch-git ]}
     rm -rf $out/lib $out/bin/crate2nix.d
     mkdir -p \
