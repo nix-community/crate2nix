@@ -7,7 +7,6 @@
 , pkgs ? import nixpkgs { config = {}; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
-, buildRustCrate ? pkgs.buildRustCrate
   # This is used as the `crateOverrides` argument for `buildRustCrate`.
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
   # The features to enable for the root_crate or the workspace_members.
@@ -289,7 +288,6 @@ rec {
     { packageId
     , features ? rootFeatures
     , crateOverrides ? defaultCrateOverrides
-    , buildRustCrateFunc ? null
     , runTests ? false
     , testCrateFlags ? [ ]
     , testInputs ? [ ]
@@ -303,26 +301,18 @@ rec {
         , testInputs
         }:
         let
-          buildRustCrateFuncOverriden =
-            if buildRustCrateFunc != null
-            then buildRustCrateFunc
-            else
-              (
-                if crateOverrides == pkgs.defaultCrateOverrides
-                then buildRustCrate
-                else
-                  buildRustCrate.override {
-                    defaultCrateOverrides = crateOverrides;
-                  }
-              );
+          buildRustCrateOverrides =
+            if crateOverrides == pkgs.defaultCrateOverrides
+            then { }
+            else {
+              defaultCrateOverrides = crateOverrides;
+            };
           builtRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
-            buildRustCrateFunc = buildRustCrateFuncOverriden;
+            inherit packageId features buildRustCrateOverrides;
             runTests = false;
           };
           builtTestRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
-            buildRustCrateFunc = buildRustCrateFuncOverriden;
+            inherit packageId features buildRustCrateOverrides;
             runTests = true;
           };
           drv = builtRustCrates.${packageId};
@@ -348,7 +338,7 @@ rec {
     { packageId
     , features
     , crateConfigs ? crates
-    , buildRustCrateFunc
+    , buildRustCrateOverrides
     , runTests
     , target ? defaultTarget
     } @ args:
@@ -366,13 +356,10 @@ rec {
               target = target // { test = runTests; };
             }
           );
-        buildByPackageId = packageId: buildByPackageIdImpl packageId;
-
-        # Memoize built packages so that reappearing packages are only built once.
-        builtByPackageId =
-          lib.mapAttrs (packageId: value: buildByPackageId packageId) crateConfigs;
-        buildByPackageIdImpl = packageId:
+        buildByPackageIdForPkgs = pkgs: packageId:
           let
+            # proc_macro crates must be compiled for the build architecture
+            cratePkgs = if crateConfig.procMacro or false then pkgs.buildPackages else pkgs;
             features = mergedFeatures."${packageId}" or [ ];
             crateConfig' = crateConfigs."${packageId}";
             crateConfig =
@@ -383,14 +370,16 @@ rec {
                 (crateConfig'.devDependencies or [ ]);
             dependencies =
               dependencyDerivations {
-                inherit builtByPackageId features target;
+                inherit features target;
+                buildByPackageId = buildByPackageIdForPkgs cratePkgs;
                 dependencies =
                   (crateConfig.dependencies or [ ])
                   ++ devDependencies;
               };
             buildDependencies =
               dependencyDerivations {
-                inherit builtByPackageId features target;
+                inherit features target;
+                buildByPackageId = buildByPackageIdForPkgs cratePkgs.buildPackages;
                 dependencies = crateConfig.buildDependencies or [ ];
               };
             filterEnabledDependenciesForThis = dependencies: filterEnabledDependencies {
@@ -422,13 +411,13 @@ rec {
                     dependenciesWithRenames;
                 versionAndRename = dep:
                   let
-                    package = builtByPackageId."${dep.packageId}";
+                    package = crateConfigs."${dep.packageId}";
                   in
                   { inherit (dep) rename; version = package.version; };
               in
               lib.mapAttrs (name: choices: builtins.map versionAndRename choices) grouped;
           in
-          buildRustCrateFunc
+          cratePkgs.buildRustCrate.override buildRustCrateOverrides
             (
               crateConfig // {
                 src = crateConfig.src or (
@@ -447,16 +436,15 @@ rec {
               }
             );
       in
-      builtByPackageId;
+      lib.mapAttrs (packageId: value: buildByPackageIdForPkgs pkgs packageId) crateConfigs;
 
   /* Returns the actual derivations for the given dependencies. */
   dependencyDerivations =
-    { builtByPackageId
+    { buildByPackageId
     , features
     , dependencies
     , target
     }:
-      assert (builtins.isAttrs builtByPackageId);
       assert (builtins.isList features);
       assert (builtins.isList dependencies);
       assert (builtins.isAttrs target);
@@ -464,7 +452,7 @@ rec {
         enabledDependencies = filterEnabledDependencies {
           inherit dependencies features target;
         };
-        depDerivation = dependency: builtByPackageId.${dependency.packageId};
+        depDerivation = dependency: buildByPackageId dependency.packageId;
       in
       map depDerivation enabledDependencies;
 
