@@ -9,7 +9,6 @@
 , pkgs ? import nixpkgs { config = {}; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
-, buildRustCrate ? pkgs.buildRustCrate
   # This is used as the `crateOverrides` argument for `buildRustCrate`.
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
   # The features to enable for the root_crate or the workspace_members.
