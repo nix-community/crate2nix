@@ -5,3 +5,6 @@ authors = ["Peter Kolloch <info@eigenvalue.net>"]
 edition = "2018"
 
 [dependencies]
+
+[target.'cfg(never_happens)'.dependencies]
+cfg-if = "1"
