@@ -154,12 +154,12 @@ rec {
             name = "libc";
             packageId = "libc";
             usesDefaultFeatures = false;
-            target = { target, features }: target."unix";
+            target = { target, features }: (target."unix" or false);
           }
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: target."windows";
+            target = { target, features }: (target."windows" or false);
             features = [ "consoleapi" "processenv" "minwinbase" "minwindef" "winbase" ];
           }
         ];
@@ -334,7 +334,7 @@ rec {
             name = "ansi_term";
             packageId = "ansi_term";
             optional = true;
-            target = { target, features }: (!target."windows");
+            target = { target, features }: (!(target."windows" or false));
           }
           {
             name = "atty";
@@ -830,7 +830,7 @@ rec {
           {
             name = "winapi-util";
             packageId = "winapi-util";
-            target = { target, features }: target."windows";
+            target = { target, features }: (target."windows" or false);
           }
         ];
         features = {
@@ -1251,7 +1251,7 @@ rec {
             name = "libc";
             packageId = "libc";
             optional = true;
-            target = { target, features }: target."unix";
+            target = { target, features }: (target."unix" or false);
           }
           {
             name = "rand_core";
@@ -1267,7 +1267,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: target."windows";
+            target = { target, features }: (target."windows" or false);
             features = [ "minwindef" "ntsecapi" "profileapi" "winnt" ];
           }
         ];
@@ -1408,7 +1408,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: target."windows";
+            target = { target, features }: (target."windows" or false);
             features = [ "std" "errhandlingapi" "winerror" "fileapi" "winbase" ];
           }
         ];
@@ -1437,7 +1437,7 @@ rec {
           {
             name = "winapi-util";
             packageId = "winapi-util";
-            target = { target, features }: target."windows";
+            target = { target, features }: (target."windows" or false);
           }
         ];
         
@@ -2090,13 +2090,13 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: target."windows";
+            target = { target, features }: (target."windows" or false);
             features = [ "std" "winnt" ];
           }
           {
             name = "winapi-util";
             packageId = "winapi-util";
-            target = { target, features }: target."windows";
+            target = { target, features }: (target."windows" or false);
           }
         ];
         
@@ -2148,7 +2148,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: target."windows";
+            target = { target, features }: (target."windows" or false);
             features = [ "std" "consoleapi" "errhandlingapi" "fileapi" "minwindef" "processenv" "winbase" "wincon" "winerror" "winnt" ];
           }
         ];

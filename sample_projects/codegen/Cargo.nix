@@ -114,12 +114,12 @@ rec {
             name = "libc";
             packageId = "libc";
             usesDefaultFeatures = false;
-            target = { target, features }: target."unix";
+            target = { target, features }: (target."unix" or false);
           }
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: target."windows";
+            target = { target, features }: (target."windows" or false);
             features = [ "consoleapi" "processenv" "minwinbase" "minwindef" "winbase" ];
           }
         ];
@@ -160,7 +160,7 @@ rec {
             name = "ansi_term";
             packageId = "ansi_term";
             optional = true;
-            target = { target, features }: (!target."windows");
+            target = { target, features }: (!(target."windows" or false));
           }
           {
             name = "atty";
