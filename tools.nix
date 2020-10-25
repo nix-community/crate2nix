@@ -44,13 +44,12 @@ rec {
         if (builtins.match ''.*\.tar\.gz$'' crateDir) != null
         then unpackedCrateDir
         else crateDir;
-      cargoLock = "${unpackedSrc}/Cargo.lock";
       vendor = internal.vendorSupport { inherit crateDir; };
     in
     stdenv.mkDerivation {
       name = "${name}-crate2nix";
 
-      buildInputs = [ pkgs.cargo crate2nix ];
+      buildInputs = [ pkgs.cargo pkgs.jq crate2nix ];
       preferLocalBuild = true;
       buildCommand = ''
         set -e
@@ -64,8 +63,10 @@ rec {
 
         crate_hashes="$out/crate-hashes.json"
         if test -r "${unpackedSrc}/crate-hashes.json" ; then
-          cp "${unpackedSrc}/crate-hashes.json" "$crate_hashes"
+          jq -s '.[0] * ${builtins.toJSON vendor.extraHashes}' "${unpackedSrc}/crate-hashes.json"  > "$crate_hashes"
           chmod +w "$crate_hashes"
+        else
+          printf '${builtins.toJSON vendor.extraHashes}' > "$crate_hashes"
         fi
 
         crate2nix_options=""
@@ -163,7 +164,7 @@ rec {
       else
         builtins.throw "unknown source type: ${source}";
 
-    # Extracts URL and rev from a git source URL.
+        # Extracts URL and rev from a git source URL.
     #
     # Crude, should be more robust :(
     parseGitSource = source:
@@ -186,7 +187,7 @@ rec {
         lockFiles =
           let
             fromCrateDir =
-              if builtins.pathExists "${crateDir}/Cargo.lock"
+              if builtins.pathExists ("${crateDir}/Cargo.lock")
               then [ "${crateDir}/Cargo.lock" ]
               else [ ];
             fromSources =
@@ -227,6 +228,29 @@ rec {
             parsedFiles = builtins.map parseFile hashesFiles;
           in
           lib.foldl (a: b: a // b) { } parsedFiles;
+
+        unhashedGitDeps = builtins.filter (p: ! hashes ? ${toPackageId p}) packagesByType.git or [ ];
+
+        mkGitHash = { source, ... }@attrs:
+        let
+          parsed = parseGitSource source;
+          src = builtins.fetchGit {
+            submodules = true;
+            inherit (parsed) url rev;
+            ref = attrs.branch or "master";
+          };
+          hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
+            echo -n "$(nix-hash --type sha256 ${src})" > $out
+          '';
+        in {
+          name = toPackageId attrs;
+          value = builtins.readFile hash;
+        };
+        
+        extraHashes = lib.optionalAttrs
+          ((builtins.elemAt (builtins.splitVersion builtins.nixVersion) 0) == "3")
+            (builtins.listToAttrs (map mkGitHash unhashedGitDeps));
+
         packages =
           let
             packagesWithDuplicates = assert builtins.isList locked.package; locked.package;
@@ -262,7 +286,7 @@ rec {
         cargoConfig =
           let
             gitSourceConfig =
-              source:
+              { source, ... }@attrs:
 
                 assert builtins.isString source;
                 let
@@ -273,9 +297,10 @@ rec {
               [source."${parsed.url}"]
               git = "${parsed.url}"
               rev = "${parsed.rev}"
+              branch = "${attrs.branch or "master"}"
               replace-with = "vendored-sources"
               '';
-            gitSources = builtins.map ({ source, ... }: source) packagesByType."git" or [ ];
+            gitSources = packagesByType."git" or [ ];
             gitSourcesUnique = lib.unique gitSources;
             gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
             gitSourceConfigsString = lib.concatStrings gitSourceConfigs;
@@ -319,7 +344,8 @@ rec {
               packageId = toPackageId package;
               sha256 =
                 hashes.${packageId}
-                  or (builtins.throw "Checksum for ${packageId} not found in crate-hashes.json");
+                  or extraHashes.${packageId}
+                    or (builtins.throw "Checksum for ${packageId} not found in crate-hashes.json");
               parsed = parseGitSource source;
               src = pkgs.fetchgit {
                 name = "${name}-${version}";
