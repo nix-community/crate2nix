@@ -32,18 +32,7 @@ rec {
     , additionalCargoNixArgs ? [ ]
     }:
     let
-      crateDir = dirOf "${src}/${cargoToml}";
-
-      # Support automatic unpacking for ".tar.gz" files as src
-      unpackedCrateDir = pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
-        ''
-          mkdir -p $out
-          tar -xzf ${crateDir} --strip-components=1 -C $out
-        '';
-      unpackedSrc =
-        if (builtins.match ''.*\.tar\.gz$'' crateDir) != null
-        then unpackedCrateDir
-        else crateDir;
+      crateDir = dirOf (src + "/${cargoToml}");
       vendor = internal.vendorSupport { inherit crateDir; };
     in
     stdenv.mkDerivation {
@@ -51,7 +40,11 @@ rec {
 
       buildInputs = [ pkgs.cargo pkgs.jq crate2nix ];
       preferLocalBuild = true;
-      buildCommand = ''
+
+      inherit src;
+      phases = [ "unpackPhase" "buildPhase" ];
+
+      buildPhase = ''
         set -e
 
         mkdir -p "$out/cargo"
@@ -62,33 +55,33 @@ rec {
         cp ${vendor.cargoConfig} $out/cargo/config
 
         crate_hashes="$out/crate-hashes.json"
-        if test -r "${unpackedSrc}/crate-hashes.json" ; then
-          jq -s '.[0] * ${builtins.toJSON vendor.extraHashes}' "${unpackedSrc}/crate-hashes.json"  > "$crate_hashes"
+        if test -r "./crate-hashes.json" ; then
+          printf "$(jq -s '.[0] * ${builtins.toJSON vendor.extraHashes}' "./crate-hashes.json")" > "$crate_hashes"
           chmod +w "$crate_hashes"
         else
           printf '${builtins.toJSON vendor.extraHashes}' > "$crate_hashes"
         fi
 
         crate2nix_options=""
-        if [ -r ${unpackedSrc}/${baseNameOf cargoToml} ]; then
-          create2nix_options+=" -f ${unpackedSrc}/${baseNameOf cargoToml}"
+        if [ -r ./${cargoToml} ]; then
+          create2nix_options+=" -f ./${cargoToml}"
         fi
 
-        if test -r "${unpackedSrc}/crate2nix.json" ; then
-          cp "${unpackedSrc}/crate2nix.json" "$out/crate2nix.json"
+        if test -r "./crate2nix.json" ; then
+          cp "./crate2nix.json" "$out/crate2nix.json"
           create2nix_options+=" -c $out/crate2nix.json"
         fi
 
-        if test -r "${unpackedSrc}/crate2nix-sources" ; then
-          ln -s "${unpackedSrc}/crate2nix-sources" "$out/crate2nix-sources"
+        if test -r "${src}/crate2nix-sources" ; then
+          ln -s "${src}/crate2nix-sources" "$out/crate2nix-sources"
         fi
 
         set -x
 
         crate2nix generate \
           $create2nix_options \
+          -o "Cargo-generated.nix" \
           -h "$crate_hashes" \
-          -o $out/default.nix \
           ${lib.escapeShellArgs additionalCargoNixArgs} || {
           { set +x; } 2>/dev/null
           echo "crate2nix failed." >&2
@@ -113,11 +106,15 @@ rec {
         }
         { set +x; } 2>/dev/null
 
-        if test -r "${unpackedSrc}/crate-hashes.json" ; then
+        if test -r "./crate-hashes.json" ; then
           set -x
-          diff -u "${unpackedSrc}/crate-hashes.json" $crate_hashes
+          diff -u "./crate-hashes.json" $crate_hashes
          { set +x; } 2>/dev/null
         fi
+
+        cp -r . $out/crate
+
+        echo "import ./crate/Cargo-generated.nix" > $out/default.nix
       '';
 
     };
@@ -164,7 +161,7 @@ rec {
       else
         builtins.throw "unknown source type: ${source}";
 
-        # Extracts URL and rev from a git source URL.
+    # Extracts URL and rev from a git source URL.
     #
     # Crude, should be more robust :(
     parseGitSource = source:
@@ -187,16 +184,16 @@ rec {
         lockFiles =
           let
             fromCrateDir =
-              if builtins.pathExists ("${crateDir}/Cargo.lock")
-              then [ "${crateDir}/Cargo.lock" ]
+              if builtins.pathExists (crateDir + "/Cargo.lock")
+              then [ (crateDir + "/Cargo.lock") ]
               else [ ];
             fromSources =
-              if builtins.pathExists "${crateDir}/crate2nix-sources"
+              if builtins.pathExists (crateDir + "/crate2nix-sources")
               then
                 let
-                  subdirsTypes = builtins.readDir "${crateDir}/crate2nix-sources";
+                  subdirsTypes = builtins.readDir (crateDir + "/crate2nix-sources");
                   subdirs = builtins.attrNames subdirsTypes;
-                  toLockFile = subdir: "${crateDir}/crate2nix-sources/${subdir}/Cargo.lock";
+                  toLockFile = subdir: (crateDir + "/crate2nix-sources/${subdir}/Cargo.lock");
                 in
                 builtins.map toLockFile subdirs
               else [ ];
@@ -232,24 +229,25 @@ rec {
         unhashedGitDeps = builtins.filter (p: ! hashes ? ${toPackageId p}) packagesByType.git or [ ];
 
         mkGitHash = { source, ... }@attrs:
-        let
-          parsed = parseGitSource source;
-          src = builtins.fetchGit {
-            submodules = true;
-            inherit (parsed) url rev;
-            ref = attrs.branch or "master";
+          let
+            parsed = parseGitSource source;
+            src = builtins.fetchGit {
+              submodules = true;
+              inherit (parsed) url rev;
+              ref = attrs.branch or "master";
+            };
+            hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
+              echo -n "$(nix-hash --type sha256 ${src})" > $out
+            '';
+          in
+          {
+            name = toPackageId attrs;
+            value = builtins.readFile hash;
           };
-          hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
-            echo -n "$(nix-hash --type sha256 ${src})" > $out
-          '';
-        in {
-          name = toPackageId attrs;
-          value = builtins.readFile hash;
-        };
-        
+
         extraHashes = lib.optionalAttrs
           ((builtins.elemAt (builtins.splitVersion builtins.nixVersion) 0) == "3")
-            (builtins.listToAttrs (map mkGitHash unhashedGitDeps));
+          (builtins.listToAttrs (map mkGitHash unhashedGitDeps));
 
         packages =
           let
@@ -297,7 +295,7 @@ rec {
               [source."${parsed.url}"]
               git = "${parsed.url}"
               rev = "${parsed.rev}"
-              branch = "${attrs.branch or "master"}"
+              ${lib.optionalString (isNull (builtins.match ".*\\?rev=[0-9a-z]{40}.*" source)) ''branch = "${attrs.branch or "master"}"''}
               replace-with = "vendored-sources"
               '';
             gitSources = packagesByType."git" or [ ];
@@ -345,7 +343,7 @@ rec {
               sha256 =
                 hashes.${packageId}
                   or extraHashes.${packageId}
-                    or (builtins.throw "Checksum for ${packageId} not found in crate-hashes.json");
+                  or (builtins.throw "Checksum for ${packageId} not found in crate-hashes.json");
               parsed = parseGitSource source;
               src = pkgs.fetchgit {
                 name = "${name}-${version}";
