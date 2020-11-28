@@ -5,10 +5,10 @@
         "homepage": "https://cachix.org",
         "owner": "cachix",
         "repo": "cachix",
-        "rev": "ad3337e192db211fc28e82f6a644a801c23aa134",
-        "sha256": "0734gwx1mxkqvbvdwh8vwg7pjznak45nalfxbai271cd2xr3jq9x",
+        "rev": "651f6aa511b5b13c7245e2ae762bf29f0ee0e31f",
+        "sha256": "1mi2iqw5kq0rv4dpihqg7zqmpf6wfvbxka6nmfkx64q49ql1x7vd",
         "type": "tarball",
-        "url": "https://github.com/cachix/cachix/archive/ad3337e192db211fc28e82f6a644a801c23aa134.tar.gz",
+        "url": "https://github.com/cachix/cachix/archive/651f6aa511b5b13c7245e2ae762bf29f0ee0e31f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "cargo-release": {
@@ -29,10 +29,10 @@
         "homepage": "",
         "owner": "kolloch",
         "repo": "crate2nix",
-        "rev": "ef8ccac5707a07f30f92dcba6f47cfc53dcb9b13",
-        "sha256": "0g5faqs9jyjm6v0r8dbsw30dhgzf2y8ss1spn3n4qpl6qkk20sbl",
+        "rev": "aa9bad0734655c32f0bbd79de52c1e074c56827e",
+        "sha256": "0wl8shmnkaqwaqzzwq22s10vqmbwxr64lqkclzpr9b1q95lbsak5",
         "type": "tarball",
-        "url": "https://github.com/kolloch/crate2nix/archive/ef8ccac5707a07f30f92dcba6f47cfc53dcb9b13.tar.gz",
+        "url": "https://github.com/kolloch/crate2nix/archive/aa9bad0734655c32f0bbd79de52c1e074c56827e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
@@ -41,10 +41,10 @@
         "homepage": "https://github.com/nmattia/niv",
         "owner": "nmattia",
         "repo": "niv",
-        "rev": "f73bf8d584148677b01859677a63191c31911eae",
-        "sha256": "0jlmrx633jvqrqlyhlzpvdrnim128gc81q5psz2lpp2af8p8q9qs",
+        "rev": "ba57d5a29b4e0f2085917010380ef3ddc3cf380f",
+        "sha256": "1kpsvc53x821cmjg1khvp1nz7906gczq8mp83664cr15h94sh8i4",
         "type": "tarball",
-        "url": "https://github.com/nmattia/niv/archive/f73bf8d584148677b01859677a63191c31911eae.tar.gz",
+        "url": "https://github.com/nmattia/niv/archive/ba57d5a29b4e0f2085917010380ef3ddc3cf380f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nix-test-runner": {
