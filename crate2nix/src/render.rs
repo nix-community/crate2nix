@@ -147,7 +147,7 @@ fn create_tera() -> Tera {
         TEMPLATES
             .iter()
             .map(|template| (template.template(), template.template_content()))
-            .collect(),
+            .collect::<Vec<_>>(),
     )
     .expect("adding templats to succeed");
 
