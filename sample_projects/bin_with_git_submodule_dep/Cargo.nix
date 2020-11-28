@@ -1391,10 +1391,11 @@ rec {
               }
             );
         in
-        pkgs.runCommand "run-tests-${testCrate.name}" {
-          inherit testCrateFlags;
-          buildInputs = testInputs;
-        } ''
+        pkgs.runCommand "run-tests-${testCrate.name}"
+          {
+            inherit testCrateFlags;
+            buildInputs = testInputs;
+          } ''
           set -ex
 
           export RUST_BACKTRACE=1
@@ -1426,12 +1427,13 @@ rec {
           done
         '';
     in
-    pkgs.runCommand "${crate.name}-linked" {
-      inherit (crate) outputs crateName;
-      passthru = (crate.passthru or { }) // {
-        inherit test;
-      };
-    } ''
+    pkgs.runCommand "${crate.name}-linked"
+      {
+        inherit (crate) outputs crateName;
+        passthru = (crate.passthru or { }) // {
+          inherit test;
+        };
+      } ''
       echo tested by ${test}
       ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
     '';
@@ -1458,13 +1460,15 @@ rec {
           buildRustCrateFuncOverriden =
             if buildRustCrateFunc != null
             then buildRustCrateFunc
-            else (
-              if crateOverrides == pkgs.defaultCrateOverrides
-              then buildRustCrate
-              else buildRustCrate.override {
-                defaultCrateOverrides = crateOverrides;
-              }
-            );
+            else
+              (
+                if crateOverrides == pkgs.defaultCrateOverrides
+                then buildRustCrate
+                else
+                  buildRustCrate.override {
+                    defaultCrateOverrides = crateOverrides;
+                  }
+              );
           builtRustCrates = builtRustCratesWithFeatures {
             inherit packageId features;
             buildRustCrateFunc = buildRustCrateFuncOverriden;
@@ -1479,11 +1483,12 @@ rec {
           testDrv = builtTestRustCrates.${packageId};
           derivation =
             if runTests then
-              crateWithTest {
-                crate = drv;
-                testCrate = testDrv;
-                inherit testCrateFlags testInputs;
-              }
+              crateWithTest
+                {
+                  crate = drv;
+                  testCrate = testDrv;
+                  inherit testCrateFlags testInputs;
+                }
             else drv;
         in
         derivation
@@ -1754,11 +1759,12 @@ rec {
                 in
                 if cache ? ${packageId} && cache.${packageId} == combinedFeatures
                 then cache
-                else mergePackageFeatures {
-                  features = combinedFeatures;
-                  featuresByPackageId = cache;
-                  inherit crateConfigs packageId target runTests rootPackageId;
-                }
+                else
+                  mergePackageFeatures {
+                    features = combinedFeatures;
+                    featuresByPackageId = cache;
+                    inherit crateConfigs packageId target runTests rootPackageId;
+                  }
             );
         cacheWithSelf =
           let

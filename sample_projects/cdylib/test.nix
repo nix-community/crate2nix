@@ -10,7 +10,8 @@ let
     }
   '';
 in
-pkgs.runCommandCC "link-cdylib" {
+pkgs.runCommandCC "link-cdylib"
+{
   crateName = "cdylib";
 } ''
   mkdir -p $out/bin

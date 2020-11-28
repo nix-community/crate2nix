@@ -27,10 +27,11 @@ let
         src =
           if release
           then src
-          else lib.cleanSourceWith {
-            filter = withoutTemplates;
-            inherit src;
-          };
+          else
+            lib.cleanSourceWith {
+              filter = withoutTemplates;
+              inherit src;
+            };
         dontFixup = !release;
       };
       cssparser-macros = attrs: assert builtins.trace "cssparser" true;{

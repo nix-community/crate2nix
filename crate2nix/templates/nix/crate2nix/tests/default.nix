@@ -6,11 +6,11 @@ let
   testsInFile = f:
     let
       tests = (pkgs.callPackage (./. + "/${f}.nix")) { inherit crate2nix; };
-      prefixedTests = lib.mapAttrs' (n: v: lib.nameValuePair "${n} in ${f}.nix" ( if builtins.isAttrs v then v else { })) tests;
+      prefixedTests = lib.mapAttrs' (n: v: lib.nameValuePair "${n} in ${f}.nix" (if builtins.isAttrs v then v else { })) tests;
     in
-      assert builtins.isAttrs prefixedTests;
+    assert builtins.isAttrs prefixedTests;
 
-      prefixedTests;
+    prefixedTests;
   all = lib.foldl (cum: f: cum // (testsInFile f)) { } testFiles;
 in
 all

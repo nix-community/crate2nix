@@ -66,14 +66,16 @@ let
           ./. + "/${pregeneratedBuild}";
       derivationAttr =
         lib.attrByPath
-          derivationAttrPath null
+          derivationAttrPath
+          null
           (buildTestPkgs.callPackage generatedCargoNix { release = true; });
       derivation =
         if builtins.isNull customBuild
         then
-          derivationAttr.build.override {
-            inherit features;
-          }
+          derivationAttr.build.override
+            {
+              inherit features;
+            }
         else
           buildTestPkgs.callPackage (./. + "/${customBuild}") {
             inherit generatedCargoNix;
@@ -98,37 +100,38 @@ let
       buildPhase =
         assert lib.length expectedTestOutputs > 0 -> derivation ? test;
         ''
-          echo === DEBUG INFO
-          echo ${debugFile "sanitizedBuildTree"}
-          echo ${debugFile "dependencyTree"}
-          echo ${debugFile "mergedPackageFeatures"}
-          echo ${debugFile "diffedDefaultPackageFeatures"}
+                    echo === DEBUG INFO
+                    echo ${debugFile "sanitizedBuildTree"}
+                    echo ${debugFile "dependencyTree"}
+                    echo ${debugFile "mergedPackageFeatures"}
+                    echo ${debugFile "diffedDefaultPackageFeatures"}
 
-          echo === RUNNING
-          mkdir -p $out
-          ${derivation.crateName} | tee $out/run.log
-          echo === VERIFYING expectedOutput
-          grep '${expectedOutput}' $out/run.log || {
-            echo '${expectedOutput}' not found in:
-            cat $out/run.log
-            exit 23
-          }
+                    echo === RUNNING
+                    mkdir -p $out
+                    ${derivation.crateName} | tee $out/run.log
+                    echo === VERIFYING expectedOutput
+                    grep '${expectedOutput}' $out/run.log || {
+                      echo '${expectedOutput}' not found in:
+                      cat $out/run.log
+                      exit 23
+                    }
 
-          echo === RUNNING TESTS
-          ${lib.optionalString (lib.length expectedTestOutputs > 0) ''
-            cp ${derivation.test} $out/tests.log
-            echo === VERIFYING expectedTestOutputs
-          ''}
-          ${lib.concatMapStringsSep "\n"
-            (
-                output: ''
-                grep '${output}' $out/tests.log || {
-                  echo '${output}' not found in:
-                  cat $out/tests.log
-                  exit 23
-                }
-              ''
-              ) expectedTestOutputs}
+                    echo === RUNNING TESTS
+                    ${lib.optionalString (lib.length expectedTestOutputs > 0) ''
+                      cp ${derivation.test} $out/tests.log
+                      echo === VERIFYING expectedTestOutputs
+                    ''}
+                    ${lib.concatMapStringsSep "\n"
+                      (
+                          output: ''
+                          grep '${output}' $out/tests.log || {
+                            echo '${output}' not found in:
+                            cat $out/tests.log
+                            exit 23
+                          }
+                        ''
+                        )
+          expectedTestOutputs}
         '';
     };
   buildTestConfigs = [
