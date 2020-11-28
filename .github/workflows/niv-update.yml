@@ -30,7 +30,7 @@ jobs:
           for source in $sources; do
             git fetch origin master
             git reset --hard origin/master
-            niv update $source
+            GITHUB_TOKEN= niv update $source
             if test -n "$(git status --porcelain)"; then
               (
                 set -x
@@ -52,7 +52,7 @@ jobs:
                   # Another try
                   git fetch
                   git reset --hard origin/master
-                  niv update $source
+                  GITHUB_TOKEN= niv update $source
                 done
                 if [ $n -ge 5 ]; then
                   echo "gave up after 5 tries"
