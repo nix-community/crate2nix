@@ -7,6 +7,11 @@
 , pkgs ? import nixpkgs { config = {}; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
+, buildRustCrateForPkgs ? if buildRustCrate != null
+    then lib.warn "`buildRustCrate` is deprecated, use `buildRustCrateForPkgs` instead" (_: buildRustCrate)
+    else pkgs: pkgs.buildRustCrate
+  # Deprecated
+, buildRustCrate ? null
   # This is used as the `crateOverrides` argument for `buildRustCrate`.
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
   # The features to enable for the root_crate or the workspace_members.
@@ -621,6 +626,7 @@ rec {
     { packageId
     , features ? rootFeatures
     , crateOverrides ? defaultCrateOverrides
+    , buildRustCrateForPkgsFunc ? null
     , runTests ? false
     , testCrateFlags ? [ ]
     , testInputs ? [ ]
@@ -634,22 +640,30 @@ rec {
         , testInputs
         }:
         let
-          buildRustCrateOverrides =
-            if crateOverrides == pkgs.defaultCrateOverrides
-            then { }
-            else {
-              defaultCrateOverrides = crateOverrides;
-            };
+          buildRustCrateForPkgsFuncOverriden =
+            if buildRustCrateForPkgsFunc != null
+            then buildRustCrateForPkgsFunc
+            else
+              (
+                if crateOverrides == pkgs.defaultCrateOverrides
+                then buildRustCrateForPkgs
+                else
+                  pkgs: (buildRustCrateForPkgs pkgs).override {
+                    defaultCrateOverrides = crateOverrides;
+                  }
+              );
           builtRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features buildRustCrateOverrides;
+            inherit packageId features;
+            buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
             runTests = false;
           };
           builtTestRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features buildRustCrateOverrides;
+            inherit packageId features;
+            buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
             runTests = true;
           };
-          drv = builtRustCrates.${packageId};
-          testDrv = builtTestRustCrates.${packageId};
+          drv = builtRustCrates.crates.${packageId};
+          testDrv = builtTestRustCrates.crates.${packageId};
           derivation =
             if runTests then
               crateWithTest
@@ -664,14 +678,14 @@ rec {
       )
       { inherit features crateOverrides runTests testCrateFlags testInputs; };
 
-  /* Returns an attr set with packageId mapped to the result of buildRustCrateFunc
+  /* Returns an attr set with packageId mapped to the result of buildRustCrateForPkgsFunc
      for the corresponding crate.
   */
   builtRustCratesWithFeatures =
     { packageId
     , features
     , crateConfigs ? crates
-    , buildRustCrateOverrides
+    , buildRustCrateForPkgsFunc
     , runTests
     , target ? defaultTarget
     } @ args:
@@ -689,10 +703,18 @@ rec {
               target = target // { test = runTests; };
             }
           );
-        buildByPackageIdForPkgs = pkgs: packageId:
+        # Memoize built packages so that reappearing packages are only built once.
+        builtByPackageIdByPkgs = mkBuiltByPackageIdByPkgs pkgs;
+        mkBuiltByPackageIdByPkgs = pkgs:
           let
-            # proc_macro crates must be compiled for the build architecture
-            cratePkgs = if crateConfig.procMacro or false then pkgs.buildPackages else pkgs;
+            self = {
+              crates = lib.mapAttrs (packageId: value: buildByPackageIdForPkgsImpl self pkgs packageId) crateConfigs;
+              build = mkBuiltByPackageIdByPkgs pkgs.buildPackages;
+            };
+          in
+          self;
+        buildByPackageIdForPkgsImpl = self: pkgs: packageId:
+          let
             features = mergedFeatures."${packageId}" or [ ];
             crateConfig' = crateConfigs."${packageId}";
             crateConfig =
@@ -704,7 +726,11 @@ rec {
             dependencies =
               dependencyDerivations {
                 inherit features target;
-                buildByPackageId = buildByPackageIdForPkgs cratePkgs;
+                buildByPackageId = depPackageId:
+                  # proc_macro crates must be compiled for the build architecture
+                  if crateConfigs.${depPackageId}.procMacro or false
+                  then self.build.crates.${depPackageId}
+                  else self.crates.${depPackageId};
                 dependencies =
                   (crateConfig.dependencies or [ ])
                   ++ devDependencies;
@@ -712,7 +738,8 @@ rec {
             buildDependencies =
               dependencyDerivations {
                 inherit features target;
-                buildByPackageId = buildByPackageIdForPkgs cratePkgs.buildPackages;
+                buildByPackageId = depPackageId:
+                  self.build.crates.${depPackageId};
                 dependencies = crateConfig.buildDependencies or [ ];
               };
             filterEnabledDependenciesForThis = dependencies: filterEnabledDependencies {
@@ -750,7 +777,7 @@ rec {
               in
               lib.mapAttrs (name: choices: builtins.map versionAndRename choices) grouped;
           in
-          cratePkgs.buildRustCrate.override buildRustCrateOverrides
+          buildRustCrateForPkgsFunc pkgs
             (
               crateConfig // {
                 src = crateConfig.src or (
@@ -769,7 +796,7 @@ rec {
               }
             );
       in
-      lib.mapAttrs (packageId: value: buildByPackageIdForPkgs pkgs packageId) crateConfigs;
+      builtByPackageIdByPkgs;
 
   /* Returns the actual derivations for the given dependencies. */
   dependencyDerivations =
@@ -808,14 +835,14 @@ rec {
       debug = rec {
         # The built tree as passed to buildRustCrate.
         buildTree = buildRustCrateWithFeatures {
-          buildRustCrateFunc = lib.id;
+          buildRustCrateForPkgsFunc = _: lib.id;
           inherit packageId;
         };
         sanitizedBuildTree = sanitizeForJson buildTree;
         dependencyTree = sanitizeForJson
           (
             buildRustCrateWithFeatures {
-              buildRustCrateFunc = crate: {
+              buildRustCrateForPkgsFunc = _: crate: {
                 "01_crateName" = crate.crateName or false;
                 "02_features" = crate.features or [ ];
                 "03_dependencies" = crate.dependencies or [ ];
