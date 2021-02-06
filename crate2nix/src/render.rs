@@ -258,7 +258,10 @@ fn test_render_cfg_to_nix_expr() {
         CfgExpr::Value(KeyPair(key.to_string(), value.to_string()))
     }
 
-    assert_eq!("target.\"unix\"", &cfg_to_nix_expr(&name("unix")));
+    assert_eq!(
+        "(target.\"unix\" or false)",
+        &cfg_to_nix_expr(&name("unix"))
+    );
     assert_eq!(
         "((builtins.elem \"aes\" targetFeatures) && (builtins.elem \"foo\" features))",
         &cfg_to_nix_expr(&CfgExpr::All(vec![
@@ -275,11 +278,11 @@ fn test_render_cfg_to_nix_expr() {
         &cfg_to_nix_expr(&CfgExpr::Not(Box::new(kv("target_os", "linux"))))
     );
     assert_eq!(
-        "(target.\"unix\" || (target.\"os\" == \"linux\"))",
+        "((target.\"unix\" or false) || (target.\"os\" == \"linux\"))",
         &cfg_to_nix_expr(&CfgExpr::Any(vec![name("unix"), kv("target_os", "linux")]))
     );
     assert_eq!(
-        "(target.\"unix\" && (target.\"os\" == \"linux\"))",
+        "((target.\"unix\" or false) && (target.\"os\" == \"linux\"))",
         &cfg_to_nix_expr(&CfgExpr::All(vec![name("unix"), kv("target_os", "linux")]))
     );
 }
