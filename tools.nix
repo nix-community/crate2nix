@@ -170,10 +170,16 @@ rec {
         withoutGitPlus = lib.removePrefix "git+" source;
         splitHash = lib.splitString "#" withoutGitPlus;
         splitQuestion = lib.concatMap (lib.splitString "?") splitHash;
+        maybeBranchSplited = lib.splitString "branch=" withoutGitPlus;
       in
       {
         url = builtins.head splitQuestion;
         rev = lib.last splitQuestion;
+        branch = if (lib.length maybeBranchSplited) == 1 then
+          "master"
+        else (
+          lib.head (lib.splitString "#" (lib.last maybeBranchSplited))
+        );
       };
 
     vendorSupport = { crateDir ? ./., ... }:
@@ -234,7 +240,7 @@ rec {
             src = builtins.fetchGit {
               submodules = true;
               inherit (parsed) url rev;
-              ref = attrs.branch or "master";
+              ref = parsed.branch or null;
             };
             hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
               echo -n "$(nix-hash --type sha256 ${src})" > $out
@@ -296,13 +302,13 @@ rec {
               [source."${parsed.url}"]
               git = "${parsed.url}"
               rev = "${parsed.rev}"
-              ${lib.optionalString (isNull (builtins.match ".*\\?rev=[0-9a-z]{40}.*" source)) ''branch = "${attrs.branch or "master"}"''}
+              ${lib.optionalString (isNull (builtins.match ".*\\?rev=[0-9a-z]{40}.*" source)) ''branch = "${attrs.branch or parsed.branch or "master"}"''}
               replace-with = "vendored-sources"
               '';
             gitSources = packagesByType."git" or [ ];
             gitSourcesUnique = lib.unique gitSources;
             gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
-            gitSourceConfigsString = lib.concatStrings gitSourceConfigs;
+            gitSourceConfigsString = lib.concatStrings (lib.unique gitSourceConfigs);
           in
           pkgs.writeText
             "vendor-config"

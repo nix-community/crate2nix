@@ -375,7 +375,7 @@ impl From<crate::config::Source> for ResolvedSource {
                 url,
                 rev,
                 r#ref: None,
-                sha256: Some(sha256),
+                sha256: sha256,
             }),
             crate::config::Source::CratesIo {
                 name,

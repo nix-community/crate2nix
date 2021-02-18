@@ -46,7 +46,7 @@ pub fn git_io_source(url: Url, rev: String) -> Result<config::Source, Error> {
     let sha256 = prefetchable.prefetch()?;
     eprintln!("done.");
 
-    Ok(config::Source::Git { url, rev, sha256 })
+    Ok(config::Source::Git { url, rev, sha256: Some(sha256) })
 }
 
 /// Operations on assmebling out-of-tree sources via nix.
