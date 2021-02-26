@@ -252,7 +252,7 @@ let generatedBuild = callPackage ./crate2nix/Cargo.nix {
     defaultCrateOverrides = pkgs.defaultCrateOverrides // {
       cssparser-macros = attrs: {
         buildInputs =
-          stdenv.lib.optionals
+          lib.optionals
             stdenv.isDarwin
             [ darwin.apple_sdk.frameworks.Security ];
       };
