@@ -27,6 +27,14 @@ rec {
     fuchsia = true;
     test = false;
 
+    # This is used by most loom-aware crates.
+    # This shouldn't be needed, as it is strictly a feature flag.
+    # See https://github.com/tokio-rs/loom
+    loom = false;
+
+    # This is used by crossbeam-utils, and functionally similiar to cfg(loom).
+    crossbeam_loom = false;
+
     # This doesn't appear to be officially documented anywhere yet.
     # See https://github.com/rust-lang-nursery/rust-forge/issues/101.
     os =
