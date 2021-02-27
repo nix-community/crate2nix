@@ -105,7 +105,7 @@ rec {
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];
-        
+
       };
       "atty" = rec {
         crateName = "atty";
@@ -129,7 +129,7 @@ rec {
             features = [ "consoleapi" "processenv" "minwinbase" "minwindef" "winbase" ];
           }
         ];
-        
+
       };
       "bitflags 0.7.0" = rec {
         crateName = "bitflags";
@@ -139,7 +139,7 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
-        
+
       };
       "bitflags 1.2.1" = rec {
         crateName = "bitflags";
@@ -230,7 +230,7 @@ rec {
             packageId = "dbus-codegen";
           }
         ];
-        
+
       };
       "dbus" = rec {
         crateName = "dbus";
@@ -286,7 +286,7 @@ rec {
             packageId = "xml-rs";
           }
         ];
-        
+
       };
       "libc" = rec {
         crateName = "libc";
@@ -322,7 +322,7 @@ rec {
             packageId = "pkg-config";
           }
         ];
-        
+
       };
       "pkg-config" = rec {
         crateName = "pkg-config";
@@ -332,7 +332,7 @@ rec {
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
-        
+
       };
       "strsim" = rec {
         crateName = "strsim";
@@ -342,7 +342,7 @@ rec {
         authors = [
           "Danny Guo <dannyguo91@gmail.com>"
         ];
-        
+
       };
       "textwrap" = rec {
         crateName = "textwrap";
@@ -358,7 +358,7 @@ rec {
             packageId = "unicode-width";
           }
         ];
-        
+
       };
       "unicode-width" = rec {
         crateName = "unicode-width";
@@ -443,7 +443,7 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
-        
+
       };
       "winapi-x86_64-pc-windows-gnu" = rec {
         crateName = "winapi-x86_64-pc-windows-gnu";
@@ -453,7 +453,7 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
-        
+
       };
       "xml-rs" = rec {
         crateName = "xml-rs";
@@ -471,7 +471,7 @@ rec {
             packageId = "bitflags 0.7.0";
           }
         ];
-        
+
       };
     };
 

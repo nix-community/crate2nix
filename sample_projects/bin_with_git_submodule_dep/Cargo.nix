@@ -127,7 +127,7 @@ rec {
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];
-        
+
       };
       "atty" = rec {
         crateName = "atty";
@@ -151,7 +151,7 @@ rec {
             features = [ "consoleapi" "processenv" "minwinbase" "minwindef" "winbase" ];
           }
         ];
-        
+
       };
       "backtrace" = rec {
         crateName = "backtrace";
@@ -235,7 +235,7 @@ rec {
             usesDefaultFeatures = false;
           }
         ];
-        
+
       };
       "bindgen" = rec {
         crateName = "bindgen";
@@ -398,7 +398,7 @@ rec {
             features = [ "verbose-errors" ];
           }
         ];
-        
+
       };
       "cfg-if" = rec {
         crateName = "cfg-if";
@@ -587,7 +587,7 @@ rec {
             packageId = "byteorder";
           }
         ];
-        
+
       };
       "getrandom" = rec {
         crateName = "getrandom";
@@ -627,7 +627,7 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
-        
+
       };
       "hermit-abi" = rec {
         crateName = "hermit-abi";
@@ -663,7 +663,7 @@ rec {
             packageId = "quick-error";
           }
         ];
-        
+
       };
       "jobserver" = rec {
         crateName = "jobserver";
@@ -689,7 +689,7 @@ rec {
             packageId = "log";
           }
         ];
-        
+
       };
       "lazy_static" = rec {
         crateName = "lazy_static";
@@ -740,7 +740,7 @@ rec {
             packageId = "cc";
           }
         ];
-        
+
       };
       "librocksdb-sys" = rec {
         crateName = "librocksdb-sys";
@@ -864,7 +864,7 @@ rec {
             packageId = "libc";
           }
         ];
-        
+
       };
       "peeking_take_while" = rec {
         crateName = "peeking_take_while";
@@ -874,7 +874,7 @@ rec {
         authors = [
           "Nick Fitzgerald <fitzgen@gmail.com>"
         ];
-        
+
       };
       "proc-macro2" = rec {
         crateName = "proc-macro2";
@@ -903,7 +903,7 @@ rec {
           "Paul Colomiets <paul@colomiets.name>"
           "Colin Kiegel <kiegel@gmx.de>"
         ];
-        
+
       };
       "quote" = rec {
         crateName = "quote";
@@ -1040,7 +1040,7 @@ rec {
         authors = [
           "comex <comexk@gmail.com>"
         ];
-        
+
       };
       "strsim" = rec {
         crateName = "strsim";
@@ -1050,7 +1050,7 @@ rec {
         authors = [
           "Danny Guo <dannyguo91@gmail.com>"
         ];
-        
+
       };
       "termcolor" = rec {
         crateName = "termcolor";
@@ -1067,7 +1067,7 @@ rec {
             target = { target, features }: (target."windows" or false);
           }
         ];
-        
+
       };
       "textwrap" = rec {
         crateName = "textwrap";
@@ -1083,7 +1083,7 @@ rec {
             packageId = "unicode-width";
           }
         ];
-        
+
       };
       "thread_local" = rec {
         crateName = "thread_local";
@@ -1099,7 +1099,7 @@ rec {
             packageId = "lazy_static";
           }
         ];
-        
+
       };
       "unicode-width" = rec {
         crateName = "unicode-width";
@@ -1172,7 +1172,7 @@ rec {
         authors = [
           "Sergio Benitez <sb@sergio.bz>"
         ];
-        
+
       };
       "wasi" = rec {
         crateName = "wasi";
@@ -1208,7 +1208,7 @@ rec {
             packageId = "libc";
           }
         ];
-        
+
       };
       "winapi" = rec {
         crateName = "winapi";
@@ -1243,7 +1243,7 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
-        
+
       };
       "winapi-util" = rec {
         crateName = "winapi-util";
@@ -1261,7 +1261,7 @@ rec {
             features = [ "std" "consoleapi" "errhandlingapi" "fileapi" "minwindef" "processenv" "winbase" "wincon" "winerror" "winnt" ];
           }
         ];
-        
+
       };
       "winapi-x86_64-pc-windows-gnu" = rec {
         crateName = "winapi-x86_64-pc-windows-gnu";
@@ -1271,7 +1271,7 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
-        
+
       };
       "wincolor" = rec {
         crateName = "wincolor";
@@ -1292,7 +1292,7 @@ rec {
             packageId = "winapi-util";
           }
         ];
-        
+
       };
     };
 

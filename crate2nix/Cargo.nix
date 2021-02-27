@@ -127,7 +127,7 @@ rec {
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];
-        
+
       };
       "anyhow" = rec {
         crateName = "anyhow";
@@ -169,7 +169,7 @@ rec {
             features = [ "consoleapi" "processenv" "minwinbase" "minwindef" "winbase" ];
           }
         ];
-        
+
       };
       "autocfg" = rec {
         crateName = "autocfg";
@@ -179,7 +179,7 @@ rec {
         authors = [
           "Josh Stone <cuviper@gmail.com>"
         ];
-        
+
       };
       "bitflags" = rec {
         crateName = "bitflags";
@@ -220,7 +220,7 @@ rec {
             packageId = "generic-array";
           }
         ];
-        
+
       };
       "block-padding" = rec {
         crateName = "block-padding";
@@ -236,7 +236,7 @@ rec {
             packageId = "byte-tools";
           }
         ];
-        
+
       };
       "bstr" = rec {
         crateName = "bstr";
@@ -270,7 +270,7 @@ rec {
         authors = [
           "RustCrypto Developers"
         ];
-        
+
       };
       "byteorder" = rec {
         crateName = "byteorder";
@@ -416,7 +416,7 @@ rec {
             usesDefaultFeatures = false;
           }
         ];
-        
+
       };
       "crate2nix" = rec {
         crateName = "crate2nix";
@@ -507,7 +507,7 @@ rec {
             packageId = "tempdir";
           }
         ];
-        
+
       };
       "crossbeam-utils" = rec {
         crateName = "crossbeam-utils";
@@ -592,7 +592,7 @@ rec {
         authors = [
           "The Rust-Crypto Project Developers"
         ];
-        
+
       };
       "fnv" = rec {
         crateName = "fnv";
@@ -616,7 +616,7 @@ rec {
         authors = [
           "Denis Kurilenko <webdesus@gmail.com>"
         ];
-        
+
       };
       "fuchsia-cprng" = rec {
         crateName = "fuchsia-cprng";
@@ -626,7 +626,7 @@ rec {
         authors = [
           "Erick Tryzelaar <etryzelaar@google.com>"
         ];
-        
+
       };
       "generic-array" = rec {
         crateName = "generic-array";
@@ -644,7 +644,7 @@ rec {
             packageId = "typenum";
           }
         ];
-        
+
       };
       "globset" = rec {
         crateName = "globset";
@@ -706,7 +706,7 @@ rec {
             packageId = "walkdir";
           }
         ];
-        
+
       };
       "heck" = rec {
         crateName = "heck";
@@ -722,7 +722,7 @@ rec {
             packageId = "unicode-segmentation";
           }
         ];
-        
+
       };
       "hermit-abi" = rec {
         crateName = "hermit-abi";
@@ -779,7 +779,7 @@ rec {
             packageId = "unicode-normalization";
           }
         ];
-        
+
       };
       "ignore" = rec {
         crateName = "ignore";
@@ -940,7 +940,7 @@ rec {
         authors = [
           "bluss"
         ];
-        
+
       };
       "matches" = rec {
         crateName = "matches";
@@ -951,7 +951,7 @@ rec {
         authors = [
           "Simon Sapin <simon.sapin@exyr.org>"
         ];
-        
+
       };
       "memchr" = rec {
         crateName = "memchr";
@@ -976,7 +976,7 @@ rec {
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
-        
+
       };
       "opaque-debug" = rec {
         crateName = "opaque-debug";
@@ -986,7 +986,7 @@ rec {
         authors = [
           "RustCrypto Developers"
         ];
-        
+
       };
       "pathdiff" = rec {
         crateName = "pathdiff";
@@ -996,7 +996,7 @@ rec {
         authors = [
           "Manish Goregaokar <manishsmail@gmail.com>"
         ];
-        
+
       };
       "percent-encoding" = rec {
         crateName = "percent-encoding";
@@ -1007,7 +1007,7 @@ rec {
         authors = [
           "The rust-url developers"
         ];
-        
+
       };
       "pest" = rec {
         crateName = "pest";
@@ -1046,7 +1046,7 @@ rec {
             packageId = "pest_generator";
           }
         ];
-        
+
       };
       "pest_generator" = rec {
         crateName = "pest_generator";
@@ -1078,7 +1078,7 @@ rec {
             packageId = "syn";
           }
         ];
-        
+
       };
       "pest_meta" = rec {
         crateName = "pest_meta";
@@ -1105,7 +1105,7 @@ rec {
             usesDefaultFeatures = false;
           }
         ];
-        
+
       };
       "proc-macro-error" = rec {
         crateName = "proc-macro-error";
@@ -1172,7 +1172,7 @@ rec {
             packageId = "version_check";
           }
         ];
-        
+
       };
       "proc-macro2" = rec {
         crateName = "proc-macro2";
@@ -1394,7 +1394,7 @@ rec {
             features = [ "std" "errhandlingapi" "winerror" "fileapi" "winbase" ];
           }
         ];
-        
+
       };
       "ryu" = rec {
         crateName = "ryu";
@@ -1422,7 +1422,7 @@ rec {
             target = { target, features }: (target."windows" or false);
           }
         ];
-        
+
       };
       "semver" = rec {
         crateName = "semver";
@@ -1457,7 +1457,7 @@ rec {
         authors = [
           "Steve Klabnik <steve@steveklabnik.com>"
         ];
-        
+
       };
       "serde" = rec {
         crateName = "serde";
@@ -1598,7 +1598,7 @@ rec {
         authors = [
           "Danny Guo <dannyguo91@gmail.com>"
         ];
-        
+
       };
       "structopt" = rec {
         crateName = "structopt";
@@ -1724,7 +1724,7 @@ rec {
             packageId = "remove_dir_all";
           }
         ];
-        
+
       };
       "tera" = rec {
         crateName = "tera";
@@ -1784,7 +1784,7 @@ rec {
             packageId = "unicode-width";
           }
         ];
-        
+
       };
       "thread_local" = rec {
         crateName = "thread_local";
@@ -1800,7 +1800,7 @@ rec {
             packageId = "lazy_static";
           }
         ];
-        
+
       };
       "tinyvec" = rec {
         crateName = "tinyvec";
@@ -1830,7 +1830,7 @@ rec {
         authors = [
           "Soveu <marx.tomasz@gmail.com>"
         ];
-        
+
       };
       "toml" = rec {
         crateName = "toml";
@@ -2003,7 +2003,7 @@ rec {
             packageId = "url";
           }
         ];
-        
+
       };
       "vec_map" = rec {
         crateName = "vec_map";
@@ -2050,7 +2050,7 @@ rec {
         authors = [
           "Sergio Benitez <sb@sergio.bz>"
         ];
-        
+
       };
       "walkdir" = rec {
         crateName = "walkdir";
@@ -2077,7 +2077,7 @@ rec {
             target = { target, features }: (target."windows" or false);
           }
         ];
-        
+
       };
       "winapi" = rec {
         crateName = "winapi";
@@ -2112,7 +2112,7 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
-        
+
       };
       "winapi-util" = rec {
         crateName = "winapi-util";
@@ -2130,7 +2130,7 @@ rec {
             features = [ "std" "consoleapi" "errhandlingapi" "fileapi" "minwindef" "processenv" "winbase" "wincon" "winerror" "winnt" ];
           }
         ];
-        
+
       };
       "winapi-x86_64-pc-windows-gnu" = rec {
         crateName = "winapi-x86_64-pc-windows-gnu";
@@ -2140,7 +2140,7 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
-        
+
       };
     };
 

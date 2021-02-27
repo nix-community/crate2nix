@@ -104,7 +104,7 @@ rec {
             packageId = "nix-base32";
           }
         ];
-        
+
       };
       "nix-base32" = rec {
         crateName = "nix-base32";
@@ -119,7 +119,7 @@ rec {
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
-        
+
       };
     };
 

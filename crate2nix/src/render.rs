@@ -8,6 +8,7 @@ use crate::target_cfg::{Cfg, CfgExpr};
 use crate::{BuildInfo, GenerateInfo};
 use anyhow::format_err;
 use anyhow::{bail, Error};
+use itertools::Itertools;
 use lazy_static::lazy_static;
 use serde::Serialize;
 use std::collections::HashMap;
@@ -63,7 +64,8 @@ pub struct Template<C: Serialize + Debug> {
 impl<C: Serialize + Debug> Template<C> {
     /// Returns the rendered template as a string.
     pub fn render(&self, context: &C) -> Result<String, Error> {
-        TERA.render(self.template, &Context::from_serialize(context)?)
+        let rendered = TERA
+            .render(self.template, &Context::from_serialize(context)?)
             .map_err(|e| {
                 format_err!(
                     "while rendering {}: {:#?}\nContext: {:#?}",
@@ -71,7 +73,8 @@ impl<C: Serialize + Debug> Template<C> {
                     e,
                     context
                 )
-            })
+            })?;
+        Ok(rendered.lines().map(|l| l.trim_end()).join("\n"))
     }
 
     /// Writes the rendered template to the given file path.

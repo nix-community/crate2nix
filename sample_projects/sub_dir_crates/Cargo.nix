@@ -100,7 +100,7 @@ rec {
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
-        
+
       };
       "lib2" = rec {
         crateName = "lib2";
@@ -115,7 +115,7 @@ rec {
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
-        
+
       };
       "sub_dir_crates" = rec {
         crateName = "sub_dir_crates";
@@ -138,7 +138,7 @@ rec {
             packageId = "lib2";
           }
         ];
-        
+
       };
     };
 
