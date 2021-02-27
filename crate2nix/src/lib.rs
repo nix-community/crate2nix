@@ -8,9 +8,12 @@
 #![forbid(unsafe_code)]
 #![deny(missing_docs)]
 
-use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::env;
 use std::path::PathBuf;
+use std::{
+    collections::{BTreeMap, HashMap, HashSet, VecDeque},
+    path::Path,
+};
 
 use anyhow::format_err;
 use anyhow::Context;
@@ -157,7 +160,7 @@ impl BuildInfo {
 }
 
 /// Call `cargo metadata` and return result.
-fn cargo_metadata(config: &GenerateConfig, cargo_toml: &PathBuf) -> Result<Metadata, Error> {
+fn cargo_metadata(config: &GenerateConfig, cargo_toml: &Path) -> Result<Metadata, Error> {
     let mut cmd = cargo_metadata::MetadataCommand::new();
     let mut other_options = config.other_metadata_options.clone();
     other_options.push("--locked".into());

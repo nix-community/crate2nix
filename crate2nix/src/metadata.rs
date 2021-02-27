@@ -200,13 +200,11 @@ impl PackageIdShortener {
     }
 
     pub fn lengthen_ref<'a>(&'a self, package_id: &'a PackageId) -> &'a PackageId {
-        self.reverse.get(&package_id).unwrap_or_else(|| &package_id)
+        self.reverse.get(&package_id).unwrap_or(&package_id)
     }
 
     pub fn shorten_ref<'a>(&'a self, package_id: &'a PackageId) -> &'a PackageId {
-        self.substitution
-            .get(&package_id)
-            .unwrap_or_else(|| &package_id)
+        self.substitution.get(&package_id).unwrap_or(&package_id)
     }
 
     pub fn shorten(&self, package_id: &PackageId) -> PackageId {
@@ -220,7 +218,7 @@ impl PackageIdShortener {
         self.substitution
             .get(&package_id)
             .cloned()
-            .unwrap_or_else(|| package_id)
+            .unwrap_or(package_id)
     }
 
     fn shorten_in_package(&self, package: &Package) -> Package {

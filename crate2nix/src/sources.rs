@@ -130,14 +130,14 @@ impl<'a> FetchedSources<'a> {
 
         let has_nix_sources = {
             let config = crate::config::Config::read_from_or_default(&self.crate2nix_json_path)?;
-            config.sources.values().any(|s| match s {
-                config::Source::Nix { .. } => true,
-                _ => false,
-            })
+            config
+                .sources
+                .values()
+                .any(|s| matches!(s, config::Source::Nix { .. }))
         };
         let outdated = || {
             let symlink_generated =
-                last_modified(&fetched_sources_symlink).unwrap_or_else(|| SystemTime::UNIX_EPOCH);
+                last_modified(&fetched_sources_symlink).unwrap_or(SystemTime::UNIX_EPOCH);
             let sources_modified =
                 last_modified(&self.crate2nix_json_path).unwrap_or_else(SystemTime::now);
             symlink_generated < sources_modified

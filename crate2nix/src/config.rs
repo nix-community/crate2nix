@@ -20,10 +20,10 @@ impl Config {
 
         let file = File::open(path).context(format!("while opening {}", path.to_string_lossy()))?;
         let reader = BufReader::new(file);
-        Ok(serde_json::from_reader(reader).context(format!(
+        serde_json::from_reader(reader).context(format!(
             "while deserializing config: {}",
             path.to_string_lossy()
-        ))?)
+        ))
     }
 
     /// Write config to path.
@@ -156,7 +156,9 @@ impl Source {
             Source::Git { url, .. } => {
                 let path = url.path();
                 let after_last_slash = path.split('/').last().unwrap_or(path);
-                let without_dot_git = strip_suffix(after_last_slash, ".git");
+                let without_dot_git = after_last_slash
+                    .strip_suffix(".git")
+                    .unwrap_or(after_last_slash);
                 Some(without_dot_git)
             }
             Source::Nix {
@@ -168,14 +170,6 @@ impl Source {
             }),
             _ => None,
         }
-    }
-}
-
-fn strip_suffix<'a>(s: &'a str, p: &str) -> &'a str {
-    if s.ends_with(p) {
-        &s[..s.len() - p.len()]
-    } else {
-        s
     }
 }
 

@@ -63,8 +63,7 @@ pub struct Template<C: Serialize + Debug> {
 impl<C: Serialize + Debug> Template<C> {
     /// Returns the rendered template as a string.
     pub fn render(&self, context: &C) -> Result<String, Error> {
-        Ok(TERA
-            .render(self.template, &Context::from_serialize(context)?)
+        TERA.render(self.template, &Context::from_serialize(context)?)
             .map_err(|e| {
                 format_err!(
                     "while rendering {}: {:#?}\nContext: {:#?}",
@@ -72,7 +71,7 @@ impl<C: Serialize + Debug> Template<C> {
                     e,
                     context
                 )
-            })?)
+            })
     }
 
     /// Writes the rendered template to the given file path.
@@ -194,11 +193,7 @@ fn cfg_to_nix_expr_filter(
 /// Renders a config expression to nix code.
 fn cfg_to_nix_expr(cfg: &CfgExpr) -> String {
     fn target(target_name: &str) -> String {
-        escape_nix_string(if target_name.starts_with("target_") {
-            &target_name[7..]
-        } else {
-            target_name
-        })
+        escape_nix_string(target_name.strip_prefix("target_").unwrap_or(target_name))
     }
 
     fn render(result: &mut String, cfg: &CfgExpr) {

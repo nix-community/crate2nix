@@ -77,6 +77,6 @@ pub fn run_cmd(cmd_path: impl AsRef<Path>) -> Result<String, Error> {
         );
     }
 
-    Ok(String::from_utf8(output.stdout)
-        .map_err(|_e| format_err!("output of {} is not UTF8!", cmd_path))?)
+    String::from_utf8(output.stdout)
+        .map_err(|_e| format_err!("output of {} is not UTF8!", cmd_path))
 }
