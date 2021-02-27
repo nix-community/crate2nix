@@ -1,12 +1,29 @@
 # 0.8.x - 0.9.0
 
-Under the hood:
+## Breaking changes
+
+* Remove long deprecated `root_crate` and `workspace_members` aliases in the generated
+  `Cargo.nix` files.
+
+## Enhancements
+
+* [Issue #83](https://github.com/kolloch/crate2nix/issues/83) Supporting depending
+  on different versions of the same crate!
+* Some strides towards cross-compilation support. Docs missing and would be
+  appreciated! Thanks, @Ericson2314, @lopsided98!
+* Experimental out-of-tree support -- with no time to work further on it :(
+
+## Under the hood
 
 * Test execution is now closer to what `cargo test` does. Thank you, @symphorien!
+* Better `direnv` support in the source. Thanks, @Mic92!
+* Better support for upcoming nix 3.0. Thanks, @balsoft!
+* tests: avoid building two versions of the same crate. Thanks, @andir!
+* Remove usages of deprecated `stdenv.lib`. Thanks, @cole-h!
 
 # 0.7.x - 0.8.0
 
-Organizational: @andir is now an additional official maintainer of `crate2nix`. 
+Organizational: @andir is now an additional official maintainer of `crate2nix`.
 Welcome!
 
 Breaking change:
@@ -52,11 +69,11 @@ New features and improvements:
   others) - Handling of "renamed crates". Thanks a lot,@andir!
 * Support for multiple binaries from the same crate. Thank you, @kristoff3r!
 * [Issue #34](https://github.com/kolloch/crate2nix/issues/34) - Support for git
-  prefetching so that repositories with sub modules now work. 
+  prefetching so that repositories with sub modules now work.
   Thank you, @cpcloud!
 * [Issue #65](https://github.com/kolloch/crate2nix/issues/65) - Reexpose
   feature selection parameters from `cargo metadata`. This allows to include
-  dependencies in the generated build file which are not used for the default 
+  dependencies in the generated build file which are not used for the default
   features. Or to exclude dependencies for features that you do not care about.
 * [Issue #67](https://github.com/kolloch/crate2nix/issues/67) - Support for
   additional lib types - in particular, `cdylib`. Thank you, @andir!
@@ -64,20 +81,20 @@ New features and improvements:
 * [Issue #18](https://github.com/kolloch/crate2nix/issues/18) - Optional crate
   unavailable
   Allows building packages that have multiple versions of the same dependency (with different
-  targets). In particular the flate2 package now builds. 
+  targets). In particular the flate2 package now builds.
   Thank you, @cchalmers!
 * [Issue #37](https://github.com/kolloch/crate2nix/issues/37) - Conditional
-  target expressions for dependencies can now 
+  target expressions for dependencies can now
   also depend on features. Thank you, @cpcloud!
 * [Issue #42](https://github.com/kolloch/crate2nix/issues/42) - Some efficiency
   improvements to prevent stack overflows for projects with
   huge dependency trees. Thank you, @jamii!
-      * [Issue #90](https://github.com/kolloch/crate2nix/issues/90) There is a follow 
+      * [Issue #90](https://github.com/kolloch/crate2nix/issues/90) There is a follow
         up to this: @nagisa was seeing super-linear instantiation counts and provided
-        a flamegraph. @andir proposed a 
+        a flamegraph. @andir proposed a
         [likely fix in nixpkgs](https://github.com/NixOS/nixpkgs/pull/79816).
         Thank you!
-* Add fuchsia as an unsupported target (ef945396fcb700322b5b5f497a5d243950ed2513 ). 
+* Add fuchsia as an unsupported target (ef945396fcb700322b5b5f497a5d243950ed2513 ).
   Thank you, @jamii!
 * [Issue #94](https://github.com/kolloch/crate2nix/issues/94): The `defaultCrateOverrides`
   argument to the build file has finally the desired effect again.
@@ -93,8 +110,8 @@ to give someone appropriate credit.
 For contributors:
 
 * `./run_tests.sh` now makes it easier to prepare your pull requests for review.
-* Build artifacts for linux are now properly pushed to 
-  [eigenvalue.cachix.org](https://eigenvalue.cachix.org/). Adding that cache with cachix will speed 
+* Build artifacts for linux are now properly pushed to
+  [eigenvalue.cachix.org](https://eigenvalue.cachix.org/). Adding that cache with cachix will speed
   up your installations and builds. And it speeds up our CI builds via github actions. Shout out to
   @domenkozar and other cachix contributors.
 * @alyssais contributed some fixes to the developer scripts, thank you!
@@ -109,7 +126,7 @@ Heads up! Feel free to discuss these planned changes in future releases with me:
   also allows overriding `buildRustCrate` more easily.
 * [#82](https://github.com/kolloch/crate2nix/issues/82): Use a new file name for
   `crate-hashes.json` every time to prevent merge issues.
-* [#102](https://github.com/kolloch/crate2nix/issues/102): Convenient support for out-of-tree sources 
+* [#102](https://github.com/kolloch/crate2nix/issues/102): Convenient support for out-of-tree sources
   (e.g. for nixpkgs)
 
 # 0.6.0 - 0.6.1
@@ -119,10 +136,10 @@ Backported escaping fix for target expressions.
 # 0.5.1 - 0.6.0
 
 * [Issue #22](https://github.com/kolloch/crate2nix/issues/22) - Support renamed
-  crates. Fixed in `buildRustCrate` in nixpkgs and in 
+  crates. Fixed in `buildRustCrate` in nixpkgs and in
   `crate2nix` by PR #24 @danieldk, thanks a lot!
   This is especially awesome because the popular `rand` crate recently made
-  use of the "renamed crates" feature and therefore could not be build by 
+  use of the "renamed crates" feature and therefore could not be build by
   `buildRustCrate`/`crate2nix` anymore.
 * [Issue #15](https://github.com/kolloch/crate2nix/issues/15) - Support
   "overrideCrates" argument for modifying the derivation for
@@ -134,7 +151,7 @@ Backported escaping fix for target expressions.
   ```nix
      cargo_nix.rootCrate.build.override {
         crateOverrides = defaultCrateOverrides // {
-          cssparser-macros = attrs: { 
+          cssparser-macros = attrs: {
             buildInputs = stdenv.lib.optionals stdenv.isDarwin [darwin.apple_sdk.frameworks.Security]; };
         };
       };
@@ -155,17 +172,17 @@ Backported escaping fix for target expressions.
 
 Infrastructure:
 
-* I moved the integration tests to tests.nix, they were in rust code before. 
-* I also now build every push with github actions, 
+* I moved the integration tests to tests.nix, they were in rust code before.
+* I also now build every push with github actions,
   and cachix/cachix-action. A suggestion from @vbrandl in #44. Unfortunately,
   the rust crates are not cached yet, I think, because they are not in the closure
-  of the result. The cachix caches is called "eigenvalue" for now (I might change 
+  of the result. The cachix caches is called "eigenvalue" for now (I might change
   that in the future).
 
 # 0.5.0 - 0.5.1
 
 Don't use ´Cargo.toml´ but ´Cargo.nix´ as default output! Thank you, @tilpner!
- 
+
  # 0.4.0 - 0.5.0
 
 ## Upgrading
@@ -186,10 +203,10 @@ Don't use ´Cargo.toml´ but ´Cargo.nix´ as default output! Thank you, @tilpne
 
 ## Upgrading
 
-Please change references to `root_crate` to `rootCrate.build` and references to `workspace_members.${crateName}` 
+Please change references to `root_crate` to `rootCrate.build` and references to `workspace_members.${crateName}`
 to `workspaceMembers.${crateName}.build`. The camel case attribute names are in line with the nixos style guide.
-The `.build` suffix allows future versions of `crate2nix` to add other convenient features such as source tarball 
-packages, docker image derivations, ... The old aliases still work but are deprecated. 
+The `.build` suffix allows future versions of `crate2nix` to add other convenient features such as source tarball
+packages, docker image derivations, ... The old aliases still work but are deprecated.
 
 ## Dynamic feature resolution
 
@@ -197,11 +214,11 @@ The enabled features for a crate now are resolved at build time! That means you 
 
 1. There is a "rootFeatures" argument to the generated build file which you can override when calling
    it from the command line:
-   
+
       ```bash
-      nix build -f ....nix --arg rootFeatures '["default" "other"]' rootCrate.build 
+      nix build -f ....nix --arg rootFeatures '["default" "other"]' rootCrate.build
       ```
-      
+
 2. Or when importing the build file with "callPackage":
 
       ```nix
@@ -209,7 +226,7 @@ The enabled features for a crate now are resolved at build time! That means you 
           crate2nix = cargo_nix.rootCrate.build;
       in ...;
       ```
-        
+
 3. Or by overriding them on the rootCrate or workspaceMembers:
 
       ```nix
@@ -217,16 +234,16 @@ The enabled features for a crate now are resolved at build time! That means you 
           crate2nix = cargo_nix.rootCrate.build.override { features = ["default" "other"]; };
       in ...;
       ```
-      
+
 ## Internal: nix test runner
 
 For this release, I needed substantial amount of nix code so I created some nix unit tests. They are invoked by
-`cargo test` like all other tests and live in the [./templates/nix/crate2nix/tests](./templates/nix/crate2nix/tests) 
+`cargo test` like all other tests and live in the [./templates/nix/crate2nix/tests](./templates/nix/crate2nix/tests)
 directory.
 
 ## Feedback: What is needed for a 1.0 release?
 
-I would really appreciate your thoughts. Please add comments to issue 
+I would really appreciate your thoughts. Please add comments to issue
 [#8](https://github.com/kolloch/crate2nix/issues/8).
 
 # 0.3.0 - 0.3.1
@@ -270,14 +287,14 @@ Example:
 
 ## Workspace Support
 
-If `crate2nix` is applied to a workspace, the resulting nix-file will contain a top-level "workspace_members" attribute 
+If `crate2nix` is applied to a workspace, the resulting nix-file will contain a top-level "workspace_members" attribute
 set that refers the corresponding top-level crate derivations by name.
 
 ## Target-specific dependencies
 
 "cfg(...)" expressions and target triplets such as "i686-pc-windows-gnu" are compiled into nix expressions. Support
-should be reasonable but incomplete because e.g. it does not work for processor features. Please let me know if this 
-causes problems for you! 
+should be reasonable but incomplete because e.g. it does not work for processor features. Please let me know if this
+causes problems for you!
 
 # 0.1.0
 
