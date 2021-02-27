@@ -1,5 +1,6 @@
 { pkgs ? import ../../nix/nixpkgs.nix { config = { }; }
 , stdenv ? pkgs.stdenv
+, lib ? pkgs.lib
 , generatedCargoNix
 }:
 let
@@ -8,7 +9,7 @@ let
       pest_generator = attrs: {
         buildInputs =
           (attrs.buildInputs or [ ])
-            ++ stdenv.lib.optionals
+            ++ lib.optionals
             stdenv.isDarwin
             (with pkgs.darwin.apple_sdk.frameworks; [ Security ]);
       };
@@ -16,7 +17,7 @@ let
       cssparser-macros = attrs: {
         buildInputs =
           (attrs.buildInputs or [ ])
-            ++ stdenv.lib.optionals
+            ++ lib.optionals
             stdenv.isDarwin
             (with pkgs.darwin.apple_sdk.frameworks; [ Security ]);
       };
