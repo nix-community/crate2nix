@@ -166,7 +166,8 @@ impl PackageIdShortener {
                 Name,
                 NameVersion,
                 PackageId,
-            };
+            }
+
             let unique_component = if packages.len() == 1 {
                 UniqueComponent::Name
             } else if packages.iter().map(|p| &p.version).unique().count() == packages.len() {

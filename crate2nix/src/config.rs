@@ -155,7 +155,7 @@ impl Source {
             Source::CratesIo { name, .. } => Some(name),
             Source::Git { url, .. } => {
                 let path = url.path();
-                let after_last_slash = path.split('/').last().unwrap_or_else(|| path);
+                let after_last_slash = path.split('/').last().unwrap_or(path);
                 let without_dot_git = strip_suffix(after_last_slash, ".git");
                 Some(without_dot_git)
             }
