@@ -1,5 +1,9 @@
 # 0.8.x - 0.9.0
 
+Help needed! I don't have the resources to meaningfully advance this project. Thank
+you for all the valuable contributions but I'd appreciate a co-maintainer who
+is motivated to put in some time into reviewing PRs, updating docs, fixing bugs, ..
+
 ## Breaking changes
 
 * Remove long deprecated `root_crate` and `workspace_members` aliases in the generated
@@ -11,7 +15,8 @@
   on different versions of the same crate!
 * Some strides towards cross-compilation support. Docs missing and would be
   appreciated! Thanks, @Ericson2314, @lopsided98!
-* Experimental out-of-tree support -- with no time to work further on it :(
+* [Experimental out-of-tree support](./out-of-tree-sources.md) -- with no time
+  to work further on it :(
 
 ## Under the hood
 
