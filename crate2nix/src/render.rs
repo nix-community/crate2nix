@@ -1,8 +1,8 @@
 //! "Render" files using tera templates.
 
-use std::fs::File;
 use std::io::{BufRead, Write};
 use std::path::Path;
+use std::{fs::File, iter};
 
 use crate::target_cfg::{Cfg, CfgExpr};
 use crate::{BuildInfo, GenerateInfo};
@@ -74,7 +74,11 @@ impl<C: Serialize + Debug> Template<C> {
                     context
                 )
             })?;
-        Ok(rendered.lines().map(|l| l.trim_end()).join("\n"))
+        Ok(rendered
+            .lines()
+            .map(|l| l.trim_end())
+            .chain(iter::once("\n"))
+            .join("\n"))
     }
 
     /// Writes the rendered template to the given file path.
