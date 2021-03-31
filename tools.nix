@@ -170,10 +170,16 @@ rec {
         withoutGitPlus = lib.removePrefix "git+" source;
         splitHash = lib.splitString "#" withoutGitPlus;
         splitQuestion = lib.concatMap (lib.splitString "?") splitHash;
+        maybeBranchSplited = lib.splitString "branch=" withoutGitPlus;
       in
       {
         url = builtins.head splitQuestion;
         rev = lib.last splitQuestion;
+        branch = if (lib.length maybeBranchSplited) == 1 then
+          "master"
+        else (
+          lib.head (lib.splitString "#" (lib.last maybeBranchSplited))
+        );
       };
 
     vendorSupport = { crateDir ? ./., ... }:
@@ -235,7 +241,7 @@ rec {
             src = builtins.fetchGit {
               submodules = true;
               inherit (parsed) url rev;
-              ref = attrs.branch or "master";
+              ref = parsed.branch or null;
             };
             hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
               echo -n "$(nix-hash --type sha256 ${src})" > $out
@@ -305,13 +311,14 @@ rec {
               [source."${parsed.url}"]
               git = "${parsed.url}"
               rev = "${parsed.rev}"
-              ${lib.optionalString (isNull (builtins.match ".*\\?rev=[0-9a-z]{40}.*" source)) ''branch = "${attrs.branch or "master"}"''}
+              ${lib.optionalString (isNull (builtins.match ".*\\?rev=[0-9a-z]{40}.*" source)) ''branch = "${attrs.branch or parsed.branch or "master"}"''}
               replace-with = "vendored-sources"
               '';
             gitSources = packagesByType."git" or [ ];
             gitSourcesUnique = lib.unique gitSources;
             gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
-            gitSourceConfigsString = lib.concatStrings gitSourceConfigs;
+            gitSourceConfigsUnique = lib.unique gitSourceConfigs;
+            gitSourceConfigsString = lib.concatStrings gitSourceConfigsUnique;
           in
           pkgs.writeText
             "vendor-config"
@@ -355,16 +362,38 @@ rec {
                   or extraHashes.${packageId}
                   or (builtins.throw "Checksum for ${packageId} not found in crate-hashes.json");
               parsed = parseGitSource source;
-              src = pkgs.fetchgit {
-                name = "${name}-${version}";
-                inherit sha256;
+              src = builtins.fetchGit {
                 inherit (parsed) url rev;
+                allRefs = true;
               };
+              srcName = "${name}-${version}";
+
+              rootCargo = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
+              isWorkspace = rootCargo ? "workspace";
+              isPackage = rootCargo ? "package";
+              containedCrates = rootCargo.workspace.members ++ (if isPackage then [ "." ] else [ ]);
+
+              getCrateNameFromPath = path:
+                let
+                  cargoTomlCrate = builtins.fromTOML (builtins.readFile "${src}/${path}/Cargo.toml");
+                in
+                cargoTomlCrate.package.name;
+
+              pathToExtract =
+                if isWorkspace then
+                  builtins.head
+                    (builtins.filter
+                      (to_filter:
+                        (getCrateNameFromPath to_filter) == name
+                      )
+                      containedCrates)
+                else
+                  ".";
             in
-            pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
+            pkgs.runCommand (lib.removeSuffix ".tar.gz" srcName) { }
               ''
                 mkdir -p $out
-                cp -apR ${src}/* $out
+                cp -apR ${src}/${pathToExtract}/* $out
                 echo '{"package":null,"files":{}}' > $out/.cargo-checksum.json
               '';
 

@@ -40,10 +40,10 @@ rec {
             assert builtins.isString type;
 
             if type == "Git"
-            then pkgs.fetchgit {
+            then builtins.fetchGit {
                 url = source.url;
                 rev = source.rev;
-                sha256 = source.sha256;
+                allRefs = true;
             }
             else if type == "CratesIo"
             then downloadFromCratesIo source

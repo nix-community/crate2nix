@@ -105,7 +105,7 @@ pub enum Source {
         /// The revision hash.
         rev: String,
         /// The sha256 of the fetched result.
-        sha256: String,
+        sha256: Option<String>,
     },
     /// Get the source from a nix expression.
     Nix {
@@ -181,7 +181,7 @@ impl Display for Source {
                 version,
                 sha256,
             } => write!(f, "{} {} from crates.io: {}", name, version, sha256),
-            Source::Git { url, rev, sha256 } => write!(f, "{}#{} via git: {}", url, rev, sha256),
+            Source::Git { url, rev, sha256 } => write!(f, "{}#{} via git: {:?}", url, rev, sha256),
             Source::Nix { file, attr: None } => write!(f, "{}", file),
             Source::Nix {
                 file,

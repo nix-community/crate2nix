@@ -130,12 +130,10 @@ rec {
           else {{crate.source.LocalDirectory.path | safe}};
         {%- elif crate.source.Git %}
         workspace_member = null;
-        src = pkgs.fetchgit {
+        src = builtins.fetchGit {
           url = {{crate.source.Git.url}};
           rev = {{crate.source.Git.rev}};
-          {%- if crate.source.Git.sha256 %}
-          sha256 = {{ crate.source.Git.sha256 }};
-          {%- endif %}
+          allRefs = true;
         };
         {%- else %}
         src = builtins.throw ''ERROR: Could not resolve source: {{crate.source | json_encode() | safe}}'';
