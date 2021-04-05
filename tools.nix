@@ -11,7 +11,7 @@
 , strictDeprecation ? true
 }:
 let
-  cargoNix = pkgs.callPackage ./crate2nix/Cargo.nix { inherit strictDeprecation; };
+  cargoNix = import ./crate2nix/Cargo.nix { inherit pkgs strictDeprecation; };
   crate2nix = cargoNix.rootCrate.build;
 in
 rec {
@@ -125,7 +125,7 @@ rec {
   # src: the source that is needed to build the crate, usually the crate/workspace root directory
   # cargoToml: Path to the Cargo.toml file relative to src, "Cargo.toml" by default.
   appliedCargoNix = { cargoToml ? "Cargo.toml", ... } @ args:
-    pkgs.callPackage (generatedCargoNix args) { };
+    import (generatedCargoNix args) { inherit pkgs; };
 
   generate =
     cargoNix.internal.deprecationWarning

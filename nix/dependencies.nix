@@ -31,10 +31,18 @@
 
     cargoRelease =
       let
-        cargoNix = tools.appliedCargoNix rec {
+        cargoNixSource = tools.generatedCargoNix rec {
           name = "cargo-release";
           src = sources."${name}";
         };
+        buildRustCrateForPkgs = pkgs: pkgs.buildRustCrate.override {
+          defaultCrateOverrides = pkgs.defaultCrateOverrides // {
+            cargo-release = { buildInputs ? [ ], ... }: {
+              buildInputs = buildInputs ++ [ pkgs.openssl ];
+            };
+          };
+        };
+        cargoNix = import cargoNixSource { inherit pkgs buildRustCrateForPkgs; };
       in
       cargoNix.rootCrate.build;
   };
