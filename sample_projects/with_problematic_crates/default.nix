@@ -4,7 +4,8 @@
 , generatedCargoNix
 }:
 let
-  generatedBuild = pkgs.callPackage generatedCargoNix {
+  generatedBuild = import generatedCargoNix {
+    inherit pkgs;
     defaultCrateOverrides = pkgs.defaultCrateOverrides // {
       pest_generator = attrs: {
         buildInputs =
