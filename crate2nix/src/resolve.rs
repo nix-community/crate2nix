@@ -61,27 +61,15 @@ impl CrateDerivation {
     ) -> Result<CrateDerivation, Error> {
         let resolved_dependencies = ResolvedDependencies::new(metadata, package)?;
 
-        let build_dependencies = resolved_dependencies
-            .filtered_dependencies(|d| d.kind == DependencyKind::Build)
-            .map_err(|e| {
-                format_err!(
-                    "while resolving build_dependencies for {}: {}",
-                    package.id,
-                    e
-                )
-            })?;
+        let build_dependencies =
+            resolved_dependencies.filtered_dependencies(|d| d.kind == DependencyKind::Build);
 
-        let dependencies = resolved_dependencies
-            .filtered_dependencies(|d| {
-                d.kind == DependencyKind::Normal || d.kind == DependencyKind::Unknown
-            })
-            .map_err(|e| format_err!("while resolving dependencies for {}: {}", package.id, e))?;
+        let dependencies = resolved_dependencies.filtered_dependencies(|d| {
+            d.kind == DependencyKind::Normal || d.kind == DependencyKind::Unknown
+        });
 
-        let dev_dependencies = resolved_dependencies
-            .filtered_dependencies(|d| d.kind == DependencyKind::Development)
-            .map_err(|e| {
-                format_err!("while resolving dev_dependencies for {}: {}", package.id, e)
-            })?;
+        let dev_dependencies =
+            resolved_dependencies.filtered_dependencies(|d| d.kind == DependencyKind::Development);
 
         let is_root_or_workspace_member = metadata
             .root
@@ -707,7 +695,7 @@ impl<'a> ResolvedDependencies<'a> {
     fn filtered_dependencies(
         &self,
         filter: impl Fn(&Dependency) -> bool,
-    ) -> Result<Vec<ResolvedDependency>, Error> {
+    ) -> Vec<ResolvedDependency> {
         let ResolvedDependencies {
             package,
             resolved_packages_by_crate_name,
@@ -760,7 +748,7 @@ impl<'a> ResolvedDependencies<'a> {
             .collect::<Vec<ResolvedDependency>>();
 
         resolved.sort_by(|d1, d2| d1.package_id.cmp(&d2.package_id));
-        Ok(resolved)
+        resolved
     }
 }
 
@@ -849,11 +837,9 @@ pub fn resolved_dependencies_filtered_dependencies_with_double_crate() {
     let root_package = &indexed.root_package().expect("root package");
     let resolved_deps = ResolvedDependencies::new(&indexed, root_package).unwrap();
 
-    let filtered_deps = resolved_deps
-        .filtered_dependencies(|d| {
-            d.kind == DependencyKind::Normal || d.kind == DependencyKind::Unknown
-        })
-        .unwrap();
+    let filtered_deps = resolved_deps.filtered_dependencies(|d| {
+        d.kind == DependencyKind::Normal || d.kind == DependencyKind::Unknown
+    });
 
     assert_eq!(
         filtered_deps.len(),
