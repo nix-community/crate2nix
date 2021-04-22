@@ -98,7 +98,7 @@ in
   testNumDependencies = {
     expr = packageFeatures "pkg_num" [ "default" ];
     expected = {
-      "pkg_num" = [ "default" "num-bigint/std" "std" ];
+      "pkg_num" = [ "default" "num-bigint" "num-bigint/std" "std" ];
       "pkg_num_bigint" = [ "std" ];
     };
   };
@@ -107,7 +107,7 @@ in
     expr = packageFeatures "pkg_numtest" [ "default" ];
     expected = {
       "pkg_numtest" = [ "default" ];
-      "pkg_num" = [ "default" "num-bigint/std" "std" ];
+      "pkg_num" = [ "default" "num-bigint" "num-bigint/std" "std" ];
       "pkg_num_bigint" = [ "std" ];
     };
   };

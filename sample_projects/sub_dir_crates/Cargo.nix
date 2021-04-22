@@ -594,10 +594,11 @@ rec {
       let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
         expandedFeatures = expandFeatures (crateConfig.features or { }) features;
+        enabledFeatures = enableFeatures (crateConfig.dependencies or [ ]) expandedFeatures;
         depWithResolvedFeatures = dependency:
           let
             packageId = dependency.packageId;
-            features = dependencyFeatures expandedFeatures dependency;
+            features = dependencyFeatures enabledFeatures dependency;
           in
           { inherit packageId features; };
         resolveDependencies = cache: path: dependencies:
@@ -606,7 +607,7 @@ rec {
           let
             enabledDependencies = filterEnabledDependencies {
               inherit dependencies target;
-              features = expandedFeatures;
+              features = enabledFeatures;
             };
             directDependencies = map depWithResolvedFeatures enabledDependencies;
             foldOverCache = op: lib.foldl op cache directDependencies;
@@ -630,7 +631,7 @@ rec {
         cacheWithSelf =
           let
             cacheFeatures = featuresByPackageId.${packageId} or [ ];
-            combinedFeatures = sortedUnique (cacheFeatures ++ expandedFeatures);
+            combinedFeatures = sortedUnique (cacheFeatures ++ enabledFeatures);
           in
           featuresByPackageId // {
             "${packageId}" = combinedFeatures;
@@ -697,6 +698,28 @@ rec {
       outFeatures = lib.concatMap expandFeature inputFeatures;
     in
     sortedUnique outFeatures;
+
+  /* This function adds optional dependencies as features if they are enabled
+     indirectly by dependency features. This function mimics Cargo's behavior
+     described in a note at:
+     https://doc.rust-lang.org/nightly/cargo/reference/features.html#dependency-features
+  */
+  enableFeatures = dependencies: features:
+    assert (builtins.isList features);
+    assert (builtins.isList dependencies);
+    let
+      additionalFeatures = lib.concatMap
+        (
+          dependency:
+            assert (builtins.isAttrs dependency);
+            let
+              enabled = builtins.any (doesFeatureEnableDependency dependency) features;
+            in
+            if (dependency.optional or false) && enabled then [ dependency.name ] else [ ]
+        )
+        dependencies;
+    in
+    sortedUnique (features ++ additionalFeatures);
 
   /*
      Returns the actual features for the given dependency.
