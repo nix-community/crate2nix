@@ -1,3 +1,26 @@
+# 0.9.x - 0.10.0 (not released)
+
+Help needed! I don't have the resources to meaningfully advance this project. Thank
+you for all the valuable contributions but I'd appreciate a co-maintainer who
+is motivated to put in some time into reviewing PRs, updating docs, fixing bugs, ..
+
+## New: Enable optional create feature if sub feature was enabled
+
+Enable a feature with the same name of an optional dependency, if the optional
+dependency is indirectly enabled by enabling one of its features.
+
+This mimicks the behavior of Cargo which is explained in the note
+[here](https://doc.rust-lang.org/nightly/cargo/reference/features.html#dependency-features).
+
+Thank you @pandaman64!
+
+This fixes the following isues:
+
+* (#146)[https://github.com/kolloch/crate2nix/issues/146]
+  Features fail to contain optional dependencies that got enabled indirectly
+* (#182)[https://github.com/kolloch/crate2nix/issues/182]
+  Can't build crate with dependency num 0.4.0
+
 # 0.8.x - 0.9.0
 
 Help needed! I don't have the resources to meaningfully advance this project. Thank
