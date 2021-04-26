@@ -134,6 +134,7 @@ rec {
           url = {{crate.source.Git.url}};
           rev = {{crate.source.Git.rev}};
           allRefs = true;
+          submodules = true;
         };
         {%- else %}
         src = builtins.throw ''ERROR: Could not resolve source: {{crate.source | json_encode() | safe}}'';

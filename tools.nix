@@ -175,11 +175,13 @@ rec {
       {
         url = builtins.head splitQuestion;
         rev = lib.last splitQuestion;
-        branch = if (lib.length maybeBranchSplited) == 1 then
-          "master"
-        else (
-          lib.head (lib.splitString "#" (lib.last maybeBranchSplited))
-        );
+        branch =
+          if (lib.length maybeBranchSplited) == 1 then
+            "master"
+          else
+            (
+              lib.head (lib.splitString "#" (lib.last maybeBranchSplited))
+            );
       };
 
     vendorSupport = { crateDir ? ./., ... }:
@@ -365,6 +367,7 @@ rec {
               src = builtins.fetchGit {
                 inherit (parsed) url rev;
                 allRefs = true;
+                submodules = true;
               };
               srcName = "${name}-${version}";
 
