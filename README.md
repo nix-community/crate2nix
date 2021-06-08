@@ -279,10 +279,10 @@ NixOS that crate2nix uses.
 
 ## Running rust tests
 
-There is some experimental support for running tests of your rust crates. All
-of the crates in the workspace will have their tests executed. When enabling
-test execution (`runTests = true;`), failing tests will make the whole build
-fail.
+There is some experimental support for running tests of your rust crates. All of
+the crates in the workspace will have their tests executed. When enabling test
+execution (`runTests = true;`), failing tests will make the whole build fail
+unless you explicitly disable this via test hooks: see the section below.
 
 ```nix
       let cargo_nix = import ./Cargo.nix { inherit pkgs; };
@@ -296,6 +296,20 @@ fail.
 `testInputs` is optional and allows passing inputs to the test execution that
 should be in scope. Defaults to an empty list and is ignored when `runTests`
 equals `false`.
+
+### Custom pre/post test hooks
+
+There are `testPreRun` and `testPostRun` attributes available for the crates
+that are being tested. These are ran directly before and after the actual test
+command. Some example use-cases include:
+
+* setting some environment variable that's needed for the test
+
+* setting (and then unsetting) the bash `set +e` option to not fail the
+  derivation build even if a test fails. This is quite useful if your tests are
+  not flaky and you want to cache failures.
+
+Arbitrary `bash` expressions are accepted.
 
 ## FAQ
 

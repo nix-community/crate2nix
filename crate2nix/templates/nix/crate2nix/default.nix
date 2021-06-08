@@ -96,9 +96,11 @@ rec {
      testCrateFlags: list of flags to pass to the test exectuable
      testInputs: list of packages that should be available during test execution
   */
-  crateWithTest = { crate, testCrate, testCrateFlags, testInputs }:
+  crateWithTest = { crate, testCrate, testCrateFlags, testInputs, testPreRun, testPostRun }:
     assert builtins.typeOf testCrateFlags == "list";
     assert builtins.typeOf testInputs == "list";
+    assert builtins.typeOf testPreRun == "string";
+    assert builtins.typeOf testPostRun == "string";
     let
       # override the `crate` so that it will build and execute tests instead of
       # building the actual lib and bin targets We just have to pass `--test`
@@ -112,6 +114,15 @@ rec {
                 buildTests = true;
               }
             );
+          # If the user hasn't set any pre/post commands, we don't want to
+          # insert empty lines. This means that any existing users of crate2nix
+          # don't get a spurious rebuild unless they set these explicitly.
+          testCommand = pkgs.lib.concatStringsSep "\n"
+            (pkgs.lib.filter (s: s != "") [
+              testPreRun
+              "$f $testCrateFlags 2>&1 | tee -a $out"
+              testPostRun
+            ]);
         in
         pkgs.runCommand "run-tests-${testCrate.name}"
           {
@@ -145,7 +156,7 @@ rec {
           for file in ${drv}/tests/*; do
             f=$testRoot/$(basename $file)-$hash
             cp $file $f
-            $f $testCrateFlags 2>&1 | tee -a $out
+            ${testCommand}
           done
         '';
     in
@@ -169,6 +180,10 @@ rec {
     , runTests ? false
     , testCrateFlags ? [ ]
     , testInputs ? [ ]
+      # Any command to run immediatelly before a test is executed.
+    , testPreRun ? ""
+      # Any command run immediatelly after a test is executed.
+    , testPostRun ? ""
     }:
     lib.makeOverridable
       (
@@ -177,6 +192,8 @@ rec {
         , runTests
         , testCrateFlags
         , testInputs
+        , testPreRun
+        , testPostRun
         }:
         let
           buildRustCrateForPkgsFuncOverriden =
@@ -209,13 +226,13 @@ rec {
                 {
                   crate = drv;
                   testCrate = testDrv;
-                  inherit testCrateFlags testInputs;
+                  inherit testCrateFlags testInputs testPreRun testPostRun;
                 }
             else drv;
         in
         derivation
       )
-      { inherit features crateOverrides runTests testCrateFlags testInputs; };
+      { inherit features crateOverrides runTests testCrateFlags testInputs testPreRun testPostRun; };
 
   /* Returns an attr set with packageId mapped to the result of buildRustCrateForPkgsFunc
      for the corresponding crate.
