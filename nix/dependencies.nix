@@ -12,13 +12,12 @@
       cargo clippy rustc rustfmt
       binutils
       nixpkgs-fmt jq
+      niv
       nix
       git
       utillinux
       cacert
       ;
-
-    niv = (pkgs.callPackage sources.niv { }).niv;
 
     nixTest =
       let
