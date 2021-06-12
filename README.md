@@ -299,17 +299,16 @@ equals `false`.
 
 ### Custom pre/post test hooks
 
-There are `testPreRun` and `testPostRun` attributes available for the crates
-that are being tested. These are ran directly before and after the actual test
-command. Some example use-cases include:
+Want to customize your test execution? Use the `testPreRun` and `testPostRun`
+crate attributes(next to `runTests` in the example above). `crate2nix` executes
+the bash snippets in `testPreRun` and `testPostRun` directly before and after
+the actual test command, and in the same shell. Some example use-cases include:
 
-* setting some environment variable that's needed for the test
+* Setting some environment variable that is needed for the test.
 
-* setting (and then unsetting) the bash `set +e` option to not fail the
+* Setting (and then unsetting) the bash `set +e` option to not fail the
   derivation build even if a test fails. This is quite useful if your tests are
   not flaky and you want to cache failures.
-
-Arbitrary `bash` expressions are accepted.
 
 ## FAQ
 

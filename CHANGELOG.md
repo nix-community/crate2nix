@@ -21,6 +21,21 @@ This fixes the following isues:
 * (#182)[https://github.com/kolloch/crate2nix/issues/182]
   Can't build crate with dependency num 0.4.0
 
+## New: Customize test commands
+
+Want to customize your test execution? Use the `testPreRun` and `testPostRun`
+crate attributes (next to `runTests`, see
+[README.md](./README.md#running-rust-tests)). `crate2nix` executes the
+bash snippets in `testPreRun` and `testPostRun` directly before and after the
+actual test command, and in the same shell. Some example use-cases include:
+
+* Setting some environment variable that is needed for the test.
+
+* Setting (and then unsetting) the bash `set +e` option to not fail the
+  derivation build even if a test fails. This is quite useful if your tests are
+  not flaky and you want to cache failures.
+
+Thank you @Fuuzetsu!
 # 0.8.x - 0.9.0
 
 Help needed! I don't have the resources to meaningfully advance this project. Thank
