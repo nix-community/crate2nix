@@ -128,7 +128,7 @@ rec {
 #
 
   /* Target (platform) data for conditional dependencies.
-     This corresponds roughly to what buildRustCrate is setting.
+    This corresponds roughly to what buildRustCrate is setting.
   */
   defaultTarget = {
     unix = true;
@@ -200,10 +200,10 @@ rec {
       );
 
   /* Returns a crate which depends on successful test execution
-     of crate given as the second argument.
+    of crate given as the second argument.
 
-     testCrateFlags: list of flags to pass to the test exectuable
-     testInputs: list of packages that should be available during test execution
+    testCrateFlags: list of flags to pass to the test exectuable
+    testInputs: list of packages that should be available during test execution
   */
   crateWithTest = { crate, testCrate, testCrateFlags, testInputs, testPreRun, testPostRun }:
     assert builtins.typeOf testCrateFlags == "list";
@@ -344,7 +344,7 @@ rec {
       { inherit features crateOverrides runTests testCrateFlags testInputs testPreRun testPostRun; };
 
   /* Returns an attr set with packageId mapped to the result of buildRustCrateForPkgsFunc
-     for the corresponding crate.
+    for the corresponding crate.
   */
   builtRustCratesWithFeatures =
     { packageId
@@ -482,7 +482,7 @@ rec {
       map depDerivation enabledDependencies;
 
   /* Returns a sanitized version of val with all values substituted that cannot
-     be serialized as JSON.
+    be serialized as JSON.
   */
   sanitizeForJson = val:
     if builtins.isAttrs val
@@ -527,9 +527,9 @@ rec {
     { internal = debug; };
 
   /* Returns differences between cargo default features and crate2nix default
-     features.
+    features.
 
-     This is useful for verifying the feature resolution in crate2nix.
+    This is useful for verifying the feature resolution in crate2nix.
   */
   diffDefaultPackageFeatures =
     { crateConfigs ? crates
@@ -566,8 +566,8 @@ rec {
 
   /* Returns an attrset mapping packageId to the list of enabled features.
 
-     If multiple paths to a dependency enable different features, the
-     corresponding feature sets are merged. Features in rust are additive.
+    If multiple paths to a dependency enable different features, the
+    corresponding feature sets are merged. Features in rust are additive.
   */
   mergePackageFeatures =
     { crateConfigs ? crates
@@ -681,10 +681,10 @@ rec {
     || startsWithPrefix;
 
   /* Returns the expanded features for the given inputFeatures by applying the
-     rules in featureMap.
+    rules in featureMap.
 
-     featureMap is an attribute set which maps feature names to lists of further
-     feature names to enable in case this feature is selected.
+    featureMap is an attribute set which maps feature names to lists of further
+    feature names to enable in case this feature is selected.
   */
   expandFeatures = featureMap: inputFeatures:
     assert (builtins.isAttrs featureMap);
@@ -698,9 +698,9 @@ rec {
     sortedUnique outFeatures;
 
   /* This function adds optional dependencies as features if they are enabled
-     indirectly by dependency features. This function mimics Cargo's behavior
-     described in a note at:
-     https://doc.rust-lang.org/nightly/cargo/reference/features.html#dependency-features
+    indirectly by dependency features. This function mimics Cargo's behavior
+    described in a note at:
+    https://doc.rust-lang.org/nightly/cargo/reference/features.html#dependency-features
   */
   enableFeatures = dependencies: features:
     assert (builtins.isList features);
@@ -720,9 +720,9 @@ rec {
     sortedUnique (features ++ additionalFeatures);
 
   /*
-     Returns the actual features for the given dependency.
+    Returns the actual features for the given dependency.
 
-     features: The features of the crate that refers this dependency.
+    features: The features of the crate that refers this dependency.
   */
   dependencyFeatures = features: dependency:
     assert (builtins.isList features);
