@@ -25,11 +25,8 @@ crossbeam-channel = "*"
 env_logger = "*"
 parking_lot ="*"
 error-chain = "*"
-hyper = "*"
-tokio = "*"
-tokio-timer = "*"
-tokio-io = "*"
-tokio-tcp = "*"
+hyper = { version = "*", features = ["full"] }
+tokio =  { version = "*", features = ["full"] }
 mime = "*"
 tokio-threadpool = "*"
 
@@ -37,3 +34,14 @@ tokio-threadpool = "*"
 tokio-executor = "*"
 # FIXME: using default features causes 2 versions of lazy_static to be found
 tracing = "*"
+
+# Most popular on crates.io
+cfg-if = "*"
+unicode-xid = "*"
+rand = "*"
+syn = "*"
+libc = "*"
+quote = "*"
+proc-macro2 = "*"
+serde = "*"
+bitflags = "*"
