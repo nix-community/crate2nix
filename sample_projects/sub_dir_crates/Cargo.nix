@@ -780,7 +780,6 @@ rec {
   #
   # crate2nix/default.nix (excerpt end)
   #
-
   };
 }
 
