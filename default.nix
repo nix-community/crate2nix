@@ -33,8 +33,14 @@ let
             };
         dontFixup = !release;
       };
-      cssparser-macros = attrs: assert builtins.trace "cssparser" true;{
+      cssparser-macros = attrs: assert builtins.trace "override for cssparser" true;{
         buildInputs = lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.Security ];
+      };
+      anyhow = attrs: assert builtins.trace "override for anyhow" true;{
+        buildInputs = lib.optionals stdenv.isDarwin [ pkgs.libiconv ];
+      };
+      bitflags = attrs: assert builtins.trace "override for bitflags" true;{
+        buildInputs = lib.optionals stdenv.isDarwin [ pkgs.libiconv ];
       };
     };
   };
