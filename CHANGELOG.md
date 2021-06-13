@@ -6,6 +6,7 @@ Help needed! I don't have the resources to meaningfully advance this project. Th
 you for all the valuable contributions but I'd appreciate a co-maintainer who
 is motivated to put in some time into reviewing PRs, updating docs, fixing bugs, ..
 
+Warning: This release does not work on Mac OS with a recent `nixpkgs`. Help wanted.
 Warning: the `buildRustCrate` argument will be removed soon.
 ## New "calling convention"
 
