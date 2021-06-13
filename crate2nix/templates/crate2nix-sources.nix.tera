@@ -40,12 +40,14 @@ rec {
             assert builtins.isString type;
 
             if type == "Git"
-            then builtins.fetchGit {
+            then builtins.fetchGit ({
                 url = source.url;
                 rev = source.rev;
-                allRefs = true;
                 submodules = true;
-            }
+            } // (if isNull source.ref
+                then { allRefs = true; } 
+                else { inherit (source) ref; }
+            ))
             else if type == "CratesIo"
             then downloadFromCratesIo source
             else if type == "Nix"

@@ -130,12 +130,15 @@ rec {
           else {{crate.source.LocalDirectory.path | safe}};
         {%- elif crate.source.Git %}
         workspace_member = null;
-        src = builtins.fetchGit {
+        src = builtins.fetchGit ({
           url = {{crate.source.Git.url}};
           rev = {{crate.source.Git.rev}};
-          allRefs = true;
           submodules = true;
-        };
+        } // (if isNull {% if crate.source.Git.ref %} {{crate.source.Git.ref}} {% else %} null {% endif %} then {
+          allRefs = true;
+        } else {
+          ref = {% if crate.source.Git.ref %} {{crate.source.Git.ref}} {% else %} null {% endif %};
+        }));
         {%- else %}
         src = builtins.throw ''ERROR: Could not resolve source: {{crate.source | json_encode() | safe}}'';
         {%- endif -%}

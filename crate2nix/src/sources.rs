@@ -34,11 +34,11 @@ pub fn crates_io_source(name: String, version: Version) -> Result<config::Source
 }
 
 /// Returns the completed Source::Git definition by prefetching the hash.
-pub fn git_io_source(url: Url, rev: String) -> Result<config::Source, Error> {
+pub fn git_io_source(url: Url, rev: String, r#ref: Option<String>) -> Result<config::Source, Error> {
     let prefetchable = GitSource {
         url: url.clone(),
         rev: rev.clone(),
-        r#ref: None,
+        r#ref: r#ref.clone(),
         sha256: None,
     };
 
@@ -46,7 +46,7 @@ pub fn git_io_source(url: Url, rev: String) -> Result<config::Source, Error> {
     let sha256 = prefetchable.prefetch()?;
     eprintln!("done.");
 
-    Ok(config::Source::Git { url, rev, sha256: Some(sha256) })
+    Ok(config::Source::Git { url, rev, r#ref, sha256: Some(sha256) })
 }
 
 /// Operations on assmebling out-of-tree sources via nix.

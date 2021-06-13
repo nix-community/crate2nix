@@ -104,6 +104,8 @@ pub enum Source {
         url: url::Url,
         /// The revision hash.
         rev: String,
+        /// The reference (branch or tag).
+        r#ref: Option<String>,
         /// The sha256 of the fetched result.
         sha256: Option<String>,
     },
@@ -181,7 +183,7 @@ impl Display for Source {
                 version,
                 sha256,
             } => write!(f, "{} {} from crates.io: {}", name, version, sha256),
-            Source::Git { url, rev, sha256 } => write!(f, "{}#{} via git: {:?}", url, rev, sha256),
+            Source::Git { url, rev, r#ref, sha256 } => write!(f, "{}#{} on {:?} via git: {:?}", url, rev, r#ref, sha256),
             Source::Nix { file, attr: None } => write!(f, "{}", file),
             Source::Nix {
                 file,

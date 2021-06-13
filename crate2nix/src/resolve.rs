@@ -366,10 +366,10 @@ pub enum ResolvedSource {
 impl From<crate::config::Source> for ResolvedSource {
     fn from(source: crate::config::Source) -> Self {
         match source {
-            crate::config::Source::Git { url, rev, sha256 } => ResolvedSource::Git(GitSource {
+            crate::config::Source::Git { url, rev, r#ref, sha256 } => ResolvedSource::Git(GitSource {
                 url,
                 rev,
-                r#ref: None,
+                r#ref,
                 sha256,
             }),
             crate::config::Source::CratesIo {
@@ -459,8 +459,8 @@ impl ResolvedSource {
         let mut url = url::Url::parse(&source_string[GIT_SOURCE_PREFIX.len()..])?;
         let mut query_pairs = url.query_pairs();
 
-        let branch = query_pairs
-            .find(|(k, _)| k == "branch")
+        let r#ref = query_pairs
+            .find(|(k, _)| k == "branch" || k == "tag")
             .map(|(_, v)| v.to_string());
         let rev = if let Some((_, rev)) = query_pairs.find(|(k, _)| k == "rev") {
             rev.to_string()
@@ -479,7 +479,7 @@ impl ResolvedSource {
         Ok(ResolvedSource::Git(GitSource {
             url,
             rev,
-            r#ref: branch,
+            r#ref,
             sha256: None,
         }))
     }
