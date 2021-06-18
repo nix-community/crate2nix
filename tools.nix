@@ -249,7 +249,7 @@ rec {
             ref = parsed.branch or parsed.tag or null;
             src = builtins.fetchGit ({
               inherit (parsed) url;
-              rev = parsed.rev or parsed.revision;
+              rev = parsed.revision;
               submodules = true;
             } // (if isNull ref then {
               allRefs = true;
@@ -321,15 +321,26 @@ rec {
                   has = name: attrs: ! isNull (attrs.${name} or null);
                   hasTag = has "tag";
                   hasRev = has "rev";
+                  hasBranch = has "branch";
+                  putBranch = (hasBranch attrs) || (hasBranch parsed);
                   putTag = (hasTag attrs) || (hasTag parsed);
                   putRev = (hasRev attrs) || (hasRev parsed);
+                  isNewerCargo = builtins.compareVersions pkgs.cargo.version "1.53.0" > (-1);
                 in
                 ''
 
               [source."${parsed.url}"]
               git = "${parsed.url}"
-              rev = "${parsed.rev or parsed.revision}"
-              ${lib.optionalString ((! putRev) && (! putTag)) ''branch = "${attrs.branch or parsed.branch or "master"}"''}
+              ${
+                if isNewerCargo
+                then lib.optionalString putRev ''rev = "${attrs.rev or parsed.rev or parsed.revision}"''
+                else ''rev = "${attrs.rev or parsed.rev or parsed.revision}"''
+              }
+              ${
+                if isNewerCargo
+                then lib.optionalString ((! putRev) && putBranch) ''branch = "${attrs.branch or parsed.branch}"''
+                else lib.optionalString ((! putRev) && (! putTag)) ''branch = "${attrs.branch or parsed.branch or "master"}"''
+              }
               ${lib.optionalString ((! putRev) && putTag) ''tag = "${attrs.tag or parsed.tag}"''}
               replace-with = "vendored-sources"
               '';
@@ -380,7 +391,7 @@ rec {
               ref = parsed.branch or parsed.tag or null;
               src = builtins.fetchGit ({
                 inherit (parsed) url;
-                rev = parsed.rev or parsed.revision;
+                rev = parsed.revision;
                 submodules = true;
               } // (if isNull ref then {
                 allRefs = true;
