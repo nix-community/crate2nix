@@ -190,6 +190,23 @@ rec {
         inherit branch;
       };
 
+    getSrcFromGitSource = source:
+      let
+        parsed = parseGitSource source;
+        ref = parsed.branch or parsed.tag or null;
+      in builtins.fetchGit ({
+        inherit (parsed) url;
+        rev = parsed.revision;
+        submodules = true;
+      } // (if isNull ref then {
+        allRefs = true;
+      } else {
+        ref =
+          if ref == (parsed.tag or null)
+          then "refs/tags/${ref}"
+          else ref;
+      }));
+
     vendorSupport = { crateDir ? ./., ... }:
       rec {
         toPackageId = { name, version, source, ... }:
@@ -245,17 +262,7 @@ rec {
 
         mkGitHash = { source, ... }@attrs:
           let
-            parsed = parseGitSource source;
-            ref = parsed.branch or parsed.tag or null;
-            src = builtins.fetchGit ({
-              inherit (parsed) url;
-              rev = parsed.revision;
-              submodules = true;
-            } // (if isNull ref then {
-              allRefs = true;
-            } else {
-              inherit ref;
-            }));
+            src = getSrcFromGitSource source;
             hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
               echo -n "$(nix-hash --type sha256 ${src})" > $out
             '';
@@ -387,17 +394,7 @@ rec {
             assert (sourceType package) == "git";
             let
               packageId = toPackageId package;
-              parsed = parseGitSource source;
-              ref = parsed.branch or parsed.tag or null;
-              src = builtins.fetchGit ({
-                inherit (parsed) url;
-                rev = parsed.revision;
-                submodules = true;
-              } // (if isNull ref then {
-                allRefs = true;
-              } else {
-                inherit ref;
-              }));
+              src = getSrcFromGitSource source;
               srcName = "${name}-${version}";
 
               rootCargo = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
