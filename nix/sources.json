@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "sunng87",
         "repo": "cargo-release",
-        "rev": "77652308c0b7fded51a2b2608a08d69a89408a0d",
-        "sha256": "0hcxp3ixl3vkchagx28za1n6d3gi50rzpyv4jcanv7qxj0985vpn",
+        "rev": "c449c7e41e5564eac5e48283df469580cecc066b",
+        "sha256": "17qr2rwx39gxz4vg5hzhn0yy66nakvwdaigzdryg0wqh8mychwr9",
         "type": "tarball",
-        "url": "https://github.com/sunng87/cargo-release/archive/77652308c0b7fded51a2b2608a08d69a89408a0d.tar.gz",
+        "url": "https://github.com/sunng87/cargo-release/archive/c449c7e41e5564eac5e48283df469580cecc066b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "crate2nix": {
@@ -53,10 +53,10 @@
         "homepage": "https://github.com/NixOS/nixpkgs",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "3a8d7958a610cd3fec3a6f424480f91a1b259185",
-        "sha256": "0bmxrdn9sn6mxvkyyxdlxlzczfh59iy66c55ql144ilc1cjk28is",
+        "rev": "036dc0c709650e0c833822307af801f576d67273",
+        "sha256": "0pnrygs6xf7id63zi17pq5379hfppwbb5cfazhypcqz6l3dfk00g",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/3a8d7958a610cd3fec3a6f424480f91a1b259185.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/036dc0c709650e0c833822307af801f576d67273.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-mozilla": {
