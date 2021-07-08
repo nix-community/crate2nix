@@ -7,6 +7,7 @@ use cargo_metadata::Package;
 use cargo_metadata::PackageId;
 use cargo_metadata::{Dependency, Source};
 use cargo_metadata::{DependencyKind, Target};
+use cargo_platform::Platform;
 use pathdiff::diff_paths;
 use semver::Version;
 use serde::Deserialize;
@@ -737,7 +738,7 @@ impl<'a> ResolvedDependencies<'a> {
                     name: package_dep.name.clone(),
                     rename: package_dep.rename.clone(),
                     package_id: dep_package.id.clone(),
-                    target: package_dep.target.as_ref().map(|t| t.to_string()),
+                    target: package_dep.target.clone(),
                     optional: package_dep.optional,
                     uses_default_features: package_dep.uses_default_features,
                     features: package_dep.features.clone(),
@@ -857,7 +858,7 @@ pub struct ResolvedDependency {
     pub package_id: PackageId,
     /// The cfg expression for conditionally enabling the dependency (if any).
     /// Can also be a target "triplet".
-    pub target: Option<String>,
+    pub target: Option<Platform>,
     /// Whether this dependency is optional and thus needs to be enabled via a feature.
     pub optional: bool,
     /// Whether the crate uses this dependency with default features enabled.
