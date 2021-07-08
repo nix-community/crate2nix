@@ -317,14 +317,9 @@ rec {
       };
       "cargo_metadata" = rec {
         crateName = "cargo_metadata";
-        version = "0.13.1";
+        version = "0.14.0";
         edition = "2018";
-        workspace_member = null;
-        src = pkgs.fetchgit {
-          url = "https://github.com/oli-obk/cargo_metadata";
-          rev = "f94920f880fc9d2553f06bb709c1535345115e64";
-          sha256 = "13lk9hvq78ch94hdbi9p1pl7m1kllhlyfwn2qh9mmzp0wvyfrnvv";
-        };
+        sha256 = "16hhak3gips08lqp0x7s9wnfm139hy0a3nm0k4pman7m6lqvv5y2";
         authors = [
           "Oliver Schneider <git-spam-no-reply9815368754983@oli-obk.de>"
         ];

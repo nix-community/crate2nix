@@ -12,8 +12,7 @@ resolver = "2"
 
 [dependencies]
 anyhow = "1.0.28"
-# https://github.com/oli-obk/cargo_metadata/issues/164 waiting on release for semver 1
-cargo_metadata = { git = "https://github.com/oli-obk/cargo_metadata", branch = "main" }
+cargo_metadata = "0.14"
 cargo-platform = "0.1"
 hex = "0.4"
 itertools = "0.9"
