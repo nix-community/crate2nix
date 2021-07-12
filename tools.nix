@@ -408,14 +408,19 @@ rec {
                 in
                 cargoTomlCrate.package.name;
 
+              filteredPaths =
+                builtins.filter
+                  (to_filter: getCrateNameFromPath to_filter == name)
+                  containedCrates;
+
               pathToExtract =
                 if isWorkspace then
-                  builtins.head
-                    (builtins.filter
-                      (to_filter:
-                        (getCrateNameFromPath to_filter) == name
-                      )
-                      containedCrates)
+                  # Workaround for sources that have isWorkspace as true, but don't
+                  # declare all their members in `workspace.members`
+                  if builtins.length filteredPaths > 0
+                  then builtins.head filteredPaths
+                  # This does not cover all possible cases, only is a last ditch effort
+                  else name
                 else
                   ".";
             in
