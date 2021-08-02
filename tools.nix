@@ -333,10 +333,14 @@ rec {
                   putTag = (hasTag attrs) || (hasTag parsed);
                   putRev = (hasRev attrs) || (hasRev parsed);
                   isNewerCargo = builtins.compareVersions pkgs.cargo.version "1.53.0" > (-1);
+                  key = if putRev    then "?rev=${attrs.rev or parsed.rev}"       else
+                        if putTag    then "?tag=${attrs.tag or parsed.tag}"       else
+                        if putBranch then "?branch=${attrs.branch or parsed.branch}" else
+                        "";
                 in
                 ''
 
-              [source."${parsed.url}"]
+              [source."${parsed.url}${key}"]
               git = "${parsed.url}"
               ${
                 if isNewerCargo
