@@ -185,8 +185,14 @@ fn cfg_to_nix_expr_filter(
                 Ok(tera::Value::String(cfg_to_nix_expr(&expr)))
             } else {
                 // It is hopefully a target "triplet".
-                let condition =
-                    format!("(stdenv.hostPlatform.config == {})", escape_nix_string(key));
+                // TODO: there is a `toRustTarget` in Nixpkgs that does this for
+                // us, but it is currently bound on the rust compiler instead of
+                // being a pure function which makes it a bit awkward to fish
+                // out.
+                let condition = format!(
+                    "((let p = stdenv.hostPlatform; in p.rustc.config or p.config) == {})",
+                    escape_nix_string(key)
+                );
                 Ok(tera::Value::String(condition))
             }
         }
