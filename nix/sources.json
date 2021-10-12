@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "sunng87",
         "repo": "cargo-release",
-        "rev": "7efc80c332cadfddf19bf41515add6be969daab4",
-        "sha256": "0wrqbfz9q4cg84rwhf93c29n1jcx9mgdx14v6071ag8zi75qv5hc",
+        "rev": "e19c222ae9010c6ab1ef8aeb5080ab2d766764d1",
+        "sha256": "1dbqbha3mq8li4n7m7gjgz85f08g59qhpjdx5mlclcbwpgwmmh8f",
         "type": "tarball",
-        "url": "https://github.com/sunng87/cargo-release/archive/7efc80c332cadfddf19bf41515add6be969daab4.tar.gz",
+        "url": "https://github.com/sunng87/cargo-release/archive/e19c222ae9010c6ab1ef8aeb5080ab2d766764d1.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "crate2nix": {
