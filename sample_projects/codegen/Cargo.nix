@@ -238,7 +238,7 @@ rec {
         edition = "2018";
         workspace_member = null;
         src = pkgs.fetchgit {
-          url = "https://github.com/diwic/dbus-rs/";
+          url = "https://github.com/diwic/dbus-rs.git";
           rev = "b079366e27da1b9c2869f065fbb6004138e439c2";
           sha256 = "0lbp76vvi0cw57lxhfqmz22qd5l61w3rh8g58hhmwi8wcr9qmiiw";
         };
@@ -265,7 +265,7 @@ rec {
         crateBin = [];
         workspace_member = null;
         src = pkgs.fetchgit {
-          url = "https://github.com/diwic/dbus-rs/";
+          url = "https://github.com/diwic/dbus-rs.git";
           rev = "b079366e27da1b9c2869f065fbb6004138e439c2";
           sha256 = "0lbp76vvi0cw57lxhfqmz22qd5l61w3rh8g58hhmwi8wcr9qmiiw";
         };
@@ -309,7 +309,7 @@ rec {
         edition = "2015";
         workspace_member = null;
         src = pkgs.fetchgit {
-          url = "https://github.com/diwic/dbus-rs/";
+          url = "https://github.com/diwic/dbus-rs.git";
           rev = "b079366e27da1b9c2869f065fbb6004138e439c2";
           sha256 = "0lbp76vvi0cw57lxhfqmz22qd5l61w3rh8g58hhmwi8wcr9qmiiw";
         };
