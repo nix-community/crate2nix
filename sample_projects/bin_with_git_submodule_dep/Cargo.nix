@@ -224,7 +224,11 @@ rec {
         crateBin = [
           { name = "bin_with_git_submodule_dep"; path = "src/main.rs"; }
         ];
-        src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
+        # We can't filter paths with references in Nix 2.4
+        # See https://github.com/NixOS/nix/issues/5410
+        src = if (lib.versionOlder builtins.nixVersion "2.4")
+          then lib.cleanSourceWith { filter = sourceFilter;  src = ./.; }
+          else ./.;
         authors = [
           "Phillip Cloud <cloud@standard.ai>"
         ];
