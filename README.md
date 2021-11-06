@@ -177,7 +177,7 @@ in import sources.nixpkgs {
         # NOTE: "rust" instead of "rustc" is not a typo: It will include more than needed
         # but also the much needed "rust-std".
         rustc = super.latest.rustChannels.stable.rust;
-        inherit (super.latest.rustChannels.stable) cargo rust rust-fmt rust-std clippy;
+        inherit (super.latest.rustChannels.stable);
       })
     ];
   }
