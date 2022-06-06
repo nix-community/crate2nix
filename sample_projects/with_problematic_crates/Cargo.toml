@@ -10,7 +10,7 @@ tera = "*"
 
 # Introduced some escaping around the generated target.os expression for
 # dragonfly
-nix = "0.14.1"
+nix = "0.20.2"
 
 # Regression test for issue #4
 html5ever = "0.22.5"
