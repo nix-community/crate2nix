@@ -263,6 +263,15 @@ let
     }
 
     {
+      name = "renamed_dev_deps";
+      src = ./sample_projects/renamed_dev_deps;
+      expectedTestOutputs = [
+        "test test::ran_a_test ... ok"
+      ];
+      customBuild = "sample_projects/renamed_dev_deps/test.nix";
+    }
+
+    {
       name = "sample_workspace";
       src = ./sample_workspace;
       expectedOutput = "Hello, with_tera!";
