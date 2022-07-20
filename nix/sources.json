@@ -5,10 +5,10 @@
         "homepage": "https://cachix.org",
         "owner": "cachix",
         "repo": "cachix",
-        "rev": "ec5904b25b74dd1b1cf7db0874f85a9169b388aa",
-        "sha256": "0s51i7mpz8sk63xs31lkzscca0j81rhzikrk61cnrlqa7dhy8nmw",
+        "rev": "8f74a19c9af05b455ae0611e1870b33065e1f9b9",
+        "sha256": "1r76aqfi01s2jbc9xxh92vhwsw7wn4x2qnwj8j77l3lg8jk1q24h",
         "type": "tarball",
-        "url": "https://github.com/cachix/cachix/archive/ec5904b25b74dd1b1cf7db0874f85a9169b388aa.tar.gz",
+        "url": "https://github.com/cachix/cachix/archive/8f74a19c9af05b455ae0611e1870b33065e1f9b9.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "cargo-release": {
@@ -24,15 +24,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "crate2nix": {
-        "branch": "master",
+        "branch": "balsoft/fix-broken-ifd",
         "description": "nix build file generator for rust crates",
         "homepage": "",
-        "owner": "kolloch",
+        "owner": "balsoft",
         "repo": "crate2nix",
-        "rev": "a18488a2083c0148c07b874343701fdfec1cd2af",
-        "sha256": "0ygbgwgnnlhm5wpll7vjfxaww7j50faj8qg0nc8jvwmnr9iv2svw",
+        "rev": "c704f6a0a76684ad65f852393480f6777a87f7ff",
+        "sha256": "1bmz1qawih9s97bki5c5zrdjgad26yk6c60r5qh5pn31aybpmhgk",
         "type": "tarball",
-        "url": "https://github.com/kolloch/crate2nix/archive/a18488a2083c0148c07b874343701fdfec1cd2af.tar.gz",
+        "url": "https://github.com/balsoft/crate2nix/archive/c704f6a0a76684ad65f852393480f6777a87f7ff.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nix-test-runner": {
@@ -65,10 +65,10 @@
         "homepage": null,
         "owner": "mozilla",
         "repo": "nixpkgs-mozilla",
-        "rev": "7c1e8b1dd6ed0043fb4ee0b12b815256b0b9de6f",
-        "sha256": "1a71nfw7d36vplf89fp65vgj3s66np1dc0hqnqgj5gbdnpm1bihl",
+        "rev": "e1f7540fc0a8b989fb8cf701dc4fd7fc76bcf168",
+        "sha256": "1b6p0rly0rywq60ks84ghc0n5zrqiafc2r64nlbnlkh9whmh5fmj",
         "type": "tarball",
-        "url": "https://github.com/mozilla/nixpkgs-mozilla/archive/7c1e8b1dd6ed0043fb4ee0b12b815256b0b9de6f.tar.gz",
+        "url": "https://github.com/mozilla/nixpkgs-mozilla/archive/e1f7540fc0a8b989fb8cf701dc4fd7fc76bcf168.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
