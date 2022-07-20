@@ -548,12 +548,9 @@ rec {
       };
       "crossbeam-utils" = rec {
         crateName = "crossbeam-utils";
-        version = "0.8.5";
+        version = "0.8.8";
         edition = "2018";
-        sha256 = "1ny481cx8a5pdknypb41jqym03dl8x26i2ldyyp3yb3zrq8zqb6q";
-        authors = [
-          "The Crossbeam Project Developers"
-        ];
+        sha256 = "0f6b3xrbyc3yx0qa1digmy48mxmh58359kv34qy6ws5p433j9w8b";
         dependencies = [
           {
             name = "cfg-if";
@@ -1368,9 +1365,9 @@ rec {
       };
       "regex" = rec {
         crateName = "regex";
-        version = "1.5.4";
+        version = "1.5.6";
         edition = "2018";
-        sha256 = "0qf479kjbmb582h4d1d6gfl75h0j8aq2nrdi5wg6zdcy6llqcynh";
+        sha256 = "1wczbykw6fas7359j9lhkkv13dplhiphzrf2ii6dmg5xjiyi4gyq";
         authors = [
           "The Rust Project Developers"
         ];
@@ -1410,9 +1407,9 @@ rec {
       };
       "regex-syntax" = rec {
         crateName = "regex-syntax";
-        version = "0.6.25";
+        version = "0.6.26";
         edition = "2018";
-        sha256 = "16y87hz1bxmmz6kk360cxwfm3jnbsxb3x4zw9x1gzz7khic2i5zl";
+        sha256 = "0r6vplrklxq7yx7x4zqf04apr699swbsn6ipv8bk82nwqngdxcs9";
         authors = [
           "The Rust Project Developers"
         ];
@@ -1821,9 +1818,9 @@ rec {
       };
       "thread_local" = rec {
         crateName = "thread_local";
-        version = "1.1.3";
+        version = "1.1.4";
         edition = "2018";
-        sha256 = "1gccp3grndpi6dyhzylz4hkqnkzc1xyri98n0xwwhnn90i7d4640";
+        sha256 = "1001bvz6a688wf3izcrh3jqrkiqaarf44wf08azm071ig1xw45jm";
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];

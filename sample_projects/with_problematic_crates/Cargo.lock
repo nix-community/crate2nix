@@ -39,9 +39,9 @@ dependencies = [
 
 [[package]]
 name = "actix-http"
-version = "2.2.0"
+version = "2.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "452299e87817ae5673910e53c243484ca38be3828db819b6011736fc6982e874"
+checksum = "2be6b66b62a794a8e6d366ac9415bb7d475ffd1e9f4671f38c1d8a8a5df950b3"
 dependencies = [
  "actix-codec",
  "actix-connect",
@@ -51,7 +51,7 @@ dependencies = [
  "actix-utils",
  "base64",
  "bitflags",
- "brotli2",
+ "brotli",
  "bytes 0.5.6",
  "cookie",
  "copyless",
@@ -288,6 +288,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "alloc-no-stdlib"
+version = "2.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "35ef4730490ad1c4eae5c4325b2a95f521d023e5c885853ff7aca0a6a1631db3"
+
+[[package]]
+name = "alloc-stdlib"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "697ed7edc0f1711de49ce108c541623a0af97c6c60b2f6e2b65229847ac843c2"
+dependencies = [
+ "alloc-no-stdlib",
+]
+
+[[package]]
 name = "async-trait"
 version = "0.1.50"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -409,23 +424,24 @@ dependencies = [
 ]
 
 [[package]]
-name = "brotli-sys"
-version = "0.3.2"
+name = "brotli"
+version = "3.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4445dea95f4c2b41cde57cc9fee236ae4dbae88d8fcbdb4750fc1bb5d86aaecd"
+checksum = "a1a0b1dbcc8ae29329621f8d4f0d835787c1c38bb1401979b49d13b0b305ff68"
 dependencies = [
- "cc",
- "libc",
+ "alloc-no-stdlib",
+ "alloc-stdlib",
+ "brotli-decompressor",
 ]
 
 [[package]]
-name = "brotli2"
-version = "0.3.2"
+name = "brotli-decompressor"
+version = "2.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0cb036c3eade309815c15ddbacec5b22c4d1f3983a774ab2eac2e3e9ea85568e"
+checksum = "59ad2d4653bf5ca36ae797b1f4bb4dbddb60ce49ca4aed8a2ce4829f60425b80"
 dependencies = [
- "brotli-sys",
- "libc",
+ "alloc-no-stdlib",
+ "alloc-stdlib",
 ]
 
 [[package]]
@@ -596,9 +612,9 @@ dependencies = [
 
 [[package]]
 name = "crossbeam-deque"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "94af6efb46fef72616855b036a624cf27ba656ffc9be1b9a3c931cfc7749a9a9"
+checksum = "6455c0ca19f0d2fbf751b908d5c55c1f5cbc65e03c4225427254b46890bdde1e"
 dependencies = [
  "cfg-if 1.0.0",
  "crossbeam-epoch 0.9.5",
@@ -1093,7 +1109,7 @@ dependencies = [
  "http",
  "indexmap",
  "slab",
- "tokio 1.6.1",
+ "tokio 1.8.4",
  "tokio-util 0.6.7",
  "tracing",
 ]
@@ -1171,9 +1187,9 @@ dependencies = [
 
 [[package]]
 name = "httparse"
-version = "1.4.1"
+version = "1.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3a87b616e37e93c22fb19bcd386f02f3af5ea98a25670ad0fce773de23c5e68"
+checksum = "496ce29bb5a52785b44e0f7ca2847ae0bb839c9bd28f69acac9b99d461c0c04c"
 
 [[package]]
 name = "httpdate"
@@ -1195,9 +1211,9 @@ checksum = "9a3a5bfb195931eeb336b2a7b4d761daec841b97f947d34394601737a7bba5e4"
 
 [[package]]
 name = "hyper"
-version = "0.14.9"
+version = "0.14.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07d6baa1b441335f3ce5098ac421fb6547c46dda735ca1bc6d0153c838f9dd83"
+checksum = "13f67199e765030fa08fe0bd581af683f0d5bc04ea09c2b1102012c5fb90e7fd"
 dependencies = [
  "bytes 1.0.1",
  "futures-channel",
@@ -1211,7 +1227,7 @@ dependencies = [
  "itoa",
  "pin-project-lite 0.2.6",
  "socket2 0.4.0",
- "tokio 1.6.1",
+ "tokio 1.8.4",
  "tower-service",
  "tracing",
  "want",
@@ -1316,9 +1332,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.97"
+version = "0.2.126"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12b8adadd720df158f4d70dfe7ccc6adb0472d7c55ca83445f6a5ab3e36f8fb6"
+checksum = "349d5a591cd28b49e1d1037471617a32ddcda5731b99419008085f72d5a53836"
 
 [[package]]
 name = "linked-hash-map"
@@ -1522,15 +1538,15 @@ checksum = "e4a24736216ec316047a1fc4252e27dabb04218aa4a3f37c6e7ddbf1f9782b54"
 
 [[package]]
 name = "nix"
-version = "0.14.1"
+version = "0.20.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c722bee1037d430d0f8e687bbdbf222f27cc6e4e68d5caf630857bb2b6dbdce"
+checksum = "f5e06129fb611568ef4e868c14b326274959aa70ff7776e9d55323531c374945"
 dependencies = [
  "bitflags",
  "cc",
- "cfg-if 0.1.10",
+ "cfg-if 1.0.0",
  "libc",
- "void",
+ "memoffset 0.6.4",
 ]
 
 [[package]]
@@ -2056,9 +2072,9 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.5.4"
+version = "1.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d07a8629359eb56f1e2fb1652bb04212c072a87ba68546a04065d525673ac461"
+checksum = "d83f127d94bdbcda4c8cc2e50f6f84f4b611f69c902699ca385a39c3a75f9ff1"
 dependencies = [
  "aho-corasick",
  "memchr",
@@ -2067,9 +2083,9 @@ dependencies = [
 
 [[package]]
 name = "regex-syntax"
-version = "0.6.25"
+version = "0.6.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f497285884f3fcff424ffc933e56d7cbca511def0c9831a7f9b5f6153e3cc89b"
+checksum = "49b3de9ec5dc0a3417da371aab17d729997c15010e7fd24ff707773a33bddb64"
 
 [[package]]
 name = "resolv-conf"
@@ -2551,9 +2567,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.6.1"
+version = "1.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a38d31d7831c6ed7aad00aa4c12d9375fd225a6dd77da1d25b707346319a975"
+checksum = "50dae83881bc9b0403dd5b44ea9deed3e939856cc8722d5be37f0d6e5c6d53dd"
 dependencies = [
  "autocfg 1.0.1",
  "bytes 1.0.1",
@@ -2632,7 +2648,7 @@ dependencies = [
  "futures-sink",
  "log",
  "pin-project-lite 0.2.6",
- "tokio 1.6.1",
+ "tokio 1.8.4",
 ]
 
 [[package]]
@@ -2852,12 +2868,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5fecdca9a5291cc2b8dcf7dc02453fee791a280f3743cb0905f8822ae463b3fe"
 
 [[package]]
-name = "void"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a02e4885ed3bc0f2de90ea6dd45ebcbb66dacffe03547fadbb0eeae2770887d"
-
-[[package]]
 name = "walkdir"
 version = "2.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3010,7 +3020,7 @@ dependencies = [
  "bitflags",
  "cfg-if 1.0.0",
  "crossbeam-channel",
- "crossbeam-deque 0.8.0",
+ "crossbeam-deque 0.8.1",
  "crossbeam-epoch 0.9.5",
  "cssparser",
  "diesel",
@@ -3022,17 +3032,17 @@ dependencies = [
  "mime",
  "nix",
  "parking_lot",
- "proc-macro2 1.0.27",
- "quote 1.0.9",
+ "proc-macro2 0.4.30",
+ "quote 0.6.13",
  "rand 0.8.3",
  "serde",
- "syn 1.0.73",
+ "syn 0.15.44",
  "tera",
- "tokio 1.6.1",
+ "tokio 1.8.4",
  "tokio-executor",
  "tokio-threadpool",
  "tracing",
- "unicode-xid 0.2.2",
+ "unicode-xid 0.1.0",
 ]
 
 [[package]]
