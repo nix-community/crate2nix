@@ -105,7 +105,8 @@ rec {
         crateBin = [];
         {%- elif crate.binaries|length > 0 and crate.is_root_or_workspace_member %}
         crateBin = [
-        {%- for bin in crate.binaries %}
+        {%- set bins_sorted = crate.binaries|sort(attribute="name") -%}
+        {%- for bin in bins_sorted %}
           { name = {{ bin.name }}; path = {{ bin.src_path }}; }
         {%- endfor %}
         ];
