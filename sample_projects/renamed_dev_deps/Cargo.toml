@@ -1,0 +1,13 @@
+[package]
+name = "renamed_dev_deps"
+version = "0.1.0"
+authors = ["John Ericson <John.Ericson@Obsidian.Systems>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+# Checks that renames in dev-dependencies work.
+[dev-dependencies]
+futures01 = { package = "futures", version = "0.1", default-features = false }

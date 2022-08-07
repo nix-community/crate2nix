@@ -9,11 +9,7 @@
 , pkgs ? import nixpkgs { config = {}; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
-, buildRustCrateForPkgs ? if buildRustCrate != null
-    then lib.warn "crate2nix: Passing `buildRustCrate` as argument to Cargo.nix is deprecated. If you don't customize `buildRustCrate`, replace `callPackage ./Cargo.nix {}` by `import ./Cargo.nix { inherit pkgs; }`, and if you need to customize `buildRustCrate`, use `buildRustCrateForPkgs` instead." (_: buildRustCrate)
-    else pkgs: pkgs.buildRustCrate
-  # Deprecated
-, buildRustCrate ? null
+, buildRustCrateForPkgs ? pkgs: pkgs.buildRustCrate
   # This is used as the `crateOverrides` argument for `buildRustCrate`.
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
   # The features to enable for the root_crate or the workspace_members.
@@ -105,7 +101,8 @@ rec {
         crateBin = [];
         {%- elif crate.binaries|length > 0 and crate.is_root_or_workspace_member %}
         crateBin = [
-        {%- for bin in crate.binaries %}
+        {%- set bins_sorted = crate.binaries|sort(attribute="name") -%}
+        {%- for bin in bins_sorted %}
           { name = {{ bin.name }}; path = {{ bin.src_path }}; }
         {%- endfor %}
         ];
@@ -122,7 +119,11 @@ rec {
         {%- elif crate.source.Nix.file.package %}
         src = pkgs.callPackage {{crate.source.Nix.file.package | safe}} {};
         {%- elif crate.source.LocalDirectory.path %}
-        src = lib.cleanSourceWith { filter = sourceFilter;  src = {{crate.source.LocalDirectory.path | safe}}; };
+        # We can't filter paths with references in Nix 2.4
+        # See https://github.com/NixOS/nix/issues/5410
+        src = if (lib.versionOlder builtins.nixVersion "2.4pre20211007")
+          then lib.cleanSourceWith { filter = sourceFilter;  src = {{crate.source.LocalDirectory.path | safe}}; }
+          else {{crate.source.LocalDirectory.path | safe}};
         {%- elif crate.source.Git %}
         workspace_member = null;
         src = pkgs.fetchgit {
@@ -233,6 +234,9 @@ rec {
             {%- if dependency.optional %}
             optional = true;
             {%- endif -%}
+            {%- if dependency.rename %}
+            rename = {{dependency.rename}};
+            {%- endif %}
             {%- if not dependency.uses_default_features %}
             usesDefaultFeatures = false;
             {%- endif -%}

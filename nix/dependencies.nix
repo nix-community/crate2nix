@@ -13,7 +13,7 @@
       binutils
       nixpkgs-fmt jq
       niv
-      nix
+      nix_2_3
       git
       utillinux
       cacert
@@ -42,7 +42,7 @@
             };
           };
         };
-        cargoNix = import cargoNixSource { inherit pkgs buildRustCrateForPkgs; };
+        cargoNix = pkgs.callPackage cargoNixSource { inherit buildRustCrateForPkgs; };
       in
       cargoNix.rootCrate.build;
   };
