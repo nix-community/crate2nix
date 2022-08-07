@@ -9,6 +9,13 @@ This was previously deprecated.
 With `buildRustCrate` removed, this is now possible without running into
 issues.
 
+## Finish renamed dependency support
+
+Previously only renamed `dependencies` and `build-dependencies` worked.
+Now renamed `dev-dependencies` work also.
+
+Thank you @Fuuzetsu!
+
 # 0.9.x - 0.10.0
 
 Help needed! I don't have the resources to meaningfully advance this project. Thank
