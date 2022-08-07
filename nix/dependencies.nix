@@ -13,7 +13,7 @@
       binutils
       nixpkgs-fmt jq
       niv
-      nix
+      nix_2_3
       git
       utillinux
       cacert
