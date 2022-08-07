@@ -17,6 +17,7 @@
       git
       utillinux
       cacert
+      nix-prefetch-git
       ;
 
     nixTest =
@@ -41,7 +42,7 @@
             };
           };
         };
-        cargoNix = import cargoNixSource { inherit pkgs buildRustCrateForPkgs; };
+        cargoNix = pkgs.callPackage cargoNixSource { inherit buildRustCrateForPkgs; };
       in
       cargoNix.rootCrate.build;
   };

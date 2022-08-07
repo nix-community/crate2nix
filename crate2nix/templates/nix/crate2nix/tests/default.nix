@@ -2,7 +2,13 @@ let
   pkgs = import ../../../../../nix/nixpkgs.nix { };
   lib = pkgs.lib;
   crate2nix = pkgs.callPackage ../default.nix { };
-  testFiles = [ "dependencyDerivations" "dependencyFeatures" "expandFeatures" "packageFeatures" ];
+  testFiles = [
+    "dependencyDerivations"
+    "dependencyFeatures"
+    "enableFeatures"
+    "expandFeatures"
+    "packageFeatures"
+  ];
   testsInFile = f:
     let
       tests = (pkgs.callPackage (./. + "/${f}.nix")) { inherit crate2nix; };

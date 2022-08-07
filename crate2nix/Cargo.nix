@@ -7,11 +7,7 @@
 , pkgs ? import nixpkgs { config = {}; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
-, buildRustCrateForPkgs ? if buildRustCrate != null
-    then lib.warn "crate2nix: Passing `buildRustCrate` as argument to Cargo.nix is deprecated. If you don't customize `buildRustCrate`, replace `callPackage ./Cargo.nix {}` by `import ./Cargo.nix { inherit pkgs; }`, and if you need to customize `buildRustCrate`, use `buildRustCrateForPkgs` instead." (_: buildRustCrate)
-    else pkgs: pkgs.buildRustCrate
-  # Deprecated
-, buildRustCrate ? null
+, buildRustCrateForPkgs ? pkgs: pkgs.buildRustCrate
   # This is used as the `crateOverrides` argument for `buildRustCrate`.
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
   # The features to enable for the root_crate or the workspace_members.
@@ -274,15 +270,65 @@ rec {
           "default" = [ "std" ];
         };
       };
+      "camino" = rec {
+        crateName = "camino";
+        version = "1.0.4";
+        edition = "2018";
+        sha256 = "1a91b5i4n6ikg7p5pgvj3hjac1gnwjmdqsi3k83al2d701nqqr6l";
+        authors = [
+          "Without Boats <saoirse@without.boats>"
+          "Ashley Williams <ashley666ashley@gmail.com>"
+          "Steve Klabnik <steve@steveklabnik.com>"
+          "Rain <rain@sunshowers.io>"
+        ];
+        dependencies = [
+          {
+            name = "serde";
+            packageId = "serde";
+            optional = true;
+            features = [ "derive" ];
+          }
+        ];
+        features = {
+          "serde1" = [ "serde" ];
+        };
+        resolvedDefaultFeatures = [ "serde" "serde1" ];
+      };
+      "cargo-platform" = rec {
+        crateName = "cargo-platform";
+        version = "0.1.1";
+        edition = "2018";
+        sha256 = "1mzi60pf0z83qkzqp7jwd61xnqz2b5ydsj7rnnikbgyicd5989h2";
+        authors = [
+          "The Cargo Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "serde";
+            packageId = "serde";
+            features = [ "derive" ];
+          }
+        ];
+
+      };
       "cargo_metadata" = rec {
         crateName = "cargo_metadata";
-        version = "0.9.1";
-        edition = "2015";
-        sha256 = "00pjms89lghvizh4d55lz80hvrih9r55xv9m5wd9vcsgc163gqs6";
+        version = "0.14.0";
+        edition = "2018";
+        sha256 = "16hhak3gips08lqp0x7s9wnfm139hy0a3nm0k4pman7m6lqvv5y2";
         authors = [
           "Oliver Schneider <git-spam-no-reply9815368754983@oli-obk.de>"
         ];
         dependencies = [
+          {
+            name = "camino";
+            packageId = "camino";
+            features = [ "serde1" ];
+          }
+          {
+            name = "cargo-platform";
+            packageId = "cargo-platform";
+          }
           {
             name = "semver";
             packageId = "semver";
@@ -291,17 +337,16 @@ rec {
           {
             name = "serde";
             packageId = "serde";
-          }
-          {
-            name = "serde_derive";
-            packageId = "serde_derive";
+            features = [ "derive" ];
           }
           {
             name = "serde_json";
             packageId = "serde_json";
+            features = [ "unbounded_depth" ];
           }
         ];
         features = {
+          "builder" = [ "derive_builder" ];
         };
         resolvedDefaultFeatures = [ "default" ];
       };
@@ -403,7 +448,11 @@ rec {
         crateBin = [
           { name = "crate2nix"; path = "src/main.rs"; }
         ];
-        src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
+        # We can't filter paths with references in Nix 2.4
+        # See https://github.com/NixOS/nix/issues/5410
+        src = if (lib.versionOlder builtins.nixVersion "2.4pre20211007")
+          then lib.cleanSourceWith { filter = sourceFilter;  src = ./.; }
+          else ./.;
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
@@ -411,6 +460,10 @@ rec {
           {
             name = "anyhow";
             packageId = "anyhow";
+          }
+          {
+            name = "cargo-platform";
+            packageId = "cargo-platform";
           }
           {
             name = "cargo_metadata";
@@ -439,6 +492,7 @@ rec {
           {
             name = "semver";
             packageId = "semver";
+            features = [ "serde" ];
           }
           {
             name = "serde";
@@ -448,6 +502,7 @@ rec {
           {
             name = "serde_json";
             packageId = "serde_json";
+            features = [ "unbounded_depth" ];
           }
           {
             name = "structopt";
@@ -489,12 +544,9 @@ rec {
       };
       "crossbeam-utils" = rec {
         crateName = "crossbeam-utils";
-        version = "0.8.5";
+        version = "0.8.8";
         edition = "2018";
-        sha256 = "1ny481cx8a5pdknypb41jqym03dl8x26i2ldyyp3yb3zrq8zqb6q";
-        authors = [
-          "The Crossbeam Project Developers"
-        ];
+        sha256 = "0f6b3xrbyc3yx0qa1digmy48mxmh58359kv34qy6ws5p433j9w8b";
         dependencies = [
           {
             name = "cfg-if";
@@ -620,9 +672,9 @@ rec {
       };
       "globset" = rec {
         crateName = "globset";
-        version = "0.4.6";
-        edition = "2015";
-        sha256 = "0jhy0qs5k43g8zyx1fys44kcdzjmcrwjyv9n703kj8g4y6g1cln1";
+        version = "0.4.8";
+        edition = "2018";
+        sha256 = "1gdzphnjjc0wdaawsq3n1nnypv9ja4prhca2n66hcahay2gksihh";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -698,9 +750,9 @@ rec {
       };
       "hermit-abi" = rec {
         crateName = "hermit-abi";
-        version = "0.1.18";
+        version = "0.1.19";
         edition = "2018";
-        sha256 = "0p6czgbk1izviwxzm6ypy3vz2wqj1yd3ab03wp82xqjng7klsbrj";
+        sha256 = "0cxcm8093nf5fyn114w8vxbrbcyvv91d4015rdnlgfll7cs6gd32";
         authors = [
           "Stefan Lankes"
         ];
@@ -756,9 +808,9 @@ rec {
       };
       "ignore" = rec {
         crateName = "ignore";
-        version = "0.4.17";
-        edition = "2015";
-        sha256 = "1347mxd0cwiidcl0qvixl7za524x5ds0izv8vjh2df0bqr2zp1xj";
+        version = "0.4.18";
+        edition = "2018";
+        sha256 = "07bmnv96msggqb040z6xqp1p7s8ys0f97b731hp6mybkjc9ingvi";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -874,9 +926,9 @@ rec {
       };
       "libc" = rec {
         crateName = "libc";
-        version = "0.2.97";
+        version = "0.2.98";
         edition = "2015";
-        sha256 = "1dlgdziv6nkabx287jjmghnlgc5dqv6fgpvh9n7ibpr0synsvf0j";
+        sha256 = "144728k6d98k3hplzklqn18a134nq6nw0jzdxy1s98sx2xvzw31j";
         authors = [
           "The Rust Project Developers"
         ];
@@ -956,9 +1008,9 @@ rec {
       };
       "once_cell" = rec {
         crateName = "once_cell";
-        version = "1.7.2";
+        version = "1.8.0";
         edition = "2018";
-        sha256 = "18qmpyfigg4ibdhjy5mwcjhzk9adwlgfaqv7nj430ivm86q0i2xg";
+        sha256 = "0mkbbxg6416z11r2yzsq91cqrkj9w1iyx5hakq15h5sbnriwnbv9";
         authors = [
           "Aleksey Kladov <aleksey.kladov@gmail.com>"
         ];
@@ -1309,9 +1361,9 @@ rec {
       };
       "regex" = rec {
         crateName = "regex";
-        version = "1.5.4";
+        version = "1.5.6";
         edition = "2018";
-        sha256 = "0qf479kjbmb582h4d1d6gfl75h0j8aq2nrdi5wg6zdcy6llqcynh";
+        sha256 = "1wczbykw6fas7359j9lhkkv13dplhiphzrf2ii6dmg5xjiyi4gyq";
         authors = [
           "The Rust Project Developers"
         ];
@@ -1351,9 +1403,9 @@ rec {
       };
       "regex-syntax" = rec {
         crateName = "regex-syntax";
-        version = "0.6.25";
+        version = "0.6.26";
         edition = "2018";
-        sha256 = "16y87hz1bxmmz6kk360cxwfm3jnbsxb3x4zw9x1gzz7khic2i5zl";
+        sha256 = "0r6vplrklxq7yx7x4zqf04apr699swbsn6ipv8bk82nwqngdxcs9";
         authors = [
           "The Rust Project Developers"
         ];
@@ -1411,38 +1463,24 @@ rec {
       };
       "semver" = rec {
         crateName = "semver";
-        version = "0.9.0";
-        edition = "2015";
-        sha256 = "00q4lkcj0rrgbhviv9sd4p6qmdsipkwkbra7rh11jrhq5kpvjzhx";
+        version = "1.0.3";
+        edition = "2018";
+        sha256 = "1gna1p10i86sf1pqfqndkwl0wks35x84yvjw77c74ckzxrbsqfjz";
         authors = [
-          "Steve Klabnik <steve@steveklabnik.com>"
-          "The Rust Project Developers"
+          "David Tolnay <dtolnay@gmail.com>"
         ];
         dependencies = [
-          {
-            name = "semver-parser";
-            packageId = "semver-parser";
-          }
           {
             name = "serde";
             packageId = "serde";
             optional = true;
+            usesDefaultFeatures = false;
           }
         ];
         features = {
-          "ci" = [ "serde" ];
+          "default" = [ "std" ];
         };
-        resolvedDefaultFeatures = [ "default" "serde" ];
-      };
-      "semver-parser" = rec {
-        crateName = "semver-parser";
-        version = "0.7.0";
-        edition = "2015";
-        sha256 = "18vhypw6zgccnrlm5ps1pwa0khz7ry927iznpr88b87cagr1v2iq";
-        authors = [
-          "Steve Klabnik <steve@steveklabnik.com>"
-        ];
-
+        resolvedDefaultFeatures = [ "default" "serde" "std" ];
       };
       "serde" = rec {
         crateName = "serde";
@@ -1531,7 +1569,7 @@ rec {
           "preserve_order" = [ "indexmap" ];
           "std" = [ "serde/std" ];
         };
-        resolvedDefaultFeatures = [ "default" "std" ];
+        resolvedDefaultFeatures = [ "default" "std" "unbounded_depth" ];
       };
       "sha-1" = rec {
         crateName = "sha-1";
@@ -1586,9 +1624,9 @@ rec {
       };
       "structopt" = rec {
         crateName = "structopt";
-        version = "0.3.21";
+        version = "0.3.22";
         edition = "2018";
-        sha256 = "136j0lvjmpv5syi751vxg8vb30gfyv4k81x8d18kxrj6xvbsqxsj";
+        sha256 = "0wadrsmkvab04dkbs670hcyl41l89kj7nvky6356l8k7rg6l3c39";
         authors = [
           "Guillaume Pinot <texitoi@texitoi.eu>"
           "others"
@@ -1624,9 +1662,9 @@ rec {
       };
       "structopt-derive" = rec {
         crateName = "structopt-derive";
-        version = "0.4.14";
+        version = "0.4.15";
         edition = "2018";
-        sha256 = "143gjwvz3s86hwp070km83y25n8kqp5f01kb1dr19f4ilkywvaav";
+        sha256 = "044w7z0bnsvla4d26s1r8s4q9sbx4f60c02yfxa1mxgmxi5964vq";
         procMacro = true;
         authors = [
           "Guillaume Pinot <texitoi@texitoi.eu>"
@@ -1712,9 +1750,9 @@ rec {
       };
       "tera" = rec {
         crateName = "tera";
-        version = "1.10.0";
+        version = "1.12.0";
         edition = "2018";
-        sha256 = "0qpsgbpmcsaw6xnd8nhpqwpkvj7mhsy9dsw26xwwi014i35hl1l1";
+        sha256 = "0fmabbqlf6igiipm81dinqj2psw9fh6ry91ix6iflmqfzwfm8wbm";
         authors = [
           "Vincent Prouillet <hello@prouilletvincent.com>"
         ];
@@ -1747,9 +1785,13 @@ rec {
             name = "serde_json";
             packageId = "serde_json";
           }
+          {
+            name = "unic-segment";
+            packageId = "unic-segment";
+          }
         ];
         features = {
-          "builtins" = [ "slug" "percent-encoding" "humansize" "chrono" "chrono-tz" "unic-segment" "rand" ];
+          "builtins" = [ "slug" "percent-encoding" "humansize" "chrono" "chrono-tz" "rand" ];
           "default" = [ "builtins" ];
           "preserve_order" = [ "serde_json/preserve_order" ];
         };
@@ -1772,9 +1814,9 @@ rec {
       };
       "thread_local" = rec {
         crateName = "thread_local";
-        version = "1.1.3";
+        version = "1.1.4";
         edition = "2018";
-        sha256 = "1gccp3grndpi6dyhzylz4hkqnkzc1xyri98n0xwwhnn90i7d4640";
+        sha256 = "1001bvz6a688wf3izcrh3jqrkiqaarf44wf08azm071ig1xw45jm";
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];
@@ -1861,6 +1903,103 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
+      "unic-char-property" = rec {
+        crateName = "unic-char-property";
+        version = "0.9.0";
+        edition = "2018";
+        sha256 = "08g21dn3wwix3ycfl0vrbahn0835nv2q3swm8wms0vwvgm07mid8";
+        authors = [
+          "The UNIC Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "unic-char-range";
+            packageId = "unic-char-range";
+          }
+        ];
+
+      };
+      "unic-char-range" = rec {
+        crateName = "unic-char-range";
+        version = "0.9.0";
+        edition = "2018";
+        sha256 = "1g0z7iwvjhqspi6194zsff8vy6i3921hpqcrp3v1813hbwnh5603";
+        authors = [
+          "The UNIC Project Developers"
+        ];
+        features = {
+          "unstable" = [ "exact-size-is-empty" "fused" "trusted-len" ];
+        };
+        resolvedDefaultFeatures = [ "default" ];
+      };
+      "unic-common" = rec {
+        crateName = "unic-common";
+        version = "0.9.0";
+        edition = "2018";
+        sha256 = "1g1mm954m0zr497dl4kx3vr09yaly290zs33bbl4wrbaba1gzmw0";
+        authors = [
+          "The UNIC Project Developers"
+        ];
+        features = {
+        };
+        resolvedDefaultFeatures = [ "default" ];
+      };
+      "unic-segment" = rec {
+        crateName = "unic-segment";
+        version = "0.9.0";
+        edition = "2018";
+        sha256 = "08wgz2q6vrdvmbd23kf9pbg8cyzm5q8hq9spc4blzy2ppqk5vvg4";
+        authors = [
+          "The UNIC Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "unic-ucd-segment";
+            packageId = "unic-ucd-segment";
+          }
+        ];
+
+      };
+      "unic-ucd-segment" = rec {
+        crateName = "unic-ucd-segment";
+        version = "0.9.0";
+        edition = "2018";
+        sha256 = "0027lczcg0r401g6fnzm2bq9fxhgxvri1nlryhhv8192lqic2y90";
+        authors = [
+          "The UNIC Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "unic-char-property";
+            packageId = "unic-char-property";
+          }
+          {
+            name = "unic-char-range";
+            packageId = "unic-char-range";
+          }
+          {
+            name = "unic-ucd-version";
+            packageId = "unic-ucd-version";
+          }
+        ];
+
+      };
+      "unic-ucd-version" = rec {
+        crateName = "unic-ucd-version";
+        version = "0.9.0";
+        edition = "2018";
+        sha256 = "1i5hnzpfnxkp4ijfk8kvhpvj84bij575ybqx1b6hyigy6wi2zgcn";
+        authors = [
+          "The UNIC Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "unic-common";
+            packageId = "unic-common";
+          }
+        ];
+
+      };
       "unicode-bidi" = rec {
         crateName = "unicode-bidi";
         version = "0.3.5";
@@ -1905,9 +2044,9 @@ rec {
       };
       "unicode-segmentation" = rec {
         crateName = "unicode-segmentation";
-        version = "1.7.1";
-        edition = "2015";
-        sha256 = "15n736z0pbj30pj44jb9s9rjavzrmx8v8pzdgsl5yfmfwrxjw3dv";
+        version = "1.8.0";
+        edition = "2018";
+        sha256 = "0nrqfgxkh00wb5dhl0874z20789i2yjimp6ndgh4ay4yjjd895c8";
         authors = [
           "kwantam <kwantam@gmail.com>"
           "Manish Goregaokar <manishsmail@gmail.com>"
@@ -2676,15 +2815,14 @@ rec {
       dependencies;
 
   /* Returns whether the given feature should enable the given dependency. */
-  doesFeatureEnableDependency = { name, rename ? null, ... }: feature:
+  doesFeatureEnableDependency = dependency: feature:
     let
+      name = dependency.rename or dependency.name;
       prefix = "${name}/";
       len = builtins.stringLength prefix;
       startsWithPrefix = builtins.substring 0 len feature == prefix;
     in
-    (rename == null && feature == name)
-    || (rename != null && rename == feature)
-    || startsWithPrefix;
+    feature == name || startsWithPrefix;
 
   /* Returns the expanded features for the given inputFeatures by applying the
     rules in featureMap.
@@ -2719,7 +2857,9 @@ rec {
             let
               enabled = builtins.any (doesFeatureEnableDependency dependency) features;
             in
-            if (dependency.optional or false) && enabled then [ dependency.name ] else [ ]
+            if (dependency.optional or false) && enabled
+            then [ (dependency.rename or dependency.name) ]
+            else [ ]
         )
         dependencies;
     in

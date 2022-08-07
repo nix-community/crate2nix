@@ -26,7 +26,7 @@ let
     , cargoToml ? "Cargo.toml"
     , features ? [ "default" ]
     , skip ? false
-    , expectedOutput
+    , expectedOutput ? null
     , expectedTestOutputs ? [ ]
     , pregeneratedBuild ? null
     , additionalCargoNixArgs ? [ ]
@@ -98,6 +98,9 @@ let
 
       sanitizedBuildTree = debugFile "sanitizedBuildTree";
       buildPhase =
+        # Must have at least one of tests or executables to run
+        assert expectedOutput != null || lib.length expectedTestOutputs > 0;
+        # Need tests if there is expected test output
         assert lib.length expectedTestOutputs > 0 -> derivation ? test;
         ''
                     echo === DEBUG INFO
@@ -106,18 +109,27 @@ let
                     echo ${debugFile "mergedPackageFeatures"}
                     echo ${debugFile "diffedDefaultPackageFeatures"}
 
-                    echo === RUNNING
                     mkdir -p $out
-                    ${derivation.crateName} | tee $out/run.log
-                    echo === VERIFYING expectedOutput
-                    grep '${expectedOutput}' $out/run.log || {
-                      echo '${expectedOutput}' not found in:
-                      cat $out/run.log
-                      exit 23
-                    }
 
-                    echo === RUNNING TESTS
-                    ${lib.optionalString (lib.length expectedTestOutputs > 0) ''
+                    ${if expectedOutput == null then ''
+                      echo === SKIP RUNNING
+                      echo "(no executables)"
+                    '' else ''
+                      echo === RUNNING
+                      ${derivation.crateName} | tee $out/run.log
+                      echo === VERIFYING expectedOutput
+                      grep '${expectedOutput}' $out/run.log || {
+                        echo '${expectedOutput}' not found in:
+                        cat $out/run.log
+                        exit 23
+                      }
+                    ''}
+
+                    ${if lib.length expectedTestOutputs == 0 then ''
+                      echo === SKIP RUNNING TESTS
+                      echo "(no tests)"
+                    '' else ''
+                      echo === RUNNING TESTS
                       cp ${derivation.test} $out/tests.log
                       echo === VERIFYING expectedTestOutputs
                     ''}
@@ -248,6 +260,15 @@ let
       name = "renamed_build_deps";
       src = ./sample_projects/renamed_build_deps;
       expectedOutput = "Hello, renamed_build_deps!";
+    }
+
+    {
+      name = "renamed_dev_deps";
+      src = ./sample_projects/renamed_dev_deps;
+      expectedTestOutputs = [
+        "test test::ran_a_test ... ok"
+      ];
+      customBuild = "sample_projects/renamed_dev_deps/test.nix";
     }
 
     {
@@ -421,6 +442,13 @@ let
     }
 
     {
+      name = "workspace_with_nondefault_lib";
+      src = ./sample_projects/workspace_with_nondefault_lib;
+      expectedOutput = "Hello, workspace_with_nondefault_lib";
+      derivationAttrPath = [ "workspaceMembers" "main" ];
+    }
+
+    {
       name = "with_problematic_crates";
       src = ./sample_projects/with_problematic_crates;
       expectedOutput = "Hello, with_problematic_crates!";
@@ -436,7 +464,6 @@ let
       # FIXME: https://github.com/kolloch/crate2nix/issues/83
       skip = true;
     }
-
   ];
   buildTestDerivationAttrSet =
     let
