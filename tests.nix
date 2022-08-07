@@ -98,8 +98,6 @@ let
 
       sanitizedBuildTree = debugFile "sanitizedBuildTree";
       buildPhase =
-        # Must have at least one of tests or executables to run
-        assert expectedOutput != null || lib.length expectedTestOutputs > 0;
         # Need tests if there is expected test output
         assert lib.length expectedTestOutputs > 0 -> derivation ? test;
         ''
@@ -463,6 +461,13 @@ let
       expectedOutput = "Hello, world!";
       # FIXME: https://github.com/kolloch/crate2nix/issues/83
       skip = true;
+    }
+
+    {
+      name = "empty_cross";
+      src = ./sample_projects/empty_cross;
+      cargoToml = "Cargo.toml";
+      customBuild = "sample_projects/empty_cross/default.nix";
     }
   ];
   buildTestDerivationAttrSet =
