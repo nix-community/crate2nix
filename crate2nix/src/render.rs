@@ -184,13 +184,14 @@ fn cfg_to_nix_expr_filter(
                 })?;
                 Ok(tera::Value::String(cfg_to_nix_expr(&expr)))
             } else {
-                // It is hopefully a target "triplet".
-                // TODO: there is a `toRustTarget` in Nixpkgs that does this for
-                // us, but it is currently bound on the rust compiler instead of
-                // being a pure function which makes it a bit awkward to fish
-                // out.
+                // `lib.toRustTarget` has existed since Nixpkgs 21.05. That is
+                // hopefully good enough.
+                //
+                // We are choosing an arbitrary rust version to grab `lib` from,
+                // which is unfortunate, but `lib` has been version-agnostic the
+                // whole time so this is good enough for now.
                 let condition = format!(
-                    "((let p = stdenv.hostPlatform; in p.rustc.config or p.config) == {})",
+                    "(pkgs.rust.lib.toRustTarget stdenv.hostPlatform == {})",
                     escape_nix_string(key)
                 );
                 Ok(tera::Value::String(condition))
