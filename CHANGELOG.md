@@ -16,6 +16,12 @@ Now renamed `dev-dependencies` work also.
 
 Thank you @Fuuzetsu!
 
+## Better cross and platform-specific compilation support
+
+* Rust-style rather than Nixpkgs-style configs are used for `[target."some-config"]` conditional Cargo sections.
+
+* The nixpkgs Rust "lib" is used to implement the above and deduplicate other `cfg` reosolution.
+
 # 0.9.x - 0.10.0
 
 Help needed! I don't have the resources to meaningfully advance this project. Thank
