@@ -136,13 +136,12 @@ rec {
     fuchsia = true;
     test = false;
 
-    # This doesn't appear to be officially documented anywhere yet.
-    # See https://github.com/rust-lang-nursery/rust-forge/issues/101.
-    os =
-      if stdenv.hostPlatform.isDarwin
-      then "macos"
-      else stdenv.hostPlatform.parsed.kernel.name;
-    arch = stdenv.hostPlatform.parsed.cpu.name;
+    /* We are choosing an arbitrary rust version to grab `lib` from,
+      which is unfortunate, but `lib` has been version-agnostic the
+      whole time so this is good enough for now.
+    */
+    os = pkgs.rust.lib.toTargetOs stdenv.hostPlatform;
+    arch = pkgs.rust.lib.toTargetArch stdenv.hostPlatform;
     family = "unix";
     env = "gnu";
     endian =
