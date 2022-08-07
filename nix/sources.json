@@ -24,15 +24,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "crate2nix": {
-        "branch": "balsoft/fix-broken-ifd",
+        "branch": "master",
         "description": "nix build file generator for rust crates",
         "homepage": "",
-        "owner": "balsoft",
+        "owner": "kolloch",
         "repo": "crate2nix",
-        "rev": "c704f6a0a76684ad65f852393480f6777a87f7ff",
-        "sha256": "1bmz1qawih9s97bki5c5zrdjgad26yk6c60r5qh5pn31aybpmhgk",
+        "rev": "230b34d09ef66445e28615d6c60eeea38f753a62",
+        "sha256": "0iflw6zkzqlqcv2b18gfls7yvd0is0v3v7zm5320225chd0bj8dc",
         "type": "tarball",
-        "url": "https://github.com/balsoft/crate2nix/archive/c704f6a0a76684ad65f852393480f6777a87f7ff.tar.gz",
+        "url": "https://github.com/kolloch/crate2nix/archive/230b34d09ef66445e28615d6c60eeea38f753a62.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nix-test-runner": {
