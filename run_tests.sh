@@ -61,7 +61,7 @@ echo -e "\e[1m=== Reformatting nix code\e[0m" >&2
     ./sample_projects/*/[[:lower:]]*.nix
 cd "$top"/crate2nix
 echo "=== Reformatting rust code" >&2
-./cargo.sh fmt
+../cargo.sh fmt
 
 cd "$top"
 echo -e "\e[1m=== Running nix unit tests\e[0m" >&2
@@ -75,9 +75,9 @@ echo -e "\e[1m=== Running nix unit tests\e[0m" >&2
 cd "$top"/crate2nix
 echo -e "\e[1m=== Running cargo clippy\e[0m" >&2
 if [ -z "${NO_CARGO_BUILD}" ]; then
-    ./cargo.sh clippy || {
+    ../cargo.sh clippy || {
         echo "==================" >&2
-        echo "$top/crate2nix/cargo.sh clippy: FAILED" >&2
+        echo "$top/cargo.sh clippy: FAILED" >&2
         exit 2
     }
 else
@@ -92,9 +92,9 @@ fi
 
 echo -e "\e[1m=== Running cargo test\e[0m" >&2
 if [ -z "${NO_CARGO_BUILD}" ]; then
-    ./cargo.sh test || {
+    ../cargo.sh test || {
         echo "==================" >&2
-        echo "$top/crate2nix/cargo.sh test: FAILED" >&2
+        echo "$top/cargo.sh test: FAILED" >&2
         exit 4
     }
 else
