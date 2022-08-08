@@ -45,5 +45,10 @@
         cargoNix = pkgs.callPackage cargoNixSource { inherit buildRustCrateForPkgs; };
       in
       cargoNix.rootCrate.build;
+
+  } // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
+
+    inherit (pkgs) libiconv;
+
   };
 }

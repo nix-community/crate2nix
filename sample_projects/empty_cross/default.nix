@@ -32,6 +32,10 @@ let
       in
       args: fun (args // lib.optionalAttrs isBareMetal {
         RUSTC_BOOTSTRAP = true;
+
+        # Needed for std for build.rs
+        nativeBuildInputs = args.nativeBuildInputs or [ ]
+          ++ lib.optional pkgs.stdenv.buildPlatform.isDarwin pkgs.buildPackages.libiconv;
       });
   };
 in
