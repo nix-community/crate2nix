@@ -46,7 +46,7 @@ function noisily {
 }
 
 if [ -z "${NO_CARGO_BUILD}" ]; then
-  (cd crate2nix; noisily ./cargo.sh run -- generate -n ../nix/nixpkgs.nix \
+  (cd crate2nix; noisily ../cargo.sh run -- generate -n ../nix/nixpkgs.nix \
     -f ./Cargo.toml -o ./Cargo.nix)  ||\
       { echo "Bootstrap regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 else
