@@ -6,7 +6,7 @@
 
 set -Eeuo pipefail
 
-top="$(dirname "$0")/.."
+top="$(dirname "$0")"
 top="$(cd "$top"; pwd)"
 
 if [ -z "${IN_CRATE2NIX_SHELL:-}" ]; then
