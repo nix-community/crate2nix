@@ -177,10 +177,24 @@ rec {
         withoutGitPlus = lib.removePrefix "git+" source;
         splitHash = lib.splitString "#" withoutGitPlus;
         splitQuestion = lib.concatMap (lib.splitString "?") splitHash;
+        getParam = tag:
+          let
+            splited = builtins.split "${tag}=" source;
+          in
+          if builtins.length splited == 1 then
+            null
+          else
+            builtins.head (builtins.split "&"
+              (builtins.head (builtins.split "#"
+                (lib.last splited)
+              ))
+            );
       in
       {
         url = builtins.head splitQuestion;
         rev = lib.last splitQuestion;
+        branch = getParam "branch";
+        tag = getParam "tag";
       };
 
     vendorSupport = { crateDir ? ./., ... }:
@@ -293,7 +307,7 @@ rec {
         cargoConfig =
           let
             gitSourceConfig =
-              { source, ... }@attrs:
+              { source, ... }:
 
                 assert builtins.isString source;
                 let
@@ -304,12 +318,25 @@ rec {
               [source."${parsed.url}"]
               git = "${parsed.url}"
               rev = "${parsed.rev}"
-              ${lib.optionalString (isNull (builtins.match ".*\\?rev=[0-9a-z]{40}.*" source)) ''branch = "${attrs.branch or "master"}"''}
+              ${
+                lib.optionalString
+                (isNull (builtins.match ".*\\?rev=[0-9a-z]{40}.*" source))
+                (if parsed.tag != null then
+                  ''tag = "${parsed.tag}"''
+                else
+                  ''branch = "${if parsed.branch != null then parsed.branch else "master"}"''
+                )
+              }
               replace-with = "vendored-sources"
               '';
             gitSources = packagesByType."git" or [ ];
-            gitSourcesUnique = lib.unique gitSources;
-            gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
+            gitSourceSimplified = builtins.map
+              (x: {
+                source = x.source;
+              })
+              gitSources;
+            gitSourcesSimplifiedUnique = lib.unique gitSourceSimplified;
+            gitSourceConfigs = builtins.map gitSourceConfig gitSourcesSimplifiedUnique;
             gitSourceConfigsString = lib.concatStrings gitSourceConfigs;
           in
           pkgs.writeText
