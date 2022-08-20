@@ -42,10 +42,18 @@ rec {
       preferLocalBuild = true;
 
       inherit src;
-      phases = [ "unpackPhase" "buildPhase" ];
+
+      phases = [ "buildPhase" ];
 
       buildPhase = ''
         set -e
+
+        if test -f $src; then
+          echo generatedCargoNix only accept folder for its src derivation
+          exit 1
+        fi
+
+        cd $src
 
         mkdir -p "$out/cargo"
 
@@ -77,10 +85,12 @@ rec {
         fi
 
         set -x
+        mkdir -p $out/crate
+        ln -s * $out/crate/
 
         crate2nix generate \
           $create2nix_options \
-          -o "Cargo-generated.nix" \
+          -o "$out/crate/Cargo-generated.nix" \
           -h "$crate_hashes" \
           ${lib.escapeShellArgs additionalCargoNixArgs} || {
           { set +x; } 2>/dev/null
@@ -112,11 +122,8 @@ rec {
          { set +x; } 2>/dev/null
         fi
 
-        cp -r . $out/crate
-
         echo "import ./crate/Cargo-generated.nix" > $out/default.nix
       '';
-
     };
 
   # Applies the default arguments from pkgs to the generated `Cargo.nix` file.
