@@ -1,0 +1,9 @@
+[package]
+name = "workspace_git"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+pmd_wan = { git="https://github.com/marius851000/pmd_wan.git", rev="cb363166d179320174fc48d1d79415d3fe054bbc" }

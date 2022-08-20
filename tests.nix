@@ -341,6 +341,12 @@ let
       ];
     }
 
+    {
+      name = "workspace_git";
+      src = ./sample_projects/workspace_git;
+      expectedOutput = "Hello from a git workspace with 32!";
+    }
+
     #
     # Prefetch tests
     #
