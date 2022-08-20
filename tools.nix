@@ -246,9 +246,9 @@ rec {
             value = builtins.readFile hash;
           };
 
-        # Fetching git submodules with builtins.fetchGit is only supported in nix > 2.3
+        # Fetching git submodules with builtins.fetchGit is only supported in nix >= 2.5
         extraHashes = lib.optionalAttrs
-          (builtins.compareVersions builtins.nixVersion "2.3" == 1)
+          (lib.versionAtLeast builtins.nixVersion "2.5")
           (builtins.listToAttrs (map mkGitHash unhashedGitDeps));
 
         packages =
