@@ -195,6 +195,13 @@ let
     }
 
     {
+      name = "bin_required_features";
+      src = ./sample_projects/bin_required_features;
+      expectedOutput = "Hello from bin_required_features default binary";
+      features = [ "compilemainbinary" ];
+    }
+
+    {
       name = "bin_with_lib_git_dep";
       src = ./sample_projects/bin_with_lib_git_dep;
       expectedOutput = "Hello world from bin_with_lib_git_dep!";

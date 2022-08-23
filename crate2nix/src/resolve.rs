@@ -335,6 +335,9 @@ pub struct BuildTarget {
     pub name: String,
     /// The relative path of the target source file.
     pub src_path: PathBuf,
+    /// The crate's features that need to be enabled for this target to be compiled.
+    /// Otherwise, this target is ignored.
+    pub required_features: Vec<String>
 }
 
 impl BuildTarget {
@@ -346,6 +349,7 @@ impl BuildTarget {
                 .canonicalize()?
                 .strip_prefix(&package_path)?
                 .to_path_buf(),
+            required_features: target.required_features.clone()
         })
     }
 }

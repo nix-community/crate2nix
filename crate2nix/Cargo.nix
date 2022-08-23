@@ -461,7 +461,11 @@ rec {
         version = "0.10.0";
         edition = "2018";
         crateBin = [
-          { name = "crate2nix"; path = "src/main.rs"; }
+          {
+            name = "crate2nix";
+            path = "src/main.rs";
+            requiredFeatures = [ ];
+          }
         ];
         # We can't filter paths with references in Nix 2.4
         # See https://github.com/NixOS/nix/issues/5410

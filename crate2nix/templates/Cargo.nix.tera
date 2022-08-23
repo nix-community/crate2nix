@@ -103,7 +103,11 @@ rec {
         crateBin = [
         {%- set bins_sorted = crate.binaries|sort(attribute="name") -%}
         {%- for bin in bins_sorted %}
-          { name = {{ bin.name }}; path = {{ bin.src_path }}; }
+          {
+            name = {{ bin.name }};
+            path = {{ bin.src_path }};
+            requiredFeatures = [ {% for feature in bin.required_features %}{{feature}} {% endfor %}];
+          }
         {%- endfor %}
         ];
         {%- endif -%}
