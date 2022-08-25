@@ -5,5 +5,6 @@ members = [
     "bin_with_default_features",
     "lib_and_bin",
     "bin_with_lib_dep",
+    "bin_with_cond_lib_dep",
     "with_tera",
 ]

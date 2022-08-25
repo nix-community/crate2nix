@@ -284,6 +284,15 @@ let
     }
 
     {
+      name = "sample_workspace";
+      src = ./sample_workspace;
+      expectedOutput = lib.optionalString
+        stdenv.hostPlatform.isUnix
+        "Hello, bin_with_cond_lib_dep!";
+      derivationAttrPath = [ "workspaceMembers" "bin_with_cond_lib_dep" ];
+    }
+
+    {
       name = "bin_with_git_submodule_dep";
       src = ./sample_projects/bin_with_git_submodule_dep;
       pregeneratedBuild = "sample_projects/bin_with_git_submodule_dep/Cargo.nix";

@@ -1,0 +1,8 @@
+[package]
+name = "hello_world_with_cond_dep"
+version = "0.1.0"
+authors = ["Peter Kolloch <info@eigenvalue.net>"]
+edition = "2018"
+
+[target.'cfg(target_family = "unix")'.dependencies]
+"hello_world_lib" = { path = "../lib"}

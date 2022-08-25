@@ -119,7 +119,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: (target."os" == "windows");
+            target = { target, features }: ("windows" == target."os");
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];
@@ -648,7 +648,7 @@ rec {
           {
             name = "wasi";
             packageId = "wasi";
-            target = { target, features }: (target."os" == "wasi");
+            target = { target, features }: ("wasi" == target."os");
           }
         ];
         features = {
@@ -908,7 +908,7 @@ rec {
           {
             name = "hermit-abi";
             packageId = "hermit-abi";
-            target = { target, features }: (((target."arch" == "x86_64") || (target."arch" == "aarch64")) && (target."os" == "hermit"));
+            target = { target, features }: ((("x86_64" == target."arch") || ("aarch64" == target."arch")) && ("hermit" == target."os"));
           }
           {
             name = "libc";
@@ -1381,7 +1381,20 @@ rec {
     */
     os = pkgs.rust.lib.toTargetOs platform;
     arch = pkgs.rust.lib.toTargetArch platform;
-    family = "unix";
+    family =
+      if platform ? rustc.platform.target-family
+      then
+        (
+          /* Since https://github.com/rust-lang/rust/pull/84072
+             `target-family` is a list instead of single value.
+           */
+          let
+            f = platform.rustc.platform.target-family;
+          in
+          if builtins.isList f then f else [ f ]
+        )
+      else lib.optional platform.isUnix "unix"
+        ++ lib.optional platform.isWindows "windows";
     env = "gnu";
     endian =
       if platform.parsed.cpu.significantByte.name == "littleEndian"
