@@ -7,7 +7,7 @@ use std::{
     fmt::Display,
     fs::File,
     io::{BufReader, BufWriter},
-    path::Path,
+    path::{Path, PathBuf},
     str::FromStr,
 };
 
@@ -116,6 +116,11 @@ pub enum Source {
         #[serde(skip_serializing_if = "Option::is_none")]
         attr: Option<String>,
     },
+    /// The source is already obtained, useful for IFD.
+    LocalDirectory {
+        /// Path to the source.
+        path: PathBuf,
+    },
 }
 
 /// A nix file path which is either included by `import` or `callPackage`.
@@ -187,6 +192,7 @@ impl Display for Source {
                 file,
                 attr: Some(attr),
             } => write!(f, "({}).{}", file, attr),
+            Source::LocalDirectory { path } => write!(f, "{}", path.display()),
         }
     }
 }
@@ -210,6 +216,9 @@ impl Source {
                 file,
                 attr: Some(attr),
             } => format!("nix --name '{}' {} '{}'", name, file.as_command(), attr),
+            Source::LocalDirectory { path } => {
+                format!("path --name '{}' {}", name, path.display())
+            },
         }
     }
 }
