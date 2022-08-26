@@ -1,6 +1,6 @@
 //! Indexing cargo metadata.
 
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 
 use anyhow::format_err;
 use anyhow::{Error, Result};
@@ -25,10 +25,8 @@ impl MergedMetadata {
     pub fn merge(metadatas: Vec<Metadata>) -> Result<MergedMetadata> {
         assert!(!metadatas.is_empty());
         let mut workspace_members = Vec::new();
-        let mut package_ids = HashSet::new();
-        let mut packages = Vec::new();
-        let mut node_package_ids = HashSet::new();
-        let mut nodes = Vec::new();
+        let mut packages = HashMap::new();
+        let mut nodes = HashMap::new();
 
         for metadata in metadatas.into_iter() {
             let resolve = metadata
@@ -46,13 +44,13 @@ impl MergedMetadata {
                 metadata
                     .packages
                     .into_iter()
-                    .filter(|p| package_ids.insert(p.id.clone())),
+                    .map(|p| (p.id.clone(), p)),
             );
             nodes.extend(
                 resolve
                     .nodes
                     .into_iter()
-                    .filter(|p| node_package_ids.insert(p.id.clone())),
+                    .map(|p| (p.id.clone(), p)),
             );
         }
 
@@ -63,10 +61,10 @@ impl MergedMetadata {
         };
 
         Ok(MergedMetadata {
-            packages,
+            packages: packages.into_values().collect(),
             root,
             workspace_members: workspace_members.into_iter().unique().collect(),
-            nodes,
+            nodes: nodes.into_values().collect(),
         })
     }
 }
