@@ -222,6 +222,13 @@ let
     }
 
     {
+      name = "bin_with_dep_features";
+      src = ./sample_projects;
+      cargoToml = "bin_with_dep_features/Cargo.toml";
+      expectedOutput = "Hello, bin_with_dep_features!";
+    }
+
+    {
       name = "sub_dir_crates";
       src = ./sample_projects/sub_dir_crates;
       expectedOutput = "main with lib1 lib2";
