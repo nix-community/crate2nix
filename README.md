@@ -26,6 +26,9 @@ supported, you can customize `defaultCrateOverrides` / `crateOverrides`, see bel
 **Easy to understand nix template**: The actual nix code is generated via `templates/build.nix.tera` so you can
 fix/improve the nix code without knowing rust if all the data is already there.
 
+**Optional Import From Derivation**: Optional ability to generate the derived `Cargo.nix` during evaluation time so it does
+no need to be commited.
+
 Here is a simple example which uses all the defaults and will generate a `Cargo.nix` file:
 
 ```bash
@@ -307,6 +310,47 @@ the actual test command, and in the same shell. Some example use-cases include:
 * Setting (and then unsetting) the bash `set +e` option to not fail the
   derivation build even if a test fails. This is quite useful if your tests are
   not flaky and you want to cache failures.
+
+## Import From Derivation
+
+The `tools.nix` file contain the necessary code to generate the `Cargo.nix` file
+during evaluation time, which guarantee to always have `Cargo.nix` file up-to-date
+in regard to the `Cargo.lock`. The generated file is importable in Nix code, and can
+then be used like a normal `Cargo.nix` file. Note that this is not allowed in
+Nixpkgs, and it need at least Nix >= 2.5.
+
+Internally, this work by reading the `Cargo.lock` file with Nix, using the locked
+version and hash present in it to fetch them without introducing impurities.
+The fetched dependancies are then used to generate a vendored folder, and the
+appropriate configuration is generated so that the depencies are fetched from here.
+`crate2nix` is then called in a derivation that will generate the `Cargo.nix` file
+offline, which can later be imported.
+
+There are two commands in the `tools.nix` file:
+* `generatedCargoNix` will generate a folder containing a `default.nix`, to be used
+  as a `Cargo.nix` file. The argument it takes are:
+  * `name`: required. The name of the project (need to be a valid nix name
+    identifier, so no space are allowed, but dash are.)
+  * `src`: required. The folder that contain the root of the Rust project.
+  * `cargoToml`: optional. The name and path relative to the `src` root of the
+    `Cargo.toml` to use. Default to `Cargo.toml`.
+  * `additionalCargoNixArgs`: optional, additional argument for `crate2nix`, in a list
+* `appliedCargoNix` take the same argument that `generatedCargoNix`, but also call the
+  generated file with the `pkgs` provided when calling `tools.nix`
+
+for example:
+
+```nix
+let
+  crate2nix-tools = pkgs.callPackage "${crate2nix}/tools.nix" {};
+  generated = crate2nix-tools.generatedCargoNix {
+    name = "test-rust-project";
+    src = ./.;
+  };
+  called = pkgs.callPackage "${generated}/default.nix" {};
+in
+  called.rootCrate.build
+```
 
 ## FAQ
 

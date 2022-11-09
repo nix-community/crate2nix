@@ -213,23 +213,3 @@ impl Source {
         }
     }
 }
-
-/// The type of a Source.
-#[derive(Debug, Serialize, Deserialize)]
-pub enum SourceType {
-    /// Corresponds to Source::CratesIo.
-    CratesIo,
-    /// Corresponds to Source::Git.
-    Git,
-}
-
-impl FromStr for SourceType {
-    type Err = anyhow::Error;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "cratesIo" => Ok(SourceType::CratesIo),
-            "git" => Ok(SourceType::Git),
-            _ => bail!("unkown source type: {}", s),
-        }
-    }
-}

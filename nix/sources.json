@@ -5,10 +5,10 @@
         "homepage": "https://cachix.org",
         "owner": "cachix",
         "repo": "cachix",
-        "rev": "6ef447dd8c25eebdc1475728bea000b5165306d8",
-        "sha256": "1g7hwhl4mkyhsviq0hyg8nk75ncpxs2ay8qrq3zxvfdj35mhm8pv",
+        "rev": "5f72a71e0326b9d831c67f166949e0f833321f66",
+        "sha256": "06x1vjaylrclwdnq65w96j4zlyz6zr0zxcaqr2yk494jsygb7bc4",
         "type": "tarball",
-        "url": "https://github.com/cachix/cachix/archive/6ef447dd8c25eebdc1475728bea000b5165306d8.tar.gz",
+        "url": "https://github.com/cachix/cachix/archive/5f72a71e0326b9d831c67f166949e0f833321f66.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "cargo-release": {
@@ -65,10 +65,10 @@
         "homepage": null,
         "owner": "mozilla",
         "repo": "nixpkgs-mozilla",
-        "rev": "0508a66e28a5792fdfb126bbf4dec1029c2509e0",
-        "sha256": "1nswjmya72g0qriidc2pkl54zn5sg0xp36vdq0ylspca56izivxc",
+        "rev": "80627b282705101e7b38e19ca6e8df105031b072",
+        "sha256": "11g9lppm53f5aq7a0fnwh5hivdhn2p1wmhwgmz1052x10hfqjrah",
         "type": "tarball",
-        "url": "https://github.com/mozilla/nixpkgs-mozilla/archive/0508a66e28a5792fdfb126bbf4dec1029c2509e0.tar.gz",
+        "url": "https://github.com/mozilla/nixpkgs-mozilla/archive/80627b282705101e7b38e19ca6e8df105031b072.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
