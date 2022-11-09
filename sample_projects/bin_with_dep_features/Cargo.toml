@@ -1,0 +1,12 @@
+[package]
+name = "bin_with_dep_features"
+version = "0.1.0"
+authors = ["Faye Duxovni <duxovni@duxovni.org>"]
+edition = "2018"
+
+[dependencies]
+"hello_world_lib" = { path = "../lib", optional = true }
+
+[features]
+default = ["use_lib"]
+use_lib = ["dep:hello_world_lib"]

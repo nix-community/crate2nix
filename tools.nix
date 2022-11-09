@@ -202,7 +202,8 @@ rec {
 
         locked =
           let
-            parseFile = cargoLock: builtins.fromTOML (builtins.readFile cargoLock);
+            # unsafeDiscardStringContext is a workaround for https://github.com/NixOS/nix/issues/6647
+            parseFile = cargoLock: builtins.fromTOML (builtins.unsafeDiscardStringContext (builtins.readFile cargoLock));
             allParsedFiles = builtins.map parseFile lockFiles;
             merge = merged: lock:
               {
