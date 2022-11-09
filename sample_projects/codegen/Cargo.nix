@@ -97,7 +97,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: (target."os" == "windows");
+            target = { target, features }: ("windows" == target."os");
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];
@@ -513,7 +513,7 @@ rec {
     */
     os = pkgs.rust.lib.toTargetOs platform;
     arch = pkgs.rust.lib.toTargetArch platform;
-    family = "unix";
+    family = pkgs.rust.lib.toTargetFamily platform;
     env = "gnu";
     endian =
       if platform.parsed.cpu.significantByte.name == "littleEndian"

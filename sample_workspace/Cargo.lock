@@ -204,6 +204,13 @@ name = "hello_world_lib_and_bin"
 version = "0.1.0"
 
 [[package]]
+name = "hello_world_with_cond_dep"
+version = "0.1.0"
+dependencies = [
+ "hello_world_lib",
+]
+
+[[package]]
 name = "hello_world_with_dep"
 version = "0.1.0"
 dependencies = [

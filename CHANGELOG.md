@@ -22,6 +22,8 @@ Thank you @Fuuzetsu!
 
 * The nixpkgs Rust "lib" is used to implement the above and deduplicate other `cfg` reosolution.
 
+* Support custom `cfg(target_family = "whatever")` dependencies.
+
 # 0.9.x - 0.10.0
 
 Help needed! I don't have the resources to meaningfully advance this project. Thank

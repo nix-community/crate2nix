@@ -119,7 +119,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: (target."os" == "windows");
+            target = { target, features }: ("windows" == target."os");
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];
@@ -648,7 +648,7 @@ rec {
           {
             name = "wasi";
             packageId = "wasi";
-            target = { target, features }: (target."os" == "wasi");
+            target = { target, features }: ("wasi" == target."os");
           }
         ];
         features = {
@@ -908,7 +908,7 @@ rec {
           {
             name = "hermit-abi";
             packageId = "hermit-abi";
-            target = { target, features }: (((target."arch" == "x86_64") || (target."arch" == "aarch64")) && (target."os" == "hermit"));
+            target = { target, features }: ((("x86_64" == target."arch") || ("aarch64" == target."arch")) && ("hermit" == target."os"));
           }
           {
             name = "libc";
@@ -1381,7 +1381,7 @@ rec {
     */
     os = pkgs.rust.lib.toTargetOs platform;
     arch = pkgs.rust.lib.toTargetArch platform;
-    family = "unix";
+    family = pkgs.rust.lib.toTargetFamily platform;
     env = "gnu";
     endian =
       if platform.parsed.cpu.significantByte.name == "littleEndian"

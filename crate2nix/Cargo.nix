@@ -119,7 +119,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: (target."os" == "windows");
+            target = { target, features }: ("windows" == target."os");
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];
@@ -151,7 +151,7 @@ rec {
           {
             name = "hermit-abi";
             packageId = "hermit-abi";
-            target = { target, features }: (target."os" == "hermit");
+            target = { target, features }: ("hermit" == target."os");
           }
           {
             name = "libc";
@@ -1310,7 +1310,7 @@ rec {
           {
             name = "fuchsia-cprng";
             packageId = "fuchsia-cprng";
-            target = { target, features }: (target."os" == "fuchsia");
+            target = { target, features }: ("fuchsia" == target."os");
           }
           {
             name = "libc";
@@ -1322,12 +1322,12 @@ rec {
             name = "rand_core";
             packageId = "rand_core 0.3.1";
             usesDefaultFeatures = false;
-            target = { target, features }: (target."env" == "sgx");
+            target = { target, features }: ("sgx" == target."env");
           }
           {
             name = "rdrand";
             packageId = "rdrand";
-            target = { target, features }: (target."env" == "sgx");
+            target = { target, features }: ("sgx" == target."env");
           }
           {
             name = "winapi";
@@ -2366,7 +2366,7 @@ rec {
     */
     os = pkgs.rust.lib.toTargetOs platform;
     arch = pkgs.rust.lib.toTargetArch platform;
-    family = "unix";
+    family = pkgs.rust.lib.toTargetFamily platform;
     env = "gnu";
     endian =
       if platform.parsed.cpu.significantByte.name == "littleEndian"
