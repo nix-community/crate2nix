@@ -146,20 +146,7 @@ rec {
     */
     os = pkgs.rust.lib.toTargetOs platform;
     arch = pkgs.rust.lib.toTargetArch platform;
-    family =
-      if platform ? rustc.platform.target-family
-      then
-        (
-          /* Since https://github.com/rust-lang/rust/pull/84072
-             `target-family` is a list instead of single value.
-           */
-          let
-            f = platform.rustc.platform.target-family;
-          in
-          if builtins.isList f then f else [ f ]
-        )
-      else lib.optional platform.isUnix "unix"
-        ++ lib.optional platform.isWindows "windows";
+    family = pkgs.rust.lib.toTargetFamily platform;
     env = "gnu";
     endian =
       if platform.parsed.cpu.significantByte.name == "littleEndian"
