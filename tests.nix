@@ -324,6 +324,33 @@ let
     }
 
     {
+      name = "conditional_features_bye";
+      src = ./sample_projects/conditional_features;
+      expectedOutput = "Bye, not foo!";
+    }
+
+    {
+      name = "conditional_features_bye_foo";
+      src = ./sample_projects/conditional_features;
+      features = [ "foo" ];
+      expectedOutput = "Bye, foo!";
+    }
+
+    {
+      name = "conditional_features_hello";
+      src = ./sample_projects/conditional_features;
+      features = [ "hello" "allow-build" ];
+      expectedOutput = "Hello, not foo!";
+    }
+
+    {
+      name = "conditional_features_hello_foo";
+      src = ./sample_projects/conditional_features;
+      features = [ "hello" "allow-build" "foo" ];
+      expectedOutput = "Hello, foo!";
+    }
+
+    {
       name = "cdylib";
       src = ./sample_projects/cdylib;
       customBuild = "sample_projects/cdylib/test.nix";

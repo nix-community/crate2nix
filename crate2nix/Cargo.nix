@@ -2963,11 +2963,21 @@ rec {
       explicitFeatures = dependency.features or [ ];
       additionalDependencyFeatures =
         let
-          dependencyPrefix = (dependency.rename or dependency.name) + "/";
-          dependencyFeatures =
-            builtins.filter (f: lib.hasPrefix dependencyPrefix f) features;
+          name = dependency.rename or dependency.name;
+          stripPrefixMatch = prefix: s:
+            if lib.hasPrefix prefix s
+            then lib.removePrefix prefix s
+            else null;
+          extractFeature = feature: lib.findFirst
+            (f: f != null)
+            null
+            (map (prefix: stripPrefixMatch prefix feature) [
+              (name + "/")
+              (name + "?/")
+            ]);
+          dependencyFeatures = lib.filter (f: f != null) (map extractFeature features);
         in
-        builtins.map (lib.removePrefix dependencyPrefix) dependencyFeatures;
+        dependencyFeatures;
     in
     defaultOrNil ++ explicitFeatures ++ additionalDependencyFeatures;
 
