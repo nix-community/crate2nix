@@ -275,7 +275,15 @@ rec {
                     source = fetcher package;
                   in
                   {
-                    name = builtins.baseNameOf source;
+                    # We are using the store path (without the store directory)
+                    # as the name of a symlink, and don't care about store
+                    # store path we got that string one. It will in fact be
+                    # tract in the value's string context anyways.
+                    #
+                    # This is needed for Nixpkgs 22.11 and beyond where the
+                    # names are deduplicated with an attrset, and attrset keys
+                    # are required to not have a string context.
+                    name = builtins.baseNameOf (builtins.unsafeDiscardStringContext source);
                     path = source;
                   }
                 )
