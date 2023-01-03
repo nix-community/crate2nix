@@ -32,6 +32,10 @@ Thank you @Fuuzetsu!
 
 * Support custom `cfg(target_family = "whatever")` dependencies.
 
+## Fix IFD support library (`tools.nix`) for Nixpkkgs 22.11
+
+* See the comment inside there for details.
+
 # 0.9.x - 0.10.0
 
 Help needed! I don't have the resources to meaningfully advance this project. Thank
