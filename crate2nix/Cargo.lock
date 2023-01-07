@@ -150,7 +150,7 @@ dependencies = [
 
 [[package]]
 name = "crate2nix"
-version = "0.10.0"
+version = "0.11.0-rc.4"
 dependencies = [
  "anyhow",
  "cargo-platform",
