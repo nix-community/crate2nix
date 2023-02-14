@@ -39,7 +39,7 @@ rec {
       if platform.parsed.cpu.significantByte.name == "littleEndian"
       then "little" else "big";
     pointer_width = toString platform.parsed.cpu.bits;
-    vendor = platform.parsed.vendor.name;
+    vendor = platform.rustc.platform.vendor or platform.parsed.vendor.name;
     debug_assertions = false;
   };
 
