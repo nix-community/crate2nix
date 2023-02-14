@@ -179,6 +179,8 @@ rec {
     , runTests ? false
     , testCrateFlags ? [ ]
     , testInputs ? [ ]
+    # A function that takes in whether the crate is a build dependency, and what dependencies to add
+    , extraDepsIsBuild ? _: [ ]
       # Any command to run immediatelly before a test is executed.
     , testPreRun ? ""
       # Any command run immediatelly after a test is executed.
@@ -190,6 +192,7 @@ rec {
         , crateOverrides
         , runTests
         , testCrateFlags
+        , extraDepsIsBuild
         , testInputs
         , testPreRun
         , testPostRun
@@ -208,12 +211,12 @@ rec {
                   }
               );
           builtRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
+            inherit packageId features extraDepsIsBuild;
             buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
             runTests = false;
           };
           builtTestRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
+            inherit packageId features extraDepsIsBuild;
             buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
             runTests = true;
           };
@@ -231,7 +234,7 @@ rec {
         in
         derivation
       )
-      { inherit features crateOverrides runTests testCrateFlags testInputs testPreRun testPostRun; };
+      { inherit features crateOverrides runTests testCrateFlags testInputs testPreRun testPostRun extraDepsIsBuild; };
 
   /* Returns an attr set with packageId mapped to the result of buildRustCrateForPkgsFunc
     for the corresponding crate.
@@ -242,6 +245,7 @@ rec {
     , crateConfigs ? crates
     , buildRustCrateForPkgsFunc
     , runTests
+    , extraDepsIsBuild
     , makeTarget ? makeDefaultTarget
     } @ args:
       assert (builtins.isAttrs crateConfigs);
@@ -259,17 +263,17 @@ rec {
             }
           );
         # Memoize built packages so that reappearing packages are only built once.
-        builtByPackageIdByPkgs = mkBuiltByPackageIdByPkgs pkgs;
-        mkBuiltByPackageIdByPkgs = pkgs:
+        builtByPackageIdByPkgs = mkBuiltByPackageIdByPkgs false pkgs;
+        mkBuiltByPackageIdByPkgs = isBuildDep: pkgs:
           let
             self = {
-              crates = lib.mapAttrs (packageId: value: buildByPackageIdForPkgsImpl self pkgs packageId) crateConfigs;
-              target = makeTarget pkgs.stdenv.hostPlatform;
-              build = mkBuiltByPackageIdByPkgs pkgs.buildPackages;
+              crates = lib.mapAttrs (packageId: value: buildByPackageIdForPkgsImpl self pkgs packageId isBuildDep) crateConfigs;
+              target = makeTarget (if isBuildDep then stdenv.buildPlatform else stdenv.hostPlatform);
+              build = mkBuiltByPackageIdByPkgs true pkgs.buildPackages;
             };
           in
           self;
-        buildByPackageIdForPkgsImpl = self: pkgs: packageId:
+        buildByPackageIdForPkgsImpl = self: pkgs: packageId: isBuildDep:
           let
             features = mergedFeatures."${packageId}" or [ ];
             crateConfig' = crateConfigs."${packageId}";
@@ -280,7 +284,7 @@ rec {
                 (runTests && packageId == rootPackageId)
                 (crateConfig'.devDependencies or [ ]);
             dependencies =
-              dependencyDerivations {
+              (dependencyDerivations {
                 inherit features;
                 inherit (self) target;
                 buildByPackageId = depPackageId:
@@ -291,7 +295,7 @@ rec {
                 dependencies =
                   (crateConfig.dependencies or [ ])
                   ++ devDependencies;
-              };
+              }) ++ (extraDepsIsBuild isBuildDep);
             buildDependencies =
               dependencyDerivations {
                 inherit features;
@@ -351,6 +355,7 @@ rec {
                   }
                 );
                 extraRustcOpts = lib.lists.optional (targetFeatures != [ ]) "-C target-feature=${lib.concatMapStringsSep "," (x: "+${x}") targetFeatures}";
+                crossCompile = !isBuildDep;
                 inherit features dependencies buildDependencies crateRenames release;
               }
             );
