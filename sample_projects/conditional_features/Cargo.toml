@@ -1,0 +1,13 @@
+[package]
+name = "conditional_features"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies.optional]
+optional = true
+path = "./optional"
+
+[features]
+hello = ["optional"]
+foo = ["optional?/foo"]
+allow-build = ["optional?/allow-build"]
