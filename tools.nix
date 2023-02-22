@@ -30,10 +30,14 @@ rec {
     , src
     , cargoToml ? "Cargo.toml"
     , additionalCargoNixArgs ? [ ]
+    , overrideLockFile ? null
     }:
     let
       crateDir = dirOf (src + "/${cargoToml}");
-      vendor = internal.vendorSupport { inherit crateDir; };
+      vendor = internal.vendorSupport {
+        inherit crateDir;
+        additionalLockFiles = if overrideLockFile == null then [ ] else [ overrideLockFile ];
+      };
     in
     stdenv.mkDerivation {
       name = "${name}-crate2nix";
@@ -51,6 +55,11 @@ rec {
 
         export CARGO_HOME="$out/cargo"
         export HOME="$out"
+
+        ${if overrideLockFile == null then
+          ""
+        else
+          "cp ${overrideLockFile} ./Cargo.lock"}
 
         cp ${vendor.cargoConfig} $out/cargo/config
 
@@ -176,7 +185,7 @@ rec {
         rev = lib.last splitQuestion;
       };
 
-    vendorSupport = { crateDir ? ./., ... }:
+    vendorSupport = { crateDir ? ./., additionalLockFiles ? [ ], ... }:
       rec {
         toPackageId = { name, version, source, ... }:
           "${name} ${version} (${source})";
@@ -198,7 +207,7 @@ rec {
                 builtins.map toLockFile subdirs
               else [ ];
           in
-          fromCrateDir ++ fromSources;
+          fromCrateDir ++ fromSources ++ additionalLockFiles;
 
         locked =
           let
