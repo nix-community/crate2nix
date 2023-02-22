@@ -211,7 +211,6 @@ let
       name = "bin_with_git_branch_dep";
       src = ./sample_projects/bin_with_git_branch_dep;
       expectedOutput = "Hello world from bin_with_git_branch_dep!";
-      pregeneratedBuild = "sample_projects/bin_with_git_branch_dep/Cargo.nix";
     }
 
     {
