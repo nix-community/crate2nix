@@ -27,6 +27,8 @@ jobs:
         run: |
           failed=""
 
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
           for source in $sources; do
             git fetch origin master
             git reset --hard origin/master
