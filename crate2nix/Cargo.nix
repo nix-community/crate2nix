@@ -2367,12 +2367,12 @@ rec {
     os = pkgs.rust.lib.toTargetOs platform;
     arch = pkgs.rust.lib.toTargetArch platform;
     family = pkgs.rust.lib.toTargetFamily platform;
+    vendor = pkgs.rust.lib.toTargetVendor platform;
     env = "gnu";
     endian =
       if platform.parsed.cpu.significantByte.name == "littleEndian"
       then "little" else "big";
     pointer_width = toString platform.parsed.cpu.bits;
-    vendor = platform.parsed.vendor.name;
     debug_assertions = false;
   };
 
