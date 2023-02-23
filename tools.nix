@@ -249,11 +249,12 @@ rec {
         mkGitHash = { source, ... }@attrs:
           let
             parsed = parseGitSource source;
-            src = builtins.fetchGit {
+            src = builtins.fetchGit ({
               submodules = true;
               inherit (parsed) url rev;
-              ref = parsed.branch or "master";
-            };
+            } // lib.optionalAttrs (parsed ? branch) {
+              ref = parsed.branch;
+            });
             hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
               echo -n "$(nix-hash --type sha256 ${src})" > $out
             '';
@@ -319,12 +320,14 @@ rec {
                 in
                 ''
 
-              [source."${lib.removePrefix "git+" source}"]
-              git = "${parsed.url}"
-              rev = "${parsed.rev}"
-              ${lib.optionalString (parsed ? branch) ''branch = "${parsed.branch}"''}
-              replace-with = "vendored-sources"
-              '';
+                [source."${lib.removePrefix "git+" source}"]
+                git = "${parsed.url}"
+                rev = "${parsed.rev}"
+              '' + lib.optionalString (parsed ? branch) ''
+                  branch = "${parsed.branch}"
+                '' + ''
+                  replace-with = "vendored-sources"
+                '';
             gitSources = packagesByType."git" or [ ];
             gitSourcesUnique = lib.unique gitSources;
             gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
