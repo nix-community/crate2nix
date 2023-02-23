@@ -173,8 +173,9 @@ rec {
         fragment = builtins.elemAt splitHash 1;
         splitQuestion = lib.splitString "?" preFragment;
         preQueryParams = builtins.elemAt splitQuestion 0;
-        queryParamsRaw = builtins.elemAt splitQuestion 1;
-        queryParamsList = lib.splitString "&" queryParamsRaw;
+        queryParamsList = lib.optionals
+          (builtins.length splitQuestion >= 2)
+          (lib.splitString "&" (builtins.elemAt splitQuestion 1));
         kv = s:
           let
             l = lib.splitString "=" s;
