@@ -162,19 +162,50 @@ rec {
         builtins.throw "unknown source type: ${source}";
 
     # Extracts URL and rev from a git source URL.
-    #
-    # Crude, should be more robust :(
     parseGitSource = source:
       assert builtins.isString source;
       let
-        withoutGitPlus = lib.removePrefix "git+" source;
-        splitHash = lib.splitString "#" withoutGitPlus;
-        splitQuestion = lib.concatMap (lib.splitString "?") splitHash;
+        extractRevision = source: lib.last (lib.splitString "#" source);
+        extractPart = part: source: if lib.hasInfix part source then lib.last (lib.splitString part (lib.head (lib.splitString "#" source))) else null;
+        extractRepoUrl = source:
+          let
+            splitted = lib.head (lib.splitString "?" source);
+            split = lib.substring 4 (lib.stringLength splitted) splitted;
+          in
+          lib.head (lib.splitString "#" split);
+
+        revision = extractRevision source;
+        rev = extractPart "?rev=" source;
+        tag = extractPart "?tag=" source;
+        branch = extractPart "?branch=" source;
+        url = extractRepoUrl source;
       in
       {
-        url = builtins.head splitQuestion;
-        rev = lib.last splitQuestion;
+        inherit revision url;
+      } // lib.optionalAttrs (! isNull rev) {
+        inherit rev;
+      } // lib.optionalAttrs (! isNull tag) {
+        inherit tag;
+      } // lib.optionalAttrs (! isNull branch) {
+        inherit branch;
       };
+
+    getSrcFromGitSource = source:
+      let
+        parsed = parseGitSource source;
+        ref = parsed.branch or parsed.tag or null;
+      in builtins.fetchGit ({
+        inherit (parsed) url;
+        rev = parsed.revision;
+        submodules = true;
+      } // (if isNull ref then {
+        allRefs = true;
+      } else {
+        ref =
+          if ref == (parsed.tag or null)
+          then "refs/tags/${ref}"
+          else ref;
+      }));
 
     vendorSupport = { crateDir ? ./., ... }:
       rec {
@@ -231,12 +262,7 @@ rec {
 
         mkGitHash = { source, ... }@attrs:
           let
-            parsed = parseGitSource source;
-            src = builtins.fetchGit {
-              submodules = true;
-              inherit (parsed) url rev;
-              ref = attrs.branch or "master";
-            };
+            src = getSrcFromGitSource source;
             hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
               echo -n "$(nix-hash --type sha256 ${src})" > $out
             '';
@@ -299,19 +325,41 @@ rec {
                 assert builtins.isString source;
                 let
                   parsed = parseGitSource source;
+                  has = name: attrs: ! isNull (attrs.${name} or null);
+                  hasTag = has "tag";
+                  hasRev = has "rev";
+                  hasBranch = has "branch";
+                  putBranch = (hasBranch attrs) || (hasBranch parsed);
+                  putTag = (hasTag attrs) || (hasTag parsed);
+                  putRev = (hasRev attrs) || (hasRev parsed);
+                  isNewerCargo = builtins.compareVersions pkgs.cargo.version "1.53.0" > (-1);
+                  key = if putRev    then "?rev=${attrs.rev or parsed.rev}"       else
+                        if putTag    then "?tag=${attrs.tag or parsed.tag}"       else
+                        if putBranch then "?branch=${attrs.branch or parsed.branch}" else
+                        "";
                 in
                 ''
 
-              [source."${parsed.url}"]
+              [source."${parsed.url}${key}"]
               git = "${parsed.url}"
-              rev = "${parsed.rev}"
-              ${lib.optionalString (isNull (builtins.match ".*\\?rev=[0-9a-z]{40}.*" source)) ''branch = "${attrs.branch or "master"}"''}
+              ${
+                if isNewerCargo
+                then lib.optionalString putRev ''rev = "${attrs.rev or parsed.rev or parsed.revision}"''
+                else ''rev = "${attrs.rev or parsed.rev or parsed.revision}"''
+              }
+              ${
+                if isNewerCargo
+                then lib.optionalString ((! putRev) && putBranch) ''branch = "${attrs.branch or parsed.branch}"''
+                else lib.optionalString ((! putRev) && (! putTag)) ''branch = "${attrs.branch or parsed.branch or "master"}"''
+              }
+              ${lib.optionalString ((! putRev) && putTag) ''tag = "${attrs.tag or parsed.tag}"''}
               replace-with = "vendored-sources"
               '';
             gitSources = packagesByType."git" or [ ];
             gitSourcesUnique = lib.unique gitSources;
             gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
-            gitSourceConfigsString = lib.concatStrings gitSourceConfigs;
+            gitSourceConfigsUnique = lib.unique gitSourceConfigs;
+            gitSourceConfigsString = lib.concatStrings gitSourceConfigsUnique;
           in
           pkgs.writeText
             "vendor-config"
@@ -350,21 +398,40 @@ rec {
             assert (sourceType package) == "git";
             let
               packageId = toPackageId package;
-              sha256 =
-                hashes.${packageId}
-                  or extraHashes.${packageId}
-                  or (builtins.throw "Checksum for ${packageId} not found in crate-hashes.json");
-              parsed = parseGitSource source;
-              src = pkgs.fetchgit {
-                name = "${name}-${version}";
-                inherit sha256;
-                inherit (parsed) url rev;
-              };
+              src = getSrcFromGitSource source;
+              srcName = "${name}-${version}";
+
+              rootCargo = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
+              isWorkspace = rootCargo ? "workspace";
+              isPackage = rootCargo ? "package";
+              containedCrates = rootCargo.workspace.members ++ (if isPackage then [ "." ] else [ ]);
+
+              getCrateNameFromPath = path:
+                let
+                  cargoTomlCrate = builtins.fromTOML (builtins.readFile "${src}/${path}/Cargo.toml");
+                in
+                cargoTomlCrate.package.name;
+
+              filteredPaths =
+                builtins.filter
+                  (to_filter: getCrateNameFromPath to_filter == name)
+                  containedCrates;
+
+              pathToExtract =
+                if isWorkspace then
+                  # Workaround for sources that have isWorkspace as true, but don't
+                  # declare all their members in `workspace.members`
+                  if builtins.length filteredPaths > 0
+                  then builtins.head filteredPaths
+                  # This does not cover all possible cases, only is a last ditch effort
+                  else name
+                else
+                  ".";
             in
-            pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
+            pkgs.runCommand (lib.removeSuffix ".tar.gz" srcName) { }
               ''
                 mkdir -p $out
-                cp -apR ${src}/* $out
+                cp -apR ${src}/${pathToExtract}/* $out
                 echo '{"package":null,"files":{}}' > $out/.cargo-checksum.json
               '';
 
