@@ -169,11 +169,28 @@ rec {
       let
         withoutGitPlus = lib.removePrefix "git+" source;
         splitHash = lib.splitString "#" withoutGitPlus;
-        splitQuestion = lib.concatMap (lib.splitString "?") splitHash;
+        preFragment = builtins.elemAt splitHash 0;
+        fragment = builtins.elemAt splitHash 1;
+        splitQuestion = lib.splitString "?" preFragment;
+        preQueryParams = builtins.elemAt splitQuestion 0;
+        queryParamsList = lib.optionals
+          (builtins.length splitQuestion >= 2)
+          (lib.splitString "&" (builtins.elemAt splitQuestion 1));
+        kv = s:
+          let
+            l = lib.splitString "=" s;
+          in
+          {
+            name = builtins.elemAt l 0;
+            value = builtins.elemAt l 1;
+          };
+        queryParams = builtins.listToAttrs (map kv queryParamsList);
       in
-      {
-        url = builtins.head splitQuestion;
-        rev = lib.last splitQuestion;
+      assert builtins.length splitHash <= 2;
+      assert builtins.length splitQuestion <= 2;
+      queryParams // {
+        url = preQueryParams;
+        rev = fragment;
       };
 
     vendorSupport = { crateDir ? ./., ... }:
@@ -232,11 +249,12 @@ rec {
         mkGitHash = { source, ... }@attrs:
           let
             parsed = parseGitSource source;
-            src = builtins.fetchGit {
+            src = builtins.fetchGit ({
               submodules = true;
               inherit (parsed) url rev;
-              ref = attrs.branch or "master";
-            };
+            } // lib.optionalAttrs (parsed ? branch) {
+              ref = parsed.branch;
+            });
             hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
               echo -n "$(nix-hash --type sha256 ${src})" > $out
             '';
@@ -302,12 +320,14 @@ rec {
                 in
                 ''
 
-              [source."${parsed.url}"]
-              git = "${parsed.url}"
-              rev = "${parsed.rev}"
-              ${lib.optionalString (isNull (builtins.match ".*\\?rev=[0-9a-z]{40}.*" source)) ''branch = "${attrs.branch or "master"}"''}
-              replace-with = "vendored-sources"
-              '';
+                [source."${lib.removePrefix "git+" source}"]
+                git = "${parsed.url}"
+                rev = "${parsed.rev}"
+              '' + lib.optionalString (parsed ? branch) ''
+                  branch = "${parsed.branch}"
+                '' + ''
+                  replace-with = "vendored-sources"
+                '';
             gitSources = packagesByType."git" or [ ];
             gitSourcesUnique = lib.unique gitSources;
             gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
