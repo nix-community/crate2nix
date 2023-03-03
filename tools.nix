@@ -170,7 +170,9 @@ rec {
         withoutGitPlus = lib.removePrefix "git+" source;
         splitHash = lib.splitString "#" withoutGitPlus;
         preFragment = builtins.elemAt splitHash 0;
-        fragment = builtins.elemAt splitHash 1;
+        fragment = if builtins.length splitHash >= 2
+          then builtins.elemAt splitHash 1
+          else null;
         splitQuestion = lib.splitString "?" preFragment;
         preQueryParams = builtins.elemAt splitQuestion 0;
         queryParamsList = lib.optionals
@@ -179,9 +181,14 @@ rec {
         kv = s:
           let
             l = lib.splitString "=" s;
+            key = builtins.elemAt l 0;
           in
           {
-            name = builtins.elemAt l 0;
+            # Cargo supports using the now-obsoleted "ref" key in place of
+            # "branch"; see cargo-vendor source
+            name = if key == "ref"
+              then "branch"
+              else key;
             value = builtins.elemAt l 1;
           };
         queryParams = builtins.listToAttrs (map kv queryParamsList);
@@ -190,7 +197,7 @@ rec {
       assert builtins.length splitQuestion <= 2;
       queryParams // {
         url = preQueryParams;
-        rev = fragment;
+        urlFragment = fragment;
       };
 
     vendorSupport = { crateDir ? ./., ... }:
@@ -251,10 +258,14 @@ rec {
             parsed = parseGitSource source;
             src = builtins.fetchGit ({
               submodules = true;
-              inherit (parsed) url rev;
-            } // lib.optionalAttrs (parsed ? branch) {
-              ref = parsed.branch;
-            });
+              inherit (parsed) url;
+              rev = if isNull parsed.urlFragment
+                then parsed.rev
+                else parsed.urlFragment;
+            } // (if (parsed ? branch || parsed ? tag)
+              then { ref = parsed.branch or "refs/tags/${parsed.tag}"; }
+              else { allRefs = true; })
+            );
             hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
               echo -n "$(nix-hash --type sha256 ${src})" > $out
             '';
@@ -322,12 +333,11 @@ rec {
 
                 [source."${lib.removePrefix "git+" source}"]
                 git = "${parsed.url}"
-                rev = "${parsed.rev}"
-              '' + lib.optionalString (parsed ? branch) ''
-                  branch = "${parsed.branch}"
-                '' + ''
-                  replace-with = "vendored-sources"
-                '';
+                ${lib.optionalString (parsed ? rev) ''rev = "${parsed.rev}"''}
+                ${lib.optionalString (parsed ? tag) ''tag = "${parsed.tag}"''}
+                ${lib.optionalString (parsed ? branch) ''branch = "${parsed.branch}"''}
+                replace-with = "vendored-sources"
+              '';
             gitSources = packagesByType."git" or [ ];
             gitSourcesUnique = lib.unique gitSources;
             gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
@@ -378,7 +388,10 @@ rec {
               src = pkgs.fetchgit {
                 name = "${name}-${version}";
                 inherit sha256;
-                inherit (parsed) url rev;
+                inherit (parsed) url;
+                rev = if isNull parsed.urlFragment
+                  then parsed.rev
+                  else parsed.urlFragment;
               };
             in
             pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
