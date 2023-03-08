@@ -170,7 +170,8 @@ rec {
         withoutGitPlus = lib.removePrefix "git+" source;
         splitHash = lib.splitString "#" withoutGitPlus;
         preFragment = builtins.elemAt splitHash 0;
-        fragment = if builtins.length splitHash >= 2
+        fragment =
+          if builtins.length splitHash >= 2
           then builtins.elemAt splitHash 1
           else null;
         splitQuestion = lib.splitString "?" preFragment;
@@ -186,7 +187,8 @@ rec {
           {
             # Cargo supports using the now-obsoleted "ref" key in place of
             # "branch"; see cargo-vendor source
-            name = if key == "ref"
+            name =
+              if key == "ref"
               then "branch"
               else key;
             value = builtins.elemAt l 1;
@@ -259,12 +261,13 @@ rec {
             src = builtins.fetchGit ({
               submodules = true;
               inherit (parsed) url;
-              rev = if isNull parsed.urlFragment
+              rev =
+                if isNull parsed.urlFragment
                 then parsed.rev
                 else parsed.urlFragment;
             } // (if (parsed ? branch || parsed ? tag)
-              then { ref = parsed.branch or "refs/tags/${parsed.tag}"; }
-              else { allRefs = true; })
+            then { ref = parsed.branch or "refs/tags/${parsed.tag}"; }
+            else { allRefs = true; })
             );
             hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
               echo -n "$(nix-hash --type sha256 ${src})" > $out
@@ -389,7 +392,8 @@ rec {
                 name = "${name}-${version}";
                 inherit sha256;
                 inherit (parsed) url;
-                rev = if isNull parsed.urlFragment
+                rev =
+                  if isNull parsed.urlFragment
                   then parsed.rev
                   else parsed.urlFragment;
               };
