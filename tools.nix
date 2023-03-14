@@ -30,10 +30,16 @@ rec {
     , src
     , cargoToml ? "Cargo.toml"
     , additionalCargoNixArgs ? [ ]
+    , additionalCrateHashes ? internal.parseOptHashesFile
+        (src + "/crate-hashes.json")
     }:
     let
       crateDir = dirOf (src + "/${cargoToml}");
-      vendor = internal.vendorSupport { inherit crateDir; };
+      vendor = internal.vendorSupport rec {
+        inherit crateDir;
+        lockFiles = internal.gatherLockFiles crateDir;
+        hashes = internal.gatherHashes (lockFiles) // additionalCrateHashes;
+      };
     in
     stdenv.mkDerivation {
       name = "${name}-crate2nix";
@@ -55,12 +61,9 @@ rec {
         cp ${vendor.cargoConfig} $out/cargo/config
 
         crate_hashes="$out/crate-hashes.json"
-        if test -r "./crate-hashes.json" ; then
-          printf "$(jq -s '.[0] * ${builtins.toJSON vendor.extraHashes}' "./crate-hashes.json")" > "$crate_hashes"
-          chmod +w "$crate_hashes"
-        else
-          printf '${builtins.toJSON vendor.extraHashes}' > "$crate_hashes"
-        fi
+        echo -n '${builtins.toJSON vendor.extendedHashes}' | jq > "$crate_hashes"
+        # Remove last trailing newline, which crate2nix doesn't (yet) include
+        truncate -s -1 "$crate_hashes"
 
         crate2nix_options=""
         if [ -r ./${cargoToml} ]; then
@@ -202,29 +205,47 @@ rec {
         urlFragment = fragment;
       };
 
-    vendorSupport = { crateDir ? ./., ... }:
+    gatherLockFiles = crateDir:
+      let
+        fromCrateDir =
+          if builtins.pathExists (crateDir + "/Cargo.lock")
+          then [ (crateDir + "/Cargo.lock") ]
+          else [ ];
+        fromSources =
+          if builtins.pathExists (crateDir + "/crate2nix-sources")
+          then
+            let
+              subdirsTypes = builtins.readDir (crateDir + "/crate2nix-sources");
+              subdirs = builtins.attrNames subdirsTypes;
+              toLockFile = subdir: (crateDir + "/crate2nix-sources/${subdir}/Cargo.lock");
+            in
+            builtins.map toLockFile subdirs
+          else [ ];
+      in
+      fromCrateDir ++ fromSources;
+
+    parseOptHashesFile = hashesFile: lib.optionalAttrs
+      (builtins.pathExists hashesFile)
+      (builtins.fromJSON (builtins.readFile hashesFile));
+
+    gatherHashes = lockFiles:
+      let
+        hashesFiles = builtins.map
+          (cargoLock: "${dirOf cargoLock}/crate-hashes.json")
+          lockFiles;
+
+        parsedFiles = builtins.map parseOptHashesFile hashesFiles;
+      in
+      lib.foldl (a: b: a // b) { } parsedFiles;
+
+    vendorSupport =
+      { crateDir ? ./.
+      , lockFiles ? [ ]
+      , hashes ? { }
+      }:
       rec {
         toPackageId = { name, version, source, ... }:
           "${name} ${version} (${source})";
-
-        lockFiles =
-          let
-            fromCrateDir =
-              if builtins.pathExists (crateDir + "/Cargo.lock")
-              then [ (crateDir + "/Cargo.lock") ]
-              else [ ];
-            fromSources =
-              if builtins.pathExists (crateDir + "/crate2nix-sources")
-              then
-                let
-                  subdirsTypes = builtins.readDir (crateDir + "/crate2nix-sources");
-                  subdirs = builtins.attrNames subdirsTypes;
-                  toLockFile = subdir: (crateDir + "/crate2nix-sources/${subdir}/Cargo.lock");
-                in
-                builtins.map toLockFile subdirs
-              else [ ];
-          in
-          fromCrateDir ++ fromSources;
 
         locked =
           let
@@ -238,22 +259,6 @@ rec {
               };
           in
           lib.foldl merge { package = [ ]; metadata = { }; } allParsedFiles;
-
-        hashesFiles =
-          builtins.map
-            (cargoLock: "${dirOf cargoLock}/crate-hashes.json")
-            lockFiles;
-        hashes =
-          let
-            parseFile = hashesFile:
-              if builtins.pathExists hashesFile
-              then builtins.fromJSON (builtins.readFile hashesFile)
-              else { };
-            parsedFiles = builtins.map parseFile hashesFiles;
-          in
-          lib.foldl (a: b: a // b) { } parsedFiles;
-
-        unhashedGitDeps = builtins.filter (p: ! hashes ? ${toPackageId p}) packagesByType.git or [ ];
 
         mkGitHash = { source, ... }@attrs:
           let
@@ -270,18 +275,20 @@ rec {
             else { allRefs = true; })
             );
             hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
-              echo -n "$(nix-hash --type sha256 ${src})" > $out
+              echo -n "$(nix-hash --type sha256 --base32 ${src})" > $out
             '';
           in
-          {
+          rec {
             name = toPackageId attrs;
-            value = builtins.readFile hash;
+            # Fetching git submodules with builtins.fetchGit is only supported in nix > 2.3
+            value = hashes.${name} or
+              (if lib.versionAtLeast builtins.nixVersion "2.4"
+              then builtins.readFile hash
+              else builtins.throw "Checksum for ${name} not found in `hashes`");
           };
 
-        # Fetching git submodules with builtins.fetchGit is only supported in nix > 2.3
-        extraHashes = lib.optionalAttrs
-          (builtins.compareVersions builtins.nixVersion "2.3" == 1)
-          (builtins.listToAttrs (map mkGitHash unhashedGitDeps));
+        extendedHashes = hashes
+          // builtins.listToAttrs (map mkGitHash (packagesByType.git or [ ]));
 
         packages =
           let
@@ -383,10 +390,7 @@ rec {
             assert (sourceType package) == "git";
             let
               packageId = toPackageId package;
-              sha256 =
-                hashes.${packageId}
-                  or extraHashes.${packageId}
-                  or (builtins.throw "Checksum for ${packageId} not found in crate-hashes.json");
+              sha256 = extendedHashes.${packageId};
               parsed = parseGitSource source;
               src = pkgs.fetchgit {
                 name = "${name}-${version}";
