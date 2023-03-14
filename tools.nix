@@ -287,7 +287,8 @@ rec {
               else builtins.throw "Checksum for ${name} not found in `hashes`");
           };
 
-        extendedHashes = hashes // (builtins.listToAttrs (map mkGitHash (packagesByType.git or [ ])));
+        extendedHashes = hashes
+          // builtins.listToAttrs (map mkGitHash (packagesByType.git or [ ]));
 
         packages =
           let
