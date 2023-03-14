@@ -30,7 +30,8 @@ rec {
     , src
     , cargoToml ? "Cargo.toml"
     , additionalCargoNixArgs ? [ ]
-    , additionalCrateHashes ? { }
+    , additionalCrateHashes ? internal.parseOptHashesFile
+        (src + "/crate-hashes.json")
     }:
     let
       crateDir = dirOf (src + "/${cargoToml}");
@@ -60,12 +61,9 @@ rec {
         cp ${vendor.cargoConfig} $out/cargo/config
 
         crate_hashes="$out/crate-hashes.json"
-        if test -r "./crate-hashes.json" ; then
-          printf "$(jq -s '.[0] * ${builtins.toJSON vendor.extendedHashes}' "./crate-hashes.json")" > "$crate_hashes"
-          chmod +w "$crate_hashes"
-        else
-          printf '${builtins.toJSON vendor.extendedHashes}' > "$crate_hashes"
-        fi
+        echo -n '${builtins.toJSON vendor.extendedHashes}' | jq > "$crate_hashes"
+        # Remove last trailing newline, which crate2nix doesn't (yet) include
+        truncate -s -1 "$crate_hashes"
 
         crate2nix_options=""
         if [ -r ./${cargoToml} ]; then
@@ -226,17 +224,17 @@ rec {
       in
       fromCrateDir ++ fromSources;
 
+    parseOptHashesFile = hashesFile: lib.optionalAttrs
+      (builtins.pathExists hashesFile)
+      (builtins.fromJSON (builtins.readFile hashesFile));
+
     gatherHashes = lockFiles:
       let
         hashesFiles = builtins.map
           (cargoLock: "${dirOf cargoLock}/crate-hashes.json")
           lockFiles;
 
-        parseFile = hashesFile:
-          if builtins.pathExists hashesFile
-          then builtins.fromJSON (builtins.readFile hashesFile)
-          else { };
-        parsedFiles = builtins.map parseFile hashesFiles;
+        parsedFiles = builtins.map parseOptHashesFile hashesFiles;
       in
       lib.foldl (a: b: a // b) { } parsedFiles;
 
@@ -283,12 +281,13 @@ rec {
           rec {
             name = toPackageId attrs;
             # Fetching git submodules with builtins.fetchGit is only supported in nix > 2.3
-            value = hashes.${name} or (if lib.versionAtLeast builtins.nixVersion "2.4" then
-              builtins.readFile hash
-            else builtins.throw "Checksum for ${name} not found in crate-hashes.json");
+            value = hashes.${name} or
+              (if lib.versionAtLeast builtins.nixVersion "2.4"
+              then builtins.readFile hash
+              else builtins.throw "Checksum for ${name} not found in `hashes`");
           };
 
-        extendedHashes = (builtins.listToAttrs (map mkGitHash (packagesByType.git or [ ])));
+        extendedHashes = hashes // (builtins.listToAttrs (map mkGitHash (packagesByType.git or [ ])));
 
         packages =
           let
