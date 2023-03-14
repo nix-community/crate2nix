@@ -30,10 +30,11 @@ rec {
     , src
     , cargoToml ? "Cargo.toml"
     , additionalCargoNixArgs ? [ ]
+    , additionalCrateHashes ? {}
     }:
     let
       crateDir = dirOf (src + "/${cargoToml}");
-      vendor = internal.vendorSupport { inherit crateDir; };
+      vendor = internal.vendorSupport { inherit crateDir additionalCrateHashes; };
     in
     stdenv.mkDerivation {
       name = "${name}-crate2nix";
@@ -202,7 +203,11 @@ rec {
         urlFragment = fragment;
       };
 
-    vendorSupport = { crateDir ? ./., ... }:
+    vendorSupport =
+      { crateDir ? ./.
+      , additionalCrateHashes ? {}
+      , ...
+      }:
       rec {
         toPackageId = { name, version, source, ... }:
           "${name} ${version} (${source})";
@@ -251,7 +256,8 @@ rec {
               else { };
             parsedFiles = builtins.map parseFile hashesFiles;
           in
-          lib.foldl (a: b: a // b) { } parsedFiles;
+            additionalCrateHashes //
+            lib.foldl (a: b: a // b) { } parsedFiles;
 
         unhashedGitDeps = builtins.filter (p: ! hashes ? ${toPackageId p}) packagesByType.git or [ ];
 
