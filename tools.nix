@@ -285,9 +285,10 @@ rec {
           };
 
         # Fetching git submodules with builtins.fetchGit is only supported in nix > 2.3
-        extraHashes = lib.optionalAttrs
-          (builtins.compareVersions builtins.nixVersion "2.3" == 1)
-          (builtins.listToAttrs (map mkGitHash unhashedGitDeps));
+        extraHashes = additionalCrateHashes //
+          lib.optionalAttrs
+            (builtins.compareVersions builtins.nixVersion "2.3" == 1)
+            (builtins.listToAttrs (map mkGitHash unhashedGitDeps));
 
         packages =
           let
