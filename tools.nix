@@ -34,7 +34,10 @@ rec {
     }:
     let
       crateDir = dirOf (src + "/${cargoToml}");
-      vendor = internal.vendorSupport { inherit crateDir additionalCrateHashes; };
+      vendor = internal.vendorSupport {
+        inherit crateDir additionalCrateHashes;
+        lockFiles = internal.gatherLockFiles crateDir;
+      };
     in
     stdenv.mkDerivation {
       name = "${name}-crate2nix";
@@ -203,33 +206,33 @@ rec {
         urlFragment = fragment;
       };
 
+    gatherLockFiles = crateDir:
+      let
+        fromCrateDir =
+          if builtins.pathExists (crateDir + "/Cargo.lock")
+          then [ (crateDir + "/Cargo.lock") ]
+          else [ ];
+        fromSources =
+          if builtins.pathExists (crateDir + "/crate2nix-sources")
+          then
+            let
+              subdirsTypes = builtins.readDir (crateDir + "/crate2nix-sources");
+              subdirs = builtins.attrNames subdirsTypes;
+              toLockFile = subdir: (crateDir + "/crate2nix-sources/${subdir}/Cargo.lock");
+            in
+            builtins.map toLockFile subdirs
+          else [ ];
+      in
+      fromCrateDir ++ fromSources;
+
     vendorSupport =
       { crateDir ? ./.
       , additionalCrateHashes ? { }
-      , ...
+      , lockFiles ? [ ]
       }:
       rec {
         toPackageId = { name, version, source, ... }:
           "${name} ${version} (${source})";
-
-        lockFiles =
-          let
-            fromCrateDir =
-              if builtins.pathExists (crateDir + "/Cargo.lock")
-              then [ (crateDir + "/Cargo.lock") ]
-              else [ ];
-            fromSources =
-              if builtins.pathExists (crateDir + "/crate2nix-sources")
-              then
-                let
-                  subdirsTypes = builtins.readDir (crateDir + "/crate2nix-sources");
-                  subdirs = builtins.attrNames subdirsTypes;
-                  toLockFile = subdir: (crateDir + "/crate2nix-sources/${subdir}/Cargo.lock");
-                in
-                builtins.map toLockFile subdirs
-              else [ ];
-          in
-          fromCrateDir ++ fromSources;
 
         locked =
           let
