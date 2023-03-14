@@ -30,7 +30,7 @@ rec {
     , src
     , cargoToml ? "Cargo.toml"
     , additionalCargoNixArgs ? [ ]
-    , additionalCrateHashes ? {}
+    , additionalCrateHashes ? { }
     }:
     let
       crateDir = dirOf (src + "/${cargoToml}");
@@ -205,7 +205,7 @@ rec {
 
     vendorSupport =
       { crateDir ? ./.
-      , additionalCrateHashes ? {}
+      , additionalCrateHashes ? { }
       , ...
       }:
       rec {
@@ -256,8 +256,8 @@ rec {
               else { };
             parsedFiles = builtins.map parseFile hashesFiles;
           in
-            additionalCrateHashes //
-            lib.foldl (a: b: a // b) { } parsedFiles;
+          additionalCrateHashes //
+          lib.foldl (a: b: a // b) { } parsedFiles;
 
         unhashedGitDeps = builtins.filter (p: ! hashes ? ${toPackageId p}) packagesByType.git or [ ];
 
