@@ -19,9 +19,6 @@ let
     in
       !(baseName == "templates" && type == "directory");
   crate2nix = cargoNix.rootCrate.build.override {
-    testCrateFlags = [
-      "--skip nix_integration_tests"
-    ];
     crateOverrides = defaultCrateOverrides // {
       crate2nix = { src, ... }: {
         src =

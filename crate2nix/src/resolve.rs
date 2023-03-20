@@ -1,6 +1,6 @@
 //! Resolve dependencies and other data for CrateDerivation.
-
 use anyhow::format_err;
+use anyhow::Context;
 use anyhow::Error;
 use cargo_metadata::Node;
 use cargo_metadata::Package;
@@ -141,11 +141,16 @@ impl CrateDerivation {
             .iter()
             .any(|t| t.kind.iter().any(|k| k == "proc-macro"));
 
+        // Binaries have one kind:
+        // https://github.com/rust-lang/cargo/blob/94394ebf2a6b6f1c1d6c160b48865a06e54d5f30/src/cargo/core/manifest.rs#L126
         let binaries = package
             .targets
             .iter()
             .filter_map(|t| {
-                if t.kind.iter().any(|k| k == "bin") {
+                if t.kind
+                    .iter()
+                    .any(|k| k == "bin" || k == "example" || k == "bench" || k == "test")
+                {
                     BuildTarget::new(&t, &package_path).ok()
                 } else {
                     None
@@ -333,23 +338,33 @@ pub fn double_crate_with_rename() {
 pub struct BuildTarget {
     /// The name of the build target.
     pub name: String,
+    /// The kind of the build target.
+    pub kind: String,
     /// The relative path of the target source file.
     pub src_path: PathBuf,
     /// The crate's features that need to be enabled for this target to be compiled.
     /// Otherwise, this target is ignored.
     pub required_features: Vec<String>,
+    /// Whether to test this binary
+    pub test: bool,
 }
 
 impl BuildTarget {
     pub fn new(target: &Target, package_path: impl AsRef<Path>) -> Result<BuildTarget, Error> {
         Ok(BuildTarget {
             name: target.name.clone(),
+            kind: target
+                .kind
+                .first()
+                .context("Target shouuld have kind")?
+                .to_string(),
             src_path: target
                 .src_path
                 .canonicalize()?
                 .strip_prefix(&package_path)?
                 .to_path_buf(),
             required_features: target.required_features.clone(),
+            test: target.test,
         })
     }
 }

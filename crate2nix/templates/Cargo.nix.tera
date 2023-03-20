@@ -106,6 +106,11 @@ rec {
           {
             name = {{ bin.name }};
             path = {{ bin.src_path }};
+            kind = {{ bin.kind }};
+            test = {{ bin.test }};
+            # TODO (when cargo merges metadata):
+            # harness
+            # bench
             requiredFeatures = [ {% for feature in bin.required_features %}{{feature}} {% endfor %}];
           }
         {%- endfor %}

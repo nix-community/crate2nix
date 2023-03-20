@@ -88,7 +88,6 @@ let
     crate2nix.mergePackageFeatures
       {
         target = crate2nix.makeDefaultTarget (stdenv.hostPlatform);
-        runTests = false;
         rootPackageId = packageId;
         inherit crateConfigs packageId features;
       };

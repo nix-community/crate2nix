@@ -89,112 +89,34 @@ rec {
         || baseName == "tests.nix"
       );
 
-  /* Returns a crate which depends on successful test execution
-    of crate given as the second argument.
-
-    testCrateFlags: list of flags to pass to the test exectuable
-    testInputs: list of packages that should be available during test execution
-  */
-  crateWithTest = { crate, testCrate, testCrateFlags, testInputs, testPreRun, testPostRun }:
-    assert builtins.typeOf testCrateFlags == "list";
-    assert builtins.typeOf testInputs == "list";
-    assert builtins.typeOf testPreRun == "string";
-    assert builtins.typeOf testPostRun == "string";
-    let
-      # override the `crate` so that it will build and execute tests instead of
-      # building the actual lib and bin targets We just have to pass `--test`
-      # to rustc and it will do the right thing.  We execute the tests and copy
-      # their log and the test executables to $out for later inspection.
-      test =
-        let
-          drv = testCrate.override
-            (
-              _: {
-                buildTests = true;
-              }
-            );
-          # If the user hasn't set any pre/post commands, we don't want to
-          # insert empty lines. This means that any existing users of crate2nix
-          # don't get a spurious rebuild unless they set these explicitly.
-          testCommand = pkgs.lib.concatStringsSep "\n"
-            (pkgs.lib.filter (s: s != "") [
-              testPreRun
-              "$f $testCrateFlags 2>&1 | tee -a $out"
-              testPostRun
-            ]);
-        in
-        pkgs.runCommand "run-tests-${testCrate.name}"
-          {
-            inherit testCrateFlags;
-            buildInputs = testInputs;
-          } ''
-          set -ex
-
-          export RUST_BACKTRACE=1
-
-          # recreate a file hierarchy as when running tests with cargo
-
-          # the source for test data
-          ${pkgs.xorg.lndir}/bin/lndir ${crate.src}
-
-          # build outputs
-          testRoot=target/debug
-          mkdir -p $testRoot
-
-          # executables of the crate
-          # we copy to prevent std::env::current_exe() to resolve to a store location
-          for i in ${crate}/bin/*; do
-            cp "$i" "$testRoot"
-          done
-          chmod +w -R .
-
-          # test harness executables are suffixed with a hash, like cargo does
-          # this allows to prevent name collision with the main
-          # executables of the crate
-          hash=$(basename $out)
-          for file in ${drv}/tests/*; do
-            f=$testRoot/$(basename $file)-$hash
-            cp $file $f
-            ${testCommand}
-          done
-        '';
-    in
-    pkgs.runCommand "${crate.name}-linked"
-      {
-        inherit (crate) outputs crateName;
-        passthru = (crate.passthru or { }) // {
-          inherit test;
-        };
-      } ''
-      echo tested by ${test}
-      ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
-    '';
-
   /* A restricted overridable version of builtRustCratesWithFeatures. */
   buildRustCrateWithFeatures =
     { packageId
     , features ? rootFeatures
     , crateOverrides ? defaultCrateOverrides
     , buildRustCrateForPkgsFunc ? null
-    , runTests ? false
-    , testCrateFlags ? [ ]
-    , testInputs ? [ ]
-      # Any command to run immediatelly before a test is executed.
-    , testPreRun ? ""
-      # Any command run immediatelly after a test is executed.
-    , testPostRun ? ""
+      # Available: [ "lib" "bin" ] or ["test" "bench" "example"]
+    , buildKinds ? [ "lib" "bin" ]
     }:
     lib.makeOverridable
       (
         { features
         , crateOverrides
-        , runTests
-        , testCrateFlags
-        , testInputs
-        , testPreRun
-        , testPostRun
+        , buildKinds
         }:
         let
+          isDevBuild =
+            let
+              inherit (pkgs.buildRustCrateHelpers.kinds) isLib isBin isExample isTest isBench;
+
+              notDev = builtins.any (k: isLib k || isBin k) buildKinds;
+              isDev = builtins.any (k: isBench k || isExample k || isTest k) buildKinds;
+            in
+            assert (buildKinds != [ ]);
+            # Can't have build dev and non dev kinds
+            assert (notDev != isDev);
+            isDev;
+
           buildRustCrateForPkgsFuncOverriden =
             if buildRustCrateForPkgsFunc != null
             then buildRustCrateForPkgsFunc
@@ -207,31 +129,16 @@ rec {
                     defaultCrateOverrides = crateOverrides;
                   }
               );
+
           builtRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
+            inherit packageId features buildKinds isDevBuild;
             buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
-            runTests = false;
           };
-          builtTestRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
-            buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
-            runTests = true;
-          };
-          drv = builtRustCrates.crates.${packageId};
-          testDrv = builtTestRustCrates.crates.${packageId};
-          derivation =
-            if runTests then
-              crateWithTest
-                {
-                  crate = drv;
-                  testCrate = testDrv;
-                  inherit testCrateFlags testInputs testPreRun testPostRun;
-                }
-            else drv;
+
         in
-        derivation
+        builtRustCrates.crates.${packageId}
       )
-      { inherit features crateOverrides runTests testCrateFlags testInputs testPreRun testPostRun; };
+      { inherit features crateOverrides buildKinds; };
 
   /* Returns an attr set with packageId mapped to the result of buildRustCrateForPkgsFunc
     for the corresponding crate.
@@ -241,21 +148,24 @@ rec {
     , features
     , crateConfigs ? crates
     , buildRustCrateForPkgsFunc
-    , runTests
+    , buildKinds
+    , isDevBuild
     , makeTarget ? makeDefaultTarget
     } @ args:
       assert (builtins.isAttrs crateConfigs);
       assert (builtins.isString packageId);
       assert (builtins.isList features);
       assert (builtins.isAttrs (makeTarget stdenv.hostPlatform));
-      assert (builtins.isBool runTests);
+      assert (builtins.isBool isDevBuild);
+      assert (builtins.isList buildKinds);
       let
         rootPackageId = packageId;
         mergedFeatures = mergePackageFeatures
           (
             args // {
               inherit rootPackageId;
-              target = makeTarget stdenv.hostPlatform // { test = runTests; };
+              # What does test do for target?
+              target = makeTarget stdenv.hostPlatform // { test = false; };
             }
           );
         # Memoize built packages so that reappearing packages are only built once.
@@ -277,7 +187,7 @@ rec {
               builtins.removeAttrs crateConfig' [ "resolvedDefaultFeatures" "devDependencies" ];
             devDependencies =
               lib.optionals
-                (runTests && packageId == rootPackageId)
+                (isDevBuild && packageId == rootPackageId)
                 (crateConfig'.devDependencies or [ ]);
             dependencies =
               dependencyDerivations {
@@ -351,6 +261,7 @@ rec {
                   }
                 );
                 extraRustcOpts = lib.lists.optional (targetFeatures != [ ]) "-C target-feature=${lib.concatMapStringsSep "," (x: "+${x}") targetFeatures}";
+                buildKinds = if (packageId == rootPackageId) then buildKinds else [ "lib" ];
                 inherit features dependencies buildDependencies crateRenames release;
               }
             );
@@ -472,7 +383,7 @@ rec {
     , featuresByPackageId ? { }
     , target
       # Adds devDependencies to the crate with rootPackageId.
-    , runTests ? false
+    , isDevBuild ? false
     , ...
     } @ args:
       assert (builtins.isAttrs crateConfigs);
@@ -482,7 +393,7 @@ rec {
       assert (builtins.isList dependencyPath);
       assert (builtins.isAttrs featuresByPackageId);
       assert (builtins.isAttrs target);
-      assert (builtins.isBool runTests);
+      assert (builtins.isBool isDevBuild);
       let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
         expandedFeatures = expandFeatures (crateConfig.features or { }) features;
@@ -517,7 +428,7 @@ rec {
                   mergePackageFeatures {
                     features = combinedFeatures;
                     featuresByPackageId = cache;
-                    inherit crateConfigs packageId target runTests rootPackageId;
+                    inherit crateConfigs packageId target isDevBuild rootPackageId;
                   }
             );
         cacheWithSelf =
@@ -533,7 +444,7 @@ rec {
             (
               crateConfig.dependencies or [ ]
               ++ lib.optionals
-                (runTests && packageId == rootPackageId)
+                (isDevBuild && packageId == rootPackageId)
                 (crateConfig.devDependencies or [ ])
             );
         cacheWithAll =

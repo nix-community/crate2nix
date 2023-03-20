@@ -136,6 +136,95 @@ rec {
       "crate2nix/tools.nix: generated deprecated since 0.7. Use appliedCargoNix in instead."
       appliedCargoNix;
 
+  /* Returns a crate which depends on successful test execution
+    of crate given as the second argument.
+
+    , testPreRun ? ""
+    , testPostRun ? ""
+  */
+  crateWithTest =
+    # crate: normal crate
+    { crate
+      # testCrate: crate with the test binaries
+    , testCrate ? crate.override { buildKinds = [ "test" ]; }
+      # testCrateFlags: list of flags to pass to the test exectuable
+    , testCrateFlags ? [ ]
+      # testInputs: list of packages that should be available during test execution
+    , testInputs ? [ ]
+      # Any command to run immediatelly before a test is executed.
+    , testPreRun ? ""
+      # Any command to run immediatelly after a test is executed.
+    , testPostRun ? ""
+    }:
+      assert builtins.typeOf testCrateFlags == "list";
+      assert builtins.typeOf testInputs == "list";
+      assert builtins.typeOf testPreRun == "string";
+      assert builtins.typeOf testPostRun == "string";
+      let
+        # override the `crate` so that it will build and execute tests instead of
+        # building the actual lib and bin targets We just have to pass `--test`
+        # to rustc and it will do the right thing.  We execute the tests and copy
+        # their log and the test executables to $out for later inspection.
+        test =
+          let
+            # If the user hasn't set any pre/post commands, we don't want to
+            # insert empty lines. This means that any existing users of crate2nix
+            # don't get a spurious rebuild unless they set these explicitly.
+            testCommand = pkgs.lib.concatStringsSep "\n"
+              (pkgs.lib.filter (s: s != "") [
+                testPreRun
+                "$f $testCrateFlags 2>&1 | tee -a $out"
+                testPostRun
+              ]);
+          in
+          pkgs.runCommand "run-tests-${testCrate.name}"
+            {
+              inherit testCrateFlags;
+              buildInputs = testInputs;
+            } ''
+            set -ex
+
+            export RUST_BACKTRACE=1
+
+            # recreate a file hierarchy as when running tests with cargo
+
+            # the source for test data
+            ${pkgs.xorg.lndir}/bin/lndir ${crate.src}
+
+            # build outputs
+            testRoot=target/debug
+            mkdir -p $testRoot
+
+            # executables of the crate
+            # we copy to prevent std::env::current_exe() to resolve to a store location
+            for i in ${crate}/bin/*; do
+              cp "$i" "$testRoot"
+            done
+            chmod +w -R .
+
+            # test harness executables are suffixed with a hash, like cargo does
+            # this allows to prevent name collision with the main
+            # executables of the crate
+            hash=$(basename $out)
+            for file in ${testCrate}/tests/*; do
+              f=$testRoot/$(basename $file)-$hash
+              cp $file $f
+              ${testCommand}
+            done
+          '';
+      in
+      pkgs.runCommand "${crate.name}-linked"
+        {
+          inherit (crate) outputs crateName;
+          passthru = (crate.passthru or { }) // {
+            inherit test;
+          };
+        } ''
+        echo tested by ${test}
+        ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
+      '';
+
+
   internal = rec {
     # Unpack sources and add a .cargo-checksum.json file to make cargo happy.
     unpacked = { sha256, src }:
