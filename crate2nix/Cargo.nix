@@ -109,6 +109,7 @@ rec {
         crateName = "ansi_term";
         version = "0.11.0";
         edition = "2015";
+        crateBin = [];
         sha256 = "16wpvrghvd0353584i1idnsgm0r3vchg8fyrm0x8ayv1rgvbljgf";
         authors = [
           "ogham@bsago.me"
@@ -129,6 +130,7 @@ rec {
         crateName = "anyhow";
         version = "1.0.41";
         edition = "2018";
+        crateBin = [];
         sha256 = "0qaa0vgsa7ybq7wqk57508l52l1lr3sbx49vk9hf43w9yql2dbqm";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
@@ -143,6 +145,7 @@ rec {
         crateName = "atty";
         version = "0.2.14";
         edition = "2015";
+        crateBin = [];
         sha256 = "1s7yslcs6a28c5vz7jwj63lkfgyx8mx99fdirlhi9lbhhzhrpcyr";
         authors = [
           "softprops <d.tangren@gmail.com>"
@@ -229,6 +232,7 @@ rec {
         crateName = "bstr";
         version = "0.2.16";
         edition = "2018";
+        crateBin = [];
         sha256 = "0y8jy9kcqn1myzxjx7c73rbv4amfw08n936ycqz3glrsc66jqs4h";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
@@ -266,6 +270,7 @@ rec {
         crateName = "byteorder";
         version = "1.4.3";
         edition = "2018";
+        crateBin = [];
         sha256 = "0456lv9xi1a5bcm32arknf33ikv76p3fr9yzki4lb2897p2qkh8l";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
@@ -278,6 +283,7 @@ rec {
         crateName = "camino";
         version = "1.0.4";
         edition = "2018";
+        crateBin = [];
         sha256 = "1a91b5i4n6ikg7p5pgvj3hjac1gnwjmdqsi3k83al2d701nqqr6l";
         authors = [
           "Without Boats <saoirse@without.boats>"
@@ -303,6 +309,7 @@ rec {
         crateName = "cargo-platform";
         version = "0.1.1";
         edition = "2018";
+        crateBin = [];
         sha256 = "1mzi60pf0z83qkzqp7jwd61xnqz2b5ydsj7rnnikbgyicd5989h2";
         authors = [
           "The Cargo Project Developers"
@@ -320,6 +327,7 @@ rec {
         crateName = "cargo_metadata";
         version = "0.14.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "16hhak3gips08lqp0x7s9wnfm139hy0a3nm0k4pman7m6lqvv5y2";
         authors = [
           "Oliver Schneider <git-spam-no-reply9815368754983@oli-obk.de>"
@@ -360,6 +368,7 @@ rec {
         crateName = "cfg-if";
         version = "1.0.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "1za0vb97n4brpzpv8lsbnzmq5r8f2b0cpqqr0sy8h5bn751xxwds";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
@@ -435,6 +444,7 @@ rec {
         crateName = "colored-diff";
         version = "0.2.2";
         edition = "2015";
+        crateBin = [];
         sha256 = "1zbfjkp7w1wjcxb1p19dd21mn9xkj6nr2s5pav8b16whzh52cvsi";
         authors = [
           "Christopher Durham <cad97@cad97.com>"
@@ -464,6 +474,21 @@ rec {
           {
             name = "crate2nix";
             path = "src/main.rs";
+            kind = "bin";
+            test = true;
+            # TODO (when cargo merges metadata):
+            # harness
+            # bench
+            requiredFeatures = [ ];
+          }
+          {
+            name = "self_build_up_to_date";
+            path = "tests/self_build_up_to_date.rs";
+            kind = "test";
+            test = true;
+            # TODO (when cargo merges metadata):
+            # harness
+            # bench
             requiredFeatures = [ ];
           }
         ];
@@ -565,6 +590,7 @@ rec {
         crateName = "crossbeam-utils";
         version = "0.8.8";
         edition = "2018";
+        crateBin = [];
         sha256 = "0f6b3xrbyc3yx0qa1digmy48mxmh58359kv34qy6ws5p433j9w8b";
         dependencies = [
           {
@@ -660,6 +686,7 @@ rec {
         crateName = "fs_extra";
         version = "1.2.0";
         edition = "2015";
+        crateBin = [];
         sha256 = "151k6dr35mhq5d8pc8krhw55ajhkyiv0pm14s7zzlc5bc9fp28i0";
         authors = [
           "Denis Kurilenko <webdesus@gmail.com>"
@@ -680,6 +707,7 @@ rec {
         crateName = "generic-array";
         version = "0.12.4";
         edition = "2015";
+        crateBin = [];
         sha256 = "1gfpay78vijl9vrwl1k9v7fbvbhkhcmnrk4kfg9l6x24y4s9zpzz";
         libName = "generic_array";
         authors = [
@@ -700,6 +728,7 @@ rec {
         crateName = "globset";
         version = "0.4.8";
         edition = "2018";
+        crateBin = [];
         sha256 = "1gdzphnjjc0wdaawsq3n1nnypv9ja4prhca2n66hcahay2gksihh";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
@@ -739,6 +768,7 @@ rec {
         crateName = "globwalk";
         version = "0.8.1";
         edition = "2015";
+        crateBin = [];
         sha256 = "1k6xwkydr7igvwjn3xkwjywk4213lcs53f576ilqz1h84jaazqwk";
         authors = [
           "Gilad Naaman <gilad@naaman.io>"
@@ -801,6 +831,7 @@ rec {
         crateName = "hex";
         version = "0.4.3";
         edition = "2018";
+        crateBin = [];
         sha256 = "0w1a4davm1lgzpamwnba907aysmlrnygbqmfis2mqjx5m552a93z";
         authors = [
           "KokaKiwi <kokakiwi@kokakiwi.net>"
@@ -816,6 +847,7 @@ rec {
         crateName = "idna";
         version = "0.1.5";
         edition = "2015";
+        crateBin = [];
         sha256 = "0kl4gs5kaydn4v07c6ka33spm9qdh2np0x7iw7g5zd8z1c7rxw1q";
         authors = [
           "The rust-url developers"
@@ -840,6 +872,7 @@ rec {
         crateName = "ignore";
         version = "0.4.18";
         edition = "2018";
+        crateBin = [];
         sha256 = "07bmnv96msggqb040z6xqp1p7s8ys0f97b731hp6mybkjc9ingvi";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
@@ -895,6 +928,7 @@ rec {
         crateName = "itertools";
         version = "0.7.11";
         edition = "2015";
+        crateBin = [];
         sha256 = "03cpsj26xmyamcalclqzr1i700vwx8hnbgxbpjvs354f8mnr8iqd";
         authors = [
           "bluss"
@@ -914,6 +948,7 @@ rec {
         crateName = "itertools";
         version = "0.9.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "0jyml7ygr7kijkcjdl3fk5f34y5h5jsavclim7l13zjiavw1hkr8";
         authors = [
           "bluss"
@@ -934,6 +969,7 @@ rec {
         crateName = "itoa";
         version = "0.4.7";
         edition = "2015";
+        crateBin = [];
         sha256 = "0di7fggbknwfjcw8cgzm1dnm3ik32l2m1f7nmyh8ipmh45h069fx";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
@@ -946,6 +982,7 @@ rec {
         crateName = "lazy_static";
         version = "1.4.0";
         edition = "2015";
+        crateBin = [];
         sha256 = "0in6ikhw8mgl33wjv6q6xfrb5b9jr16q8ygjy803fay4zcisvaz2";
         authors = [
           "Marvin Löbel <loebel.marvin@gmail.com>"
@@ -959,6 +996,7 @@ rec {
         crateName = "libc";
         version = "0.2.98";
         edition = "2015";
+        crateBin = [];
         sha256 = "144728k6d98k3hplzklqn18a134nq6nw0jzdxy1s98sx2xvzw31j";
         authors = [
           "The Rust Project Developers"
@@ -975,6 +1013,7 @@ rec {
         crateName = "log";
         version = "0.4.14";
         edition = "2015";
+        crateBin = [];
         sha256 = "04175hv0v62shd82qydq58a48k3bjijmk54v38zgqlbxqkkbpfai";
         authors = [
           "The Rust Project Developers"
@@ -999,6 +1038,7 @@ rec {
         crateName = "maplit";
         version = "1.0.2";
         edition = "2015";
+        crateBin = [];
         sha256 = "07b5kjnhrrmfhgqm9wprjw8adx6i225lqp49gasgqg74lahnabiy";
         authors = [
           "bluss"
@@ -1009,6 +1049,7 @@ rec {
         crateName = "matches";
         version = "0.1.8";
         edition = "2015";
+        crateBin = [];
         sha256 = "020axl4q7rk9vz90phs7f8jas4imxal9y9kxl4z4v7a6719mrz3z";
         libPath = "lib.rs";
         authors = [
@@ -1046,6 +1087,7 @@ rec {
         crateName = "once_cell";
         version = "1.8.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "0mkbbxg6416z11r2yzsq91cqrkj9w1iyx5hakq15h5sbnriwnbv9";
         authors = [
           "Aleksey Kladov <aleksey.kladov@gmail.com>"
@@ -1093,6 +1135,7 @@ rec {
         crateName = "pest";
         version = "2.1.3";
         edition = "2015";
+        crateBin = [];
         sha256 = "0lry80bm90x47nq71wxq83kjrm9ashpz4kbm92p90ysdx4m8gx0h";
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
@@ -1113,6 +1156,7 @@ rec {
         crateName = "pest_derive";
         version = "2.1.0";
         edition = "2015";
+        crateBin = [];
         sha256 = "1l5jfa6ril71cw5nsiw0r45br54dd8cj2r1nc2d1wq6wb3jilgc3";
         procMacro = true;
         authors = [
@@ -1193,6 +1237,7 @@ rec {
         crateName = "proc-macro-error";
         version = "1.0.4";
         edition = "2018";
+        crateBin = [];
         sha256 = "1373bhxaf0pagd8zkyd03kkx6bchzf6g0dkwrwzsnal9z47lj9fs";
         authors = [
           "CreepySkeleton <creepy-skeleton@yandex.ru>"
@@ -1261,6 +1306,7 @@ rec {
         crateName = "proc-macro2";
         version = "1.0.27";
         edition = "2018";
+        crateBin = [];
         sha256 = "0f3h0zl5w5090ajmmvpmhkpr4iwqnn5rip3afacabhc657vwmn7h";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
@@ -1281,6 +1327,7 @@ rec {
         crateName = "quote";
         version = "1.0.9";
         edition = "2018";
+        crateBin = [];
         sha256 = "19rjmfqzk26rxbgxy5j2ckqc2v12sw2xw8l4gi8bzpn2bmsbkl63";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
@@ -1302,6 +1349,7 @@ rec {
         crateName = "rand";
         version = "0.4.6";
         edition = "2015";
+        crateBin = [];
         sha256 = "14qjfv3gggzhnma20k0sc1jf8y6pplsaq7n1j9ls5c8kf2wl0a2m";
         authors = [
           "The Rust Project Developers"
@@ -1386,6 +1434,7 @@ rec {
         crateName = "rdrand";
         version = "0.4.0";
         edition = "2015";
+        crateBin = [];
         sha256 = "1cjq0kwx1bk7jx3kzyciiish5gqsj7620dm43dc52sr8fzmm9037";
         authors = [
           "Simonas Kazlauskas <rdrand@kazlauskas.me>"
@@ -1406,6 +1455,7 @@ rec {
         crateName = "regex";
         version = "1.5.6";
         edition = "2018";
+        crateBin = [];
         sha256 = "1wczbykw6fas7359j9lhkkv13dplhiphzrf2ii6dmg5xjiyi4gyq";
         authors = [
           "The Rust Project Developers"
@@ -1450,6 +1500,7 @@ rec {
         crateName = "regex-syntax";
         version = "0.6.26";
         edition = "2018";
+        crateBin = [];
         sha256 = "0r6vplrklxq7yx7x4zqf04apr699swbsn6ipv8bk82nwqngdxcs9";
         authors = [
           "The Rust Project Developers"
@@ -1482,6 +1533,7 @@ rec {
         crateName = "ryu";
         version = "1.0.5";
         edition = "2018";
+        crateBin = [];
         sha256 = "0vpqv1dj7fksa6hm3zpk5rbsjs0ifbfy7xwzsyyil0rx37a03lvi";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
@@ -1494,6 +1546,7 @@ rec {
         crateName = "same-file";
         version = "1.0.6";
         edition = "2018";
+        crateBin = [];
         sha256 = "00h5j1w87dmhnvbv9l8bic3y7xxsnjmssvifw2ayvgx9mb1ivz4k";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
@@ -1511,6 +1564,7 @@ rec {
         crateName = "semver";
         version = "1.0.3";
         edition = "2018";
+        crateBin = [];
         sha256 = "1gna1p10i86sf1pqfqndkwl0wks35x84yvjw77c74ckzxrbsqfjz";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
@@ -1624,6 +1678,7 @@ rec {
         crateName = "sha-1";
         version = "0.8.2";
         edition = "2015";
+        crateBin = [];
         sha256 = "1pv387q0r7llk2cqzyq0nivzvkgqgzsiygqzlv7b68z9xl5lvngp";
         libName = "sha1";
         authors = [
@@ -1667,6 +1722,7 @@ rec {
         crateName = "strsim";
         version = "0.8.0";
         edition = "2015";
+        crateBin = [];
         sha256 = "0sjsm7hrvjdifz661pjxq5w4hf190hx53fra8dfvamacvff139cf";
         authors = [
           "Danny Guo <dannyguo91@gmail.com>"
@@ -1677,6 +1733,7 @@ rec {
         crateName = "structopt";
         version = "0.3.22";
         edition = "2018";
+        crateBin = [];
         sha256 = "0wadrsmkvab04dkbs670hcyl41l89kj7nvky6356l8k7rg6l3c39";
         authors = [
           "Guillaume Pinot <texitoi@texitoi.eu>"
@@ -1751,6 +1808,7 @@ rec {
         crateName = "syn";
         version = "1.0.73";
         edition = "2018";
+        crateBin = [];
         sha256 = "1ixw4lscc7009ibaic8g5bvnc94hdcr62ksjk3jjl38363zqj57p";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
@@ -1785,6 +1843,7 @@ rec {
         crateName = "tempdir";
         version = "0.3.7";
         edition = "2015";
+        crateBin = [];
         sha256 = "1n5n86zxpgd85y0mswrp5cfdisizq2rv3la906g6ipyc03xvbwhm";
         authors = [
           "The Rust Project Developers"
@@ -1859,6 +1918,7 @@ rec {
         crateName = "textwrap";
         version = "0.11.0";
         edition = "2015";
+        crateBin = [];
         sha256 = "0q5hky03ik3y50s9sz25r438bc4nwhqc6dqwynv4wylc807n29nk";
         authors = [
           "Martin Geisler <martin@geisler.net>"
@@ -1878,6 +1938,7 @@ rec {
         crateName = "thread_local";
         version = "1.1.4";
         edition = "2018";
+        crateBin = [];
         sha256 = "1001bvz6a688wf3izcrh3jqrkiqaarf44wf08azm071ig1xw45jm";
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
@@ -1896,6 +1957,7 @@ rec {
         crateName = "tinyvec";
         version = "1.2.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "0hn3fkpb9nca9nf9znz2dxlp4ccv37hnbh67aczpzpmpbgq20ljv";
         authors = [
           "Lokathor <zefria@gmail.com>"
@@ -1928,6 +1990,7 @@ rec {
         crateName = "toml";
         version = "0.5.8";
         edition = "2018";
+        crateBin = [];
         sha256 = "1apcmjrrjw429pjw7mqlmdwwd67g8305vwqy4kw3swr612bl44d3";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
@@ -1948,6 +2011,7 @@ rec {
         crateName = "typenum";
         version = "1.13.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "01lbbspn4080yg8wp6y7q3xcqih1c1dmkkx4pwax4z1a9436k7w7";
         build = "build/main.rs";
         authors = [
@@ -1961,6 +2025,7 @@ rec {
         crateName = "ucd-trie";
         version = "0.1.3";
         edition = "2018";
+        crateBin = [];
         sha256 = "072cblf8v3wzyaz3lhbpzgil4s03dpzg1ppy3gqx2l4v622y3pjn";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
@@ -1974,6 +2039,7 @@ rec {
         crateName = "unic-char-property";
         version = "0.9.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "08g21dn3wwix3ycfl0vrbahn0835nv2q3swm8wms0vwvgm07mid8";
         authors = [
           "The UNIC Project Developers"
@@ -1990,6 +2056,7 @@ rec {
         crateName = "unic-char-range";
         version = "0.9.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "1g0z7iwvjhqspi6194zsff8vy6i3921hpqcrp3v1813hbwnh5603";
         authors = [
           "The UNIC Project Developers"
@@ -2016,6 +2083,7 @@ rec {
         crateName = "unic-segment";
         version = "0.9.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "08wgz2q6vrdvmbd23kf9pbg8cyzm5q8hq9spc4blzy2ppqk5vvg4";
         authors = [
           "The UNIC Project Developers"
@@ -2032,6 +2100,7 @@ rec {
         crateName = "unic-ucd-segment";
         version = "0.9.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "0027lczcg0r401g6fnzm2bq9fxhgxvri1nlryhhv8192lqic2y90";
         authors = [
           "The UNIC Project Developers"
@@ -2056,6 +2125,7 @@ rec {
         crateName = "unic-ucd-version";
         version = "0.9.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "1i5hnzpfnxkp4ijfk8kvhpvj84bij575ybqx1b6hyigy6wi2zgcn";
         authors = [
           "The UNIC Project Developers"
@@ -2096,6 +2166,7 @@ rec {
         crateName = "unicode-normalization";
         version = "0.1.19";
         edition = "2018";
+        crateBin = [];
         sha256 = "1yabhmg8zlcksda3ajly9hpbzqgbhknxwch8dwkfkaa1569r0ifm";
         authors = [
           "kwantam <kwantam@gmail.com>"
@@ -2117,6 +2188,7 @@ rec {
         crateName = "unicode-segmentation";
         version = "1.8.0";
         edition = "2018";
+        crateBin = [];
         sha256 = "0nrqfgxkh00wb5dhl0874z20789i2yjimp6ndgh4ay4yjjd895c8";
         authors = [
           "kwantam <kwantam@gmail.com>"
@@ -2146,6 +2218,7 @@ rec {
         crateName = "unicode-xid";
         version = "0.2.2";
         edition = "2015";
+        crateBin = [];
         sha256 = "1wrkgcw557v311dkdb6n2hrix9dm2qdsb1zpw7pn79l03zb85jwc";
         authors = [
           "erick.tryzelaar <erick.tryzelaar@gmail.com>"
@@ -2160,6 +2233,7 @@ rec {
         crateName = "url";
         version = "1.7.2";
         edition = "2015";
+        crateBin = [];
         sha256 = "0nim1c90mxpi9wgdw2xh8dqd72vlklwlzam436akcrhjac6pqknx";
         authors = [
           "The rust-url developers"
@@ -2422,112 +2496,34 @@ rec {
         || baseName == "tests.nix"
       );
 
-  /* Returns a crate which depends on successful test execution
-    of crate given as the second argument.
-
-    testCrateFlags: list of flags to pass to the test exectuable
-    testInputs: list of packages that should be available during test execution
-  */
-  crateWithTest = { crate, testCrate, testCrateFlags, testInputs, testPreRun, testPostRun }:
-    assert builtins.typeOf testCrateFlags == "list";
-    assert builtins.typeOf testInputs == "list";
-    assert builtins.typeOf testPreRun == "string";
-    assert builtins.typeOf testPostRun == "string";
-    let
-      # override the `crate` so that it will build and execute tests instead of
-      # building the actual lib and bin targets We just have to pass `--test`
-      # to rustc and it will do the right thing.  We execute the tests and copy
-      # their log and the test executables to $out for later inspection.
-      test =
-        let
-          drv = testCrate.override
-            (
-              _: {
-                buildTests = true;
-              }
-            );
-          # If the user hasn't set any pre/post commands, we don't want to
-          # insert empty lines. This means that any existing users of crate2nix
-          # don't get a spurious rebuild unless they set these explicitly.
-          testCommand = pkgs.lib.concatStringsSep "\n"
-            (pkgs.lib.filter (s: s != "") [
-              testPreRun
-              "$f $testCrateFlags 2>&1 | tee -a $out"
-              testPostRun
-            ]);
-        in
-        pkgs.runCommand "run-tests-${testCrate.name}"
-          {
-            inherit testCrateFlags;
-            buildInputs = testInputs;
-          } ''
-          set -ex
-
-          export RUST_BACKTRACE=1
-
-          # recreate a file hierarchy as when running tests with cargo
-
-          # the source for test data
-          ${pkgs.xorg.lndir}/bin/lndir ${crate.src}
-
-          # build outputs
-          testRoot=target/debug
-          mkdir -p $testRoot
-
-          # executables of the crate
-          # we copy to prevent std::env::current_exe() to resolve to a store location
-          for i in ${crate}/bin/*; do
-            cp "$i" "$testRoot"
-          done
-          chmod +w -R .
-
-          # test harness executables are suffixed with a hash, like cargo does
-          # this allows to prevent name collision with the main
-          # executables of the crate
-          hash=$(basename $out)
-          for file in ${drv}/tests/*; do
-            f=$testRoot/$(basename $file)-$hash
-            cp $file $f
-            ${testCommand}
-          done
-        '';
-    in
-    pkgs.runCommand "${crate.name}-linked"
-      {
-        inherit (crate) outputs crateName;
-        passthru = (crate.passthru or { }) // {
-          inherit test;
-        };
-      } ''
-      echo tested by ${test}
-      ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
-    '';
-
   /* A restricted overridable version of builtRustCratesWithFeatures. */
   buildRustCrateWithFeatures =
     { packageId
     , features ? rootFeatures
     , crateOverrides ? defaultCrateOverrides
     , buildRustCrateForPkgsFunc ? null
-    , runTests ? false
-    , testCrateFlags ? [ ]
-    , testInputs ? [ ]
-      # Any command to run immediatelly before a test is executed.
-    , testPreRun ? ""
-      # Any command run immediatelly after a test is executed.
-    , testPostRun ? ""
+      # Available: [ "lib" "bin" ] or ["test" "bench" "example"]
+    , buildKinds ? [ "lib" "bin" ]
     }:
     lib.makeOverridable
       (
         { features
         , crateOverrides
-        , runTests
-        , testCrateFlags
-        , testInputs
-        , testPreRun
-        , testPostRun
+        , buildKinds
         }:
         let
+          isDevBuild =
+            let
+              inherit (pkgs.buildRustCrateHelpers.kinds) isLib isBin isExample isTest isBench;
+
+              notDev = builtins.any (k: isLib k || isBin k) buildKinds;
+              isDev = builtins.any (k: isBench k || isExample k || isTest k) buildKinds;
+            in
+            assert (buildKinds != [ ]);
+            # Can't have build dev and non dev kinds
+            assert (notDev != isDev);
+            isDev;
+
           buildRustCrateForPkgsFuncOverriden =
             if buildRustCrateForPkgsFunc != null
             then buildRustCrateForPkgsFunc
@@ -2540,31 +2536,16 @@ rec {
                     defaultCrateOverrides = crateOverrides;
                   }
               );
+
           builtRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
+            inherit packageId features buildKinds isDevBuild;
             buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
-            runTests = false;
           };
-          builtTestRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
-            buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
-            runTests = true;
-          };
-          drv = builtRustCrates.crates.${packageId};
-          testDrv = builtTestRustCrates.crates.${packageId};
-          derivation =
-            if runTests then
-              crateWithTest
-                {
-                  crate = drv;
-                  testCrate = testDrv;
-                  inherit testCrateFlags testInputs testPreRun testPostRun;
-                }
-            else drv;
+
         in
-        derivation
+        builtRustCrates.crates.${packageId}
       )
-      { inherit features crateOverrides runTests testCrateFlags testInputs testPreRun testPostRun; };
+      { inherit features crateOverrides buildKinds; };
 
   /* Returns an attr set with packageId mapped to the result of buildRustCrateForPkgsFunc
     for the corresponding crate.
@@ -2574,21 +2555,24 @@ rec {
     , features
     , crateConfigs ? crates
     , buildRustCrateForPkgsFunc
-    , runTests
+    , buildKinds
+    , isDevBuild
     , makeTarget ? makeDefaultTarget
     } @ args:
       assert (builtins.isAttrs crateConfigs);
       assert (builtins.isString packageId);
       assert (builtins.isList features);
       assert (builtins.isAttrs (makeTarget stdenv.hostPlatform));
-      assert (builtins.isBool runTests);
+      assert (builtins.isBool isDevBuild);
+      assert (builtins.isList buildKinds);
       let
         rootPackageId = packageId;
         mergedFeatures = mergePackageFeatures
           (
             args // {
               inherit rootPackageId;
-              target = makeTarget stdenv.hostPlatform // { test = runTests; };
+              # What does test do for target?
+              target = makeTarget stdenv.hostPlatform // { test = false; };
             }
           );
         # Memoize built packages so that reappearing packages are only built once.
@@ -2610,7 +2594,7 @@ rec {
               builtins.removeAttrs crateConfig' [ "resolvedDefaultFeatures" "devDependencies" ];
             devDependencies =
               lib.optionals
-                (runTests && packageId == rootPackageId)
+                (isDevBuild && packageId == rootPackageId)
                 (crateConfig'.devDependencies or [ ]);
             dependencies =
               dependencyDerivations {
@@ -2684,6 +2668,7 @@ rec {
                   }
                 );
                 extraRustcOpts = lib.lists.optional (targetFeatures != [ ]) "-C target-feature=${lib.concatMapStringsSep "," (x: "+${x}") targetFeatures}";
+                buildKinds = if (packageId == rootPackageId) then buildKinds else [ "lib" ];
                 inherit features dependencies buildDependencies crateRenames release;
               }
             );
@@ -2805,7 +2790,7 @@ rec {
     , featuresByPackageId ? { }
     , target
       # Adds devDependencies to the crate with rootPackageId.
-    , runTests ? false
+    , isDevBuild ? false
     , ...
     } @ args:
       assert (builtins.isAttrs crateConfigs);
@@ -2815,7 +2800,7 @@ rec {
       assert (builtins.isList dependencyPath);
       assert (builtins.isAttrs featuresByPackageId);
       assert (builtins.isAttrs target);
-      assert (builtins.isBool runTests);
+      assert (builtins.isBool isDevBuild);
       let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
         expandedFeatures = expandFeatures (crateConfig.features or { }) features;
@@ -2850,7 +2835,7 @@ rec {
                   mergePackageFeatures {
                     features = combinedFeatures;
                     featuresByPackageId = cache;
-                    inherit crateConfigs packageId target runTests rootPackageId;
+                    inherit crateConfigs packageId target isDevBuild rootPackageId;
                   }
             );
         cacheWithSelf =
@@ -2866,7 +2851,7 @@ rec {
             (
               crateConfig.dependencies or [ ]
               ++ lib.optionals
-                (runTests && packageId == rootPackageId)
+                (isDevBuild && packageId == rootPackageId)
                 (crateConfig.devDependencies or [ ])
             );
         cacheWithAll =

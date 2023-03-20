@@ -107,15 +107,9 @@ rec {
         let
           isDevBuild =
             let
-              inherit (pkgs.buildRustCrateHelpers.kinds) isLib isBin isExample isTest isBench;
-
-              notDev = builtins.any (k: isLib k || isBin k) buildKinds;
-              isDev = builtins.any (k: isBench k || isExample k || isTest k) buildKinds;
+              inherit (pkgs.buildRustCrateHelpers.kinds) isExample isTest isBench;
             in
-            assert (buildKinds != [ ]);
-            # Can't have build dev and non dev kinds
-            assert (notDev != isDev);
-            isDev;
+              builtins.any (k: isBench k || isExample k || isTest k) buildKinds;
 
           buildRustCrateForPkgsFuncOverriden =
             if buildRustCrateForPkgsFunc != null
