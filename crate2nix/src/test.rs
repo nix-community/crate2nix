@@ -56,7 +56,7 @@ impl MetadataEnv {
     }
 
     fn mut_resolve(&mut self) -> &mut Resolve {
-        self.metadata.resolve.get_or_insert_with(|| empty_resolve())
+        self.metadata.resolve.get_or_insert_with(empty_resolve)
     }
 
     pub fn add_package_and_node(&mut self, name: &str) -> PackageAndNode {
@@ -103,7 +103,7 @@ impl<'a> PackageAndNode<'a> {
             .mut_metadata()
             .workspace_members
             .push(package_id.clone());
-        self.env.mut_resolve().root = Some(package_id.clone());
+        self.env.mut_resolve().root = Some(package_id);
         self
     }
 
@@ -264,11 +264,13 @@ where
     T: serde::de::DeserializeOwned,
 {
     use serde_json::{from_value, to_string_pretty};
-    from_value(json()).expect(&format!(
-        "invalid {}: {}",
-        std::any::type_name::<T>(),
-        to_string_pretty(&json()).unwrap()
-    ))
+    from_value(json()).unwrap_or_else(|_| {
+        panic!(
+            "invalid {}: {}",
+            std::any::type_name::<T>(),
+            to_string_pretty(&json()).unwrap()
+        )
+    })
 }
 
 /// Return value from given JSON.

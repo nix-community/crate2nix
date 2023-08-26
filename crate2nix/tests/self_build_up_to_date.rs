@@ -56,7 +56,7 @@ fn pregenerated_up_to_date() {
             Some(pregenerated_build) => {
                 let cargo_nix = PathBuf::from_str(&pregenerated_build)
                     .expect("pregeneratedBuild must be valid path");
-                assert_up_to_date(&cargo_nix.parent().expect("Cargo.nix must be in directory"));
+                assert_up_to_date(cargo_nix.parent().expect("Cargo.nix must be in directory"));
             }
             None => println!("Skipping not pregenerated {}", test_config.name),
         }
@@ -125,7 +125,7 @@ struct TestConfig {
 
 fn get_test_configs() -> Result<Vec<TestConfig>, Error> {
     let output = Command::new("nix")
-        .args(&["eval", "--json", "-f", "../tests.nix", "buildTestConfigs"])
+        .args(["eval", "--json", "-f", "../tests.nix", "buildTestConfigs"])
         .output()
         .map_err(|e| format_err!("while spawning nix: {}", e))?;
     if !output.status.success() {

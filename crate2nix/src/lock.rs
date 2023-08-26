@@ -16,7 +16,7 @@ impl EncodableResolve {
     }
 
     pub fn load_lock_string(path: &Path, config: &str) -> Result<EncodableResolve, Error> {
-        let resolve: toml::Value = toml::from_str(&config)
+        let resolve: toml::Value = toml::from_str(config)
             .map_err(|e| format_err!("while parsing toml from {}: {}", path.display(), e))?;
 
         let v: EncodableResolve = resolve

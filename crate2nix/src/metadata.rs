@@ -112,16 +112,16 @@ impl IndexedMetadata {
             .map(|node| {
                 (
                     id_shortener.shorten(&node.id),
-                    id_shortener.shorten_in_node(&node),
+                    id_shortener.shorten_in_node(node),
                 )
             })
             .collect();
 
         Ok(IndexedMetadata {
-            root: root.as_ref().map(|id| id_shortener.shorten(&id)),
+            root: root.as_ref().map(|id| id_shortener.shorten(id)),
             workspace_members: workspace_members
                 .iter()
-                .map(|id| id_shortener.shorten(&id))
+                .map(|id| id_shortener.shorten(id))
                 .collect(),
             pkgs_by_id,
             nodes_by_id,
@@ -132,7 +132,7 @@ impl IndexedMetadata {
     #[cfg(test)]
     pub fn root_package(&self) -> Option<&Package> {
         let root = self.root.as_ref()?;
-        self.pkgs_by_id.get(&root)
+        self.pkgs_by_id.get(root)
     }
 }
 
@@ -200,16 +200,16 @@ impl PackageIdShortener {
     }
 
     pub fn lengthen_ref<'a>(&'a self, package_id: &'a PackageId) -> &'a PackageId {
-        self.reverse.get(&package_id).unwrap_or(&package_id)
+        self.reverse.get(package_id).unwrap_or(package_id)
     }
 
     pub fn shorten_ref<'a>(&'a self, package_id: &'a PackageId) -> &'a PackageId {
-        self.substitution.get(&package_id).unwrap_or(&package_id)
+        self.substitution.get(package_id).unwrap_or(package_id)
     }
 
     pub fn shorten(&self, package_id: &PackageId) -> PackageId {
         self.substitution
-            .get(&package_id)
+            .get(package_id)
             .cloned()
             .unwrap_or_else(|| package_id.clone())
     }

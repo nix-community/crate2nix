@@ -163,8 +163,7 @@ fn cargo_metadata(config: &GenerateConfig, cargo_toml: &Path) -> Result<Metadata
     let mut cmd = cargo_metadata::MetadataCommand::new();
     let mut other_options = config.other_metadata_options.clone();
     other_options.push("--locked".into());
-    cmd.manifest_path(&cargo_toml)
-        .other_options(&*other_options);
+    cmd.manifest_path(cargo_toml).other_options(&*other_options);
     cmd.exec().map_err(|e| {
         format_err!(
             "while retrieving metadata about {}: {}",
@@ -180,7 +179,7 @@ fn prefetch_and_fill_crates_sha256(
     default_nix: &mut BuildInfo,
 ) -> Result<(), Error> {
     let mut from_lock_file: HashMap<PackageId, String> =
-        extract_hashes_from_lockfile(&config, default_nix)?;
+        extract_hashes_from_lockfile(config, default_nix)?;
     for (_package_id, hash) in from_lock_file.iter_mut() {
         let bytes =
             hex::decode(&hash).map_err(|e| format_err!("while decoding '{}': {}", hash, e))?;

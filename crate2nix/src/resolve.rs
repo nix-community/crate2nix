@@ -92,7 +92,7 @@ impl CrateDerivation {
             // name anymore. So we need to extract it from the path.
             let configured_source = package_path
                 .file_name()
-                .and_then(|file_name| crate2nix_json.sources.get(&*file_name).cloned());
+                .and_then(|file_name| crate2nix_json.sources.get(file_name).cloned());
 
             if !crate2nix_json.sources.is_empty() && configured_source.is_none() {
                 eprintln!(
@@ -109,7 +109,7 @@ impl CrateDerivation {
         let source = if let Some(configured) = configured_source {
             configured.into()
         } else {
-            ResolvedSource::new(&config, &package, &package_path)?
+            ResolvedSource::new(config, package, package_path)?
         };
 
         let package_path = package_path.canonicalize().map_err(|e| {
@@ -128,13 +128,13 @@ impl CrateDerivation {
                     k == "lib" || k == "cdylib" || k == "dylib" || k == "rlib" || k == "proc-macro"
                 })
             })
-            .and_then(|target| BuildTarget::new(&target, &package_path).ok());
+            .and_then(|target| BuildTarget::new(target, &package_path).ok());
 
         let build = package
             .targets
             .iter()
             .find(|t| t.kind.iter().any(|k| k == "custom-build"))
-            .and_then(|target| BuildTarget::new(&target, &package_path).ok());
+            .and_then(|target| BuildTarget::new(target, &package_path).ok());
 
         let proc_macro = package
             .targets
@@ -146,7 +146,7 @@ impl CrateDerivation {
             .iter()
             .filter_map(|t| {
                 if t.kind.iter().any(|k| k == "bin") {
-                    BuildTarget::new(&t, &package_path).ok()
+                    BuildTarget::new(t, &package_path).ok()
                 } else {
                     None
                 }
@@ -228,7 +228,7 @@ pub fn minimal_resolve() {
         crate_derivation.version,
         semver::Version::parse("1.2.3").unwrap()
     );
-    assert_eq!(crate_derivation.is_root_or_workspace_member, true);
+    assert!(crate_derivation.is_root_or_workspace_member);
     let empty: Vec<String> = vec![];
     assert_eq!(crate_derivation.lib_crate_types, empty);
 
@@ -249,7 +249,7 @@ pub fn configured_source_is_used_instead_of_local_directory() {
     // By simulating this layout, we ensure that we do not canonicalize paths at the "wrong"
     // moment.
     let simulated_store_path = env.temp_dir();
-    std::fs::File::create(&simulated_store_path.join("Cargo.toml")).expect("File creation failed");
+    std::fs::File::create(simulated_store_path.join("Cargo.toml")).expect("File creation failed");
     let workspace_with_symlink = env.temp_dir();
     std::os::unix::fs::symlink(
         &simulated_store_path,
@@ -272,7 +272,7 @@ pub fn configured_source_is_used_instead_of_local_directory() {
         version: semver::Version::from_str("1.2.3").unwrap(),
         sha256: "123".to_string(),
     };
-    crate2nix_json.upsert_source(None, source.clone());
+    crate2nix_json.upsert_source(None, source);
     let crate_derivation =
         CrateDerivation::resolve(&config, &crate2nix_json, &indexed, root_package).unwrap();
 
