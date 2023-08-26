@@ -241,6 +241,8 @@ fn cfg_to_nix_expr(cfg: &CfgExpr) -> String {
                 }
                 result.push(')');
             }
+            CfgExpr::Any(expressions) if expressions.len() == 0 =>
+                result.push_str("false"),
             CfgExpr::Any(expressions) => {
                 result.push('(');
                 render(result, &expressions[0]);
