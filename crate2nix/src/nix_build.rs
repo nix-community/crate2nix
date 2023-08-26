@@ -22,7 +22,7 @@ pub fn nix_build(
         &format!("Building {}", project_dir),
         Command::new("nix")
             .current_dir(&project_dir)
-            .args(&[
+            .args([
                 "--show-trace",
                 "build",
                 "-f",
@@ -42,7 +42,7 @@ pub fn nix_build(
     );
 
     if result.is_err() {
-        dump_with_lines(&project_dir_path.join("default.nix"))?;
+        dump_with_lines(project_dir_path.join("default.nix"))?;
     }
 
     result
