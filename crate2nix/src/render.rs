@@ -233,22 +233,30 @@ fn cfg_to_nix_expr(cfg: &CfgExpr) -> String {
                 result.push(')');
             }
             CfgExpr::All(expressions) => {
-                result.push('(');
-                render(result, &expressions[0]);
-                for expr in &expressions[1..] {
-                    result.push_str(" && ");
-                    render(result, expr);
+                if expressions.is_empty() {
+                    result.push_str("true");
+                } else {
+                    result.push('(');
+                    render(result, &expressions[0]);
+                    for expr in &expressions[1..] {
+                        result.push_str(" && ");
+                        render(result, expr);
+                    }
+                    result.push(')');
                 }
-                result.push(')');
             }
             CfgExpr::Any(expressions) => {
-                result.push('(');
-                render(result, &expressions[0]);
-                for expr in &expressions[1..] {
-                    result.push_str(" || ");
-                    render(result, expr);
+                if expressions.is_empty() {
+                    result.push_str("false");
+                } else {
+                    result.push('(');
+                    render(result, &expressions[0]);
+                    for expr in &expressions[1..] {
+                        result.push_str(" || ");
+                        render(result, expr);
+                    }
+                    result.push(')');
                 }
-                result.push(')');
             }
         }
     }
@@ -299,6 +307,8 @@ fn test_render_cfg_to_nix_expr() {
         "((target.\"unix\" or false) && (\"linux\" == target.\"os\"))",
         &cfg_to_nix_expr(&CfgExpr::All(vec![name("unix"), kv("target_os", "linux")]))
     );
+    assert_eq!("true", &cfg_to_nix_expr(&CfgExpr::All(vec![])));
+    assert_eq!("false", &cfg_to_nix_expr(&CfgExpr::Any(vec![])));
 }
 
 /// Escapes a string as a nix string.
