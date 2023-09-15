@@ -384,6 +384,9 @@ impl From<crate::config::Source> for ResolvedSource {
             crate::config::Source::Nix { file, attr } => {
                 ResolvedSource::Nix(NixSource { file, attr })
             }
+            crate::config::Source::LocalDirectory { path } => {
+                ResolvedSource::LocalDirectory(LocalDirectorySource { path })
+            }
         }
     }
 }
