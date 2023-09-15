@@ -61,7 +61,7 @@ pkgs.symlinkJoin {
       }
       lib.maintainers.andir
     ];
-    mainProgram = crate2nix.name;
+    mainProgram = "crate2nix";
     platforms = lib.platforms.all;
   };
   postBuild = ''
