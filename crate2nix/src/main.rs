@@ -150,6 +150,20 @@ pub enum Opt {
         )]
         output: PathBuf,
     },
+
+    #[structopt(
+        name = "resolve-manifest",
+        about = "Resolve fields inherited from a workspace, so that the manifest can be processed stand-alone."
+    )]
+    ResolveManifest {
+        #[structopt(
+            short = "f",
+            long = "cargo-toml",
+            parse(from_os_str),
+            help = "The path to the Cargo.toml of the project."
+        )]
+        cargo_toml: PathBuf,
+    },
 }
 
 #[derive(Debug, StructOpt, Deserialize, Serialize)]
@@ -464,7 +478,24 @@ fn main() -> anyhow::Result<()> {
         } => {
             command.execute(&crate2nix_json)?;
         }
+        Opt::ResolveManifest { cargo_toml } => {
+            let manifest = resolve_manifest(&cargo_toml)?;
+            let toml = toml::to_string_pretty(manifest.original())?;
+            println!("{toml}");
+        }
     }
 
     Ok(())
+}
+
+fn resolve_manifest(cargo_toml: &Path) -> cargo::CargoResult<cargo::core::Manifest> {
+    use cargo::core::SourceId;
+
+    let full_path = cargo_toml.canonicalize()?;
+    let source_id = SourceId::for_path(&full_path)?;
+
+    let config = cargo::Config::default()?;
+    let (pkg, _paths) = cargo::ops::read_package(&full_path, source_id, &config)?;
+
+    Ok(pkg.manifest().clone())
 }
