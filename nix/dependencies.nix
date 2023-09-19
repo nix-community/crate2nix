@@ -13,6 +13,8 @@
       binutils
       nixpkgs-fmt jq
       niv
+      pkgconfig
+      openssl
       git
       utillinux
       cacert
