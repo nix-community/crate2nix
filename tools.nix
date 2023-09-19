@@ -67,12 +67,12 @@ rec {
 
         crate2nix_options=""
         if [ -r ./${cargoToml} ]; then
-          create2nix_options+=" -f ./${cargoToml}"
+          crate2nix_options+=" -f ./${cargoToml}"
         fi
 
         if test -r "./crate2nix.json" ; then
           cp "./crate2nix.json" "$out/crate2nix.json"
-          create2nix_options+=" -c $out/crate2nix.json"
+          crate2nix_options+=" -c $out/crate2nix.json"
         fi
 
         if test -r "${src}/crate2nix-sources" ; then
@@ -82,7 +82,7 @@ rec {
         set -x
 
         crate2nix generate \
-          $create2nix_options \
+          $crate2nix_options \
           -o "Cargo-generated.nix" \
           -h "$crate_hashes" \
           ${lib.escapeShellArgs additionalCargoNixArgs} || {
