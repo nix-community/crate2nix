@@ -11,7 +11,14 @@
 , strictDeprecation ? true
 }:
 let
-  cargoNix = pkgs.callPackage ./crate2nix/Cargo.nix { inherit strictDeprecation; };
+  defaultCrateOverrides = pkgs.defaultCrateOverrides // {
+    libgit2-sys = old: {
+      nativeBuildInputs = (old.nativeBuildInputs or []) ++ pkgs.libgit2.nativeBuildInputs;
+      buildInputs = (old.buildInputs or []) ++ pkgs.libgit2.buildInputs;
+    };
+  };
+
+  cargoNix = pkgs.callPackage ./crate2nix/Cargo.nix { inherit strictDeprecation defaultCrateOverrides; };
   crate2nix = cargoNix.rootCrate.build;
 in
 rec {
