@@ -128,7 +128,7 @@ rec {
             inherit testCrateFlags;
             buildInputs = testInputs;
           } ''
-          set -ex
+          set -e
 
           export RUST_BACKTRACE=1
 
