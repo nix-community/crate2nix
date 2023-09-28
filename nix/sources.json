@@ -65,10 +65,10 @@
         "homepage": null,
         "owner": "mozilla",
         "repo": "nixpkgs-mozilla",
-        "rev": "d8a0a26242ca12145c9a1a4e08e21efb15fc7776",
-        "sha256": "1f41psqw00mdcwm28y1frjhssybg6r8i7rpa8jq0jiannksbj27s",
+        "rev": "6eabade97bc28d707a8b9d82ad13ef143836736e",
+        "sha256": "1fp637wkji0rhp12hg0hkr0nv50sqrhyf1jd4bpgj58y7wn4yjfl",
         "type": "tarball",
-        "url": "https://github.com/mozilla/nixpkgs-mozilla/archive/d8a0a26242ca12145c9a1a4e08e21efb15fc7776.tar.gz",
+        "url": "https://github.com/mozilla/nixpkgs-mozilla/archive/6eabade97bc28d707a8b9d82ad13ef143836736e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
