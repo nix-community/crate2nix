@@ -176,7 +176,7 @@ fn cfg_to_nix_expr_filter(
             if key.starts_with("cfg(") && key.ends_with(')') {
                 let cfg = &key[4..key.len() - 1];
 
-                let expr = CfgExpr::from_str(&cfg).map_err(|e| {
+                let expr = CfgExpr::from_str(cfg).map_err(|e| {
                     tera::Error::msg(format!(
                         "cfg_to_nix_expr_filter: Could not parse '{}': {}",
                         cfg, e
