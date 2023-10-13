@@ -53,15 +53,14 @@ else
   echo "Skipping because of --no-cargo-build"
 fi
 
-noisily nix run --arg release false $NIX_OPTIONS -c crate2nix generate -n ../nix/nixpkgs.nix \
+crate2nix=$(noisily nix-build --arg release false $NIX_OPTIONS)/bin/crate2nix
+noisily "$crate2nix" generate -n ../nix/nixpkgs.nix \
   -f ./crate2nix/Cargo.toml -o ./crate2nix/Cargo.nix || \
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-noisily nix build -L --arg release false $NIX_OPTIONS
+crate2nix=$(noisily nix-build --arg release false $NIX_OPTIONS)/bin/crate2nix
 
-crate2nix="$(pwd)"/result/bin/crate2nix
-
-nix eval --json -f ./tests.nix buildTestConfigs | \
+nix-instantiate tests.nix --eval --strict --json -A buildTestConfigs | \
  jq -r .[].pregeneratedBuild | \
  while read cargo_nix; do
    if [ "$cargo_nix" = "null" ]; then

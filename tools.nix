@@ -11,7 +11,14 @@
 , strictDeprecation ? true
 }:
 let
-  cargoNix = pkgs.callPackage ./crate2nix/Cargo.nix { inherit strictDeprecation; };
+  defaultCrateOverrides = pkgs.defaultCrateOverrides // {
+    libgit2-sys = old: {
+      nativeBuildInputs = (old.nativeBuildInputs or []) ++ pkgs.libgit2.nativeBuildInputs;
+      buildInputs = (old.buildInputs or []) ++ pkgs.libgit2.buildInputs;
+    };
+  };
+
+  cargoNix = pkgs.callPackage ./crate2nix/Cargo.nix { inherit strictDeprecation defaultCrateOverrides; };
   crate2nix = cargoNix.rootCrate.build;
 in
 rec {
@@ -67,12 +74,12 @@ rec {
 
         crate2nix_options=""
         if [ -r ./${cargoToml} ]; then
-          create2nix_options+=" -f ./${cargoToml}"
+          crate2nix_options+=" -f ./${cargoToml}"
         fi
 
         if test -r "./crate2nix.json" ; then
           cp "./crate2nix.json" "$out/crate2nix.json"
-          create2nix_options+=" -c $out/crate2nix.json"
+          crate2nix_options+=" -c $out/crate2nix.json"
         fi
 
         if test -r "${src}/crate2nix-sources" ; then
@@ -82,7 +89,7 @@ rec {
         set -x
 
         crate2nix generate \
-          $create2nix_options \
+          $crate2nix_options \
           -o "Cargo-generated.nix" \
           -h "$crate_hashes" \
           ${lib.escapeShellArgs additionalCargoNixArgs} || {
@@ -349,7 +356,9 @@ rec {
                 replace-with = "vendored-sources"
               '';
             gitSources = packagesByType."git" or [ ];
-            gitSourcesUnique = lib.unique gitSources;
+            uniqueBy = f:
+              lib.foldl' (acc: e: if lib.elem (f e) (map f acc) then acc else acc ++ [ e ]) [];
+            gitSourcesUnique = uniqueBy (c: c.source) gitSources;
             gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
             gitSourceConfigsString = lib.concatStrings gitSourceConfigs;
           in
@@ -401,14 +410,35 @@ rec {
                   then parsed.rev
                   else parsed.urlFragment;
               };
+ 
+              rootCargo = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
+              isWorkspace = rootCargo ? "workspace";
+              isPackage = rootCargo ? "package";
+              containedCrates = rootCargo.workspace.members ++ (if isPackage then ["."] else []);
+
+              getCrateNameFromPath = path: let
+                cargoTomlCrate = builtins.fromTOML (builtins.readFile "${src}/${path}/Cargo.toml");
+              in
+                cargoTomlCrate.package.name;
+
+              pathToExtract = if isWorkspace then
+                builtins.head (builtins.filter (to_filter:
+                  (getCrateNameFromPath to_filter) == name
+                ) containedCrates)
+              else
+                ".";
             in
             pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
               ''
                 mkdir -p $out
-                cp -apR ${src}/* $out
+                cp -apR ${src}/${pathToExtract}/* $out
+                cd $out
+
+                mv ./Cargo.toml ./Cargo.toml.orig
+                ${crate2nix}/bin/crate2nix resolve-manifest --cargo-toml ${src}/${pathToExtract}/Cargo.toml > ./Cargo.toml
+
                 echo '{"package":null,"files":{}}' > $out/.cargo-checksum.json
               '';
-
         };
       };
   };
