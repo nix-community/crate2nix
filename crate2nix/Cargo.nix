@@ -2916,12 +2916,24 @@ rec {
     assert (builtins.isAttrs featureMap);
     assert (builtins.isList inputFeatures);
     let
-      expandFeature = feature:
-        assert (builtins.isString feature);
-        [ feature ] ++ (expandFeatures featureMap (featureMap."${feature}" or [ ]));
-      outFeatures = lib.concatMap expandFeature inputFeatures;
-    in
-    sortedUnique outFeatures;
+      expandFeaturesNoCycle = oldSeen: inputFeatures:
+        if inputFeatures != []
+        then
+          let
+            # The feature we're currently expanding.
+            feature = builtins.head inputFeatures;
+            # All the features we've seen/expanded so far, including the one
+            # we're currently processing.
+            seen = oldSeen // { ${feature} = 1; };
+            # Expand the feature but be careful to not re-introduce a feature
+            # that we've already seen: this can easily cause a cycle, see issue
+            # #209.
+            enables = builtins.filter (f: !(seen ? "${f}")) (featureMap."${feature}" or []);
+          in [ feature ] ++ (expandFeaturesNoCycle seen (builtins.tail inputFeatures ++ enables))
+        # No more features left, nothing to expand to.
+        else [];
+      outFeatures = expandFeaturesNoCycle { } inputFeatures;
+    in sortedUnique outFeatures;
 
   /* This function adds optional dependencies as features if they are enabled
     indirectly by dependency features. This function mimics Cargo's behavior
