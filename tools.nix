@@ -350,7 +350,7 @@ rec {
               '';
             gitSources = packagesByType."git" or [ ];
             uniqueBy = f:
-              lib.foldl' (acc: e: if lib.elem (f e) (map f acc) then acc else acc ++ [ e ]) [];
+              lib.foldl' (acc: e: if lib.elem (f e) (map f acc) then acc else acc ++ [ e ]) [ ];
             gitSourcesUnique = uniqueBy (c: c.source) gitSources;
             gitSourceConfigs = builtins.map gitSourceConfig gitSourcesUnique;
             gitSourceConfigsString = lib.concatStrings gitSourceConfigs;
