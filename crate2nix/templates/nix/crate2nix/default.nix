@@ -584,7 +584,7 @@ rec {
     assert (builtins.isList inputFeatures);
     let
       expandFeaturesNoCycle = oldSeen: inputFeatures:
-        if inputFeatures != []
+        if inputFeatures != [ ]
         then
           let
             # The feature we're currently expanding.
@@ -595,12 +595,14 @@ rec {
             # Expand the feature but be careful to not re-introduce a feature
             # that we've already seen: this can easily cause a cycle, see issue
             # #209.
-            enables = builtins.filter (f: !(seen ? "${f}")) (featureMap."${feature}" or []);
-          in [ feature ] ++ (expandFeaturesNoCycle seen (builtins.tail inputFeatures ++ enables))
+            enables = builtins.filter (f: !(seen ? "${f}")) (featureMap."${feature}" or [ ]);
+          in
+          [ feature ] ++ (expandFeaturesNoCycle seen (builtins.tail inputFeatures ++ enables))
         # No more features left, nothing to expand to.
-        else [];
+        else [ ];
       outFeatures = expandFeaturesNoCycle { } inputFeatures;
-    in sortedUnique outFeatures;
+    in
+    sortedUnique outFeatures;
 
   /* This function adds optional dependencies as features if they are enabled
     indirectly by dependency features. This function mimics Cargo's behavior
