@@ -12,8 +12,8 @@
       cargo clippy rustc rustfmt
       binutils
       nixpkgs-fmt jq
+      nix
       niv
-      nix_2_3
       git
       utillinux
       cacert
@@ -29,22 +29,22 @@
       in
       cargoNix.rootCrate.build;
 
-    cargoRelease =
-      let
-        cargoNixSource = tools.generatedCargoNix rec {
-          name = "cargo-release";
-          src = sources."${name}";
-        };
-        buildRustCrateForPkgs = pkgs: pkgs.buildRustCrate.override {
-          defaultCrateOverrides = pkgs.defaultCrateOverrides // {
-            cargo-release = { buildInputs ? [ ], ... }: {
-              buildInputs = buildInputs ++ [ pkgs.openssl ];
-            };
-          };
-        };
-        cargoNix = pkgs.callPackage cargoNixSource { inherit buildRustCrateForPkgs; };
-      in
-      cargoNix.rootCrate.build;
+    # cargoRelease =
+    #   let
+    #     cargoNixSource = tools.generatedCargoNix rec {
+    #       name = "cargo-release";
+    #       src = sources."${name}";
+    #     };
+    #     buildRustCrateForPkgs = pkgs: pkgs.buildRustCrate.override {
+    #       defaultCrateOverrides = pkgs.defaultCrateOverrides // {
+    #         cargo-release = { buildInputs ? [ ], ... }: {
+    #           buildInputs = buildInputs ++ [ pkgs.openssl ];
+    #         };
+    #       };
+    #     };
+    #     cargoNix = pkgs.callPackage cargoNixSource { inherit buildRustCrateForPkgs; };
+    #   in
+    #   cargoNix.rootCrate.build;
 
   } // pkgs.lib.optionalAttrs pkgs.stdenv.isDarwin {
 
