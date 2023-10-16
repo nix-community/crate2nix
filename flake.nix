@@ -4,7 +4,7 @@
   };
 
   outputs = { self, flake-utils }: {
-    overlays.default = self: super: {
+    overlays.default = final: prev: {
       crate2nix = self.callPackage ./default.nix { };
     };
   } // flake-utils.lib.eachDefaultSystem (system:
