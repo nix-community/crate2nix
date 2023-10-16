@@ -21,10 +21,20 @@ let
     buildRustCrateForPkgs = pkgs:
       let
         isBareMetal = pkgs.stdenv.hostPlatform.parsed.kernel.name == "none";
+        # Don't need other tools
+        stdenvBase = if isBareMetal then pkgs.stdenvNoCC else pkgs.stdenv;
+
+        stdenv =
+          if stdenvBase.hostPlatform.extensions ? sharedLibrary
+          then stdenvBase
+          else
+            lib.recursiveUpdate stdenvBase {
+              # This is used in buildRustCrate. Should probably be optional there.
+              hostPlatform.extensions.sharedLibrary = "";
+            };
 
         fun = pkgs.buildRustCrate.override {
-          # Don't need other tools
-          stdenv = if isBareMetal then pkgs.stdenvNoCC else pkgs.stdenv;
+          inherit stdenv;
 
           # Don't bother with cross compiler since we don't need stdlib
           inherit (pkgs.buildPackages.buildPackages) rust rustc cargo;
