@@ -20,3 +20,4 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: "./run_tests.sh --no-cargo-build"
     - run: "nix flake check"
+    - run: "nix run"
