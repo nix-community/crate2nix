@@ -407,19 +407,24 @@ rec {
               rootCargo = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
               isWorkspace = rootCargo ? "workspace";
               isPackage = rootCargo ? "package";
-              containedCrates = rootCargo.workspace.members ++ (if isPackage then ["."] else []);
+              containedCrates = rootCargo.workspace.members ++ (if isPackage then [ "." ] else [ ]);
 
-              getCrateNameFromPath = path: let
-                cargoTomlCrate = builtins.fromTOML (builtins.readFile "${src}/${path}/Cargo.toml");
-              in
+              getCrateNameFromPath = path:
+                let
+                  cargoTomlCrate = builtins.fromTOML (builtins.readFile "${src}/${path}/Cargo.toml");
+                in
                 cargoTomlCrate.package.name;
 
-              pathToExtract = if isWorkspace then
-                builtins.head (builtins.filter (to_filter:
-                  (getCrateNameFromPath to_filter) == name
-                ) containedCrates)
-              else
-               ".";
+              pathToExtract =
+                if isWorkspace then
+                  builtins.head
+                    (builtins.filter
+                      (to_filter:
+                        (getCrateNameFromPath to_filter) == name
+                      )
+                      containedCrates)
+                else
+                  ".";
             in
             pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
               ''
