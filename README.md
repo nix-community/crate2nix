@@ -3,9 +3,8 @@
 crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) crates
 using [cargo](https://crates.io/).
 
-
-[![tests-nix-linux](https://github.com/nix-community/crate2nix/workflows/tests-nix-linux/badge.svg)](https://github.com/nix-community/crate2nix/actions?query=workflow%3Atests-nix-linux)
-[![tests-nix-macos](https://github.com/nix-community/crate2nix/workflows/tests-nix-macos/badge.svg)](https://github.com/nix-community/crate2nix/actions?query=workflow%3Atests-nix-macos)
+[![tests-nix-linux](https://github.com/nix-community/crate2nix/actions/workflows/tests-nix-linux.yml/badge.svg)](https://github.com/nix-community/crate2nix/actions/workflows/tests-nix-linux.yml)
+[![tests-nix-macos](https://github.com/nix-community/crate2nix/actions/workflows/tests-nix-macos.yml/badge.svg)](https://github.com/nix-community/crate2nix/actions/workflows/tests-nix-macos.yml)
 [![Crate](https://img.shields.io/crates/v/crate2nix.svg)](https://crates.io/crates/crate2nix)
 
 **Same dependency tree as cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the
