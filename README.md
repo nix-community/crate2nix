@@ -49,14 +49,23 @@ Use `crate2nix help` to show all commands and options.
 
 ## Installation
 
-If you are not running, install a recent version of nix by running `curl https://nixos.org/nix/install | sh` or following
-the instructions on [https://nixos.org/nix/](https://nixos.org/nix/).
+If you are not running, install a recent version of nix by running 
+
+```curl --proto'=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s --install```
+
+or following the instructions on [https://nixos.org/nix/](https://nixos.org/nix/).
 
 Then
 
 ```bash
 # Install the stable version to your user env (with shell completions):
-nix-env -i -f https://github.com/kolloch/crate2nix/tarball/0.10.0
+nix-env -i -f https://github.com/nix-community/crate2nix/tarball/0.11.0
+```
+
+or with flakes (enabled by default by nix-installer above):
+
+```bash
+nix profile install nix-community/crate2nix?ref=0.11.0
 ```
 
 NOTE: You can use [eigenvalue.cachix.org](https://eigenvalue.cachix.org/) to
@@ -68,7 +77,7 @@ Similarly, you can install crate2nix by
 
 ```bash
 # Install the unstable version to your user env (with shell completions):
-nix-env -i -f https://github.com/kolloch/crate2nix/tarball/master
+nix-env -i -f https://github.com/nix-community/crate2nix/tarball/master
 ```
 
 If you want to tweak crate2nix, clone the repository and then
@@ -356,7 +365,7 @@ in
 ## Known Restrictions
 
 `crate2nix` makes heavy use of `buildRustCrate` in `nixpkgs`. So we potentially depend on features in a recent version
-of `nixpkgs`. Check [nix/sources.json](https://github.com/kolloch/crate2nix/blob/master/nix/sources.json) for the version
+of `nixpkgs`. Check [nix/sources.json](https://github.com/nix-community/crate2nix/blob/master/nix/sources.json) for the version
 of nixpkgs that `crate2nix` is tested against.
 
 If you feel limited by these restrictions, please do not hesitate to file an issue! That
@@ -366,11 +375,11 @@ gives me a feeling of what is worth working on.
   support for building and running tests, see [nixpkgs, issue
   59177](https://github.com/NixOS/nixpkgs/issues/59177).~~
 * Target-specific features do not work automatically, see
-  [#129](https://github.com/kolloch/crate2nix/issues/129). You should be able to
+  [#129](https://github.com/nix-community/crate2nix/issues/129). You should be able to
   enable the required features manually, however.
 * A crate will only have access to its own source directory during build time
   and not e.g. to other directories in the same workspace. See [crate2nix, issue
-  17](https://github.com/kolloch/crate2nix/issues/17). I used to consider this
+  17](https://github.com/nix-community/crate2nix/issues/17). I used to consider this
   "works as intended" but now I think that we should use the "workspaceMember"
   argument of buildRustCrate for this.
 * It does translates target strings to nix expressions. The support should be
@@ -401,7 +410,7 @@ Former restrictions, now supported:
 ## Feedback: What is needed for a 1.0 release?
 
 I would really appreciate your thoughts. Please add comments to issue
-[#8](https://github.com/kolloch/crate2nix/issues/8).
+[#8](https://github.com/nix-community/crate2nix/issues/8).
 
 ## Runtime Dependencies
 
