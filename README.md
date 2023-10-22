@@ -59,13 +59,13 @@ Then
 
 ```bash
 # Install the stable version to your user env (with shell completions):
-nix-env -i -f https://github.com/nix-community/crate2nix/tarball/0.11.0
+nix-env -i -f https://github.com/nix-community/crate2nix/tarball/0.11.1
 ```
 
 or with flakes (enabled by default by nix-installer above):
 
 ```bash
-nix profile install nix-community/crate2nix?ref=0.11.0
+nix profile install nix-community/crate2nix?ref=0.11.1
 ```
 
 NOTE: You can use [eigenvalue.cachix.org](https://eigenvalue.cachix.org/) to
@@ -83,7 +83,7 @@ nix-env -i -f https://github.com/nix-community/crate2nix/tarball/master
 or with flakes (enabled by default by nix-installer above):
 
 ```bash
-nix profile install nix-community/crate2nix?ref=0.11.0
+nix profile install nix-community/crate2nix?ref=0.11.1
 ```
 
 If you want to tweak crate2nix, clone the repository and then
