@@ -1,12 +1,13 @@
 # 0.11.x - 0.12.0 (not released)
 
+
+# 0.10.x - 0.11.0
+
 ## Support `foo?/bar` feature selections
 
 [Conditional features](https://doc.rust-lang.org/cargo/reference/features.html#dependency-features)
 are now supported. The feature selection `foo?/bar` will only enable the `bar` feature of the `foo`
 dependency if that dependency would be enabled anyway (non-optional, or enabled by a different feature selection).
-
-# 0.10.x - 0.11.0 (not released)
 
 ## Remove `buildRustCrate` parameter
 
