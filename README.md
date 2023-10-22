@@ -80,6 +80,12 @@ Similarly, you can install crate2nix by
 nix-env -i -f https://github.com/nix-community/crate2nix/tarball/master
 ```
 
+or with flakes (enabled by default by nix-installer above):
+
+```bash
+nix profile install nix-community/crate2nix?ref=0.11.0
+```
+
 If you want to tweak crate2nix, clone the repository and then
 
 ```bash
