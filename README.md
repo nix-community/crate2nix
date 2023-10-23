@@ -28,6 +28,33 @@ fix/improve the nix code without knowing rust if all the data is already there.
 **Optional Import From Derivation**: Optional ability to generate the derived `Cargo.nix` during evaluation time so it does
 no need to be commited.
 
+## Flake
+
+A stub template is provided:
+``` nix
+nix flake init --template github:nix-community/crate2nix
+```
+
+### Specifying the version of Rust
+
+[oxalica/rust-overlay](https://github.com/oxalica/rust-overlay) provides a convenient way to specify the rust version:
+``` nix
+{
+      overlays = [
+        (import rust-overlay)
+        (self: super: let
+          toolchain = super.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
+        in {
+          rustc = toolchain;
+        })
+      ];
+      pkgs = import nixpkgs { inherit system overlays; };
+}
+```
+
+
+## Non-Flake
+
 Here is a simple example which uses all the defaults and will generate a `Cargo.nix` file:
 
 ```bash

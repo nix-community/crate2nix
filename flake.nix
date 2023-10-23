@@ -7,6 +7,10 @@
     overlays.default = final: prev: {
       crate2nix = self.callPackage ./default.nix { };
     };
+    templates.default = {
+      path = ./templates;
+      description = "An example of crate2nix";
+    };
   } // flake-utils.lib.eachDefaultSystem (system:
     let
       sources = import ./nix/sources.nix;
