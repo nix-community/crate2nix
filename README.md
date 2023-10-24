@@ -31,14 +31,14 @@ no need to be commited.
 ## Flake
 
 A stub template is provided:
-``` nix
+```nix
 nix flake init --template github:nix-community/crate2nix
 ```
 
 ### Specifying the version of Rust
 
 [oxalica/rust-overlay](https://github.com/oxalica/rust-overlay) provides a convenient way to specify the rust version:
-``` nix
+```nix
 {
       overlays = [
         (import rust-overlay)
@@ -51,6 +51,7 @@ nix flake init --template github:nix-community/crate2nix
       pkgs = import nixpkgs { inherit system overlays; };
 }
 ```
+Thanks to a new feature in Nix 2.6, explicitly generating the `Cargo.nix` file is not needed.
 
 
 ## Non-Flake
