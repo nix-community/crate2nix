@@ -224,7 +224,7 @@ fn cfg_to_nix_expr(cfg: &CfgExpr) -> String {
                 } else if key == "target_family" {
                     format!("(builtins.elem {} target.{})", escaped_value, target(key))
                 } else {
-                    format!("({} == target.{})", escaped_value, target(key))
+                    format!("({} == target.{} or null)", escaped_value, target(key))
                 });
             }
             CfgExpr::Not(expr) => {
@@ -292,19 +292,19 @@ fn test_render_cfg_to_nix_expr() {
         &cfg_to_nix_expr(&kv("target_family", "unix"))
     );
     assert_eq!(
-        "(\"linux\" == target.\"os\")",
+        "(\"linux\" == target.\"os\" or null)",
         &cfg_to_nix_expr(&kv("target_os", "linux"))
     );
     assert_eq!(
-        "(!(\"linux\" == target.\"os\"))",
+        "(!(\"linux\" == target.\"os\" or null))",
         &cfg_to_nix_expr(&CfgExpr::Not(Box::new(kv("target_os", "linux"))))
     );
     assert_eq!(
-        "((target.\"unix\" or false) || (\"linux\" == target.\"os\"))",
+        "((target.\"unix\" or false) || (\"linux\" == target.\"os\" or null))",
         &cfg_to_nix_expr(&CfgExpr::Any(vec![name("unix"), kv("target_os", "linux")]))
     );
     assert_eq!(
-        "((target.\"unix\" or false) && (\"linux\" == target.\"os\"))",
+        "((target.\"unix\" or false) && (\"linux\" == target.\"os\" or null))",
         &cfg_to_nix_expr(&CfgExpr::All(vec![name("unix"), kv("target_os", "linux")]))
     );
     assert_eq!("true", &cfg_to_nix_expr(&CfgExpr::All(vec![])));
