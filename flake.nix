@@ -8,7 +8,7 @@
       crate2nix = self.callPackage ./default.nix { };
     };
     templates.default = {
-      path = ./templates;
+      path = ./template;
       description = "An example of crate2nix";
     };
   } // flake-utils.lib.eachDefaultSystem (system:
