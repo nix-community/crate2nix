@@ -119,7 +119,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: ("windows" == target."os");
+            target = { target, features }: ("windows" == target."os" or null);
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];
@@ -648,7 +648,7 @@ rec {
           {
             name = "wasi";
             packageId = "wasi";
-            target = { target, features }: ("wasi" == target."os");
+            target = { target, features }: ("wasi" == target."os" or null);
           }
         ];
         features = {
@@ -908,7 +908,7 @@ rec {
           {
             name = "hermit-abi";
             packageId = "hermit-abi";
-            target = { target, features }: ((("x86_64" == target."arch") || ("aarch64" == target."arch")) && ("hermit" == target."os"));
+            target = { target, features }: ((("x86_64" == target."arch" or null) || ("aarch64" == target."arch" or null)) && ("hermit" == target."os" or null));
           }
           {
             name = "libc";

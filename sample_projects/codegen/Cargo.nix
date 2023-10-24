@@ -97,7 +97,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: ("windows" == target."os");
+            target = { target, features }: ("windows" == target."os" or null);
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];

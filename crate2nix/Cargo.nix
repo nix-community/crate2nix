@@ -122,7 +122,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: ("windows" == target."os");
+            target = { target, features }: ("windows" == target."os" or null);
             features = [ "consoleapi" "errhandlingapi" "fileapi" "handleapi" "processenv" ];
           }
         ];
@@ -157,7 +157,7 @@ rec {
           {
             name = "hermit-abi";
             packageId = "hermit-abi";
-            target = { target, features }: ("hermit" == target."os");
+            target = { target, features }: ("hermit" == target."os" or null);
           }
           {
             name = "libc";
@@ -428,12 +428,12 @@ rec {
           {
             name = "libc";
             packageId = "libc";
-            target = { target, features }: (("aarch64" == target."arch") && ("linux" == target."os"));
+            target = { target, features }: (("aarch64" == target."arch" or null) && ("linux" == target."os" or null));
           }
           {
             name = "libc";
             packageId = "libc";
-            target = { target, features }: (("aarch64" == target."arch") && ("apple" == target."vendor"));
+            target = { target, features }: (("aarch64" == target."arch" or null) && ("apple" == target."vendor" or null));
           }
         ];
 
@@ -1310,7 +1310,7 @@ rec {
           {
             name = "fuchsia-cprng";
             packageId = "fuchsia-cprng";
-            target = { target, features }: ("fuchsia" == target."os");
+            target = { target, features }: ("fuchsia" == target."os" or null);
           }
           {
             name = "libc";
@@ -1322,12 +1322,12 @@ rec {
             name = "rand_core";
             packageId = "rand_core 0.3.1";
             usesDefaultFeatures = false;
-            target = { target, features }: ("sgx" == target."env");
+            target = { target, features }: ("sgx" == target."env" or null);
           }
           {
             name = "rdrand";
             packageId = "rdrand";
-            target = { target, features }: ("sgx" == target."env");
+            target = { target, features }: ("sgx" == target."env" or null);
           }
           {
             name = "winapi";
@@ -1721,7 +1721,7 @@ rec {
           {
             name = "cpufeatures";
             packageId = "cpufeatures";
-            target = { target, features }: (("aarch64" == target."arch") || ("x86_64" == target."arch") || ("x86" == target."arch"));
+            target = { target, features }: (("aarch64" == target."arch" or null) || ("x86_64" == target."arch" or null) || ("x86" == target."arch" or null));
           }
           {
             name = "digest";
