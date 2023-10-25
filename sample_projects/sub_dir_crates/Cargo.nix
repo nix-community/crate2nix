@@ -464,9 +464,9 @@ rec {
                   let
                     package = crateConfigs."${dep.packageId}";
                   in
-                  { inherit (dep) rename; version = package.version; };
+                  { inherit (dep) rename; inherit (package) version; };
               in
-              lib.mapAttrs (name: choices: builtins.map versionAndRename choices) grouped;
+              lib.mapAttrs (name: builtins.map versionAndRename) grouped;
           in
           buildRustCrateForPkgsFunc pkgs
             (
@@ -514,7 +514,7 @@ rec {
   */
   sanitizeForJson = val:
     if builtins.isAttrs val
-    then lib.mapAttrs (n: v: sanitizeForJson v) val
+    then lib.mapAttrs (n: sanitizeForJson) val
     else if builtins.isList val
     then builtins.map sanitizeForJson val
     else if builtins.isFunction val
@@ -623,7 +623,7 @@ rec {
         enabledFeatures = enableFeatures (crateConfig.dependencies or [ ]) expandedFeatures;
         depWithResolvedFeatures = dependency:
           let
-            packageId = dependency.packageId;
+            inherit (dependency) packageId;
             features = dependencyFeatures enabledFeatures dependency;
           in
           { inherit packageId features; };
