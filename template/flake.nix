@@ -2,7 +2,6 @@
   description = "Rust-Nix";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-crate2nix = {
@@ -19,9 +18,9 @@
     rust-crate2nix,
     ...
   } : flake-parts.lib.mkFlake { inherit inputs; } {
-    flake = {
-    };
     systems = [
+      "x86_64-linux"
+      "aarch64-linux"
       "x86_64-linux"
       "aarch64-darwin"
     ];
@@ -48,9 +47,6 @@
       packages = {
         rustnix = project.rootCrate.build;
         default = packages.rustnix;
-      };
-      devShells.default = pkgs.mkShell {
-        buildInputs = [pkgs.rustc];
       };
     };
   };
