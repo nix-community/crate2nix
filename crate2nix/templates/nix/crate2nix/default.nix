@@ -135,7 +135,7 @@ rec {
           # recreate a file hierarchy as when running tests with cargo
 
           # the source for test data
-          ${pkgs.xorg.lndir}/bin/lndir ${crate.src}
+          ${pkgs.buildPackages.xorg.lndir}/bin/lndir ${crate.src}
 
           # build outputs
           testRoot=target/debug
@@ -165,10 +165,12 @@ rec {
         passthru = (crate.passthru or { }) // {
           inherit test;
         };
-      } ''
-      echo tested by ${test}
-      ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
-    '';
+      }
+      (lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
+        echo tested by ${test}
+      '' + ''
+        ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
+      '');
 
   /* A restricted overridable version of builtRustCratesWithFeatures. */
   buildRustCrateWithFeatures =
