@@ -615,7 +615,7 @@ rec {
           # recreate a file hierarchy as when running tests with cargo
 
           # the source for test data
-          ${pkgs.xorg.lndir}/bin/lndir ${crate.src}
+          ${pkgs.buildPackages.xorg.lndir}/bin/lndir ${crate.src}
 
           # build outputs
           testRoot=target/debug
