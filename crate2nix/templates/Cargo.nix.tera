@@ -96,6 +96,9 @@ rec {
         crateName = {{crate.crate_name}};
         version = {{crate.version}};
         edition = {{crate.edition}};
+        {%- if crate.links %}
+        links = {{crate.links}};
+        {%- endif %}
 
         {%- if crate.binaries|length > 0 and not crate.is_root_or_workspace_member %}
         crateBin = [];
