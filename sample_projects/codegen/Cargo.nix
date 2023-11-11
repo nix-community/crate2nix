@@ -319,6 +319,7 @@ rec {
         crateName = "libdbus-sys";
         version = "0.2.1";
         edition = "2015";
+        links = "dbus";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/diwic/dbus-rs.git";
