@@ -33,6 +33,8 @@ pub struct CrateDerivation {
     pub edition: String,
     pub authors: Vec<String>,
     pub version: Version,
+    /// The name of a native library the package is linking to.
+    pub links: Option<String>,
     pub source: ResolvedSource,
     /// The crate types of the lib targets of this crate, e.g. "lib", "dylib", "rlib", ...
     pub lib_crate_types: Vec<String>,
@@ -159,6 +161,7 @@ impl CrateDerivation {
             authors: package.authors.clone(),
             package_id: package.id.clone(),
             version: package.version.clone(),
+            links: package.links.clone(),
             source,
             features: package
                 .features
