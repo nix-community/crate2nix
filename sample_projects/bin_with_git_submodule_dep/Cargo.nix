@@ -439,6 +439,7 @@ rec {
         crateName = "clang-sys";
         version = "0.28.1";
         edition = "2015";
+        links = "clang";
         sha256 = "0ls8zcqi5bmmrvrk3b6r1ym4wlivinbv590d2dvg2xn9f44mbpl1";
         authors = [
           "Kyle Mayes <kyle@mayeses.com>"
@@ -792,6 +793,7 @@ rec {
         crateName = "librocksdb-sys";
         version = "6.2.4";
         edition = "2015";
+        links = "rocksdb";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
