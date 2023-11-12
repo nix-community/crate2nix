@@ -79,7 +79,7 @@ Use `crate2nix help` to show all commands and options.
 
 If you are not running, install a recent version of nix by running 
 
-```curl --proto'=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s --install```
+```curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install```
 
 or following the instructions on [https://nixos.org/nix/](https://nixos.org/nix/).
 
@@ -93,7 +93,7 @@ nix-env -i -f https://github.com/nix-community/crate2nix/tarball/0.11.1
 or with flakes (enabled by default by nix-installer above):
 
 ```bash
-nix profile install nix-community/crate2nix?ref=0.11.1
+nix profile install github:nix-community/crate2nix?ref=0.11.1
 ```
 
 NOTE: You can use [eigenvalue.cachix.org](https://eigenvalue.cachix.org/) to
