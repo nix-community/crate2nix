@@ -1,5 +1,13 @@
-# 0.11.x - 0.12.0 (not released)
+# 0.12.x - 0.13.0 (unreleased)
 
+TODO
+
+# 0.11.x - 0.12.0
+
+* [Cross compilation fixes](https://github.com/nix-community/crate2nix/pull/309). Thank you, @flokli!
+* Propagate crate links attribute. Thank you, @lblasc!
+* Determine target vendor via nixpkgs function. Thank you, @jordanisaacs!
+* Initial flake.nix for crate2nix. Thank you, @vleni!
 
 # 0.10.x - 0.11.0
 
