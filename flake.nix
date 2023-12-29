@@ -8,6 +8,10 @@
   outputs = inputs@{ nixpkgs, self, flake-parts }: flake-parts.lib.mkFlake { inherit inputs; } {
     systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
 
+    imports = [
+      ./docs/flake-module.nix
+    ];
+
     flake = {
       overlays.default = final: prev: {
         crate2nix = self.callPackage ./default.nix { };
