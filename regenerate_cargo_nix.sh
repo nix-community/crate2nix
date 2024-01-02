@@ -5,18 +5,18 @@ set -Eeuo pipefail
 top="$(readlink -f "$(dirname "$0")")"
 
 if [ -z "${IN_CRATE2NIX_SHELL:-}" ]; then
-  exec nix-shell --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")"
+  exec nix-shell --pure "$top/shell.nix" --run "$(printf "%q " "$0" "$@")"
 fi
 
-options=$(getopt -o '' --long offline,no-cargo-build -- "$@")
-[ $? -eq 0 ] || {
+options=$(getopt -o '' --long offline,no-cargo-build -- "$@" || {
     echo "Incorrect options provided. Available:"
     echo "   --offline Enable offline friendly operations with out substituters"
     echo "   --no-cargo-build     Skip local cargo build." >&2
     exit 1
-}
+})
+
 eval set -- "$options"
-NIX_OPTIONS="--option log-lines 100 --show-trace"
+NIX_OPTIONS=( --option log-lines 100 --show-trace )
 NO_CARGO_BUILD=""
 while true; do
     case "$1" in
@@ -24,7 +24,7 @@ while true; do
         NO_CARGO_BUILD=1
         ;;
     --offline)
-        NIX_OPTIONS="--option substitute false"
+        NIX_OPTIONS=( --option substitute false )
         ;;
     --)
         shift
@@ -53,16 +53,16 @@ else
   echo "Skipping because of --no-cargo-build"
 fi
 
-crate2nix=$(noisily nix-build --arg release false $NIX_OPTIONS)/bin/crate2nix
+crate2nix=$(noisily nix-build --arg release false "${NIX_OPTIONS[@]}")/bin/crate2nix
 noisily "$crate2nix" generate -n ../nix/nixpkgs.nix \
   -f ./crate2nix/Cargo.toml -o ./crate2nix/Cargo.nix || \
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-crate2nix=$(noisily nix-build --arg release false $NIX_OPTIONS)/bin/crate2nix
+crate2nix=$(noisily nix-build --arg release false "${NIX_OPTIONS[@]}")/bin/crate2nix
 
 nix-instantiate tests.nix --eval --strict --json -A buildTestConfigs | \
  jq -r .[].pregeneratedBuild | \
- while read cargo_nix; do
+ while read -r cargo_nix; do
    if [ "$cargo_nix" = "null" ]; then
      continue
    fi
