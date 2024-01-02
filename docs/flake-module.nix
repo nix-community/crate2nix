@@ -1,17 +1,18 @@
-{
+{ self, ... }: {
   perSystem = { config, self', inputs', pkgs, system, ... }: {
     packages.docs = pkgs.buildNpmPackage {
       pname = "docs";
       version = "0.1.0";
 
-      src = pkgs.nix-gitignore.gitignoreSource [
-        ".vscode"
-        "README.md"
-        ".gitignore"
-        "nix"
-        "flake.*"
-      ]
-        ./.;
+      src =
+        pkgs.nix-gitignore.gitignoreSource [
+          ".vscode"
+          "README.md"
+          ".gitignore"
+          "nix"
+          "flake.*"
+        ]
+          ./.;
 
       buildInputs = [
         pkgs.vips

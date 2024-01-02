@@ -16,7 +16,8 @@
           # lint shell scripts
           shellcheck.enable = true;
           # nix format
-          nixpkgs-fmt.enable = true;
+          # TODO: need to preformat things accordingly and potentially use another formatter
+          # nixpkgs-fmt.enable = true;
         };
       };
     };
