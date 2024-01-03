@@ -20,6 +20,5 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: "./run_tests.sh --no-cargo-build"
     - run: "nix --version"
-# TODO: Reenable with recent nix
-#   - run: "nix flake check"
+    - run: "nix flake check"
     - run: "nix run . -- --help"

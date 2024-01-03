@@ -20,6 +20,5 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
     - run: "./run_tests.sh --no-cargo-build"
     - run: "nix --version"
-  # TODO: update nixpkgs/nix and fix this
-  #  - run: "nix flake check"
+    - run: "nix flake check"
     - run: "nix run . -- --help"
