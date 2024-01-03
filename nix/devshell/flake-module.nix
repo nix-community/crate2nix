@@ -13,6 +13,11 @@
     , ...
     } @ perSystem: {
       devshells.default = {
+        imports = [
+          "${inputs.devshell}/extra/language/c.nix"
+          "${inputs.devshell}/extra/language/rust.nix"
+        ];
+
         packages = with pkgs; [
           nil
           nixpkgs-fmt
@@ -22,7 +27,6 @@
           clippy
           rustc
           rustfmt
-          gcc
           nixpkgs-fmt
           jq
           nix
@@ -34,7 +38,11 @@
           cacert
           nix-prefetch-git
           (import ../nix-test-runner.nix { inherit pkgs; })
-        ] ++ (lib.optional pkgs.stdenv.isDarwin pkgs.libiconv);
+        ];
+
+        language.c = {
+          libraries = lib.optional pkgs.stdenv.isDarwin pkgs.libiconv; 
+        };
 
         env = [
           {
