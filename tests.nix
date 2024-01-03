@@ -7,11 +7,9 @@
 , buildTestPkgs ? import buildTestNixpkgs { config = { }; }
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
-  # Whether to build crate2nix with relase=true
-, crate2NixRelease ? true
 }:
 let
-  crate2nix = pkgs.callPackage ./default.nix { release = crate2NixRelease; };
+  crate2nix = (import ./default.nix).default;
   nixTest = pkgs.callPackage ./nix/nix-test-runner.nix { };
   nodes = {
     dev = { pkgs, ... }: {
