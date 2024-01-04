@@ -32,15 +32,15 @@
           cacert
         ];
 
-        commands =  with pkgs; [
+        commands = with pkgs; [
           { package = gitMinimal; }
           { package = pre-commit; }
           { package = nixpkgs-fmt; category = "nix"; }
           { package = nix; category = "nix"; }
           { package = nix-prefetch-git; category = "nix"; }
-          { 
+          {
             name = "nix-test";
-            package = (import ../nix-test-runner.nix { inherit pkgs; }); 
+            package = (import ../nix-test-runner.nix { inherit pkgs; });
             category = "nix";
             help = "nix test runner for unit tests.";
           }

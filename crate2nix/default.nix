@@ -1,7 +1,5 @@
-
 # Provided by callPackage or also directly usable via nix-build with defaults.
-{ 
- pkgs ? (
+{ pkgs ? (
     let
       flakeLock = builtins.fromJSON (builtins.readFile ../flake.lock);
     in
@@ -17,8 +15,10 @@
 , cargo ? pkgs.cargo
 , callPackage ? pkgs.callPackage
 , nix-prefetch-git ? pkgs.nix-prefetch-git
-# Seperate arguements that are NOT filled by callPackage.
-, cargoNixPath ? ./Cargo.nix, release ? true }:
+  # Seperate arguements that are NOT filled by callPackage.
+, cargoNixPath ? ./Cargo.nix
+, release ? true
+}:
 let
   cargoNix = callPackage cargoNixPath { inherit release; };
   withoutTemplates = name: type:
@@ -48,7 +48,8 @@ let
     };
   };
   set_templates = if release then "" else "--set TEMPLATES_DIR ${./templates}";
-in symlinkJoin {
+in
+symlinkJoin {
   name = crate2nix.name;
   paths = [ crate2nix ];
   buildInputs = [ makeWrapper cargo ];

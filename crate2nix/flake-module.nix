@@ -7,6 +7,6 @@
     { pkgs
     , ...
     }: {
-      packages.default = pkgs.callPackage ./default.nix {};
+      packages.default = pkgs.callPackage ./default.nix { };
     };
 }

@@ -11,7 +11,7 @@
       # https://github.com/cachix/pre-commit-hooks.nix/tree/master
       pre-commit = {
         check.enable = true;
-          settings.settings.rust.cargoManifestPath = "${self}/crate2nix/Cargo.toml";
+        settings.settings.rust.cargoManifestPath = "${self}/crate2nix/Cargo.toml";
 
         settings.hooks = {
 
