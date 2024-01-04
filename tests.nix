@@ -79,62 +79,70 @@ let
           name = "${name}_${attrName}.json";
           text = builtins.toJSON debug."${attrName}";
         };
+      testDerivation = pkgs.stdenv.mkDerivation {
+        name = "${name}_buildTest";
+        phases = [ "buildPhase" ];
+        buildInputs = [ derivation ];
+        inherit derivation generatedCargoNix;
+
+        sanitizedBuildTree = debugFile "sanitizedBuildTree";
+        buildPhase =
+          # Need tests if there is expected test output
+          assert lib.length expectedTestOutputs > 0 -> derivation ? test;
+          ''
+                      echo === DEBUG INFO
+                      echo ${debugFile "sanitizedBuildTree"}
+                      echo ${debugFile "dependencyTree"}
+                      echo ${debugFile "mergedPackageFeatures"}
+                      echo ${debugFile "diffedDefaultPackageFeatures"}
+
+                      mkdir -p $out
+
+                      ${if expectedOutput == null then ''
+                        echo === SKIP RUNNING
+                        echo "(no executables)"
+                      '' else ''
+                        echo === RUNNING
+                        ${derivation.crateName} | tee $out/run.log
+                        echo === VERIFYING expectedOutput
+                        grep '${expectedOutput}' $out/run.log || {
+                          echo '${expectedOutput}' not found in:
+                          cat $out/run.log
+                          exit 23
+                        }
+                      ''}
+
+                      ${if lib.length expectedTestOutputs == 0 then ''
+                        echo === SKIP RUNNING TESTS
+                        echo "(no tests)"
+                      '' else ''
+                        echo === RUNNING TESTS
+                        cp ${derivation.test} $out/tests.log
+                        echo === VERIFYING expectedTestOutputs
+                      ''}
+                      ${lib.concatMapStringsSep "\n"
+                        (
+                            output: ''
+                            grep '${output}' $out/tests.log || {
+                              echo '${output}' not found in:
+                              cat $out/tests.log
+                              exit 23
+                            }
+                          ''
+                          )
+            expectedTestOutputs}
+          '';
+      };
     in
-    if skip then { } else
-    pkgs.stdenv.mkDerivation {
-      name = "${name}_buildTest";
-      phases = [ "buildPhase" ];
-      buildInputs = [ derivation ];
-      inherit derivation generatedCargoNix;
-
-      sanitizedBuildTree = debugFile "sanitizedBuildTree";
-      buildPhase =
-        # Need tests if there is expected test output
-        assert lib.length expectedTestOutputs > 0 -> derivation ? test;
-        ''
-                    echo === DEBUG INFO
-                    echo ${debugFile "sanitizedBuildTree"}
-                    echo ${debugFile "dependencyTree"}
-                    echo ${debugFile "mergedPackageFeatures"}
-                    echo ${debugFile "diffedDefaultPackageFeatures"}
-
-                    mkdir -p $out
-
-                    ${if expectedOutput == null then ''
-                      echo === SKIP RUNNING
-                      echo "(no executables)"
-                    '' else ''
-                      echo === RUNNING
-                      ${derivation.crateName} | tee $out/run.log
-                      echo === VERIFYING expectedOutput
-                      grep '${expectedOutput}' $out/run.log || {
-                        echo '${expectedOutput}' not found in:
-                        cat $out/run.log
-                        exit 23
-                      }
-                    ''}
-
-                    ${if lib.length expectedTestOutputs == 0 then ''
-                      echo === SKIP RUNNING TESTS
-                      echo "(no tests)"
-                    '' else ''
-                      echo === RUNNING TESTS
-                      cp ${derivation.test} $out/tests.log
-                      echo === VERIFYING expectedTestOutputs
-                    ''}
-                    ${lib.concatMapStringsSep "\n"
-                      (
-                          output: ''
-                          grep '${output}' $out/tests.log || {
-                            echo '${output}' not found in:
-                            cat $out/tests.log
-                            exit 23
-                          }
-                        ''
-                        )
-          expectedTestOutputs}
-        '';
-    };
+    if skip 
+    then pkgs.runCommandNoCCLocal "skip_${name}" {
+      passthru = { forceSkipped = testDerivation; };
+    } ''
+      echo SKIPPED
+      touch $out
+    ''
+    else testDerivation;
+    
   buildTestConfigs = [
 
     #
@@ -508,7 +516,7 @@ let
       src = ./sample_projects/empty_cross;
       cargoToml = "Cargo.toml";
       customBuild = "sample_projects/empty_cross/default.nix";
-      # FIXME: https://github.com/nix-community/crate2nix/issues/319
+      # # FIXME: https://github.com/nix-community/crate2nix/issues/319
       skip = true;
     }
   ];
