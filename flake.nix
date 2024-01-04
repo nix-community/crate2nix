@@ -38,10 +38,6 @@
     };
 
     perSystem = { config, self', inputs', pkgs, system, ... }: {
-      # TODO: Get rid of nixpkgs in sources and just use the flake inputs.
-      _module.args.pkgs =
-        let sources = import ./nix/sources.nix;
-        in import sources.nixpkgs { inherit system; };
       formatter = pkgs.nixpkgs-fmt;
       checks = config.packages;
       packages.niv = pkgs.niv;

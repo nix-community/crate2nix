@@ -51,10 +51,7 @@
           }
           {
             name = "NIX_PATH";
-            value =
-              # TODO: Substitute sources with flake inputs
-              let sources = import ../../nix/sources.nix;
-              in "nixpkgs=${sources.nixpkgs}";
+            value = "nixpkgs=${inputs.nixpkgs}";
           }
         ];
 
