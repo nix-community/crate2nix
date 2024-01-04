@@ -4,6 +4,19 @@
 
 TODO
 
+### Flakify the crate2nix build itself
+
+Convert the pre-flake infrastructure step-by step to [nix flakes](https://nix.dev/concepts/flakes.html), while attempting to preserve compatibility for non-flake users.
+
+This is more of an internal change and should not affect the usage of crate2nix yet but a more
+flake friendly interface is planned.
+
+* Convert flake.nix to [flake.parts](https://flake.parts). @kolloch
+* Use [devshell](https://github.com/numtide/devshell) for devShell. @kolloch
+* Provide `default.nix`/`shell.nix` via [flake-compat](https://github.com/edolstra/flake-compat). @kolloch
+
+Still ongoing. Currently somewhat confusing mix.
+
 ## 0.11.x - 0.12.0
 
 * [Cross compilation fixes](https://github.com/nix-community/crate2nix/pull/309). Thank you, @flokli!
