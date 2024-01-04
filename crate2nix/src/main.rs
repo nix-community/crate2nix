@@ -176,7 +176,7 @@ pub enum SourceCommands {
     Fetch,
     #[structopt(
         name = "generate",
-        about = "Generate crate2nix-sources.nix.\n\
+        about = "Generate Cargo.nix.\n\
                  This is usually called automatically and mostly useful for testing."
     )]
     Generate,

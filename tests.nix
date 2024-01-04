@@ -10,14 +10,7 @@
 }:
 let
   crate2nix = pkgs.callPackage ./default.nix { };
-  nixTest = pkgs.callPackage ./nix/nix-test-runner.nix { };
-  nodes = {
-    dev = { pkgs, ... }: {
-      environment.systemPackages = [ crate2nix ];
-    };
-  };
   tools = pkgs.callPackage ./tools.nix { };
-  toolsAllowDeprecated = pkgs.callPackage ./tools.nix { strictDeprecation = false; };
   buildTest =
     { name
     , src

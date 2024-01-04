@@ -1,5 +1,4 @@
 { inputs
-, self
 , ...
 }: {
   imports = [
@@ -8,6 +7,7 @@
   config.perSystem =
     { config
     , system
+    , inputs'
     , lib
     , pkgs
     , ...
@@ -20,24 +20,32 @@
 
         packages = with pkgs; [
           nil
-          nixpkgs-fmt
-          pre-commit
 
-          cargo
           clippy
           rustc
           rustfmt
-          nixpkgs-fmt
           jq
-          nix
           niv
-          git
           coreutils
           gnugrep
           utillinux
           cacert
-          nix-prefetch-git
-          (import ../nix-test-runner.nix { inherit pkgs; })
+        ];
+
+        commands =  with pkgs; [
+          { package = gitMinimal; }
+          { package = pre-commit; }
+          { package = nixpkgs-fmt; category = "nix"; }
+          { package = nix; category = "nix"; }
+          { package = nix-prefetch-git; category = "nix"; }
+          { 
+            name = "nix-test";
+            package = (import ../nix-test-runner.nix { inherit pkgs; }); 
+            category = "nix";
+            help = "nix test runner for unit tests.";
+          }
+          { package = inputs'.cachix.packages.default; category = "nix"; }
+          { package = cargo; category = "rust"; }
         ];
 
         language.c = {

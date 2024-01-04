@@ -1,5 +1,16 @@
 {
+  description = ''
+    crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) 
+    crates using [cargo](https://crates.io/).
+  '';
+
+  nixConfig = {
+    extra-trusted-public-keys = "eigenvalue.cachix.org-1:ykerQDDa55PGxU25CETy9wF6uVDpadGGXYrFNJA3TUs=";
+    extra-substituters = "https://eigenvalue.cachix.org";
+  };
+
   inputs = {
+    # TODO: Remove nixpkgs pin after solving https://github.com/nix-community/crate2nix/issues/319
     nixpkgs.url = "nixpkgs/0cbe9f69c234a7700596e943bfae7ef27a31b735";
 
     flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz";
@@ -9,8 +20,24 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
+    # Development
+
     devshell = {
       url = "github:numtide/devshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    crate2nix_stable = {
+      url = "github:nix-community/crate2nix/0.12.0";
+    };
+
+    nix-test-runner = {
+      url = "github:stoeffel/nix-test-runner";
+      flake = false;
+    };
+
+    cachix = {
+      url = "github:cachix/cachix/latest";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
