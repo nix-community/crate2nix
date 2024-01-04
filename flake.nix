@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2311.553775.tar.gz";
+    nixpkgs.url = "nixpkgs/0cbe9f69c234a7700596e943bfae7ef27a31b735";
 
     flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz";
 
@@ -27,13 +27,10 @@
     imports = [
       ./nix/devshell/flake-module.nix
       ./nix/pre-commit/flake-module.nix
-      ./nix/crate2nix/flake-module.nix
+      ./crate2nix/flake-module.nix
     ];
 
     flake = {
-      overlays.default = final: prev: {
-        crate2nix = self.callPackage ./default.nix { };
-      };
       templates.default = {
         path = ./template;
         description = "An example of crate2nix";

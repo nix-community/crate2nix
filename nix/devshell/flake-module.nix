@@ -41,7 +41,7 @@
         ];
 
         language.c = {
-          libraries = lib.optional pkgs.stdenv.isDarwin pkgs.libiconv; 
+          libraries = lib.optional pkgs.stdenv.isDarwin pkgs.libiconv;
         };
 
         env = [

@@ -9,7 +9,7 @@
 , stdenv ? pkgs.stdenv
 }:
 let
-  crate2nix = (import ./default.nix).default;
+  crate2nix = pkgs.callPackage ./default.nix { };
   nixTest = pkgs.callPackage ./nix/nix-test-runner.nix { };
   nodes = {
     dev = { pkgs, ... }: {
