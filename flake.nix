@@ -11,7 +11,7 @@
 
   inputs = {
     # TODO: Remove nixpkgs pin after solving https://github.com/nix-community/crate2nix/issues/319
-    nixpkgs.url = "nixpkgs/0cbe9f69c234a7700596e943bfae7ef27a31b735";
+    nixpkgs.url = "nixpkgs";
 
     flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz";
 
@@ -38,7 +38,8 @@
 
     cachix = {
       url = "github:cachix/cachix/latest";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # we only want the binary, so we don't do this
+      # inputs.nixpkgs.follows = "nixpkgs";
       inputs.devenv.follows = "";
       inputs.flake-compat.follows = "";
       inputs.pre-commit-hooks.follows = "";
