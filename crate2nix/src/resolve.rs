@@ -172,7 +172,7 @@ impl CrateDerivation {
                 .nodes_by_id
                 .get(&package.id)
                 .map(|n| n.features.clone())
-                .unwrap_or_else(Vec::new),
+                .unwrap_or_default(),
             lib_crate_types: package
                 .targets
                 .iter()

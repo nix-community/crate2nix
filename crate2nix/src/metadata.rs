@@ -57,7 +57,7 @@ impl MergedMetadata {
         }
 
         let root = if workspace_members.len() <= 1 {
-            workspace_members.get(0).cloned()
+            workspace_members.first().cloned()
         } else {
             None
         };

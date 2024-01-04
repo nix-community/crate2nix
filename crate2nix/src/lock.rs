@@ -104,16 +104,14 @@ dependencies = [
     resolve.get_hashes_by_package_id(&mut hashes).unwrap();
     assert_eq!(
         hashes,
-        vec![
-            (
+        [(
                 PackageId { repr: "structopt 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)".to_string() },
                 "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
             ),
             (
                 PackageId { repr: "structopt-derive 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)".to_string()},
                 "53010261a84b37689f9ed7d395165029f9cc7abb9f56bbfe86bee2597ed25107"
-            )
-        ]
+            )]
         .iter()
         .map(|(package_id, hash)| (package_id.clone(), hash.to_string()))
         .collect::<HashMap<_, _>>()
@@ -137,7 +135,7 @@ checksum = "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
     resolve.get_hashes_by_package_id(&mut hashes).unwrap();
     assert_eq!(
         hashes,
-        vec![(
+        [(
             PackageId {
                 repr: "aho-corasick 0.7.6 (registry+https://github.com/rust-lang/crates.io-index)"
                     .to_string()

@@ -12,7 +12,7 @@ use std::str::FromStr;
 fn self_up_to_date() {
     let metadata = BuildInfo::for_config(
         &GenerateInfo {
-            crate2nix_arguments: vec![
+            crate2nix_arguments: [
                 "generate",
                 "-n",
                 "../nix/nixpkgs.nix",
@@ -82,7 +82,7 @@ fn assert_up_to_date(project_dir: &Path) {
     };
     let metadata = BuildInfo::for_config(
         &GenerateInfo {
-            crate2nix_arguments: vec![
+            crate2nix_arguments: [
                 "generate",
                 "-f",
                 cargo_toml.to_str().unwrap(),
