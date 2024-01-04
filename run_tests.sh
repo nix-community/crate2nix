@@ -43,7 +43,7 @@ while true; do
         ;;
     --build-test-nixpkgs)
         shift
-        NIX_TESTS_OPTIONS+=( --arg buildTestNixpkgs $1 )
+        NIX_TESTS_OPTIONS+=( --arg buildTestNixpkgs "$1" )
         ;;
     --)
         shift
