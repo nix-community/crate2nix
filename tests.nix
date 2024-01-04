@@ -508,6 +508,8 @@ let
       src = ./sample_projects/empty_cross;
       cargoToml = "Cargo.toml";
       customBuild = "sample_projects/empty_cross/default.nix";
+      # FIXME: https://github.com/nix-community/crate2nix/issues/319
+      skip = true;
     }
   ];
   buildTestDerivationAttrSet =
