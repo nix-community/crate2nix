@@ -57,7 +57,7 @@ done
 cd "$top"
 echo -e "\e[1m=== Reformatting nix code\e[0m" >&2
 ./nixpkgs-fmt.sh \
-    ./{,nix/}*.nix \
+    ./{,nix/}{,*/}*.nix \
     ./crate2nix/templates/nix/crate2nix/{*.nix,tests/*.nix} \
     ./sample_projects/*/[[:lower:]]*.nix
 cd "$top"/crate2nix
