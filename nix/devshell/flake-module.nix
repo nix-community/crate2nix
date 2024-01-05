@@ -13,17 +13,9 @@
     , ...
     } @ perSystem: {
       devshells.default = {
-        imports = [
-          "${inputs.devshell}/extra/language/c.nix"
-          "${inputs.devshell}/extra/language/rust.nix"
-        ];
-
         packages = with pkgs; [
           nil
 
-          clippy
-          rustc
-          rustfmt
           jq
           niv
           coreutils
@@ -45,12 +37,7 @@
             help = "nix test runner for unit tests.";
           }
           { package = inputs'.cachix.packages.default; category = "nix"; }
-          { package = cargo; category = "rust"; }
         ];
-
-        language.c = {
-          libraries = lib.optional pkgs.stdenv.isDarwin pkgs.libiconv;
-        };
 
         env = [
           {
