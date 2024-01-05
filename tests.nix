@@ -134,15 +134,17 @@ let
           '';
       };
     in
-    if skip 
-    then pkgs.runCommandNoCCLocal "skip_${name}" {
-      passthru = { forceSkipped = testDerivation; };
-    } ''
-      echo SKIPPED
-      touch $out
-    ''
+    if skip
+    then
+      pkgs.runCommandNoCCLocal "skip_${name}"
+        {
+          passthru = { forceSkipped = testDerivation; };
+        } ''
+        echo SKIPPED
+        touch $out
+      ''
     else testDerivation;
-    
+
   buildTestConfigs = [
 
     #
