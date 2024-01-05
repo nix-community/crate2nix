@@ -5,9 +5,14 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'My Docs',
+			title: 'crate2nix - nix-community',
+			site: 'https://nix-community.github.io',
+			base: '/crate2nix',
 			social: {
-				github: 'https://github.com/withastro/starlight',
+				github: 'https://github.com/nix-community/crate2nix',
+			},
+			editLink: {
+				baseUrl: 'https://github.com/nix-community/crate2nix/edit/master/',
 			},
 			sidebar: [
 				{
