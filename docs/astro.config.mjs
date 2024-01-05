@@ -19,7 +19,7 @@ export default defineConfig({
 					label: 'Guides',
 					items: [
 						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', link: '/crate2nix/guides/example/' },
+						{ label: 'Example Guide', link: '/guides/example/' },
 					],
 				},
 				{
