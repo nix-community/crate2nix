@@ -3,11 +3,11 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://nix-community.github.io',
+	base: '/crate2nix',
 	integrations: [
 		starlight({
 			title: 'crate2nix - nix-community',
-			site: 'https://nix-community.github.io',
-			base: '/crate2nix',
 			social: {
 				github: 'https://github.com/nix-community/crate2nix',
 			},
