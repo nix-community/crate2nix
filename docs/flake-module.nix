@@ -1,5 +1,18 @@
-{ self, ... }: {
+{
   perSystem = { config, self', inputs', pkgs, system, ... }: {
+    devshells.default = {
+      commands = [
+        { package = pkgs.nodejs_21; category = "docs/js"; }
+      ];
+    };
+
+    # https://github.com/cachix/pre-commit-hooks.nix/tree/master
+    pre-commit = {
+      settings.hooks = {
+        markdownlint.enable = true;
+      };
+    };
+    
     packages.docs = pkgs.buildNpmPackage {
       pname = "docs";
       version = "0.1.0";

@@ -12,14 +12,14 @@ export default defineConfig({
 				github: 'https://github.com/nix-community/crate2nix',
 			},
 			editLink: {
-				baseUrl: 'https://github.com/nix-community/crate2nix/edit/master/',
+				baseUrl: 'https://github.com/nix-community/crate2nix/edit/master/docs/',
 			},
 			sidebar: [
 				{
 					label: 'Guides',
 					items: [
 						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', link: '/guides/example/' },
+						{ label: 'Example Guide', link: '/crate2nix/guides/example/' },
 					],
 				},
 				{
