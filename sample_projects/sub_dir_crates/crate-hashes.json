@@ -1,0 +1,4 @@
+{
+  "lib1 0.1.0 (git+https://github.com/kolloch/with_sub_crates.git?rev=f8ad2b98ff0eb5fea4962f55e3ced5b0b5afe973#f8ad2b98ff0eb5fea4962f55e3ced5b0b5afe973)": "0nlw7rg28p6bya040cbipq4jdcdp4h3q9shdjygfk2xkva9bjl8w",
+  "lib2 0.1.0 (git+https://github.com/kolloch/with_sub_crates.git?rev=f8ad2b98ff0eb5fea4962f55e3ced5b0b5afe973#f8ad2b98ff0eb5fea4962f55e3ced5b0b5afe973)": "0nlw7rg28p6bya040cbipq4jdcdp4h3q9shdjygfk2xkva9bjl8w"
+}

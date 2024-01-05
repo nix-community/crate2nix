@@ -5,7 +5,7 @@ target
 /result*
 /sample_projects/*/result
 crate2nix/result*
-*.json
+/*.json
 *.log
 *~
 

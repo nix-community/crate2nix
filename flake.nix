@@ -60,6 +60,7 @@
       ./nix/devshell/flake-module.nix
       ./nix/pre-commit/flake-module.nix
       ./crate2nix/flake-module.nix
+      ./docs/flake-module.nix
     ];
 
     flake = {

@@ -1,0 +1,6 @@
+{
+    "nix.enableLanguageServer": true,
+    // "nix.serverPath": "rnix-lsp"
+    "nix.serverPath": "nil",
+    // "nix.serverPath": "nixd"
+}
