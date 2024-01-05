@@ -31,6 +31,7 @@ no need to be commited.
 ## Flake
 
 A stub template is provided:
+
 ```nix
 nix flake init --template github:nix-community/crate2nix
 ```
@@ -38,6 +39,7 @@ nix flake init --template github:nix-community/crate2nix
 ### Specifying the version of Rust
 
 [oxalica/rust-overlay](https://github.com/oxalica/rust-overlay) provides a convenient way to specify the rust version:
+
 ```nix
 {
       overlays = [
@@ -51,8 +53,8 @@ nix flake init --template github:nix-community/crate2nix
       pkgs = import nixpkgs { inherit system overlays; };
 }
 ```
-Thanks to a new feature in Nix 2.6, explicitly generating the `Cargo.nix` file is not needed.
 
+Thanks to a new feature in Nix 2.6, explicitly generating the `Cargo.nix` file is not needed.
 
 ## Non-Flake
 
@@ -77,7 +79,7 @@ Use `crate2nix help` to show all commands and options.
 
 ## Installation
 
-If you are not running, install a recent version of nix by running 
+If you are not running, install a recent version of nix by running
 
 ```curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install```
 
@@ -264,6 +266,7 @@ The enabled features for a crate now are resolved at build time! That means you 
           crate2nix = cargo_nix.rootCrate.build.override { features = ["default" "other"]; };
       in ...
       ```
+
 Note that only dependencies for the default features are included in the build.
 If you want full flexibility, you can use `crate2nix generate --all-features` to
 generate the most general build file. If you want to strip down the generated
@@ -330,9 +333,9 @@ unless you explicitly disable this via test hooks: see the section below.
 ```nix
       let cargo_nix = callPackage ./Cargo.nix {};
           crate2nix = cargo_nix.rootCrate.build.override {
-	    runTests = true;
-	    testInputs = [ pkgs.cowsay ];
-	  };
+     runTests = true;
+     testInputs = [ pkgs.cowsay ];
+   };
       in ...
 ```
 
@@ -369,6 +372,7 @@ appropriate configuration is generated so that the depencies are fetched from he
 offline, which can later be imported.
 
 There are two commands in the `tools.nix` file:
+
 * `generatedCargoNix` will generate a folder containing a `default.nix`, to be used
   as a `Cargo.nix` file. The argument it takes are:
   * `name`: required. The name of the project (need to be a valid nix name
@@ -477,9 +481,9 @@ If you want to hack on this, it is useful to know that build file generation is 
   file, I don't know how it handles git dependencies with sub modules.
 * [tenx-tech/cargo2nix](https://github.com/tenx-tech/cargo2nix): I
   haven't used it so take it with a grain of salt but I think
-    * it uses its own build logic instead of `buildRustCrate` but
+  * it uses its own build logic instead of `buildRustCrate` but
       still builds each crate in its own derivation.
-    * it has some support for cross building (which is quite weak in
+  * it has some support for cross building (which is quite weak in
       crate2nix).
 * [cargo-raze](https://github.com/google/cargo-raze) generates `BUILD`
   files for bazel.

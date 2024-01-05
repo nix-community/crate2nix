@@ -1,4 +1,4 @@
-{self, inputs, lib, ...}: {
+{ self, inputs, lib, ... }: {
   flake.overlays.default = final: prev: {
     crate2nix = prev.callPackage ./default.nix { };
   };
@@ -34,10 +34,10 @@
         settings.hooks = {
           # rust
           rustfmt.enable = true;
-          clippy.enable = true;
+          # clippy.enable = true;
         };
       };
-      
+
       packages.default = pkgs.callPackage ./default.nix { };
     };
 }

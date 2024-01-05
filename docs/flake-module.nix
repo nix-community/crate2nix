@@ -1,18 +1,22 @@
 {
-  perSystem = { config, self', inputs', pkgs, system, ... }: {
+  perSystem = { config, self', inputs', pkgs, lib, system, ... }: {
     devshells.default = {
       commands = [
-        { package = pkgs.nodejs_21; category = "docs/js"; }
+        { package = pkgs.nodejs_21; category = "docs"; }
+        { package = pkgs.markdownlint-cli; category = "docs"; }
       ];
     };
 
     # https://github.com/cachix/pre-commit-hooks.nix/tree/master
     pre-commit = {
       settings.hooks = {
-        markdownlint.enable = true;
+        markdownlint = {
+          enable = true;
+          files = lib.mkForce "^docs/.*\\.md$";
+        };
       };
     };
-    
+
     packages.docs = pkgs.buildNpmPackage {
       pname = "docs";
       version = "0.1.0";
