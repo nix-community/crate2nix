@@ -1,5 +1,5 @@
 ---
-title: Rust Tests
+title: Rust tests
 sidebar:
   badge: { text: 'Experimental', variant: 'caution' }
 ---

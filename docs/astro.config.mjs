@@ -16,6 +16,10 @@ export default defineConfig({
 			},
 			sidebar: [
 				{
+					label: 'Home',
+					link: '/',
+				},
+				{
 					label: 'Guides',
 					autogenerate: { directory: '00_guides' },
 				},

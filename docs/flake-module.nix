@@ -13,7 +13,6 @@
         hooks = {
           markdownlint = {
             enable = true;
-            files = lib.mkForce "^docs/.*\\.md$";
           };
         };
         # https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc
