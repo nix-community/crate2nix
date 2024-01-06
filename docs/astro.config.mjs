@@ -7,7 +7,7 @@ export default defineConfig({
 	base: '/crate2nix',
 	integrations: [
 		starlight({
-			title: 'crate2nix - nix-community',
+			title: 'crate2nix',
 			social: {
 				github: 'https://github.com/nix-community/crate2nix',
 			},
@@ -17,10 +17,11 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Guides',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', link: '/guides/example/' },
-					],
+					autogenerate: { directory: 'guides' },
+				},
+				{
+					label: 'Contributing',
+					autogenerate: { directory: 'contributing' },
 				},
 				{
 					label: 'Reference',

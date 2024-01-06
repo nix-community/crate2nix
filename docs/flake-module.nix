@@ -9,10 +9,19 @@
 
     # https://github.com/cachix/pre-commit-hooks.nix/tree/master
     pre-commit = {
-      settings.hooks = {
-        markdownlint = {
-          enable = true;
-          files = lib.mkForce "^docs/.*\\.md$";
+      settings = {
+        hooks = {
+          markdownlint = {
+            enable = true;
+            files = lib.mkForce "^docs/.*\\.md$";
+          };
+        };
+        settings.markdownlint.config = {
+          "MD013" = {
+            "line_length" = 80;
+            "code_block_line_length" = 120;
+            "tables" = false;
+          };
         };
       };
     };
