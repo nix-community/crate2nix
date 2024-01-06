@@ -17,15 +17,19 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Guides',
-					autogenerate: { directory: 'guides' },
+					autogenerate: { directory: '00_guides' },
 				},
 				{
 					label: 'Contributing',
-					autogenerate: { directory: 'contributing' },
+					autogenerate: { directory: '50_contributing' },
+				},
+				{
+					label: 'Design & Background',
+					autogenerate: { directory: '70_design' },
 				},
 				{
 					label: 'Reference',
-					autogenerate: { directory: 'reference' },
+					autogenerate: { directory: '90_reference' },
 				},
 			],
 		}),

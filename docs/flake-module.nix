@@ -16,11 +16,19 @@
             files = lib.mkForce "^docs/.*\\.md$";
           };
         };
+        # https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc
         settings.markdownlint.config = {
+          # MD013/line-length : Line length : https://github.com/DavidAnson/markdownlint/blob/v0.32.1/doc/md013.md
           "MD013" = {
-            "line_length" = 80;
+            "line_length" = 120;
             "code_block_line_length" = 120;
             "tables" = false;
+          };
+
+          # MD024/no-duplicate-heading : Multiple headings with the same content : https://github.com/DavidAnson/markdownlint/blob/v0.32.1/doc/md024.md
+          "MD024" = {
+            # we have multiple Bugfixes/Upgrading headings in the CHANGELOG for consistency.
+            "siblings_only" = true;
           };
         };
       };

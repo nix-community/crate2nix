@@ -10,7 +10,6 @@
   };
 
   inputs = {
-    # TODO: Remove nixpkgs pin after solving https://github.com/nix-community/crate2nix/issues/319
     nixpkgs.url = "nixpkgs";
 
     flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz";

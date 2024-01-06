@@ -43,6 +43,8 @@ are in the docs folder of the source repo.
   * **Preview**: Preview your changes [locally](http://localhost:4321/crate2nix/).
   * **Build in nix**: `git add` your changes.
   * **Lint**: `pre-commit` run local lints.
+* **CHANGELOG**: Add yourself to the changelog to get some well-deserved
+  recognition in the release notes!
 * **Build in nix**: run `nix flake check`.
 * **Create your pull request**
 
