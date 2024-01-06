@@ -1,16 +1,18 @@
 # Starlight Starter Kit: Basics
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+`crate2nix` uses Starlight and Astro to provide a GitHub page.
 
-```shell
-npm create astro@latest -- --template starlight
+This README provides some basic info about the structure and how to
+test the doc side locally outside of nix.
+
+`npm` is available if you enter the dev shell with [direnv](https://direnv.net/)
+and/or `nix develop`.
+
+Publishing the docs to the `result` directory is as easy as:
+
+```bash
+nix build .#docs
 ```
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/starlight/tree/main/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/starlight/tree/main/examples/basics)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwithastro%2Fstarlight%2Ftree%2Fmain%2Fexamples%2Fbasics&project-name=my-starlight-docs&repository-name=my-starlight-docs)
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
 ## 🚀 Project Structure
 
