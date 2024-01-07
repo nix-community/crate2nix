@@ -262,7 +262,6 @@ pub enum SourceAddingCommands {
         /// The URL of the git repository.
         ///
         /// E.g. https://github.com/kolloch/crate2nix.git
-        #[serde(with = "url_serde")]
         url: url::Url,
 
         #[structopt(long = "rev", parse(from_str), help = "The git revision hash.")]

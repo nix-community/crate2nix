@@ -99,7 +99,6 @@ pub enum Source {
         /// The URL of the git repository.
         ///
         /// E.g. https://github.com/kolloch/crate2nix.git
-        #[serde(with = "url_serde")]
         url: url::Url,
         /// The revision hash.
         rev: String,

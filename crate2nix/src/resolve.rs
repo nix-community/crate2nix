@@ -157,7 +157,7 @@ impl CrateDerivation {
 
         Ok(CrateDerivation {
             crate_name: package.name.clone(),
-            edition: package.edition.clone(),
+            edition: package.edition.to_string(),
             authors: package.authors.clone(),
             package_id: package.id.clone(),
             version: package.version.clone(),
@@ -400,7 +400,6 @@ pub struct CratesIoSource {
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct GitSource {
-    #[serde(with = "url_serde")]
     pub url: Url,
     pub rev: String,
     pub r#ref: Option<String>,

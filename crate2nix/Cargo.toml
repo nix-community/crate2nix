@@ -12,21 +12,20 @@ resolver = "2"
 
 [dependencies]
 anyhow = "1.0.28"
-cargo_metadata = "0.14"
+cargo_metadata = "0.18"
 cargo-platform = "0.1"
 hex = "0.4"
-itertools = "0.9"
+itertools = "0.12"
 lazy_static = "1"
 nix-base32 = "0.1"
-pathdiff = "0.1"
+pathdiff = "0.2"
 structopt = "0.3"
 semver = { version = "1", features = ["serde"] }
 serde = { version = "1.0.107", features = ["derive"] }
 serde_json = { version = "1.0.59", features = ["unbounded_depth"] }
 tera = { version = "1", default-features = false }
-toml = "0.5"
-url = "1"
-url_serde = "0.2"
+toml = "0.8"
+url = { version = "2", features = ["serde"] }
 
 [dev-dependencies]
 colored-diff = "0.2.2"
