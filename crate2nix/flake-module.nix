@@ -7,7 +7,11 @@
     { pkgs
     , ...
     }@perSystem: {
-      devshells.default = {
+      # imports = [
+      #   inputs.pre-commit-hooks.flakeModule
+      # ];
+
+      config.devshells.default = {
         imports = [
           "${inputs.devshell}/extra/language/c.nix"
           "${inputs.devshell}/extra/language/rust.nix"
@@ -28,7 +32,7 @@
         };
       };
 
-      pre-commit = {
+      config.pre-commit = {
         settings.settings.rust.cargoManifestPath = "${self}/crate2nix/Cargo.toml";
 
         settings.hooks = {
@@ -38,6 +42,6 @@
         };
       };
 
-      packages.default = pkgs.callPackage ./default.nix { };
+      config.packages.default = pkgs.callPackage ./default.nix { };
     };
 }

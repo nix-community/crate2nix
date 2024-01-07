@@ -7,8 +7,13 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 import { Icon } from '@astrojs/starlight/components';
 
 <Card title="What does crate2nix do?">
-`crate2nix` generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) crates
-using [cargo](https://crates.io/) so that you can **build your rust project with nix**.
+`crate2nix` builds your [cargo](https://crates.io/)-based [rust](https://www.rust-lang.org/) project 
+crate-by-crate with [nix](https://nixos.org/nix/).
+
+You can 
+
+* save time by only rebuilding changed crates hermetically in CI, and
+* use `cargo`/`rust-analyzer` locally for a fast developing loop.
 </Card>
 
 **Dependency tree from cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the

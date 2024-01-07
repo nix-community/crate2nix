@@ -7,6 +7,7 @@
   nixConfig = {
     extra-trusted-public-keys = "eigenvalue.cachix.org-1:ykerQDDa55PGxU25CETy9wF6uVDpadGGXYrFNJA3TUs=";
     extra-substituters = "https://eigenvalue.cachix.org";
+    allow-import-from-derivation = true;
   };
 
   inputs = {
@@ -64,9 +65,12 @@
     ];
 
     flake = { lib, ... }: {
-      config.templates.default = {
-        path = ./template;
-        description = "An example of crate2nix";
+      config.templates = rec {
+        default = flake-binary;
+        flake-binary = {
+          path = ./templates/flake-binary;
+          description = "An example of crate2nix";
+        };
       };
 
       config.lib = {
@@ -99,7 +103,7 @@
       };
     };
 
-    perSystem = { config, self', inputs', pkgs, system, ... }: {
+    perSystem = { config, pkgs, ... }: {
       formatter = pkgs.nixpkgs-fmt;
       checks = config.packages;
     };
