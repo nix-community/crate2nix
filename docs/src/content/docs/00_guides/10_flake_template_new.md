@@ -22,7 +22,10 @@ If the directory is empty, it will also create a hello world stub.
 
 If you call this from an existing project, make sure to delete any superfluous
 files. The template expects top-level `Cargo.toml`/`Cargo.lock` files,
-otherwise you need to adjust `flake.nix` manually.
+and a single result binary, otherwise you need to adjust `flake.nix` manually.
+
+Continue to use `cargo`/`rust-analyzer` for a fast developer loop and use
+nix to verify your program hermetically with nix locally and in CI:
 
 ```bash title="Building project and running tests"
 nix build
