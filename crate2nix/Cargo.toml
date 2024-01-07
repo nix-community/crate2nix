@@ -9,7 +9,7 @@ repository = "https://github.com/nix-community/crate2nix"
 homepage = "https://nix-community.github.io/crate2nix/"
 documentation = "https://nix-community.github.io/crate2nix/"
 readme = "../README.md"
-keywords = ["nixos", "nix", "cargo", "build", "ci", "cache"]
+keywords = ["nix", "cargo", "build", "ci", "cache"]
 resolver = "2"
 
 [dependencies]
