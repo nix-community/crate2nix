@@ -460,7 +460,7 @@ rec {
       "crate2nix" = rec {
         crateName = "crate2nix";
         version = "0.12.0";
-        edition = "2018";
+        edition = "2021";
         crateBin = [
           {
             name = "crate2nix";

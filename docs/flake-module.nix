@@ -29,6 +29,10 @@
             # we have multiple Bugfixes/Upgrading headings in the CHANGELOG for consistency.
             "siblings_only" = true;
           };
+
+          "MD033" = {
+            "allowed_elements" = [ "Card" ];
+          };
         };
       };
     };

@@ -5,14 +5,39 @@ description: A list of all major changes per version.
 
 ## 0.12.x - 0.13.0 (unreleased)
 
-WIP
+The usual internal version updates but there is more!
 
 ### Documentation as Github Page
 
 The old README.md had become very long and hard to navigate.
+Check out the new and shiny page at [https://nix-community.github.io/crate2nix/](https://nix-community.github.io/crate2nix/)!
 
 * Create new [Github Page](https://nix-community.github.io/crate2nix/). [@kolloch](https://github.com/kolloch/)
 * Move most of the old content there. [@kolloch](https://github.com/kolloch/)
+
+### Export `tools` as flake attribute
+
+Do you like to use [import from derivation](https://nixos.org/manual/nix/stable/language/import-from-derivation)
+so that you do not have to regenerate `Cargo.nix` on every dependency change?
+
+The related convenience functions are now also available via the flake attribute "tools":
+
+```nix
+# ...
+      perSystem = { system, pkgs, lib, inputs', ... }:
+        let
+          cargoNix = inputs.crate2nix.tools.${system}.appliedCargoNix {
+            name = "rustnix";
+            src = ./.;
+          };
+        in
+        rec {
+          packages.default = cargoNix.rootCrate.build;
+        };
+# ...
+```
+
+Check out the [documentation](https://nix-community.github.io/crate2nix/00_guides/31_auto_generating/).
 
 ### Flakify the crate2nix build itself
 
