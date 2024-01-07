@@ -2,7 +2,7 @@
 title: Runtime Dependencies
 ---
 
-crate2nix uses `cargo metadata` at runtime.
+crate2nix uses `cargo metadata` at runtime when generating `Cargo.nix`.
 
 Depending on the situation it also calls out to
 
