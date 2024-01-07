@@ -1,8 +1,8 @@
 {
-  perSystem = { config, self', inputs', pkgs, lib, system, ... }: {
+  perSystem = { config, self', inputs', pkgs, lib, system, ... }: let nodejs = pkgs.nodejs_21; in {
     devshells.default = {
       commands = [
-        { package = pkgs.nodejs_21; category = "docs"; }
+        { package = nodejs; category = "docs"; }
         { package = pkgs.markdownlint-cli; category = "docs"; }
       ];
     };
@@ -40,6 +40,8 @@
     packages.docs = pkgs.buildNpmPackage {
       pname = "docs";
       version = "0.1.0";
+
+      inherit nodejs;
 
       src =
         pkgs.nix-gitignore.gitignoreSource [
