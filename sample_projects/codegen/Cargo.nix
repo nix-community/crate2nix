@@ -85,9 +85,9 @@ rec {
     crates = {
       "ansi_term" = rec {
         crateName = "ansi_term";
-        version = "0.11.0";
+        version = "0.12.1";
         edition = "2015";
-        sha256 = "16wpvrghvd0353584i1idnsgm0r3vchg8fyrm0x8ayv1rgvbljgf";
+        sha256 = "1ljmkbilxgmhavxvxqa7qvm6f3fjggi7q2l3a72q9x0cxjvrnanm";
         authors = [
           "ogham@bsago.me"
           "Ryan Scheel (Havvy) <ryan.havvy@gmail.com>"
@@ -98,20 +98,28 @@ rec {
             name = "winapi";
             packageId = "winapi";
             target = { target, features }: ("windows" == target."os" or null);
-            features = [ "errhandlingapi" "consoleapi" "processenv" ];
+            features = [ "consoleapi" "errhandlingapi" "fileapi" "handleapi" "processenv" ];
           }
         ];
-
+        features = {
+          "derive_serde_style" = [ "serde" ];
+          "serde" = [ "dep:serde" ];
+        };
       };
       "atty" = rec {
         crateName = "atty";
-        version = "0.2.13";
+        version = "0.2.14";
         edition = "2015";
-        sha256 = "140sswp1bwqwc4zk80bxkbnfb3g936hgrb77g9g0k1zcld3wc0qq";
+        sha256 = "1s7yslcs6a28c5vz7jwj63lkfgyx8mx99fdirlhi9lbhhzhrpcyr";
         authors = [
           "softprops <d.tangren@gmail.com>"
         ];
         dependencies = [
+          {
+            name = "hermit-abi";
+            packageId = "hermit-abi";
+            target = { target, features }: ("hermit" == target."os" or null);
+          }
           {
             name = "libc";
             packageId = "libc";
@@ -127,33 +135,26 @@ rec {
         ];
 
       };
-      "bitflags 0.7.0" = rec {
+      "bitflags" = rec {
         crateName = "bitflags";
-        version = "0.7.0";
-        edition = "2015";
-        sha256 = "0v8hh6wdkpk9my8z8442g4hqrqf05h0qj53dsay6mv18lqvqklda";
-        authors = [
-          "The Rust Project Developers"
-        ];
-
-      };
-      "bitflags 1.2.1" = rec {
-        crateName = "bitflags";
-        version = "1.2.1";
-        edition = "2015";
-        sha256 = "14qnd5nq8p2almk79m4m8ydqhd413yaxsyjp5xd19g3mikzf47fg";
+        version = "1.3.2";
+        edition = "2018";
+        sha256 = "12ki6w8gn1ldq7yz9y680llwk5gmrhrzszaa17g1sbrw2r2qvwxy";
         authors = [
           "The Rust Project Developers"
         ];
         features = {
+          "compiler_builtins" = [ "dep:compiler_builtins" ];
+          "core" = [ "dep:core" ];
+          "rustc-dep-of-std" = [ "core" "compiler_builtins" ];
         };
         resolvedDefaultFeatures = [ "default" ];
       };
       "clap" = rec {
         crateName = "clap";
-        version = "2.33.0";
-        edition = "2015";
-        sha256 = "1nf6ld3bims1n5vfzhkvcb55pdzh04bbhzf8nil5vvw05nxzarsh";
+        version = "2.34.0";
+        edition = "2018";
+        sha256 = "071q5d8jfwbazi6zhik9xwpacx5i6kb2vkzy060vhf0c3120aqd0";
         authors = [
           "Kevin K. <kbknapp@gmail.com>"
         ];
@@ -171,7 +172,7 @@ rec {
           }
           {
             name = "bitflags";
-            packageId = "bitflags 1.2.1";
+            packageId = "bitflags";
           }
           {
             name = "strsim";
@@ -199,7 +200,6 @@ rec {
           "color" = [ "ansi_term" "atty" ];
           "default" = [ "suggestions" "color" "vec_map" ];
           "doc" = [ "yaml" ];
-          "lints" = [ "clippy" ];
           "strsim" = [ "dep:strsim" ];
           "suggestions" = [ "strsim" ];
           "term_size" = [ "dep:term_size" ];
@@ -245,13 +245,13 @@ rec {
       };
       "dbus" = rec {
         crateName = "dbus";
-        version = "0.7.1";
+        version = "0.9.7";
         edition = "2018";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/diwic/dbus-rs.git";
-          rev = "b079366e27da1b9c2869f065fbb6004138e439c2";
-          sha256 = "0lbp76vvi0cw57lxhfqmz22qd5l61w3rh8g58hhmwi8wcr9qmiiw";
+          rev = "618262f5e3217cdd173d46d705bbac26c5141e21";
+          sha256 = "0gvhz2knd1k799l7ssh4rdm5qw0vhazzr3bxpmlgq7fhy6hjazrs";
         };
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
@@ -265,20 +265,31 @@ rec {
             name = "libdbus-sys";
             packageId = "libdbus-sys";
           }
+          {
+            name = "winapi";
+            packageId = "winapi";
+            target = { target, features }: (target."windows" or false);
+            features = [ "winsock2" ];
+          }
         ];
         features = {
+          "futures" = [ "futures-util" "futures-channel" ];
+          "futures-channel" = [ "dep:futures-channel" ];
+          "futures-executor" = [ "dep:futures-executor" ];
+          "futures-util" = [ "dep:futures-util" ];
+          "vendored" = [ "libdbus-sys/vendored" ];
         };
       };
       "dbus-codegen" = rec {
         crateName = "dbus-codegen";
-        version = "0.4.1";
+        version = "0.10.0";
         edition = "2018";
         crateBin = [];
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/diwic/dbus-rs.git";
-          rev = "b079366e27da1b9c2869f065fbb6004138e439c2";
-          sha256 = "0lbp76vvi0cw57lxhfqmz22qd5l61w3rh8g58hhmwi8wcr9qmiiw";
+          rev = "618262f5e3217cdd173d46d705bbac26c5141e21";
+          sha256 = "0gvhz2knd1k799l7ssh4rdm5qw0vhazzr3bxpmlgq7fhy6hjazrs";
         };
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
@@ -291,19 +302,48 @@ rec {
           {
             name = "dbus";
             packageId = "dbus";
+            optional = true;
           }
           {
             name = "xml-rs";
             packageId = "xml-rs";
           }
         ];
-
+        features = {
+          "dbus" = [ "dep:dbus" ];
+          "dbus-crossroads" = [ "dep:dbus-crossroads" ];
+          "dbus-tree" = [ "dep:dbus-tree" ];
+          "default" = [ "dbus" ];
+        };
+        resolvedDefaultFeatures = [ "dbus" "default" ];
+      };
+      "hermit-abi" = rec {
+        crateName = "hermit-abi";
+        version = "0.1.19";
+        edition = "2018";
+        sha256 = "0cxcm8093nf5fyn114w8vxbrbcyvv91d4015rdnlgfll7cs6gd32";
+        authors = [
+          "Stefan Lankes"
+        ];
+        dependencies = [
+          {
+            name = "libc";
+            packageId = "libc";
+            usesDefaultFeatures = false;
+          }
+        ];
+        features = {
+          "compiler_builtins" = [ "dep:compiler_builtins" ];
+          "core" = [ "dep:core" ];
+          "rustc-dep-of-std" = [ "core" "compiler_builtins/rustc-dep-of-std" "libc/rustc-dep-of-std" ];
+        };
+        resolvedDefaultFeatures = [ "default" ];
       };
       "libc" = rec {
         crateName = "libc";
-        version = "0.2.66";
+        version = "0.2.152";
         edition = "2015";
-        sha256 = "0n0mwry21fxfwc063k33mvxk8xj7ia5ar8m42c9ymbam2ksb25fm";
+        sha256 = "1rsnma7hnw22w7jh9yqg43slddvfbnfzrvm3s7s4kinbj1jvzqqk";
         authors = [
           "The Rust Project Developers"
         ];
@@ -317,14 +357,14 @@ rec {
       };
       "libdbus-sys" = rec {
         crateName = "libdbus-sys";
-        version = "0.2.1";
+        version = "0.2.5";
         edition = "2015";
         links = "dbus";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/diwic/dbus-rs.git";
-          rev = "b079366e27da1b9c2869f065fbb6004138e439c2";
-          sha256 = "0lbp76vvi0cw57lxhfqmz22qd5l61w3rh8g58hhmwi8wcr9qmiiw";
+          rev = "618262f5e3217cdd173d46d705bbac26c5141e21";
+          sha256 = "0gvhz2knd1k799l7ssh4rdm5qw0vhazzr3bxpmlgq7fhy6hjazrs";
         };
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
@@ -333,15 +373,22 @@ rec {
           {
             name = "pkg-config";
             packageId = "pkg-config";
+            optional = true;
           }
         ];
-
+        features = {
+          "cc" = [ "dep:cc" ];
+          "default" = [ "pkg-config" ];
+          "pkg-config" = [ "dep:pkg-config" ];
+          "vendored" = [ "cc" ];
+        };
+        resolvedDefaultFeatures = [ "default" "pkg-config" ];
       };
       "pkg-config" = rec {
         crateName = "pkg-config";
-        version = "0.3.17";
+        version = "0.3.28";
         edition = "2015";
-        sha256 = "0xynnaxdv0gzadlw4h79j855k0q7rj4zb9xb1vk00nc6ss559nh5";
+        sha256 = "16kgffwncx5hsppsdf54z6jnjkhwywqy601cxk3rqncyi9zmilv9";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -378,11 +425,12 @@ rec {
       };
       "unicode-width" = rec {
         crateName = "unicode-width";
-        version = "0.1.6";
+        version = "0.1.11";
         edition = "2015";
-        sha256 = "082f9hv1r3gcd1xl33whjhrm18p0w9i77zhhhkiccb5r47adn1vh";
+        sha256 = "11ds4ydhg8g7l06rlmh712q41qsrd0j0h00n1jm74kww3kqk65z5";
         authors = [
           "kwantam <kwantam@gmail.com>"
+          "Manish Goregaokar <manishsmail@gmail.com>"
         ];
         features = {
           "compiler_builtins" = [ "dep:compiler_builtins" ];
@@ -394,9 +442,9 @@ rec {
       };
       "vec_map" = rec {
         crateName = "vec_map";
-        version = "0.8.1";
+        version = "0.8.2";
         edition = "2015";
-        sha256 = "06n8hw4hlbcz328a3gbpvmy0ma46vg1lc0r5wf55900szf3qdiq5";
+        sha256 = "1481w9g1dw9rxp3l6snkdqihzyrd2f8vispzqmwjwsdyhw8xzggi";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
           "Jorge Aparicio <japaricious@gmail.com>"
@@ -432,9 +480,9 @@ rec {
       };
       "winapi" = rec {
         crateName = "winapi";
-        version = "0.3.8";
+        version = "0.3.9";
         edition = "2015";
-        sha256 = "1ii9j9lzrhwri0902652awifzx9fpayimbp6hfhhc296xcg0k4w0";
+        sha256 = "06gl025x418lchw1wxj64ycr7gha83m44cjr5sarhynd9xkrm0sw";
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -453,7 +501,7 @@ rec {
         features = {
           "debug" = [ "impl-debug" ];
         };
-        resolvedDefaultFeatures = [ "consoleapi" "errhandlingapi" "minwinbase" "minwindef" "processenv" "winbase" ];
+        resolvedDefaultFeatures = [ "consoleapi" "errhandlingapi" "fileapi" "handleapi" "minwinbase" "minwindef" "processenv" "winbase" "winsock2" ];
       };
       "winapi-i686-pc-windows-gnu" = rec {
         crateName = "winapi-i686-pc-windows-gnu";
@@ -477,19 +525,13 @@ rec {
       };
       "xml-rs" = rec {
         crateName = "xml-rs";
-        version = "0.3.6";
-        edition = "2015";
+        version = "0.8.19";
+        edition = "2021";
         crateBin = [];
-        sha256 = "0qmm2nss16b0f46fp30s2ka8k50a5i03jlp36672qf38magc7iky";
+        sha256 = "0nnpvk3fv32hgh7vs9gbg2swmzxx5yz73f4b7rak7q39q2x9rjqg";
         libName = "xml";
         authors = [
-          "Vladimir Matveev <vladimir.matweev@gmail.com>"
-        ];
-        dependencies = [
-          {
-            name = "bitflags";
-            packageId = "bitflags 0.7.0";
-          }
+          "Vladimir Matveev <vmatveev@citrine.cc>"
         ];
 
       };

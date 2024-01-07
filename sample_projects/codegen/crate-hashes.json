@@ -1,5 +1,5 @@
 {
-  "dbus 0.7.1 (git+https://github.com/diwic/dbus-rs.git#b079366e27da1b9c2869f065fbb6004138e439c2)": "0lbp76vvi0cw57lxhfqmz22qd5l61w3rh8g58hhmwi8wcr9qmiiw",
-  "dbus-codegen 0.4.1 (git+https://github.com/diwic/dbus-rs.git#b079366e27da1b9c2869f065fbb6004138e439c2)": "0lbp76vvi0cw57lxhfqmz22qd5l61w3rh8g58hhmwi8wcr9qmiiw",
-  "libdbus-sys 0.2.1 (git+https://github.com/diwic/dbus-rs.git#b079366e27da1b9c2869f065fbb6004138e439c2)": "0lbp76vvi0cw57lxhfqmz22qd5l61w3rh8g58hhmwi8wcr9qmiiw"
+  "dbus 0.9.7 (git+https://github.com/diwic/dbus-rs.git#618262f5e3217cdd173d46d705bbac26c5141e21)": "0gvhz2knd1k799l7ssh4rdm5qw0vhazzr3bxpmlgq7fhy6hjazrs",
+  "dbus-codegen 0.10.0 (git+https://github.com/diwic/dbus-rs.git#618262f5e3217cdd173d46d705bbac26c5141e21)": "0gvhz2knd1k799l7ssh4rdm5qw0vhazzr3bxpmlgq7fhy6hjazrs",
+  "libdbus-sys 0.2.5 (git+https://github.com/diwic/dbus-rs.git#618262f5e3217cdd173d46d705bbac26c5141e21)": "0gvhz2knd1k799l7ssh4rdm5qw0vhazzr3bxpmlgq7fhy6hjazrs"
 }
