@@ -3,7 +3,7 @@
 crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) crates
 using [cargo](https://crates.io/).
 
-Get started by having a look at the [documentation](https://nix-community.github.io/crate2nix/)!
+➡️ [documentation](https://nix-community.github.io/crate2nix/) ⬅️
 
 [![tests-nix-linux](https://github.com/nix-community/crate2nix/actions/workflows/tests-nix-linux.yml/badge.svg)](https://github.com/nix-community/crate2nix/actions/workflows/tests-nix-linux.yml)
 [![tests-nix-macos](https://github.com/nix-community/crate2nix/actions/workflows/tests-nix-macos.yml/badge.svg)](https://github.com/nix-community/crate2nix/actions/workflows/tests-nix-macos.yml)

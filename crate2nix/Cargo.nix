@@ -285,9 +285,9 @@ rec {
       };
       "cargo_metadata" = rec {
         crateName = "cargo_metadata";
-        version = "0.14.2";
+        version = "0.18.1";
         edition = "2018";
-        sha256 = "1yl1y40vby9cas4dlfc44szrbl4m4z3pahv3p6ckdqp8ksfv1jsa";
+        sha256 = "0drh0zndl4qgndy6kg6783cydbvhxgv0hcg7d9hhqx0zwi3nb21d";
         authors = [
           "Oliver Schneider <git-spam-no-reply9815368754983@oli-obk.de>"
         ];
@@ -315,6 +315,10 @@ rec {
             name = "serde_json";
             packageId = "serde_json";
             features = [ "unbounded_depth" ];
+          }
+          {
+            name = "thiserror";
+            packageId = "thiserror";
           }
         ];
         features = {
@@ -490,7 +494,7 @@ rec {
           }
           {
             name = "itertools";
-            packageId = "itertools 0.9.0";
+            packageId = "itertools 0.12.0";
           }
           {
             name = "lazy_static";
@@ -535,10 +539,7 @@ rec {
           {
             name = "url";
             packageId = "url";
-          }
-          {
-            name = "url_serde";
-            packageId = "url_serde";
+            features = [ "serde" ];
           }
         ];
         devDependencies = [
@@ -716,6 +717,36 @@ rec {
           "default" = [ "use_std" ];
           "serde" = [ "dep:serde" ];
         };
+        resolvedDefaultFeatures = [ "use_std" ];
+      };
+      "equivalent" = rec {
+        crateName = "equivalent";
+        version = "1.0.1";
+        edition = "2015";
+        sha256 = "1malmx5f4lkfvqasz319lq6gb3ddg19yzf9s8cykfsgzdmyq0hsl";
+
+      };
+      "form_urlencoded" = rec {
+        crateName = "form_urlencoded";
+        version = "1.2.1";
+        edition = "2018";
+        sha256 = "0milh8x7nl4f450s3ddhg57a3flcv6yq8hlkyk6fyr3mcb128dp1";
+        authors = [
+          "The rust-url developers"
+        ];
+        dependencies = [
+          {
+            name = "percent-encoding";
+            packageId = "percent-encoding";
+            usesDefaultFeatures = false;
+          }
+        ];
+        features = {
+          "alloc" = [ "percent-encoding/alloc" ];
+          "default" = [ "std" ];
+          "std" = [ "alloc" "percent-encoding/std" ];
+        };
+        resolvedDefaultFeatures = [ "alloc" "default" "std" ];
       };
       "fs_extra" = rec {
         crateName = "fs_extra";
@@ -834,6 +865,30 @@ rec {
         ];
 
       };
+      "hashbrown" = rec {
+        crateName = "hashbrown";
+        version = "0.14.3";
+        edition = "2021";
+        sha256 = "012nywlg0lj9kwanh69my5x67vjlfmzfi9a0rq4qvis2j8fil3r9";
+        authors = [
+          "Amanieu d'Antras <amanieu@gmail.com>"
+        ];
+        features = {
+          "ahash" = [ "dep:ahash" ];
+          "alloc" = [ "dep:alloc" ];
+          "allocator-api2" = [ "dep:allocator-api2" ];
+          "compiler_builtins" = [ "dep:compiler_builtins" ];
+          "core" = [ "dep:core" ];
+          "default" = [ "ahash" "inline-more" "allocator-api2" ];
+          "equivalent" = [ "dep:equivalent" ];
+          "nightly" = [ "allocator-api2?/nightly" "bumpalo/allocator_api" ];
+          "rayon" = [ "dep:rayon" ];
+          "rkyv" = [ "dep:rkyv" ];
+          "rustc-dep-of-std" = [ "nightly" "core" "compiler_builtins" "alloc" "rustc-internal-api" ];
+          "serde" = [ "dep:serde" ];
+        };
+        resolvedDefaultFeatures = [ "raw" ];
+      };
       "heck" = rec {
         crateName = "heck";
         version = "0.3.3";
@@ -889,27 +944,30 @@ rec {
       };
       "idna" = rec {
         crateName = "idna";
-        version = "0.1.5";
-        edition = "2015";
-        sha256 = "0kl4gs5kaydn4v07c6ka33spm9qdh2np0x7iw7g5zd8z1c7rxw1q";
+        version = "0.5.0";
+        edition = "2018";
+        sha256 = "1xhjrcjqq0l5bpzvdgylvpkgk94panxgsirzhjnnqfdgc4a9nkb3";
         authors = [
           "The rust-url developers"
         ];
         dependencies = [
           {
-            name = "matches";
-            packageId = "matches";
-          }
-          {
             name = "unicode-bidi";
             packageId = "unicode-bidi";
+            usesDefaultFeatures = false;
+            features = [ "hardcoded-data" ];
           }
           {
             name = "unicode-normalization";
             packageId = "unicode-normalization";
+            usesDefaultFeatures = false;
           }
         ];
-
+        features = {
+          "default" = [ "std" ];
+          "std" = [ "alloc" "unicode-bidi/std" "unicode-normalization/std" ];
+        };
+        resolvedDefaultFeatures = [ "alloc" "default" "std" ];
       };
       "ignore" = rec {
         crateName = "ignore";
@@ -958,6 +1016,34 @@ rec {
         ];
         features = { };
       };
+      "indexmap" = rec {
+        crateName = "indexmap";
+        version = "2.1.0";
+        edition = "2021";
+        sha256 = "07rxrqmryr1xfnmhrjlz8ic6jw28v6h5cig3ws2c9d0wifhy2c6m";
+        dependencies = [
+          {
+            name = "equivalent";
+            packageId = "equivalent";
+            usesDefaultFeatures = false;
+          }
+          {
+            name = "hashbrown";
+            packageId = "hashbrown";
+            usesDefaultFeatures = false;
+            features = [ "raw" ];
+          }
+        ];
+        features = {
+          "arbitrary" = [ "dep:arbitrary" ];
+          "default" = [ "std" ];
+          "quickcheck" = [ "dep:quickcheck" ];
+          "rayon" = [ "dep:rayon" ];
+          "rustc-rayon" = [ "dep:rustc-rayon" ];
+          "serde" = [ "dep:serde" ];
+        };
+        resolvedDefaultFeatures = [ "default" "std" ];
+      };
       "itertools 0.10.5" = rec {
         crateName = "itertools";
         version = "0.10.5";
@@ -978,11 +1064,11 @@ rec {
           "use_std" = [ "use_alloc" "either/use_std" ];
         };
       };
-      "itertools 0.9.0" = rec {
+      "itertools 0.12.0" = rec {
         crateName = "itertools";
-        version = "0.9.0";
+        version = "0.12.0";
         edition = "2018";
-        sha256 = "0jyml7ygr7kijkcjdl3fk5f34y5h5jsavclim7l13zjiavw1hkr8";
+        sha256 = "1c07gzdlc6a1c8p8jrvvw3gs52bss3y58cs2s21d9i978l36pnr5";
         authors = [
           "bluss"
         ];
@@ -995,8 +1081,9 @@ rec {
         ];
         features = {
           "default" = [ "use_std" ];
+          "use_std" = [ "use_alloc" "either/use_std" ];
         };
-        resolvedDefaultFeatures = [ "default" "use_std" ];
+        resolvedDefaultFeatures = [ "default" "use_alloc" "use_std" ];
       };
       "itoa" = rec {
         crateName = "itoa";
@@ -1058,14 +1145,6 @@ rec {
           "value-bag" = [ "dep:value-bag" ];
         };
       };
-      "matches" = rec {
-        crateName = "matches";
-        version = "0.1.10";
-        edition = "2015";
-        sha256 = "1994402fq4viys7pjhzisj4wcw894l53g798kkm2y74laxk0jci5";
-        libPath = "lib.rs";
-
-      };
       "memchr" = rec {
         crateName = "memchr";
         version = "2.7.1";
@@ -1117,24 +1196,29 @@ rec {
       };
       "pathdiff" = rec {
         crateName = "pathdiff";
-        version = "0.1.0";
-        edition = "2015";
-        sha256 = "0cfg3isnx6mf3wbi7rsg4nmvywby40sbcs589n20fgi09l4p1gx3";
+        version = "0.2.1";
+        edition = "2018";
+        sha256 = "1pa4dcmb7lwir4himg1mnl97a05b2z0svczg62l8940pbim12dc8";
         authors = [
           "Manish Goregaokar <manishsmail@gmail.com>"
         ];
-
+        features = {
+          "camino" = [ "dep:camino" ];
+        };
       };
       "percent-encoding" = rec {
         crateName = "percent-encoding";
-        version = "1.0.1";
-        edition = "2015";
-        sha256 = "0cgq08v1fvr6bs5fvy390cz830lq4fak8havdasdacxcw790s09i";
-        libPath = "lib.rs";
+        version = "2.3.1";
+        edition = "2018";
+        sha256 = "0gi8wgx0dcy8rnv1kywdv98lwcx67hz0a0zwpib5v2i08r88y573";
         authors = [
           "The rust-url developers"
         ];
-
+        features = {
+          "default" = [ "std" ];
+          "std" = [ "alloc" ];
+        };
+        resolvedDefaultFeatures = [ "alloc" "default" "std" ];
       };
       "pest" = rec {
         crateName = "pest";
@@ -1782,6 +1866,29 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" "unbounded_depth" ];
       };
+      "serde_spanned" = rec {
+        crateName = "serde_spanned";
+        version = "0.6.5";
+        edition = "2021";
+        sha256 = "1hgh6s3jjwyzhfk3xwb6pnnr1misq9nflwq0f026jafi37s24dpb";
+        dependencies = [
+          {
+            name = "serde";
+            packageId = "serde";
+            optional = true;
+          }
+        ];
+        devDependencies = [
+          {
+            name = "serde";
+            packageId = "serde";
+          }
+        ];
+        features = {
+          "serde" = [ "dep:serde" ];
+        };
+        resolvedDefaultFeatures = [ "serde" ];
+      };
       "sha2" = rec {
         crateName = "sha2";
         version = "0.10.8";
@@ -2147,9 +2254,9 @@ rec {
       };
       "toml" = rec {
         crateName = "toml";
-        version = "0.5.11";
-        edition = "2018";
-        sha256 = "0d2266nx8b3n22c7k24x4428z6di8n83a9n466jm7a2hipfz1xzl";
+        version = "0.8.8";
+        edition = "2021";
+        sha256 = "0ddbahcrrxf9374mkn3c1h2a2g6a883qx23kywl6k8lxikn9b8d1";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -2158,12 +2265,103 @@ rec {
             name = "serde";
             packageId = "serde";
           }
+          {
+            name = "serde_spanned";
+            packageId = "serde_spanned";
+            features = [ "serde" ];
+          }
+          {
+            name = "toml_datetime";
+            packageId = "toml_datetime";
+            features = [ "serde" ];
+          }
+          {
+            name = "toml_edit";
+            packageId = "toml_edit";
+            optional = true;
+            usesDefaultFeatures = false;
+            features = [ "serde" ];
+          }
+        ];
+        devDependencies = [
+          {
+            name = "serde";
+            packageId = "serde";
+            features = [ "derive" ];
+          }
         ];
         features = {
+          "default" = [ "parse" "display" ];
+          "display" = [ "dep:toml_edit" "toml_edit?/display" ];
           "indexmap" = [ "dep:indexmap" ];
+          "parse" = [ "dep:toml_edit" "toml_edit?/parse" ];
           "preserve_order" = [ "indexmap" ];
         };
-        resolvedDefaultFeatures = [ "default" ];
+        resolvedDefaultFeatures = [ "default" "display" "parse" ];
+      };
+      "toml_datetime" = rec {
+        crateName = "toml_datetime";
+        version = "0.6.5";
+        edition = "2021";
+        sha256 = "1wds4pm2cn6agd38f0ivm65xnc7c7bmk9m0fllcaq82nd3lz8l1m";
+        authors = [
+          "Alex Crichton <alex@alexcrichton.com>"
+        ];
+        dependencies = [
+          {
+            name = "serde";
+            packageId = "serde";
+            optional = true;
+          }
+        ];
+        features = {
+          "serde" = [ "dep:serde" ];
+        };
+        resolvedDefaultFeatures = [ "serde" ];
+      };
+      "toml_edit" = rec {
+        crateName = "toml_edit";
+        version = "0.21.0";
+        edition = "2021";
+        sha256 = "00xa3qfk34qazvnkfxyyyqqc6nyl2ksks1c5bd53n5has0y3hkfk";
+        authors = [
+          "Andronik Ordian <write@reusable.software>"
+          "Ed Page <eopage@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "indexmap";
+            packageId = "indexmap";
+            features = [ "std" ];
+          }
+          {
+            name = "serde";
+            packageId = "serde";
+            optional = true;
+          }
+          {
+            name = "serde_spanned";
+            packageId = "serde_spanned";
+            optional = true;
+            features = [ "serde" ];
+          }
+          {
+            name = "toml_datetime";
+            packageId = "toml_datetime";
+          }
+          {
+            name = "winnow";
+            packageId = "winnow";
+            optional = true;
+          }
+        ];
+        features = {
+          "default" = [ "parse" "display" ];
+          "parse" = [ "dep:winnow" ];
+          "perf" = [ "dep:kstring" ];
+          "serde" = [ "dep:serde" "toml_datetime/serde" "dep:serde_spanned" ];
+        };
+        resolvedDefaultFeatures = [ "display" "parse" "serde" ];
       };
       "typenum" = rec {
         crateName = "typenum";
@@ -2307,7 +2505,7 @@ rec {
           "serde" = [ "dep:serde" ];
           "with_serde" = [ "serde" ];
         };
-        resolvedDefaultFeatures = [ "default" "hardcoded-data" "std" ];
+        resolvedDefaultFeatures = [ "hardcoded-data" "std" ];
       };
       "unicode-ident" = rec {
         crateName = "unicode-ident";
@@ -2338,7 +2536,7 @@ rec {
         features = {
           "default" = [ "std" ];
         };
-        resolvedDefaultFeatures = [ "default" "std" ];
+        resolvedDefaultFeatures = [ "std" ];
       };
       "unicode-segmentation" = rec {
         crateName = "unicode-segmentation";
@@ -2370,54 +2568,43 @@ rec {
       };
       "url" = rec {
         crateName = "url";
-        version = "1.7.2";
-        edition = "2015";
-        sha256 = "0nim1c90mxpi9wgdw2xh8dqd72vlklwlzam436akcrhjac6pqknx";
+        version = "2.5.0";
+        edition = "2018";
+        sha256 = "0cs65961miawncdg2z20171w0vqrmraswv2ihdpd8lxp7cp31rii";
         authors = [
           "The rust-url developers"
         ];
         dependencies = [
+          {
+            name = "form_urlencoded";
+            packageId = "form_urlencoded";
+          }
           {
             name = "idna";
             packageId = "idna";
           }
           {
-            name = "matches";
-            packageId = "matches";
-          }
-          {
             name = "percent-encoding";
             packageId = "percent-encoding";
           }
-        ];
-        features = {
-          "encoding" = [ "dep:encoding" ];
-          "heap_size" = [ "heapsize" ];
-          "heapsize" = [ "dep:heapsize" ];
-          "query_encoding" = [ "encoding" ];
-          "rustc-serialize" = [ "dep:rustc-serialize" ];
-          "serde" = [ "dep:serde" ];
-        };
-      };
-      "url_serde" = rec {
-        crateName = "url_serde";
-        version = "0.2.0";
-        edition = "2015";
-        sha256 = "1snxgdzlcj5mpnbkpnzm533l6830qf9hrmmxshizhlpfy6cx1rvl";
-        authors = [
-          "The rust-url developers"
-        ];
-        dependencies = [
           {
             name = "serde";
             packageId = "serde";
-          }
-          {
-            name = "url";
-            packageId = "url";
+            optional = true;
+            features = [ "derive" ];
           }
         ];
-
+        devDependencies = [
+          {
+            name = "serde";
+            packageId = "serde";
+            features = [ "derive" ];
+          }
+        ];
+        features = {
+          "serde" = [ "dep:serde" ];
+        };
+        resolvedDefaultFeatures = [ "default" "serde" ];
       };
       "vec_map" = rec {
         crateName = "vec_map";
@@ -2550,6 +2737,28 @@ rec {
           "Peter Atashian <retep998@gmail.com>"
         ];
 
+      };
+      "winnow" = rec {
+        crateName = "winnow";
+        version = "0.5.33";
+        edition = "2021";
+        sha256 = "1ahn330q4z2k1zhbcmk7xq6f5aq7pqgyp0p6qjkwl4bjxjyhnlmp";
+        dependencies = [
+          {
+            name = "memchr";
+            packageId = "memchr";
+            optional = true;
+            usesDefaultFeatures = false;
+          }
+        ];
+        features = {
+          "debug" = [ "dep:anstream" "dep:anstyle" "dep:is-terminal" "dep:terminal_size" ];
+          "default" = [ "std" ];
+          "simd" = [ "dep:memchr" ];
+          "std" = [ "alloc" "memchr?/std" ];
+          "unstable-doc" = [ "alloc" "std" "simd" ];
+        };
+        resolvedDefaultFeatures = [ "alloc" "default" "std" ];
       };
     };
 

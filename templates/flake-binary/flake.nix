@@ -50,7 +50,7 @@
           cargoNix = inputs.crate2nix.tools.${system}.appliedCargoNix {
             name = "rustnix";
             src = ./.;
-          };            
+          };
         in
         rec {
           checks = {
