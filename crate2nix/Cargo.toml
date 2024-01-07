@@ -2,7 +2,7 @@
 name = "crate2nix"
 version = "0.12.0"
 authors = ["Peter Kolloch <info@eigenvalue.net>"]
-edition = "2018"
+edition = "2021"
 license = "Apache-2.0"
 description = "crate2nix generates nix (as in NixOS) build files for rust using cargo."
 repository = "https://github.com/nix-community/crate2nix"
