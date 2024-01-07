@@ -58,21 +58,50 @@
     imports = [
       ./nix/devshell/flake-module.nix
       ./nix/pre-commit/flake-module.nix
+      ./nix/perSystem-tools/flake-module.nix
       ./crate2nix/flake-module.nix
       ./docs/flake-module.nix
     ];
 
-    flake = {
-      templates.default = {
+    flake = { lib, ... }: {
+      config.templates.default = {
         path = ./template;
         description = "An example of crate2nix";
+      };
+
+      config.lib = {
+        tools = import ./tools.nix;
+      };
+
+      options.lib = lib.mkOption {
+        description = ''
+          nix libraries exported by crate2nix.
+        '';
+
+        type = lib.types.submoduleWith {
+          modules = [
+            {
+              options.tools = lib.mkOption {
+                description = ''
+                  Prefer the perSystem "tools" option which has the libary
+                  already applied for the correct system.
+
+                  Export the crate2nix/tools.nix function as property.
+
+                  To use it, call it with pkgs.callPackage.
+                '';
+
+                type = lib.types.functionTo lib.types.attrs;
+              };
+            }
+          ];
+        };
       };
     };
 
     perSystem = { config, self', inputs', pkgs, system, ... }: {
       formatter = pkgs.nixpkgs-fmt;
       checks = config.packages;
-      packages.niv = pkgs.niv;
     };
   };
 }
