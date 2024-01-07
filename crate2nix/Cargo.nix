@@ -423,9 +423,9 @@ rec {
       };
       "cpufeatures" = rec {
         crateName = "cpufeatures";
-        version = "0.2.11";
+        version = "0.2.12";
         edition = "2018";
-        sha256 = "1l0gzsyy576n017g9bf0vkv5hhg9cpz1h1libxyfdlzcgbh0yhnf";
+        sha256 = "012m7rrak4girqlii3jnqwrr73gv1i980q4wra5yyyhvzwk5xzjk";
         authors = [
           "RustCrypto Developers"
         ];
@@ -914,9 +914,9 @@ rec {
       };
       "ignore" = rec {
         crateName = "ignore";
-        version = "0.4.21";
+        version = "0.4.22";
         edition = "2021";
-        sha256 = "0q3hs8ak1dsng3a0adxn2ysjdspazgdkmmm0mgl7h6l4mssd2ykl";
+        sha256 = "1wcaqpi6djqgi1brghrdyw4d5qgnwzhqrqyn4mar4vp677gi0s5l";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
@@ -1027,9 +1027,9 @@ rec {
       };
       "libc" = rec {
         crateName = "libc";
-        version = "0.2.151";
+        version = "0.2.152";
         edition = "2015";
-        sha256 = "1x28f0zgp4zcwr891p8n9ag9w371sbib30vp4y6hi2052frplb9h";
+        sha256 = "1rsnma7hnw22w7jh9yqg43slddvfbnfzrvm3s7s4kinbj1jvzqqk";
         authors = [
           "The Rust Project Developers"
         ];
@@ -1339,9 +1339,9 @@ rec {
       };
       "proc-macro2" = rec {
         crateName = "proc-macro2";
-        version = "1.0.75";
+        version = "1.0.76";
         edition = "2021";
-        sha256 = "021pn6vxs5l4y08819q4ynijcr0p0m6w67fgs6fg5hk41yyn2ylh";
+        sha256 = "136cp0fgl6rg5ljm3b1xpc0bn0lyvagzzmxvbxgk5hxml36mdz4m";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
           "Alex Crichton <alex@alexcrichton.com>"
@@ -1685,9 +1685,9 @@ rec {
       };
       "serde" = rec {
         crateName = "serde";
-        version = "1.0.194";
+        version = "1.0.195";
         edition = "2018";
-        sha256 = "0wxplk1ayrsb81bdwh8zmkldw1b0xigs3qc90r5ck6374nc4848b";
+        sha256 = "00kbc86kgaihpza0zdglcd2qq5468yg0dvvdmkli2y660bs1s9k3";
         authors = [
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
@@ -1719,9 +1719,9 @@ rec {
       };
       "serde_derive" = rec {
         crateName = "serde_derive";
-        version = "1.0.194";
+        version = "1.0.195";
         edition = "2015";
-        sha256 = "1q6l0ycrykdg960c350fgnac6d653q1v608g84qrk3rf692mwf53";
+        sha256 = "0b7ag1qm9q3fgwlmyk2ap5gjbqa9vyf2wfmj4xish6yq0f38zzj6";
         procMacro = true;
         authors = [
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
