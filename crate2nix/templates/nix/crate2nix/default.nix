@@ -140,8 +140,9 @@ rec {
           # because we compiled those test binaries in the former and not the latter.
           # So all paths will expect source tree to be there and not in the build top directly.
           # For example: $NIX_BUILD_TOP := /build in general, if you ask yourself.
-          # TODO(raitobezarius): I believe there could be more edge cases if `crate.sourceRoot`
-          # do exist but it's very hard to reason about them, so let's wait until the first bug report.
+          # NOTE: There could be edge cases if `crate.sourceRoot` does exist but
+          # it's very hard to reason about them.
+          # Open a bug if you run into this!
           mkdir -p source/
           cd source/
 
