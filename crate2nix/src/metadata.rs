@@ -22,7 +22,7 @@ use serde::Serialize;
 #[derive(Debug)]
 pub struct MergedMetadata {
     workspace_members: Vec<PackageId>,
-    packages: Vec<Package>,
+    pub(crate) packages: Vec<Package>,
     root: Option<PackageId>,
     nodes: Vec<Node>,
 }
