@@ -158,15 +158,13 @@ pub struct EncodableResolve {
     package: Vec<EncodableDependency>,
     /// `root` is optional to allow backward compatibility.
     root: Option<EncodableDependency>,
-    metadata: Option<Metadata>,
+    metadata: Option<BTreeMap<String, String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 struct Patch {
     unused: Vec<EncodableDependency>,
 }
-
-pub type Metadata = BTreeMap<String, String>;
 
 #[derive(Serialize, Deserialize, Debug, PartialOrd, Ord, PartialEq, Eq)]
 pub struct EncodableDependency {
