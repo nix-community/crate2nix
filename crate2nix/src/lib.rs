@@ -20,6 +20,7 @@ use anyhow::Context;
 use anyhow::Error;
 use cargo_metadata::Metadata;
 use cargo_metadata::PackageId;
+use metadata::MergedMetadata;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -84,7 +85,7 @@ impl BuildInfo {
 
         default_nix.prune_unneeded_crates();
 
-        prefetch_and_fill_crates_sha256(config, &mut default_nix)?;
+        prefetch_and_fill_crates_sha256(config, &merged, &mut default_nix)?;
 
         Ok(default_nix)
     }
@@ -176,10 +177,11 @@ fn cargo_metadata(config: &GenerateConfig, cargo_toml: &Path) -> Result<Metadata
 /// Prefetch hashes when necessary.
 fn prefetch_and_fill_crates_sha256(
     config: &GenerateConfig,
+    merged: &MergedMetadata,
     default_nix: &mut BuildInfo,
 ) -> Result<(), Error> {
     let mut from_lock_file: HashMap<PackageId, String> =
-        extract_hashes_from_lockfile(config, default_nix)?;
+        extract_hashes_from_lockfile(config, merged, default_nix)?;
     for (_package_id, hash) in from_lock_file.iter_mut() {
         let bytes =
             hex::decode(&hash).map_err(|e| format_err!("while decoding '{}': {}", hash, e))?;
@@ -215,6 +217,7 @@ fn prefetch_and_fill_crates_sha256(
 
 fn extract_hashes_from_lockfile(
     config: &GenerateConfig,
+    merged: &MergedMetadata,
     default_nix: &mut BuildInfo,
 ) -> Result<HashMap<PackageId, String>, Error> {
     if !config.use_cargo_lock_checksums {
@@ -227,7 +230,7 @@ fn extract_hashes_from_lockfile(
         let lock_file_path = cargo_toml.parent().unwrap().join("Cargo.lock");
         let lock_file = crate::lock::EncodableResolve::load_lock_file(&lock_file_path)?;
         lock_file
-            .get_hashes_by_package_id(&mut hashes)
+            .get_hashes_by_package_id(merged, &mut hashes)
             .context(format!(
                 "while parsing checksums from Lockfile {}",
                 &lock_file_path.to_string_lossy()

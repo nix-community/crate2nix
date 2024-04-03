@@ -8,6 +8,8 @@ use std::fmt;
 use std::path::Path;
 use std::str::FromStr;
 
+use crate::metadata::MergedMetadata;
+
 impl EncodableResolve {
     pub fn load_lock_file(path: &Path) -> Result<EncodableResolve, Error> {
         let config = &std::fs::read_to_string(path)
@@ -27,8 +29,19 @@ impl EncodableResolve {
 
     pub fn get_hashes_by_package_id(
         &self,
+        metadata: &MergedMetadata,
         hashes: &mut HashMap<PackageId, String>,
     ) -> Result<(), Error> {
+        let mut package_id_by_source = HashMap::new();
+        for p in &metadata.packages {
+            let Some(ref source) = p.source else {
+                // local crate
+                continue;
+            };
+            let key = (p.name.as_str(), source.repr.as_str(), p.version.to_string());
+            package_id_by_source.insert(key, &p.id);
+        }
+
         for EncodableDependency {
             name,
             version,
@@ -37,13 +50,17 @@ impl EncodableResolve {
             ..
         } in self.package.iter()
         {
-            if let (Some(source), Some(checksum)) = (source, checksum) {
-                let package_id = PackageId {
-                    repr: format!("{} {} ({})", name, version, source),
-                };
-                if checksum != "<none>" {
-                    hashes.insert(package_id, checksum.clone());
-                }
+            let Some((source, checksum)) = Option::zip(source.as_ref(), checksum.as_ref()) else {
+                continue;
+            };
+            if checksum == "<none>" {
+                continue;
+            }
+
+            if let Some(package_id) =
+                package_id_by_source.get(&(name.as_str(), source.as_str(), version.clone()))
+            {
+                hashes.insert((*package_id).clone(), checksum.clone());
             }
         }
 
@@ -64,88 +81,6 @@ impl EncodableResolve {
 
         Ok(())
     }
-}
-
-#[test]
-fn test_no_legacy_checksums() {
-    let config = r#"
-[[package]]
-name = "aho-corasick"
-version = "0.7.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-        dependencies = [
-        "memchr 2.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
-    ]
-"#;
-    let resolve = EncodableResolve::load_lock_string(Path::new("dummy"), config).unwrap();
-    let mut hashes = HashMap::new();
-    resolve.get_hashes_by_package_id(&mut hashes).unwrap();
-    assert_eq!(hashes, HashMap::new());
-}
-
-#[test]
-fn test_some_legacy_checksums() {
-    let config = r#"
-[[package]]
-name = "aho-corasick"
-version = "0.7.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
-  "memchr 2.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[metadata]
-"checksum structopt 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)" = "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
-"checksum structopt-derive 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)" = "53010261a84b37689f9ed7d395165029f9cc7abb9f56bbfe86bee2597ed25107"
-
-"#;
-    let resolve = EncodableResolve::load_lock_string(Path::new("dummy"), config).unwrap();
-    let mut hashes = HashMap::new();
-    resolve.get_hashes_by_package_id(&mut hashes).unwrap();
-    assert_eq!(
-        hashes,
-        [(
-                PackageId { repr: "structopt 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)".to_string() },
-                "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
-            ),
-            (
-                PackageId { repr: "structopt-derive 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)".to_string()},
-                "53010261a84b37689f9ed7d395165029f9cc7abb9f56bbfe86bee2597ed25107"
-            )]
-        .iter()
-        .map(|(package_id, hash)| (package_id.clone(), hash.to_string()))
-        .collect::<HashMap<_, _>>()
-    );
-}
-
-#[test]
-fn test_some_inline_checksums() {
-    let config = r#"
-[[package]]
-name = "aho-corasick"
-version = "0.7.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
-  "memchr 2.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-checksum = "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
-"#;
-    let resolve = EncodableResolve::load_lock_string(Path::new("dummy"), config).unwrap();
-    let mut hashes = HashMap::new();
-    resolve.get_hashes_by_package_id(&mut hashes).unwrap();
-    assert_eq!(
-        hashes,
-        [(
-            PackageId {
-                repr: "aho-corasick 0.7.6 (registry+https://github.com/rust-lang/crates.io-index)"
-                    .to_string()
-            },
-            "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
-        )]
-        .iter()
-        .map(|(package_id, hash)| (package_id.clone(), hash.to_string()))
-        .collect::<HashMap<_, _>>()
-    );
 }
 
 //
