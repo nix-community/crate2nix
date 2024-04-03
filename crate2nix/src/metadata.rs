@@ -84,7 +84,7 @@ pub struct IndexedMetadata {
 impl IndexedMetadata {
     pub fn new_from(metadata: Metadata) -> Result<IndexedMetadata, Error> {
         let merged = MergedMetadata::merge(vec![metadata])?;
-        Self::new_from_merged(merged)
+        Self::new_from_merged(&merged)
     }
 
     pub fn new_from_merged(
@@ -93,7 +93,7 @@ impl IndexedMetadata {
             workspace_members,
             packages,
             nodes,
-        }: MergedMetadata,
+        }: &MergedMetadata,
     ) -> Result<IndexedMetadata, Error> {
         let id_shortener = PackageIdShortener::new(packages.iter());
 

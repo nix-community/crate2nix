@@ -69,7 +69,7 @@ impl BuildInfo {
             metadata::MergedMetadata::merge(metadatas)?
         };
 
-        let indexed_metadata = IndexedMetadata::new_from_merged(merged).map_err(|e| {
+        let indexed_metadata = IndexedMetadata::new_from_merged(&merged).map_err(|e| {
             format_err!(
                 "while indexing metadata for {:#?}: {}",
                 config
