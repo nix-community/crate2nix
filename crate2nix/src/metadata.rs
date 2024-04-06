@@ -13,6 +13,12 @@ use serde::Deserialize;
 use serde::Serialize;
 
 /// The merged metadata of potentially multiple sources.
+///
+/// Metadata: Package Metadata from Cargo.lock files.
+///
+/// Why "merged" metadata: crate2nix can be used to generate
+/// builds for multiple projects without combining them into a
+/// workspace.
 #[derive(Debug)]
 pub struct MergedMetadata {
     workspace_members: Vec<PackageId>,
@@ -136,6 +142,9 @@ impl IndexedMetadata {
     }
 }
 
+/// "Shortens" package IDs to potentially remove local paths from
+/// the IDs. The local paths can make the build file generation
+/// depend on the local systems path.
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct PackageIdShortener {
     substitution: HashMap<PackageId, PackageId>,
