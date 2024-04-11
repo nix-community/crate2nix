@@ -12,7 +12,8 @@ TODO
 [340](https://github.com/nix-community/crate2nix/issues/340) make `crate2nix` compatible
 with the lock file changes from rust 1.77.x.
 
-[Move sources into /build/sources](https://github.com/nix-community/crate2nix/commit/15656bb6cb15f55ee3344bf4362e6489feb93db6) to maximize compatibility.
+[Move sources into /build/sources](https://github.com/nix-community/crate2nix/commit/15656bb6cb15f55ee3344bf4362e6489feb93db6)
+to maximize compatibility.
 
 ## 0.12.x - 0.13.0
 
