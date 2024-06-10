@@ -439,7 +439,7 @@ rec {
           {
             name = "libc";
             packageId = "libc";
-            target = { target, features }: (pkgs.rust.lib.toRustTarget stdenv.hostPlatform == "aarch64-linux-android");
+            target = { target, features }: (stdenv.hostPlatform.rust.rustcTarget == "aarch64-linux-android");
           }
           {
             name = "libc";
@@ -2695,12 +2695,12 @@ rec {
           {
             name = "winapi-i686-pc-windows-gnu";
             packageId = "winapi-i686-pc-windows-gnu";
-            target = { target, features }: (pkgs.rust.lib.toRustTarget stdenv.hostPlatform == "i686-pc-windows-gnu");
+            target = { target, features }: (stdenv.hostPlatform.rust.rustcTarget == "i686-pc-windows-gnu");
           }
           {
             name = "winapi-x86_64-pc-windows-gnu";
             packageId = "winapi-x86_64-pc-windows-gnu";
-            target = { target, features }: (pkgs.rust.lib.toRustTarget stdenv.hostPlatform == "x86_64-pc-windows-gnu");
+            target = { target, features }: (stdenv.hostPlatform.rust.rustcTarget == "x86_64-pc-windows-gnu");
           }
         ];
         features = {
@@ -2783,14 +2783,11 @@ rec {
     fuchsia = true;
     test = false;
 
-    /* We are choosing an arbitrary rust version to grab `lib` from,
-      which is unfortunate, but `lib` has been version-agnostic the
-      whole time so this is good enough for now.
-    */
-    os = pkgs.rust.lib.toTargetOs platform;
-    arch = pkgs.rust.lib.toTargetArch platform;
-    family = pkgs.rust.lib.toTargetFamily platform;
-    vendor = pkgs.rust.lib.toTargetVendor platform;
+    inherit (platform.rust.platform)
+      arch
+      os
+      vendor;
+    family = platform.rust.platform.target-family;
     env = "gnu";
     endian =
       if platform.parsed.cpu.significantByte.name == "littleEndian"
@@ -3033,7 +3030,7 @@ rec {
           let
             self = {
               crates = lib.mapAttrs (packageId: value: buildByPackageIdForPkgsImpl self pkgs packageId) crateConfigs;
-              target = makeTarget pkgs.stdenv.hostPlatform;
+              target = makeTarget stdenv.hostPlatform;
               build = mkBuiltByPackageIdByPkgs pkgs.buildPackages;
             };
           in
