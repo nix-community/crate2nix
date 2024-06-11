@@ -223,11 +223,7 @@ rec {
             requiredFeatures = [ ];
           }
         ];
-        # We can't filter paths with references in Nix 2.4
-        # See https://github.com/NixOS/nix/issues/5410
-        src = if ((lib.versionOlder builtins.nixVersion "2.4pre20211007") || (lib.versionOlder "2.5" builtins.nixVersion ))
-          then lib.cleanSourceWith { filter = sourceFilter;  src = ./.; }
-          else ./.;
+        src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
