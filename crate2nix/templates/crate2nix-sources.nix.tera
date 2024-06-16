@@ -18,8 +18,7 @@
 , crate2nixJson ? ./crate2nix.json
 }:
 
-# unsafeDiscardStringContext is a workaround for https://github.com/NixOS/nix/issues/6647
-let config = builtins.fromJSON (builtins.unsafeDiscardStringContext (builtins.readFile crate2nixJson));
+let config = lib.importJSON crate2nixJson;
     sources = config.sources or (builtins.throw "no sources in ${crate2nixJson}");
 in
 rec {

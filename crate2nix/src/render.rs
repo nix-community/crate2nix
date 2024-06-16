@@ -184,14 +184,8 @@ fn cfg_to_nix_expr_filter(
                 })?;
                 Ok(tera::Value::String(cfg_to_nix_expr(&expr)))
             } else {
-                // `lib.toRustTarget` has existed since Nixpkgs 21.05. That is
-                // hopefully good enough.
-                //
-                // We are choosing an arbitrary rust version to grab `lib` from,
-                // which is unfortunate, but `lib` has been version-agnostic the
-                // whole time so this is good enough for now.
                 let condition = format!(
-                    "(pkgs.rust.lib.toRustTarget stdenv.hostPlatform == {})",
+                    "(stdenv.hostPlatform.rust.rustcTarget == {})",
                     escape_nix_string(key)
                 );
                 Ok(tera::Value::String(condition))
