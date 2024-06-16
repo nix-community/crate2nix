@@ -5,7 +5,7 @@ set -Eeuo pipefail
 top="$(readlink -f "$(dirname "$0")")"
 
 if [ -z "${IN_CRATE2NIX_SHELL:-}" ]; then
-  exec nix-shell --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")"
+  exec nix-shell --extra-experimental-features flakes --pure "$top/shell.nix" --run "$(printf "%q " $0 "$@")"
 fi
 
 options=$(getopt -o '' --long offline,no-cargo-build -- "$@")
@@ -53,13 +53,13 @@ else
   echo "Skipping because of --no-cargo-build"
 fi
 
-noisily nix-build --arg release false $NIX_OPTIONS
-crate2nix=$(nix-build --arg release false $NIX_OPTIONS)/bin/crate2nix
+noisily nix-build --extra-experimental-features flakes --arg release false $NIX_OPTIONS
+crate2nix=$(nix-build --extra-experimental-features flakes --arg release false $NIX_OPTIONS)/bin/crate2nix
 noisily "$crate2nix" generate -n ../nix/nixpkgs.nix \
   -f ./crate2nix/Cargo.toml -o ./crate2nix/Cargo.nix || \
      { echo "Regeneration of ./Cargo.nix failed." >&2 ; exit 1; }
 
-nix-instantiate tests.nix --eval --strict --json -A buildTestConfigs | \
+nix-instantiate --extra-experimental-features flakes tests.nix --eval --strict --json -A buildTestConfigs | \
  jq -r .[].pregeneratedBuild | \
  while read cargo_nix; do
    if [ "$cargo_nix" = "null" ]; then
