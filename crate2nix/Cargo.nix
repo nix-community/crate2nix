@@ -2860,6 +2860,7 @@ rec {
             (
               _: {
                 buildTests = true;
+                release = false;
               }
             );
           # If the user hasn't set any pre/post commands, we don't want to
