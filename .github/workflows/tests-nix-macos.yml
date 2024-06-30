@@ -11,11 +11,11 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v4
-    - uses: cachix/install-nix-action@v22
+    - uses: cachix/install-nix-action@v27
       with:
-          install_url: "https://releases.nixos.org/nix/nix-2.17.1/install"
-          nix_path: nixpkgs=channel:nixos-unstable
-    - uses: cachix/cachix-action@v13
+        install_url: "https://releases.nixos.org/nix/nix-2.17.1/install"
+        nix_path: nixpkgs=channel:nixos-unstable
+    - uses: cachix/cachix-action@v15
       with:
         name: eigenvalue
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
