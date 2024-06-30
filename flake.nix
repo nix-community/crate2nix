@@ -28,7 +28,7 @@
     };
 
     crate2nix_stable = {
-      url = "github:nix-community/crate2nix/0.12.0";
+      url = "github:nix-community/crate2nix/0.14.0";
     };
 
     nix-test-runner = {

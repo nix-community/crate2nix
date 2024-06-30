@@ -7,6 +7,20 @@ description: A list of all major changes per version.
 
 TODO
 
+## 0.14.x - 0.14.1 (2024-06-30)
+
+Maintenance release with cross-compilation fixes, documentation improvements and removal of old workarounds.
+
+* [#352](https://github.com/nix-community/crate2nix/pull/352):
+  * `rust.lib` -> `stdenv.hostPlatform.rust`
+  * Always filter `src` using `filterSource`
+  * Get rid of `dontStrip` for Darwin as it's no longer needed
+  * Remove no longer needed `unsafeDiscardStringContext` workaround
+
+* [#351](https://github.com/nix-community/crate2nix/pull/351): Set `--extra-experimental-features flakes` in `regenerate_cargo_nix.sh`.
+
+* [#350](https://github.com/nix-community/crate2nix/pull/350): Document `targetFeatures` better.
+
 ## 0.13.x - 0.14.0 (2024-04-11)
 
 [340](https://github.com/nix-community/crate2nix/issues/340) make `crate2nix` compatible
