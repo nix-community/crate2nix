@@ -184,7 +184,7 @@ rec {
   buildRustCrateWithFeatures =
     { packageId
     , features ? rootFeatures
-    , crateOverrides ? defaultCrateOverrides
+    , crateOverrides ? null
     , buildRustCrateForPkgsFunc ? null
     , runTests ? false
     , testCrateFlags ? [ ]
@@ -210,7 +210,7 @@ rec {
             then buildRustCrateForPkgsFunc
             else
               (
-                if crateOverrides == pkgs.defaultCrateOverrides
+                if crateOverrides == null
                 then buildRustCrateForPkgs
                 else
                   pkgs: (buildRustCrateForPkgs pkgs).override {
