@@ -5,7 +5,7 @@ description: A list of all major changes per version.
 
 ## 0.14.x - 0.15.0 (unreleased)
 
-TODO
+* [#359](https://github.com/nix-community/crate2nix/issues/359): Document using `rust-overlay`.
 
 ## 0.14.x - 0.14.1 (2024-06-30)
 
