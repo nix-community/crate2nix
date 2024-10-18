@@ -154,6 +154,8 @@ rec {
               ${testCommand}
             done
           '';
+
+           dontInstall = true;
         };
     in
     pkgs.runCommand "${crate.name}-linked"
