@@ -94,6 +94,17 @@ pub enum Source {
         /// The sha256 hash of the source.
         sha256: String,
     },
+    /// Get the source from crates.io.
+    Registry {
+        /// The registry's URL
+        registry: String,
+        /// The crate name.
+        name: String,
+        /// The exact crate version to fetch.
+        version: semver::Version,
+        /// The sha256 hash of the source.
+        sha256: String,
+    },
     /// Get the source from git.
     Git {
         /// The URL of the git repository.
@@ -179,6 +190,20 @@ impl Display for Source {
                 version,
                 sha256,
             } => write!(f, "{} {} from crates.io: {}", name, version, sha256),
+            Source::Registry {
+                name,
+                version,
+                sha256,
+                registry,
+                ..
+            } => write!(
+                f,
+                "{} {} from {}: {}",
+                name,
+                version,
+                registry.to_string(),
+                sha256
+            ),
             Source::Git { url, rev, sha256 } => write!(f, "{}#{} via git: {}", url, rev, sha256),
             Source::Nix { file, attr: None } => write!(f, "{}", file),
             Source::Nix {
@@ -198,6 +223,15 @@ impl Source {
                 version,
                 ..
             } => format!("cratesIo --name '{}' '{}' '{}'", name, crate_name, version),
+            Source::Registry {
+                name: crate_name,
+                version,
+                registry,
+                ..
+            } => format!(
+                "registry --registry '{}' --name '{}' '{}' '{}'",
+                registry, name, crate_name, version
+            ),
             Source::Git { url, rev, .. } => {
                 format!("git --name '{}' '{}' --rev {}", name, url, rev)
             }

@@ -40,6 +40,26 @@ rec {
     debug_assertions = false;
   };
 
+  registryUrl = { registries, url, crate, version, sha256 }:
+    let dl = registries.${url}.dl;
+        tmpl = [ "{crate}" "{version}" "{prefix}" "{lowerprefix}" "{sha256-checksum}" ];
+    in
+      with lib.strings;
+    if lib.lists.any (i: hasInfix "{}" dl) tmpl then
+      let prefix =
+            if builtins.stringLength crate == 1 then
+              "1"
+            else if builtins.stringLength crate == 2 then
+              "2"
+            else
+              "${builtins.substring 0 2 crate}/${builtins.substring 2 (builtins.stringLength crate - 2) crate}";
+      in
+        builtins.replaceStrings tmpl [
+          crate version prefix (lib.strings.toLower prefix) sha256
+        ]
+    else
+      "${dl}/${crate}/${version}/download";
+
   /* Filters common temp files and build files. */
   # TODO(pkolloch): Substitute with gitignore filter
   sourceFilter = name: type:
