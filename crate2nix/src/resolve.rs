@@ -361,6 +361,7 @@ impl BuildTarget {
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub enum ResolvedSource {
     CratesIo(CratesIoSource),
+    Registry(RegistrySource),
     Git(GitSource),
     LocalDirectory(LocalDirectorySource),
     Nix(NixSource),
@@ -384,6 +385,17 @@ impl From<crate::config::Source> for ResolvedSource {
                 version,
                 sha256: Some(sha256),
             }),
+            crate::config::Source::Registry {
+                name,
+                version,
+                sha256,
+                registry,
+            } => ResolvedSource::Registry(RegistrySource {
+                name,
+                version,
+                sha256: Some(sha256),
+                registry: registry.parse().unwrap(),
+            }),
             crate::config::Source::Nix { file, attr } => {
                 ResolvedSource::Nix(NixSource { file, attr })
             }
@@ -393,6 +405,14 @@ impl From<crate::config::Source> for ResolvedSource {
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct CratesIoSource {
+    pub name: String,
+    pub version: Version,
+    pub sha256: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
+pub struct RegistrySource {
+    pub registry: Url,
     pub name: String,
     pub version: Version,
     pub sha256: Option<String>,
@@ -434,6 +454,20 @@ impl ResolvedSource {
                     sha256: None,
                 }))
             }
+            Some(source) if source.repr.starts_with("sparse+") => {
+                Ok(ResolvedSource::Registry(RegistrySource {
+                    registry: source
+                        .repr
+                        .split_at("sparse+".len())
+                        .1
+                        .to_string()
+                        .parse()
+                        .unwrap(),
+                    name: package.name.clone(),
+                    version: package.version.clone(),
+                    sha256: None,
+                }))
+            }
             Some(source) => {
                 ResolvedSource::git_or_local_directory(config, package, &package_path, source)
             }
@@ -460,7 +494,6 @@ impl ResolvedSource {
         }
         let mut url = url::Url::parse(&source_string[GIT_SOURCE_PREFIX.len()..])?;
         let mut query_pairs = url.query_pairs();
-
         let branch = query_pairs
             .find(|(k, _)| k == "branch")
             .map(|(_, v)| v.to_string());
@@ -556,9 +589,9 @@ impl ResolvedSource {
 
     pub fn sha256(&self) -> Option<&String> {
         match self {
-            Self::CratesIo(CratesIoSource { sha256, .. }) | Self::Git(GitSource { sha256, .. }) => {
-                sha256.as_ref()
-            }
+            Self::CratesIo(CratesIoSource { sha256, .. })
+            | Self::Registry(RegistrySource { sha256, .. })
+            | Self::Git(GitSource { sha256, .. }) => sha256.as_ref(),
             _ => None,
         }
     }
@@ -566,6 +599,10 @@ impl ResolvedSource {
     pub fn with_sha256(&self, sha256: String) -> Self {
         match self {
             Self::CratesIo(source) => Self::CratesIo(CratesIoSource {
+                sha256: Some(sha256),
+                ..source.clone()
+            }),
+            Self::Registry(source) => Self::Registry(RegistrySource {
                 sha256: Some(sha256),
                 ..source.clone()
             }),
@@ -583,6 +620,10 @@ impl ResolvedSource {
                 sha256: None,
                 ..source.clone()
             }),
+            Self::Registry(source) => Self::Registry(RegistrySource {
+                sha256: None,
+                ..source.clone()
+            }),
             Self::Git(source) => Self::Git(GitSource {
                 sha256: None,
                 ..source.clone()
@@ -596,6 +637,7 @@ impl ToString for ResolvedSource {
     fn to_string(&self) -> String {
         match self {
             Self::CratesIo(source) => source.to_string(),
+            Self::Registry(source) => source.to_string(),
             Self::Git(source) => source.to_string(),
             Self::LocalDirectory(source) => source.to_string(),
             Self::Nix(source) => source.to_string(),
@@ -615,7 +657,19 @@ impl CratesIoSource {
     }
 }
 
+impl RegistrySource {
+    pub fn url(&self) -> String {
+        unimplemented!()
+    }
+}
+
 impl Display for CratesIoSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.url())
+    }
+}
+
+impl Display for RegistrySource {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.url())
     }
