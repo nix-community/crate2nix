@@ -99,7 +99,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: ("windows" == target."os" or null);
+            target = {target, targetSpec, features}: ("windows" == targetSpec."os" or null);
             features = [ "consoleapi" "errhandlingapi" "fileapi" "handleapi" "processenv" ];
           }
         ];
@@ -120,18 +120,18 @@ rec {
           {
             name = "hermit-abi";
             packageId = "hermit-abi";
-            target = { target, features }: ("hermit" == target."os" or null);
+            target = {target, targetSpec, features}: ("hermit" == targetSpec."os" or null);
           }
           {
             name = "libc";
             packageId = "libc";
             usesDefaultFeatures = false;
-            target = { target, features }: (target."unix" or false);
+            target = {target, targetSpec, features}: (targetSpec."unix" or false);
           }
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: (target."windows" or false);
+            target = {target, targetSpec, features}: (targetSpec."windows" or false);
             features = [ "consoleapi" "processenv" "minwinbase" "minwindef" "winbase" ];
           }
         ];
@@ -165,7 +165,7 @@ rec {
             name = "ansi_term";
             packageId = "ansi_term";
             optional = true;
-            target = { target, features }: (!(target."windows" or false));
+            target = {target, targetSpec, features}: (!(targetSpec."windows" or false));
           }
           {
             name = "atty";
@@ -266,7 +266,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = { target, features }: (target."windows" or false);
+            target = {target, targetSpec, features}: (targetSpec."windows" or false);
             features = [ "winsock2" ];
           }
         ];
@@ -488,12 +488,12 @@ rec {
           {
             name = "winapi-i686-pc-windows-gnu";
             packageId = "winapi-i686-pc-windows-gnu";
-            target = { target, features }: (stdenv.hostPlatform.rust.rustcTarget == "i686-pc-windows-gnu");
+            target = {target, targetSpec, features}: (target == "i686-pc-windows-gnu");
           }
           {
             name = "winapi-x86_64-pc-windows-gnu";
             packageId = "winapi-x86_64-pc-windows-gnu";
-            target = { target, features }: (stdenv.hostPlatform.rust.rustcTarget == "x86_64-pc-windows-gnu");
+            target = {target, targetSpec, features}: (target == "x86_64-pc-windows-gnu");
           }
         ];
         features = {
@@ -542,7 +542,7 @@ rec {
   /* Target (platform) data for conditional dependencies.
     This corresponds roughly to what buildRustCrate is setting.
   */
-  makeDefaultTarget = platform: {
+  makeDefaultTargetSpec = platform: {
     unix = platform.isUnix;
     windows = platform.isWindows;
     fuchsia = true;
@@ -762,12 +762,12 @@ rec {
     , crateConfigs ? crates
     , buildRustCrateForPkgsFunc
     , runTests
-    , makeTarget ? makeDefaultTarget
+    , makeTargetSpec ? makeDefaultTargetSpec
     } @ args:
       assert (builtins.isAttrs crateConfigs);
       assert (builtins.isString packageId);
       assert (builtins.isList features);
-      assert (builtins.isAttrs (makeTarget stdenv.hostPlatform));
+      assert (builtins.isAttrs (makeTargetSpec stdenv.hostPlatform));
       assert (builtins.isBool runTests);
       let
         rootPackageId = packageId;
@@ -775,7 +775,8 @@ rec {
           (
             args // {
               inherit rootPackageId;
-              target = makeTarget stdenv.hostPlatform // { test = runTests; };
+              target = stdenv.hostPlatform.rust.rustcTarget;
+              targetSpec = makeTargetSpec stdenv.hostPlatform // { test = runTests; };
             }
           );
         # Memoize built packages so that reappearing packages are only built once.
@@ -784,7 +785,8 @@ rec {
           let
             self = {
               crates = lib.mapAttrs (packageId: value: buildByPackageIdForPkgsImpl self pkgs packageId) crateConfigs;
-              target = makeTarget stdenv.hostPlatform;
+              target = pkgs.stdenv.hostPlatform.rust.rustcTarget;
+              targetSpec = makeTargetSpec pkgs.stdenv.hostPlatform;
               build = mkBuiltByPackageIdByPkgs pkgs.buildPackages;
             };
           in
@@ -802,7 +804,7 @@ rec {
             dependencies =
               dependencyDerivations {
                 inherit features;
-                inherit (self) target;
+                inherit (self) target targetSpec;
                 buildByPackageId = depPackageId:
                   # proc_macro crates must be compiled for the build architecture
                   if crateConfigs.${depPackageId}.procMacro or false
@@ -815,7 +817,7 @@ rec {
             buildDependencies =
               dependencyDerivations {
                 inherit features;
-                inherit (self.build) target;
+                inherit (self.build) target targetSpec;
                 buildByPackageId = depPackageId:
                   self.build.crates.${depPackageId};
                 dependencies = crateConfig.buildDependencies or [ ];
@@ -824,12 +826,12 @@ rec {
               let
                 buildDeps = filterEnabledDependencies {
                   inherit features;
-                  inherit (self) target;
+                  inherit (self) target targetSpec;
                   dependencies = crateConfig.dependencies or [ ] ++ devDependencies;
                 };
                 hostDeps = filterEnabledDependencies {
                   inherit features;
-                  inherit (self.build) target;
+                  inherit (self.build) target targetSpec;
                   dependencies = crateConfig.buildDependencies or [ ];
                 };
               in
@@ -883,13 +885,14 @@ rec {
     , features
     , dependencies
     , target
+    , targetSpec
     }:
       assert (builtins.isList features);
       assert (builtins.isList dependencies);
-      assert (builtins.isAttrs target);
+      assert (builtins.isAttrs targetSpec);
       let
         enabledDependencies = filterEnabledDependencies {
-          inherit dependencies features target;
+          inherit dependencies features target targetSpec;
         };
         depDerivation = dependency: buildByPackageId dependency.packageId;
       in
@@ -908,7 +911,7 @@ rec {
     else val;
 
   /* Returns various tools to debug a crate. */
-  debugCrate = { packageId, target ? makeDefaultTarget stdenv.hostPlatform }:
+  debugCrate = { packageId, target ? stdenv.hostPlatform.rust.rustcTarget, targetSpec ? makeDefaultTargetSpec stdenv.hostPlatform }:
     assert (builtins.isString packageId);
     let
       debug = rec {
@@ -931,10 +934,10 @@ rec {
           );
         mergedPackageFeatures = mergePackageFeatures {
           features = rootFeatures;
-          inherit packageId target;
+          inherit packageId target targetSpec;
         };
         diffedDefaultPackageFeatures = diffDefaultPackageFeatures {
-          inherit packageId target;
+          inherit packageId target targetSpec;
         };
       };
     in
@@ -949,6 +952,7 @@ rec {
     { crateConfigs ? crates
     , packageId
     , target
+    , targetSpec
     }:
       assert (builtins.isAttrs crateConfigs);
       let
@@ -956,7 +960,7 @@ rec {
         mergedFeatures =
           prefixValues
             "crate2nix"
-            (mergePackageFeatures { inherit crateConfigs packageId target; features = [ "default" ]; });
+            (mergePackageFeatures { inherit crateConfigs packageId target targetSpec; features = [ "default" ]; });
         configs = prefixValues "cargo" crateConfigs;
         combined = lib.foldAttrs (a: b: a // b) { } [ mergedFeatures configs ];
         onlyInCargo =
@@ -991,6 +995,7 @@ rec {
     , dependencyPath ? [ crates.${packageId}.crateName ]
     , featuresByPackageId ? { }
     , target
+    , targetSpec
       # Adds devDependencies to the crate with rootPackageId.
     , runTests ? false
     , ...
@@ -1001,7 +1006,7 @@ rec {
       assert (builtins.isList features);
       assert (builtins.isList dependencyPath);
       assert (builtins.isAttrs featuresByPackageId);
-      assert (builtins.isAttrs target);
+      assert (builtins.isAttrs targetSpec);
       assert (builtins.isBool runTests);
       let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
@@ -1018,7 +1023,7 @@ rec {
           assert (builtins.isList dependencies);
           let
             enabledDependencies = filterEnabledDependencies {
-              inherit dependencies target;
+              inherit dependencies target targetSpec;
               features = enabledFeatures;
             };
             directDependencies = map depWithResolvedFeatures enabledDependencies;
@@ -1037,7 +1042,7 @@ rec {
                   mergePackageFeatures {
                     features = combinedFeatures;
                     featuresByPackageId = cache;
-                    inherit crateConfigs packageId target runTests rootPackageId;
+                    inherit crateConfigs packageId target targetSpec runTests rootPackageId;
                   }
             );
         cacheWithSelf =
@@ -1064,10 +1069,11 @@ rec {
       cacheWithAll;
 
   /* Returns the enabled dependencies given the enabled features. */
-  filterEnabledDependencies = { dependencies, features, target }:
+  filterEnabledDependencies = { dependencies, features, target, targetSpec }:
     assert (builtins.isList dependencies);
     assert (builtins.isList features);
-    assert (builtins.isAttrs target);
+    assert (builtins.isString target);
+    assert (builtins.isAttrs targetSpec);
 
     lib.filter
       (
@@ -1075,7 +1081,7 @@ rec {
         let
           targetFunc = dep.target or (features: true);
         in
-        targetFunc { inherit features target; }
+        targetFunc { inherit features target targetSpec; }
         && (
           !(dep.optional or false)
           || builtins.any (doesFeatureEnableDependency dep) features

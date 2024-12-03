@@ -87,7 +87,8 @@ let
     packageId: features:
     crate2nix.mergePackageFeatures
       {
-        target = crate2nix.makeDefaultTarget stdenv.hostPlatform;
+        target = stdenv.hostPlatform.rust.rustcTarget;
+        targetSpec = crate2nix.makeDefaultTargetSpec stdenv.hostPlatform;
         runTests = false;
         rootPackageId = packageId;
         inherit crateConfigs packageId features;
