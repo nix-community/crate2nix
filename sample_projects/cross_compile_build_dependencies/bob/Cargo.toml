@@ -1,0 +1,7 @@
+[package]
+name = "bob"
+version.workspace = true
+edition.workspace = true
+
+[target.'cfg(unix)'.dependencies]
+charlie.workspace = true

@@ -24,7 +24,8 @@ let
   dependencyDerivations = features: dependencies:
     crate2nix.dependencyDerivations {
       buildByPackageId = p: fakeCrates.${p};
-      target = crate2nix.makeDefaultTarget stdenv.hostPlatform;
+      target = stdenv.hostPlatform.rust.rustcTarget;
+      targetSpec = crate2nix.makeDefaultTargetSpec stdenv.hostPlatform;
       inherit features dependencies;
     };
 in

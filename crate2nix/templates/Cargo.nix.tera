@@ -195,7 +195,7 @@ rec {
             usesDefaultFeatures = false;
             {%- endif -%}
             {%- if dependency.target %}
-            target = { target, features }: {{dependency.target | cfg_to_nix_expr | safe }};
+            target = {target, targetSpec, features}: {{dependency.target | cfg_to_nix_expr | safe}};
             {%- endif %}
             {%- if dependency.features %}
             features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
@@ -221,7 +221,7 @@ rec {
             usesDefaultFeatures = false;
             {%- endif -%}
             {%- if dependency.target %}
-            target = {target, features}: {{dependency.target | cfg_to_nix_expr | safe }};
+            target = {target, targetSpec, features}: {{dependency.target | cfg_to_nix_expr | safe}};
             {%- endif %}
             {%- if dependency.features %}
             features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
@@ -246,7 +246,7 @@ rec {
             usesDefaultFeatures = false;
             {%- endif -%}
             {%- if dependency.target %}
-            target = {target, features}: {{dependency.target | cfg_to_nix_expr | safe }};
+            target = {target, targetSpec, features}: {{dependency.target | cfg_to_nix_expr | safe}};
             {%- endif %}
             {%- if dependency.features %}
             features = [ {% for feature in dependency.features %}{{feature}} {% endfor %}];
