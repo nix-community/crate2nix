@@ -221,7 +221,10 @@ fn prefetch_and_fill_crates_sha256(
 }
 
 /// Prefetch hashes when necessary.
-fn prefetch_and_fill_registries(config: &GenerateConfig, default_nix: &mut BuildInfo) -> Result<(), Error> {
+fn prefetch_and_fill_registries(
+    config: &GenerateConfig,
+    default_nix: &mut BuildInfo,
+) -> Result<(), Error> {
     default_nix.registries = prefetch::prefetch_registries(config, &mut default_nix.crates)
         .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
 

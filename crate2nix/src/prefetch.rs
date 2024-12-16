@@ -177,7 +177,6 @@ pub fn prefetch_registries(
     config: &GenerateConfig,
     crate_derivations: &[CrateDerivation],
 ) -> Result<BTreeMap<String, String>, Error> {
-
     let hashes_string: String = if config.read_crate_hashes {
         std::fs::read_to_string(&config.registry_hashes_json).unwrap_or_else(|_| "{}".to_string())
     } else {
@@ -307,8 +306,8 @@ impl PrefetchableSource for RegistrySource {
     }
 
     fn prefetch(&self) -> Result<String, Error> {
-	// This is done in two steps, currently only implemented in
-	// the generated Nix.
+        // This is done in two steps, currently only implemented in
+        // the generated Nix.
         unimplemented!()
     }
 }
