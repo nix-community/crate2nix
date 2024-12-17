@@ -3,7 +3,7 @@
 use crate::{
     config,
     prefetch::PrefetchableSource,
-    resolve::{CratesIoSource, GitSource},
+    resolve::{CratesIoSource, GitSource, RegistrySource},
 };
 use anyhow::{bail, format_err, Context, Error};
 use semver::Version;
@@ -27,6 +27,31 @@ pub fn crates_io_source(name: String, version: Version) -> Result<config::Source
     eprintln!("done.");
 
     Ok(config::Source::CratesIo {
+        name,
+        version,
+        sha256,
+    })
+}
+
+/// Returns the completed Source::Registry definition by prefetching the hash.
+pub fn registry_source(
+    registry: String,
+    name: String,
+    version: Version,
+) -> Result<config::Source, Error> {
+    let prefetchable = RegistrySource {
+        registry: registry.parse()?,
+        name: name.clone(),
+        version: version.clone(),
+        sha256: None,
+    };
+
+    eprint!("Prefetching {}: ", prefetchable);
+    let sha256 = prefetchable.prefetch()?;
+    eprintln!("done.");
+
+    Ok(config::Source::Registry {
+        registry,
         name,
         version,
         sha256,

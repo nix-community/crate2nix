@@ -49,6 +49,8 @@ pub struct BuildInfo {
     pub root_package_id: Option<PackageId>,
     /// Workspaces member package IDs by package names.
     pub workspace_members: BTreeMap<String, PackageId>,
+    /// Registries used by the crates.
+    pub registries: BTreeMap<String, String>,
     /// Build info for all crates needed for this build.
     pub crates: Vec<CrateDerivation>,
     /// For convenience include the source for tests.
@@ -86,6 +88,8 @@ impl BuildInfo {
         default_nix.prune_unneeded_crates();
 
         prefetch_and_fill_crates_sha256(config, &merged, &mut default_nix)?;
+
+        prefetch_and_fill_registries(config, &mut default_nix)?;
 
         Ok(default_nix)
     }
@@ -145,6 +149,7 @@ impl BuildInfo {
                         .map(|pkg| (pkg.name.clone(), pkg_id.clone()))
                 })
                 .collect(),
+            registries: BTreeMap::new(),
             crates: metadata
                 .pkgs_by_id
                 .values()
@@ -211,6 +216,17 @@ fn prefetch_and_fill_crates_sha256(
             }
         }
     }
+
+    Ok(())
+}
+
+/// Prefetch hashes when necessary.
+fn prefetch_and_fill_registries(
+    config: &GenerateConfig,
+    default_nix: &mut BuildInfo,
+) -> Result<(), Error> {
+    default_nix.registries = prefetch::prefetch_registries(config, &mut default_nix.crates)
+        .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
 
     Ok(())
 }
@@ -299,6 +315,9 @@ pub struct GenerateConfig {
     /// The path of the `crate-hashes.json` file which is used to look up hashes and/or store
     /// prefetched hashes at.
     pub crate_hashes_json: PathBuf,
+    /// The path of the `registry-hashes.json` file which is used to look up hashes and/or store
+    /// prefetched hashes at.
+    pub registry_hashes_json: PathBuf,
     /// The nix expression for the nixpkgs path to use.
     pub nixpkgs_path: String,
     /// Additional arguments to pass to `cargo metadata`.
