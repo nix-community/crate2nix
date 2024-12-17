@@ -1,15 +1,18 @@
 #
 # crate2nix/default.nix (excerpt start)
 #{#
-{ pkgs
-, lib
+{ lib
+, pkgs
 , stdenv
+, stdenvNoCC
 , buildRustCrate
 , buildRustCrateForPkgs ? if buildRustCrate != null then
     lib.warn "`buildRustCrate` is deprecated, use `buildRustCrateForPkgs` instead" (_: buildRustCrate)
   else
     pkgs: pkgs.buildRustCrate
+, buildPackages
 , defaultCrateOverrides
+, runCommand
 , strictDeprecation ? true
 , crates ? { }
 , rootFeatures ? [ ]
@@ -157,15 +160,15 @@ rec {
             # If the user hasn't set any pre/post commands, we don't want to
             # insert empty lines. This means that any existing users of crate2nix
             # don't get a spurious rebuild unless they set these explicitly.
-            testCommand = pkgs.lib.concatStringsSep "\n" (
-              pkgs.lib.filter (s: s != "") [
+            testCommand = lib.concatStringsSep "\n" (
+              lib.filter (s: s != "") [
                 testPreRun
                 "$f $testCrateFlags 2>&1 | tee -a $out"
                 testPostRun
               ]
             );
           in
-          pkgs.stdenvNoCC.mkDerivation {
+          stdenvNoCC.mkDerivation {
             name = "run-tests-${testCrate.name}";
 
             inherit (crate) src;
@@ -201,7 +204,7 @@ rec {
             '';
           };
       in
-      pkgs.runCommand "${crate.name}-linked"
+      runCommand "${crate.name}-linked"
         {
           inherit (crate) outputs crateName;
           passthru = (crate.passthru or { }) // {
@@ -340,7 +343,7 @@ rec {
                 )
                 crateConfigs;
               target = makeTarget stdenv.hostPlatform;
-              build = mkBuiltByPackageIdByPkgs pkgs.buildPackages;
+              build = mkBuiltByPackageIdByPkgs buildPackages;
             };
           in
           self;

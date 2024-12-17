@@ -4,10 +4,16 @@
 # See https://github.com/kolloch/crate2nix for more info.
 
 { nixpkgs ? <nixpkgs>
-, pkgs ? import nixpkgs { config = {}; }
+, pkgs ? import nixpkgs { }
 , fetchurl ? pkgs.fetchurl
+, fetchgit ? pkgs.fetchgit
+, callPackage ? pkgs.callPackage
 , lib ? pkgs.lib
+, buildPackages ? pkgs.buildPackages
 , stdenv ? pkgs.stdenv
+, stdenvNoCC ? pkgs.stdenvNoCC
+, symlinkJoin ? pkgs.symlinkJoin
+, runCommand ? pkgs.runCommand
 , buildRustCrateForPkgs ? pkgs: pkgs.buildRustCrate
   # This is used as the `crateOverrides` argument for `buildRustCrate`.
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
@@ -24,7 +30,7 @@
   # Additional crate2nix configuration if it exists.
 , crateConfig
   ? if builtins.pathExists ./crate-config.nix
-    then pkgs.callPackage ./crate-config.nix {}
+    then callPackage ./crate-config.nix {}
     else {}
 }:
 
@@ -65,7 +71,7 @@ rec {
 
 
   # A derivation that joins the outputs of all workspace members together.
-  allWorkspaceMembers = pkgs.symlinkJoin {
+  allWorkspaceMembers = symlinkJoin {
       name = "all-workspace-members";
       paths =
         let members = builtins.attrValues workspaceMembers;
@@ -485,7 +491,7 @@ rec {
         edition = "2018";
         links = "rocksdb";
         workspace_member = null;
-        src = pkgs.fetchgit {
+        src = fetchgit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
           rev = "66f04df013b6e6bd42b5a8c353406e09a7c7da2a";
           sha256 = "1rchvjrjamdaznx26gy4bmjj10rrf00mgc1wvkc489r9z1nh4h1h";
@@ -837,7 +843,7 @@ rec {
         version = "0.21.0";
         edition = "2018";
         workspace_member = null;
-        src = pkgs.fetchgit {
+        src = fetchgit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
           rev = "66f04df013b6e6bd42b5a8c353406e09a7c7da2a";
           sha256 = "1rchvjrjamdaznx26gy4bmjj10rrf00mgc1wvkc489r9z1nh4h1h";
@@ -1504,15 +1510,15 @@ rec {
             # If the user hasn't set any pre/post commands, we don't want to
             # insert empty lines. This means that any existing users of crate2nix
             # don't get a spurious rebuild unless they set these explicitly.
-            testCommand = pkgs.lib.concatStringsSep "\n" (
-              pkgs.lib.filter (s: s != "") [
+            testCommand = lib.concatStringsSep "\n" (
+              lib.filter (s: s != "") [
                 testPreRun
                 "$f $testCrateFlags 2>&1 | tee -a $out"
                 testPostRun
               ]
             );
           in
-          pkgs.stdenvNoCC.mkDerivation {
+          stdenvNoCC.mkDerivation {
             name = "run-tests-${testCrate.name}";
 
             inherit (crate) src;
@@ -1548,7 +1554,7 @@ rec {
             '';
           };
       in
-      pkgs.runCommand "${crate.name}-linked"
+      runCommand "${crate.name}-linked"
         {
           inherit (crate) outputs crateName;
           passthru = (crate.passthru or { }) // {
@@ -1687,7 +1693,7 @@ rec {
                 )
                 crateConfigs;
               target = makeTarget stdenv.hostPlatform;
-              build = mkBuiltByPackageIdByPkgs pkgs.buildPackages;
+              build = mkBuiltByPackageIdByPkgs buildPackages;
             };
           in
           self;

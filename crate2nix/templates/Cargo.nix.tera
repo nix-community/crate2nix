@@ -6,10 +6,16 @@
 # See https://github.com/kolloch/crate2nix for more info.
 
 { nixpkgs ? {{config.nixpkgs_path | safe}}
-, pkgs ? import nixpkgs { config = {}; }
+, pkgs ? import nixpkgs { }
 , fetchurl ? pkgs.fetchurl
+, fetchgit ? pkgs.fetchgit
+, callPackage ? pkgs.callPackage
 , lib ? pkgs.lib
+, buildPackages ? pkgs.buildPackages
 , stdenv ? pkgs.stdenv
+, stdenvNoCC ? pkgs.stdenvNoCC
+, symlinkJoin ? pkgs.symlinkJoin
+, runCommand ? pkgs.runCommand
 , buildRustCrateForPkgs ? pkgs: pkgs.buildRustCrate
   # This is used as the `crateOverrides` argument for `buildRustCrate`.
 , defaultCrateOverrides ? pkgs.defaultCrateOverrides
@@ -26,7 +32,7 @@
   # Additional crate2nix configuration if it exists.
 , crateConfig
   ? if builtins.pathExists ./crate-config.nix
-    then pkgs.callPackage ./crate-config.nix {}
+    then callPackage ./crate-config.nix {}
     else {}
 }:
 
@@ -74,7 +80,7 @@ rec {
   registries = {
   {%- for name, hash in registries %}
     {{name}} = builtins.fromJSON (builtins.readFile (fetchurl {
-      url = "{{name | safe}}/config.json";
+      url = "{{name | trim_end_matches(pat="/") | safe}}/config.json";
       sha256 = {{hash}};
     }));
   {%- endfor %}
@@ -82,7 +88,7 @@ rec {
   {%- endif %}
 
   # A derivation that joins the outputs of all workspace members together.
-  allWorkspaceMembers = pkgs.symlinkJoin {
+  allWorkspaceMembers = symlinkJoin {
       name = "all-workspace-members";
       paths =
         let members = builtins.attrValues workspaceMembers;
@@ -147,16 +153,16 @@ rec {
         {%- elif crate.source.Nix.file.import and crate.source.Nix.attr %}
         src = (import {{crate.source.Nix.file.import | safe}}).{{crate.source.Nix.attr | safe}};
         {%- elif crate.source.Nix.file.package and crate.source.Nix.attr %}
-        src = (pkgs.callPackage {{crate.source.Nix.file.package | safe}} {}).{{crate.source.Nix.attr | safe}};
+        src = (callPackage {{crate.source.Nix.file.package | safe}} {}).{{crate.source.Nix.attr | safe}};
         {%- elif crate.source.Nix.file.import %}
         src = import {{crate.source.Nix.file.import | safe}};
         {%- elif crate.source.Nix.file.package %}
-        src = pkgs.callPackage {{crate.source.Nix.file.package | safe}} {};
+        src = callPackage {{crate.source.Nix.file.package | safe}} {};
         {%- elif crate.source.LocalDirectory.path %}
         src = lib.cleanSourceWith { filter = sourceFilter;  src = {{crate.source.LocalDirectory.path | safe}}; };
         {%- elif crate.source.Git %}
         workspace_member = null;
-        src = pkgs.fetchgit {
+        src = fetchgit {
           url = {{crate.source.Git.url}};
           rev = {{crate.source.Git.rev}};
           {%- if crate.source.Git.sha256 %}
