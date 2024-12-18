@@ -7,6 +7,7 @@
 
 { nixpkgs ? {{config.nixpkgs_path | safe}}
 , pkgs ? import nixpkgs { config = {}; }
+, fetchurl ? pkgs.fetchurl
 , lib ? pkgs.lib
 , stdenv ? pkgs.stdenv
 , buildRustCrateForPkgs ? pkgs: pkgs.buildRustCrate
@@ -69,6 +70,17 @@ rec {
   };
   {%- endif %}
 
+  {% if registries %}
+  registries = {
+  {%- for name, hash in registries %}
+    {{name}} = builtins.fromJSON (builtins.readFile (fetchurl {
+      url = "{{name | safe}}/config.json";
+      sha256 = {{hash}};
+    }));
+  {%- endfor %}
+  };
+  {%- endif %}
+
   # A derivation that joins the outputs of all workspace members together.
   allWorkspaceMembers = pkgs.symlinkJoin {
       name = "all-workspace-members";
@@ -119,6 +131,19 @@ rec {
 
         {%- if crate.source.CratesIo.sha256 %}
         sha256 = {{crate.source.CratesIo.sha256}};
+	{%- elif crate.source.Registry.sha256 %}
+	src = fetchurl {
+	  name = "{{crate.source.Registry.name | safe}}-{{crate.source.Registry.version | safe}}.tar.gz";
+	  url = registryUrl {
+	    inherit registries;
+	    url = {{crate.source.Registry.registry}};
+	    crate = {{crate.source.Registry.name}};
+	    version = {{crate.source.Registry.version}};
+	    sha256 = {{crate.source.Registry.sha256}};
+	  };
+          sha256 = {{crate.source.Registry.sha256}};
+	};
+        sha256 = {{crate.source.Registry.sha256}};
         {%- elif crate.source.Nix.file.import and crate.source.Nix.attr %}
         src = (import {{crate.source.Nix.file.import | safe}}).{{crate.source.Nix.attr | safe}};
         {%- elif crate.source.Nix.file.package and crate.source.Nix.attr %}

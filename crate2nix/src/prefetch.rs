@@ -4,7 +4,7 @@ use std::io::Write;
 use std::process::Command;
 
 use crate::metadata::PackageIdShortener;
-use crate::resolve::{CrateDerivation, CratesIoSource, GitSource, ResolvedSource};
+use crate::resolve::{CrateDerivation, CratesIoSource, GitSource, RegistrySource, ResolvedSource};
 use crate::GenerateConfig;
 use anyhow::bail;
 use anyhow::format_err;
@@ -172,6 +172,64 @@ pub fn prefetch(
     Ok(hashes)
 }
 
+/// Prefetch the config.json file from all the derivation's private registries.
+pub fn prefetch_registries(
+    config: &GenerateConfig,
+    crate_derivations: &[CrateDerivation],
+) -> Result<BTreeMap<String, String>, Error> {
+    let hashes_string: String = if config.read_crate_hashes {
+        std::fs::read_to_string(&config.registry_hashes_json).unwrap_or_else(|_| "{}".to_string())
+    } else {
+        "{}".to_string()
+    };
+
+    let old_prefetched_hashes: BTreeMap<String, String> = serde_json::from_str(&hashes_string)?;
+
+    let mut hashes = old_prefetched_hashes.clone();
+
+    for package in crate_derivations {
+        let registry =
+            if let ResolvedSource::Registry(RegistrySource { ref registry, .. }) = package.source {
+                registry
+            } else {
+                continue;
+            };
+        use std::collections::btree_map::Entry;
+        if let Entry::Vacant(e) = hashes.entry(registry.to_string()) {
+            eprintln!("Prefetching {} config", e.key());
+            let out = get_command_output(
+                "nix-prefetch-url",
+                &[&format!(
+                    "{}{}config.json",
+                    e.key(),
+                    if e.key().ends_with("/") { "" } else { "/" }
+                )],
+            )?;
+            e.insert(out);
+        }
+    }
+
+    if hashes != old_prefetched_hashes {
+        std::fs::write(
+            &config.registry_hashes_json,
+            serde_json::to_vec_pretty(&hashes)?,
+        )
+        .map_err(|e| {
+            format_err!(
+                "while writing hashes to {}: {}",
+                config.crate_hashes_json.to_str().unwrap_or("<unknown>"),
+                e
+            )
+        })?;
+        eprintln!(
+            "Wrote hashes to {}.",
+            config.registry_hashes_json.to_string_lossy()
+        );
+    }
+
+    Ok(hashes)
+}
+
 fn get_command_output(cmd: &str, args: &[&str]) -> Result<String, Error> {
     let output = Command::new(cmd)
         .args(args)
@@ -206,6 +264,7 @@ impl ResolvedSource {
     fn inner_prefetchable(&self) -> Option<&dyn PrefetchableSource> {
         match self {
             ResolvedSource::CratesIo(source) => Some(source),
+            ResolvedSource::Registry(source) => Some(source),
             ResolvedSource::Git(source) => Some(source),
             _ => None,
         }
@@ -238,6 +297,18 @@ impl PrefetchableSource for CratesIoSource {
             &format!("{}-{}", self.name, self.version),
         ];
         get_command_output("nix-prefetch-url", args)
+    }
+}
+
+impl PrefetchableSource for RegistrySource {
+    fn needs_prefetch(&self) -> bool {
+        self.sha256.is_none()
+    }
+
+    fn prefetch(&self) -> Result<String, Error> {
+        // This is done in two steps, currently only implemented in
+        // the generated Nix.
+        unimplemented!()
     }
 }
 
