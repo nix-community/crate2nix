@@ -196,14 +196,7 @@ impl Display for Source {
                 sha256,
                 registry,
                 ..
-            } => write!(
-                f,
-                "{} {} from {}: {}",
-                name,
-                version,
-                registry.to_string(),
-                sha256
-            ),
+            } => write!(f, "{} {} from {}: {}", name, version, registry, sha256),
             Source::Git { url, rev, sha256 } => write!(f, "{}#{} via git: {}", url, rev, sha256),
             Source::Nix { file, attr: None } => write!(f, "{}", file),
             Source::Nix {
