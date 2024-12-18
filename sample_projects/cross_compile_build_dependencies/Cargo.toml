@@ -1,0 +1,15 @@
+[workspace]
+members = [
+  "./alice",
+  "./bob",
+  "./charlie",
+]
+resolver = "2"
+
+[workspace.package]
+version = "1.0.0"
+edition = "2021"
+
+[workspace.dependencies]
+bob.path = "./bob"
+charlie.path = "./charlie"
