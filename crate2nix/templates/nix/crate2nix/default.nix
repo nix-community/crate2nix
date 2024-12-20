@@ -12,6 +12,7 @@
     pkgs: pkgs.buildRustCrate
 , buildPackages
 , defaultCrateOverrides
+, fetchurl
 , runCommand
 , strictDeprecation ? true
 , crates ? { }
@@ -418,7 +419,7 @@ rec {
             crateConfig
             // {
               src =
-                crateConfig.src or (pkgs.fetchurl rec {
+                crateConfig.src or (fetchurl rec {
                   name = "${crateConfig.crateName}-${crateConfig.version}.tar.gz";
                   # https://www.pietroalbini.org/blog/downloading-crates-io/
                   # Not rate-limited, CDN URL.
