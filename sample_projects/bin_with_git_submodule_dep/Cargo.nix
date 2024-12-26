@@ -1799,6 +1799,7 @@ rec {
     }:
       assert (builtins.isList features);
       assert (builtins.isList dependencies);
+      assert (builtins.isString target);
       assert (builtins.isAttrs targetSpec);
       let
         enabledDependencies = filterEnabledDependencies {
@@ -1929,6 +1930,7 @@ rec {
       assert (builtins.isList features);
       assert (builtins.isList dependencyPath);
       assert (builtins.isAttrs featuresByPackageId);
+      assert (builtins.isString target);
       assert (builtins.isAttrs targetSpec);
       assert (builtins.isBool runTests);
       let
