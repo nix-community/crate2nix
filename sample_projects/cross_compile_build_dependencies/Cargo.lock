@@ -12,10 +12,10 @@ dependencies = [
 [[package]]
 name = "bob"
 version = "1.0.0"
-dependencies = [
- "charlie",
-]
 
 [[package]]
-name = "charlie"
+name = "cross_compile_build_dependencies"
 version = "1.0.0"
+dependencies = [
+ "alice",
+]

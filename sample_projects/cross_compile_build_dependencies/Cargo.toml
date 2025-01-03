@@ -1,15 +1,7 @@
-[workspace]
-members = [
-  "./alice",
-  "./bob",
-  "./charlie",
-]
-resolver = "2"
-
-[workspace.package]
+[package]
+name = "cross_compile_build_dependencies"
 version = "1.0.0"
 edition = "2021"
 
-[workspace.dependencies]
-bob.path = "./bob"
-charlie.path = "./charlie"
+[build-dependencies]
+alice.path = "./alice"

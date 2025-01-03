@@ -381,7 +381,6 @@ let
       name = "cross_compile_build_dependencies";
       src = ./sample_projects/cross_compile_build_dependencies;
       customBuild = "sample_projects/cross_compile_build_dependencies/default.nix";
-      derivationAttrPath = [ "workspaceMembers" "alice" ];
     }
 
     #

@@ -1,4 +1,0 @@
-[package]
-name = "charlie"
-version.workspace = true
-edition.workspace = true

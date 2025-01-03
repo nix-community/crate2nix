@@ -1,6 +1,4 @@
-{ nixpkgs ? import ../../nix/nixpkgs.nix
-, lib ? import "${nixpkgs}/lib"
-, pkgs ? import nixpkgs { crossSystem = lib.systems.examples.wasm32-unknown-none; }
-, generatedCargoNix
+{ generatedCargoNix
+, pkgs ? import ../../nix/nixpkgs.nix { crossSystem.config = "wasm32-unknown-none"; }
 }:
-(pkgs.callPackage generatedCargoNix { }).workspaceMembers.alice.build
+(pkgs.callPackage generatedCargoNix { }).rootCrate.build

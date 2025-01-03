@@ -1,7 +1,7 @@
 [package]
 name = "alice"
-version.workspace = true
-edition.workspace = true
+version = "1.0.0"
+edition = "2021"
 
-[build-dependencies]
-bob.workspace = true
+[target.'cfg(unix)'.dependencies]
+bob.path = "./bob"
