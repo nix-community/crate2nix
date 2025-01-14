@@ -283,7 +283,7 @@ rec {
             name = "libc";
             packageId = "libc";
             usesDefaultFeatures = false;
-            target = {target, targetSpec, features}: (targetSpec."unix" or false);
+            target = {target, features}: (target."unix" or false);
           }
         ];
         features = {
@@ -407,7 +407,7 @@ rec {
           {
             name = "libc";
             packageId = "libc";
-            target = {target, targetSpec, features}: (targetSpec."unix" or false);
+            target = {target, features}: (target."unix" or false);
           }
         ];
 
@@ -468,12 +468,12 @@ rec {
           {
             name = "cfg-if";
             packageId = "cfg-if";
-            target = {target, targetSpec, features}: (targetSpec."unix" or false);
+            target = {target, features}: (target."unix" or false);
           }
           {
             name = "windows-sys";
             packageId = "windows-sys";
-            target = {target, targetSpec, features}: (targetSpec."windows" or false);
+            target = {target, features}: (target."windows" or false);
             features = [ "Win32_Foundation" "Win32_System_Diagnostics_Debug" "Win32_System_LibraryLoader" ];
           }
         ];
@@ -1256,37 +1256,37 @@ rec {
           {
             name = "windows_aarch64_gnullvm";
             packageId = "windows_aarch64_gnullvm";
-            target = {target, targetSpec, features}: (target == "aarch64-pc-windows-gnullvm");
+            target = {target, features}: (target.name == "aarch64-pc-windows-gnullvm");
           }
           {
             name = "windows_aarch64_msvc";
             packageId = "windows_aarch64_msvc";
-            target = {target, targetSpec, features}: (("aarch64" == targetSpec."arch" or null) && ("msvc" == targetSpec."env" or null) && (!(targetSpec."windows_raw_dylib" or false)));
+            target = {target, features}: (("aarch64" == target."arch" or null) && ("msvc" == target."env" or null) && (!(target."windows_raw_dylib" or false)));
           }
           {
             name = "windows_i686_gnu";
             packageId = "windows_i686_gnu";
-            target = {target, targetSpec, features}: (("x86" == targetSpec."arch" or null) && ("gnu" == targetSpec."env" or null) && (!(targetSpec."windows_raw_dylib" or false)));
+            target = {target, features}: (("x86" == target."arch" or null) && ("gnu" == target."env" or null) && (!(target."windows_raw_dylib" or false)));
           }
           {
             name = "windows_i686_msvc";
             packageId = "windows_i686_msvc";
-            target = {target, targetSpec, features}: (("x86" == targetSpec."arch" or null) && ("msvc" == targetSpec."env" or null) && (!(targetSpec."windows_raw_dylib" or false)));
+            target = {target, features}: (("x86" == target."arch" or null) && ("msvc" == target."env" or null) && (!(target."windows_raw_dylib" or false)));
           }
           {
             name = "windows_x86_64_gnu";
             packageId = "windows_x86_64_gnu";
-            target = {target, targetSpec, features}: (("x86_64" == targetSpec."arch" or null) && ("gnu" == targetSpec."env" or null) && (!("llvm" == targetSpec."abi" or null)) && (!(targetSpec."windows_raw_dylib" or false)));
+            target = {target, features}: (("x86_64" == target."arch" or null) && ("gnu" == target."env" or null) && (!("llvm" == target."abi" or null)) && (!(target."windows_raw_dylib" or false)));
           }
           {
             name = "windows_x86_64_gnullvm";
             packageId = "windows_x86_64_gnullvm";
-            target = {target, targetSpec, features}: (target == "x86_64-pc-windows-gnullvm");
+            target = {target, features}: (target.name == "x86_64-pc-windows-gnullvm");
           }
           {
             name = "windows_x86_64_msvc";
             packageId = "windows_x86_64_msvc";
-            target = {target, targetSpec, features}: (("x86_64" == targetSpec."arch" or null) && ("msvc" == targetSpec."env" or null) && (!(targetSpec."windows_raw_dylib" or false)));
+            target = {target, features}: (("x86_64" == target."arch" or null) && ("msvc" == target."env" or null) && (!(target."windows_raw_dylib" or false)));
           }
         ];
 
@@ -1371,7 +1371,9 @@ rec {
     Target (platform) data for conditional dependencies.
     This corresponds roughly to what buildRustCrate is setting.
   */
-  makeDefaultTargetSpec = platform: {
+  makeDefaultTarget = platform: {
+    name = platform.rust.rustcTarget;
+
     unix = platform.isUnix;
     windows = platform.isWindows;
     fuchsia = true;
@@ -1656,13 +1658,13 @@ rec {
     , crateConfigs ? crates
     , buildRustCrateForPkgsFunc
     , runTests
-    , makeTargetSpec ? makeDefaultTargetSpec
+    , makeTarget ? makeDefaultTarget
     ,
     }@args:
       assert (builtins.isAttrs crateConfigs);
       assert (builtins.isString packageId);
       assert (builtins.isList features);
-      assert (builtins.isAttrs (makeTargetSpec stdenv.hostPlatform));
+      assert (builtins.isAttrs (makeTarget stdenv.hostPlatform));
       assert (builtins.isBool runTests);
       let
         rootPackageId = packageId;
@@ -1670,8 +1672,7 @@ rec {
           args
           // {
             inherit rootPackageId;
-            target = stdenv.hostPlatform.rust.rustcTarget;
-            targetSpec = makeTargetSpec stdenv.hostPlatform // {
+            target = makeTarget stdenv.hostPlatform // {
               test = runTests;
             };
           }
@@ -1687,8 +1688,7 @@ rec {
                   packageId: value: buildByPackageIdForPkgsImpl self pkgs packageId
                 )
                 crateConfigs;
-              target = pkgs.stdenv.hostPlatform.rust.rustcTarget;
-              targetSpec = makeTargetSpec pkgs.stdenv.hostPlatform;
+              target = makeTarget pkgs.stdenv.hostPlatform;
               build = mkBuiltByPackageIdByPkgs pkgs.buildPackages;
             };
           in
@@ -1707,7 +1707,7 @@ rec {
             );
             dependencies = dependencyDerivations {
               inherit features;
-              inherit (self) target targetSpec;
+              inherit (self) target;
               buildByPackageId =
                 depPackageId:
                 # proc_macro crates must be compiled for the build architecture
@@ -1719,7 +1719,7 @@ rec {
             };
             buildDependencies = dependencyDerivations {
               inherit features;
-              inherit (self.build) target targetSpec;
+              inherit (self.build) target;
               buildByPackageId = depPackageId: self.build.crates.${depPackageId};
               dependencies = crateConfig.buildDependencies or [ ];
             };
@@ -1727,12 +1727,12 @@ rec {
               let
                 buildDeps = filterEnabledDependencies {
                   inherit features;
-                  inherit (self) target targetSpec;
+                  inherit (self) target;
                   dependencies = crateConfig.dependencies or [ ] ++ devDependencies;
                 };
                 hostDeps = filterEnabledDependencies {
                   inherit features;
-                  inherit (self.build) target targetSpec;
+                  inherit (self.build) target;
                   dependencies = crateConfig.buildDependencies or [ ];
                 };
               in
@@ -1794,16 +1794,14 @@ rec {
     , features
     , dependencies
     , target
-    , targetSpec
     ,
     }:
       assert (builtins.isList features);
       assert (builtins.isList dependencies);
-      assert (builtins.isString target);
-      assert (builtins.isAttrs targetSpec);
+      assert (builtins.isAttrs target);
       let
         enabledDependencies = filterEnabledDependencies {
-          inherit dependencies features target targetSpec;
+          inherit dependencies features target;
         };
         depDerivation = dependency: buildByPackageId dependency.packageId;
       in
@@ -1827,8 +1825,7 @@ rec {
   # Returns various tools to debug a crate.
   debugCrate =
     { packageId
-    , target ? stdenv.hostPlatform.rust.rustcTarget
-    , targetSpec ? makeDefaultTargetSpec stdenv.hostPlatform
+    , target ? makeDefaultTarget stdenv.hostPlatform
     ,
     }:
       assert (builtins.isString packageId);
@@ -1850,10 +1847,10 @@ rec {
           });
           mergedPackageFeatures = mergePackageFeatures {
             features = rootFeatures;
-            inherit packageId target targetSpec;
+            inherit packageId target;
           };
           diffedDefaultPackageFeatures = diffDefaultPackageFeatures {
-            inherit packageId target targetSpec;
+            inherit packageId target;
           };
         };
       in
@@ -1871,14 +1868,13 @@ rec {
     { crateConfigs ? crates
     , packageId
     , target
-    , targetSpec
     ,
     }:
       assert (builtins.isAttrs crateConfigs);
       let
         prefixValues = prefix: lib.mapAttrs (n: v: { "${prefix}" = v; });
         mergedFeatures = prefixValues "crate2nix" (mergePackageFeatures {
-          inherit crateConfigs packageId target targetSpec;
+          inherit crateConfigs packageId target;
           features = [ "default" ];
         });
         configs = prefixValues "cargo" crateConfigs;
@@ -1919,7 +1915,6 @@ rec {
     , dependencyPath ? [ crates.${packageId}.crateName ]
     , featuresByPackageId ? { }
     , target
-    , targetSpec
     , # Adds devDependencies to the crate with rootPackageId.
       runTests ? false
     , ...
@@ -1930,8 +1925,7 @@ rec {
       assert (builtins.isList features);
       assert (builtins.isList dependencyPath);
       assert (builtins.isAttrs featuresByPackageId);
-      assert (builtins.isString target);
-      assert (builtins.isAttrs targetSpec);
+      assert (builtins.isAttrs target);
       assert (builtins.isBool runTests);
       let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
@@ -1952,7 +1946,7 @@ rec {
             assert (builtins.isList dependencies);
             let
               enabledDependencies = filterEnabledDependencies {
-                inherit dependencies target targetSpec;
+                inherit dependencies target;
                 features = enabledFeatures;
               };
               directDependencies = map depWithResolvedFeatures enabledDependencies;
@@ -1975,7 +1969,6 @@ rec {
                     crateConfigs
                     packageId
                     target
-                    targetSpec
                     runTests
                     rootPackageId
                     ;
@@ -2005,13 +1998,11 @@ rec {
     { dependencies
     , features
     , target
-    , targetSpec
     ,
     }:
       assert (builtins.isList dependencies);
       assert (builtins.isList features);
-      assert (builtins.isString target);
-      assert (builtins.isAttrs targetSpec);
+      assert (builtins.isAttrs target);
 
       lib.filter
         (
@@ -2019,7 +2010,7 @@ rec {
           let
             targetFunc = dep.target or (features: true);
           in
-          targetFunc { inherit features target targetSpec; }
+          targetFunc { inherit features target; }
           && (!(dep.optional or false) || builtins.any (doesFeatureEnableDependency dep) features)
         )
         dependencies;
