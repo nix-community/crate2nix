@@ -102,7 +102,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = {target, features}: ("windows" == target."os" or null);
+            target = { target, features }: ("windows" == target."os" or null);
             features = [ "consoleapi" "errhandlingapi" "fileapi" "handleapi" "processenv" ];
           }
         ];
@@ -123,18 +123,18 @@ rec {
           {
             name = "hermit-abi";
             packageId = "hermit-abi";
-            target = {target, features}: ("hermit" == target."os" or null);
+            target = { target, features }: ("hermit" == target."os" or null);
           }
           {
             name = "libc";
             packageId = "libc";
             usesDefaultFeatures = false;
-            target = {target, features}: (target."unix" or false);
+            target = { target, features }: (target."unix" or false);
           }
           {
             name = "winapi";
             packageId = "winapi";
-            target = {target, features}: (target."windows" or false);
+            target = { target, features }: (target."windows" or false);
             features = [ "consoleapi" "processenv" "minwinbase" "minwindef" "winbase" ];
           }
         ];
@@ -168,7 +168,7 @@ rec {
             name = "ansi_term";
             packageId = "ansi_term";
             optional = true;
-            target = {target, features}: (!(target."windows" or false));
+            target = { target, features }: (!(target."windows" or false));
           }
           {
             name = "atty";
@@ -269,7 +269,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = {target, features}: (target."windows" or false);
+            target = { target, features }: (target."windows" or false);
             features = [ "winsock2" ];
           }
         ];
@@ -491,12 +491,12 @@ rec {
           {
             name = "winapi-i686-pc-windows-gnu";
             packageId = "winapi-i686-pc-windows-gnu";
-            target = {target, features}: (target.name == "i686-pc-windows-gnu");
+            target = { target, features }: (target.name == "i686-pc-windows-gnu");
           }
           {
             name = "winapi-x86_64-pc-windows-gnu";
             packageId = "winapi-x86_64-pc-windows-gnu";
-            target = {target, features}: (target.name == "x86_64-pc-windows-gnu");
+            target = { target, features }: (target.name == "x86_64-pc-windows-gnu");
           }
         ];
         features = {

@@ -127,7 +127,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = {target, features}: ("windows" == target."os" or null);
+            target = { target, features }: ("windows" == target."os" or null);
             features = [ "consoleapi" "errhandlingapi" "fileapi" "handleapi" "processenv" ];
           }
         ];
@@ -162,18 +162,18 @@ rec {
           {
             name = "hermit-abi";
             packageId = "hermit-abi";
-            target = {target, features}: ("hermit" == target."os" or null);
+            target = { target, features }: ("hermit" == target."os" or null);
           }
           {
             name = "libc";
             packageId = "libc";
             usesDefaultFeatures = false;
-            target = {target, features}: (target."unix" or false);
+            target = { target, features }: (target."unix" or false);
           }
           {
             name = "winapi";
             packageId = "winapi";
-            target = {target, features}: (target."windows" or false);
+            target = { target, features }: (target."windows" or false);
             features = [ "consoleapi" "processenv" "minwinbase" "minwindef" "winbase" ];
           }
         ];
@@ -368,7 +368,7 @@ rec {
             name = "ansi_term";
             packageId = "ansi_term";
             optional = true;
-            target = {target, features}: (!(target."windows" or false));
+            target = { target, features }: (!(target."windows" or false));
           }
           {
             name = "atty";
@@ -449,22 +449,22 @@ rec {
           {
             name = "libc";
             packageId = "libc";
-            target = {target, features}: (target.name == "aarch64-linux-android");
+            target = { target, features }: (target.name == "aarch64-linux-android");
           }
           {
             name = "libc";
             packageId = "libc";
-            target = {target, features}: (("aarch64" == target."arch" or null) && ("linux" == target."os" or null));
+            target = { target, features }: (("aarch64" == target."arch" or null) && ("linux" == target."os" or null));
           }
           {
             name = "libc";
             packageId = "libc";
-            target = {target, features}: (("aarch64" == target."arch" or null) && ("apple" == target."vendor" or null));
+            target = { target, features }: (("aarch64" == target."arch" or null) && ("apple" == target."vendor" or null));
           }
           {
             name = "libc";
             packageId = "libc";
-            target = {target, features}: (("loongarch64" == target."arch" or null) && ("linux" == target."os" or null));
+            target = { target, features }: (("loongarch64" == target."arch" or null) && ("linux" == target."os" or null));
           }
         ];
 
@@ -996,7 +996,7 @@ rec {
           {
             name = "winapi-util";
             packageId = "winapi-util";
-            target = {target, features}: (target."windows" or false);
+            target = { target, features }: (target."windows" or false);
           }
         ];
         features = {
@@ -1463,29 +1463,29 @@ rec {
           {
             name = "fuchsia-cprng";
             packageId = "fuchsia-cprng";
-            target = {target, features}: ("fuchsia" == target."os" or null);
+            target = { target, features }: ("fuchsia" == target."os" or null);
           }
           {
             name = "libc";
             packageId = "libc";
             optional = true;
-            target = {target, features}: (target."unix" or false);
+            target = { target, features }: (target."unix" or false);
           }
           {
             name = "rand_core";
             packageId = "rand_core 0.3.1";
             usesDefaultFeatures = false;
-            target = {target, features}: ("sgx" == target."env" or null);
+            target = { target, features }: ("sgx" == target."env" or null);
           }
           {
             name = "rdrand";
             packageId = "rdrand";
-            target = {target, features}: ("sgx" == target."env" or null);
+            target = { target, features }: ("sgx" == target."env" or null);
           }
           {
             name = "winapi";
             packageId = "winapi";
-            target = {target, features}: (target."windows" or false);
+            target = { target, features }: (target."windows" or false);
             features = [ "minwindef" "ntsecapi" "profileapi" "winnt" ];
           }
         ];
@@ -1703,7 +1703,7 @@ rec {
           {
             name = "winapi";
             packageId = "winapi";
-            target = {target, features}: (target."windows" or false);
+            target = { target, features }: (target."windows" or false);
             features = [ "std" "errhandlingapi" "winerror" "fileapi" "winbase" ];
           }
         ];
@@ -1733,7 +1733,7 @@ rec {
           {
             name = "winapi-util";
             packageId = "winapi-util";
-            target = {target, features}: (target."windows" or false);
+            target = { target, features }: (target."windows" or false);
           }
         ];
 
@@ -1778,7 +1778,7 @@ rec {
           {
             name = "serde_derive";
             packageId = "serde_derive";
-            target = {target, features}: false;
+            target = { target, features }: false;
           }
         ];
         devDependencies = [
@@ -1907,7 +1907,7 @@ rec {
           {
             name = "cpufeatures";
             packageId = "cpufeatures";
-            target = {target, features}: (("aarch64" == target."arch" or null) || ("x86_64" == target."arch" or null) || ("x86" == target."arch" or null));
+            target = { target, features }: (("aarch64" == target."arch" or null) || ("x86_64" == target."arch" or null) || ("x86" == target."arch" or null));
           }
           {
             name = "digest";
@@ -2674,7 +2674,7 @@ rec {
           {
             name = "winapi-util";
             packageId = "winapi-util";
-            target = {target, features}: (target."windows" or false);
+            target = { target, features }: (target."windows" or false);
           }
         ];
 
@@ -2691,12 +2691,12 @@ rec {
           {
             name = "winapi-i686-pc-windows-gnu";
             packageId = "winapi-i686-pc-windows-gnu";
-            target = {target, features}: (target.name == "i686-pc-windows-gnu");
+            target = { target, features }: (target.name == "i686-pc-windows-gnu");
           }
           {
             name = "winapi-x86_64-pc-windows-gnu";
             packageId = "winapi-x86_64-pc-windows-gnu";
-            target = {target, features}: (target.name == "x86_64-pc-windows-gnu");
+            target = { target, features }: (target.name == "x86_64-pc-windows-gnu");
           }
         ];
         features = {
@@ -2726,7 +2726,7 @@ rec {
           {
             name = "windows-sys";
             packageId = "windows-sys";
-            target = {target, features}: (target."windows" or false);
+            target = { target, features }: (target."windows" or false);
             features = [ "Win32_Foundation" "Win32_Storage_FileSystem" "Win32_System_Console" "Win32_System_SystemInformation" ];
           }
         ];
@@ -3001,42 +3001,42 @@ rec {
           {
             name = "windows_aarch64_gnullvm";
             packageId = "windows_aarch64_gnullvm";
-            target = {target, features}: (target.name == "aarch64-pc-windows-gnullvm");
+            target = { target, features }: (target.name == "aarch64-pc-windows-gnullvm");
           }
           {
             name = "windows_aarch64_msvc";
             packageId = "windows_aarch64_msvc";
-            target = {target, features}: (("aarch64" == target."arch" or null) && ("msvc" == target."env" or null) && (!(target."windows_raw_dylib" or false)));
+            target = { target, features }: (("aarch64" == target."arch" or null) && ("msvc" == target."env" or null) && (!(target."windows_raw_dylib" or false)));
           }
           {
             name = "windows_i686_gnu";
             packageId = "windows_i686_gnu";
-            target = {target, features}: (("x86" == target."arch" or null) && ("gnu" == target."env" or null) && (!("llvm" == target."abi" or null)) && (!(target."windows_raw_dylib" or false)));
+            target = { target, features }: (("x86" == target."arch" or null) && ("gnu" == target."env" or null) && (!("llvm" == target."abi" or null)) && (!(target."windows_raw_dylib" or false)));
           }
           {
             name = "windows_i686_gnullvm";
             packageId = "windows_i686_gnullvm";
-            target = {target, features}: (target.name == "i686-pc-windows-gnullvm");
+            target = { target, features }: (target.name == "i686-pc-windows-gnullvm");
           }
           {
             name = "windows_i686_msvc";
             packageId = "windows_i686_msvc";
-            target = {target, features}: (("x86" == target."arch" or null) && ("msvc" == target."env" or null) && (!(target."windows_raw_dylib" or false)));
+            target = { target, features }: (("x86" == target."arch" or null) && ("msvc" == target."env" or null) && (!(target."windows_raw_dylib" or false)));
           }
           {
             name = "windows_x86_64_gnu";
             packageId = "windows_x86_64_gnu";
-            target = {target, features}: (("x86_64" == target."arch" or null) && ("gnu" == target."env" or null) && (!("llvm" == target."abi" or null)) && (!(target."windows_raw_dylib" or false)));
+            target = { target, features }: (("x86_64" == target."arch" or null) && ("gnu" == target."env" or null) && (!("llvm" == target."abi" or null)) && (!(target."windows_raw_dylib" or false)));
           }
           {
             name = "windows_x86_64_gnullvm";
             packageId = "windows_x86_64_gnullvm";
-            target = {target, features}: (target.name == "x86_64-pc-windows-gnullvm");
+            target = { target, features }: (target.name == "x86_64-pc-windows-gnullvm");
           }
           {
             name = "windows_x86_64_msvc";
             packageId = "windows_x86_64_msvc";
-            target = {target, features}: ((("x86_64" == target."arch" or null) || ("arm64ec" == target."arch" or null)) && ("msvc" == target."env" or null) && (!(target."windows_raw_dylib" or false)));
+            target = { target, features }: ((("x86_64" == target."arch" or null) || ("arm64ec" == target."arch" or null)) && ("msvc" == target."env" or null) && (!(target."windows_raw_dylib" or false)));
           }
         ];
 
