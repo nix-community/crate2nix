@@ -13,10 +13,16 @@ use serde::Deserialize;
 use serde::Serialize;
 
 /// The merged metadata of potentially multiple sources.
+///
+/// Metadata: Package Metadata from Cargo.lock files.
+///
+/// Why "merged" metadata: crate2nix can be used to generate
+/// builds for multiple projects without combining them into a
+/// workspace.
 #[derive(Debug)]
 pub struct MergedMetadata {
     workspace_members: Vec<PackageId>,
-    packages: Vec<Package>,
+    pub(crate) packages: Vec<Package>,
     root: Option<PackageId>,
     nodes: Vec<Node>,
 }
@@ -57,7 +63,7 @@ impl MergedMetadata {
         }
 
         let root = if workspace_members.len() <= 1 {
-            workspace_members.get(0).cloned()
+            workspace_members.first().cloned()
         } else {
             None
         };
@@ -84,7 +90,7 @@ pub struct IndexedMetadata {
 impl IndexedMetadata {
     pub fn new_from(metadata: Metadata) -> Result<IndexedMetadata, Error> {
         let merged = MergedMetadata::merge(vec![metadata])?;
-        Self::new_from_merged(merged)
+        Self::new_from_merged(&merged)
     }
 
     pub fn new_from_merged(
@@ -93,7 +99,7 @@ impl IndexedMetadata {
             workspace_members,
             packages,
             nodes,
-        }: MergedMetadata,
+        }: &MergedMetadata,
     ) -> Result<IndexedMetadata, Error> {
         let id_shortener = PackageIdShortener::new(packages.iter());
 
@@ -112,16 +118,16 @@ impl IndexedMetadata {
             .map(|node| {
                 (
                     id_shortener.shorten(&node.id),
-                    id_shortener.shorten_in_node(&node),
+                    id_shortener.shorten_in_node(node),
                 )
             })
             .collect();
 
         Ok(IndexedMetadata {
-            root: root.as_ref().map(|id| id_shortener.shorten(&id)),
+            root: root.as_ref().map(|id| id_shortener.shorten(id)),
             workspace_members: workspace_members
                 .iter()
-                .map(|id| id_shortener.shorten(&id))
+                .map(|id| id_shortener.shorten(id))
                 .collect(),
             pkgs_by_id,
             nodes_by_id,
@@ -132,10 +138,13 @@ impl IndexedMetadata {
     #[cfg(test)]
     pub fn root_package(&self) -> Option<&Package> {
         let root = self.root.as_ref()?;
-        self.pkgs_by_id.get(&root)
+        self.pkgs_by_id.get(root)
     }
 }
 
+/// "Shortens" package IDs to potentially remove local paths from
+/// the IDs. The local paths can make the build file generation
+/// depend on the local systems path.
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct PackageIdShortener {
     substitution: HashMap<PackageId, PackageId>,
@@ -200,16 +209,16 @@ impl PackageIdShortener {
     }
 
     pub fn lengthen_ref<'a>(&'a self, package_id: &'a PackageId) -> &'a PackageId {
-        self.reverse.get(&package_id).unwrap_or(&package_id)
+        self.reverse.get(package_id).unwrap_or(package_id)
     }
 
     pub fn shorten_ref<'a>(&'a self, package_id: &'a PackageId) -> &'a PackageId {
-        self.substitution.get(&package_id).unwrap_or(&package_id)
+        self.substitution.get(package_id).unwrap_or(package_id)
     }
 
     pub fn shorten(&self, package_id: &PackageId) -> PackageId {
         self.substitution
-            .get(&package_id)
+            .get(package_id)
             .cloned()
             .unwrap_or_else(|| package_id.clone())
     }

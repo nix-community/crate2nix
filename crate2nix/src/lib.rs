@@ -20,6 +20,7 @@ use anyhow::Context;
 use anyhow::Error;
 use cargo_metadata::Metadata;
 use cargo_metadata::PackageId;
+use metadata::MergedMetadata;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -48,6 +49,8 @@ pub struct BuildInfo {
     pub root_package_id: Option<PackageId>,
     /// Workspaces member package IDs by package names.
     pub workspace_members: BTreeMap<String, PackageId>,
+    /// Registries used by the crates.
+    pub registries: BTreeMap<String, String>,
     /// Build info for all crates needed for this build.
     pub crates: Vec<CrateDerivation>,
     /// For convenience include the source for tests.
@@ -69,7 +72,7 @@ impl BuildInfo {
             metadata::MergedMetadata::merge(metadatas)?
         };
 
-        let indexed_metadata = IndexedMetadata::new_from_merged(merged).map_err(|e| {
+        let indexed_metadata = IndexedMetadata::new_from_merged(&merged).map_err(|e| {
             format_err!(
                 "while indexing metadata for {:#?}: {}",
                 config
@@ -84,7 +87,9 @@ impl BuildInfo {
 
         default_nix.prune_unneeded_crates();
 
-        prefetch_and_fill_crates_sha256(config, &mut default_nix)?;
+        prefetch_and_fill_crates_sha256(config, &merged, &mut default_nix)?;
+
+        prefetch_and_fill_registries(config, &mut default_nix)?;
 
         Ok(default_nix)
     }
@@ -144,6 +149,7 @@ impl BuildInfo {
                         .map(|pkg| (pkg.name.clone(), pkg_id.clone()))
                 })
                 .collect(),
+            registries: BTreeMap::new(),
             crates: metadata
                 .pkgs_by_id
                 .values()
@@ -163,8 +169,7 @@ fn cargo_metadata(config: &GenerateConfig, cargo_toml: &Path) -> Result<Metadata
     let mut cmd = cargo_metadata::MetadataCommand::new();
     let mut other_options = config.other_metadata_options.clone();
     other_options.push("--locked".into());
-    cmd.manifest_path(&cargo_toml)
-        .other_options(&*other_options);
+    cmd.manifest_path(cargo_toml).other_options(&*other_options);
     cmd.exec().map_err(|e| {
         format_err!(
             "while retrieving metadata about {}: {}",
@@ -177,10 +182,11 @@ fn cargo_metadata(config: &GenerateConfig, cargo_toml: &Path) -> Result<Metadata
 /// Prefetch hashes when necessary.
 fn prefetch_and_fill_crates_sha256(
     config: &GenerateConfig,
+    merged: &MergedMetadata,
     default_nix: &mut BuildInfo,
 ) -> Result<(), Error> {
     let mut from_lock_file: HashMap<PackageId, String> =
-        extract_hashes_from_lockfile(&config, default_nix)?;
+        extract_hashes_from_lockfile(config, merged, default_nix)?;
     for (_package_id, hash) in from_lock_file.iter_mut() {
         let bytes =
             hex::decode(&hash).map_err(|e| format_err!("while decoding '{}': {}", hash, e))?;
@@ -214,8 +220,20 @@ fn prefetch_and_fill_crates_sha256(
     Ok(())
 }
 
+/// Prefetch hashes when necessary.
+fn prefetch_and_fill_registries(
+    config: &GenerateConfig,
+    default_nix: &mut BuildInfo,
+) -> Result<(), Error> {
+    default_nix.registries = prefetch::prefetch_registries(config, &mut default_nix.crates)
+        .map_err(|e| format_err!("while prefetching crates for calculating sha256: {}", e))?;
+
+    Ok(())
+}
+
 fn extract_hashes_from_lockfile(
     config: &GenerateConfig,
+    merged: &MergedMetadata,
     default_nix: &mut BuildInfo,
 ) -> Result<HashMap<PackageId, String>, Error> {
     if !config.use_cargo_lock_checksums {
@@ -228,7 +246,7 @@ fn extract_hashes_from_lockfile(
         let lock_file_path = cargo_toml.parent().unwrap().join("Cargo.lock");
         let lock_file = crate::lock::EncodableResolve::load_lock_file(&lock_file_path)?;
         lock_file
-            .get_hashes_by_package_id(&mut hashes)
+            .get_hashes_by_package_id(merged, &mut hashes)
             .context(format!(
                 "while parsing checksums from Lockfile {}",
                 &lock_file_path.to_string_lossy()
@@ -297,6 +315,9 @@ pub struct GenerateConfig {
     /// The path of the `crate-hashes.json` file which is used to look up hashes and/or store
     /// prefetched hashes at.
     pub crate_hashes_json: PathBuf,
+    /// The path of the `registry-hashes.json` file which is used to look up hashes and/or store
+    /// prefetched hashes at.
+    pub registry_hashes_json: PathBuf,
     /// The nix expression for the nixpkgs path to use.
     pub nixpkgs_path: String,
     /// Additional arguments to pass to `cargo metadata`.

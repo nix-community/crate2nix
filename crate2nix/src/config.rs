@@ -1,6 +1,6 @@
 //! Managing the `crate2nix.json` config.
 
-use anyhow::{bail, Context, Error};
+use anyhow::{Context, Error};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::BTreeMap,
@@ -8,7 +8,6 @@ use std::{
     fs::File,
     io::{BufReader, BufWriter},
     path::Path,
-    str::FromStr,
 };
 
 impl Config {
@@ -64,8 +63,8 @@ impl Config {
 
         let max_len = self
             .sources
-            .iter()
-            .map(|(n, _)| n.len())
+            .keys()
+            .map(|n| n.len())
             .max()
             .unwrap_or_default();
         for (name, source) in &self.sources {
@@ -95,12 +94,22 @@ pub enum Source {
         /// The sha256 hash of the source.
         sha256: String,
     },
+    /// Get the source from crates.io.
+    Registry {
+        /// The registry's URL
+        registry: String,
+        /// The crate name.
+        name: String,
+        /// The exact crate version to fetch.
+        version: semver::Version,
+        /// The sha256 hash of the source.
+        sha256: String,
+    },
     /// Get the source from git.
     Git {
         /// The URL of the git repository.
         ///
         /// E.g. https://github.com/kolloch/crate2nix.git
-        #[serde(with = "url_serde")]
         url: url::Url,
         /// The revision hash.
         rev: String,
@@ -181,6 +190,20 @@ impl Display for Source {
                 version,
                 sha256,
             } => write!(f, "{} {} from crates.io: {}", name, version, sha256),
+            Source::Registry {
+                name,
+                version,
+                sha256,
+                registry,
+                ..
+            } => write!(
+                f,
+                "{} {} from {}: {}",
+                name,
+                version,
+                registry.to_string(),
+                sha256
+            ),
             Source::Git { url, rev, sha256 } => write!(f, "{}#{} via git: {}", url, rev, sha256),
             Source::Nix { file, attr: None } => write!(f, "{}", file),
             Source::Nix {
@@ -200,6 +223,15 @@ impl Source {
                 version,
                 ..
             } => format!("cratesIo --name '{}' '{}' '{}'", name, crate_name, version),
+            Source::Registry {
+                name: crate_name,
+                version,
+                registry,
+                ..
+            } => format!(
+                "registry --registry '{}' --name '{}' '{}' '{}'",
+                registry, name, crate_name, version
+            ),
             Source::Git { url, rev, .. } => {
                 format!("git --name '{}' '{}' --rev {}", name, url, rev)
             }

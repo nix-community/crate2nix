@@ -98,6 +98,15 @@ pub enum Opt {
         )]
         crate_hashes: Option<PathBuf>,
 
+        #[structopt(
+            short = "r",
+            long = "registry-hashes",
+            parse(from_os_str),
+            help = "The path to the registry hash cache file. \
+                    Uses 'registry-hashes.json' in the same directory as the Cargo.nix output by default."
+        )]
+        registry_hashes: Option<PathBuf>,
+
         // Mostly useful for testing
         #[structopt(
             long = "no-cargo-lock-checksums",
@@ -276,7 +285,6 @@ pub enum SourceAddingCommands {
         /// The URL of the git repository.
         ///
         /// E.g. https://github.com/kolloch/crate2nix.git
-        #[serde(with = "url_serde")]
         url: url::Url,
 
         #[structopt(long = "rev", parse(from_str), help = "The git revision hash.")]
@@ -379,6 +387,7 @@ fn main() -> anyhow::Result<()> {
             output: opt_output,
             nixpkgs_path,
             crate_hashes,
+            registry_hashes,
             all_features,
             default_features,
             no_default_features,
@@ -410,6 +419,13 @@ fn main() -> anyhow::Result<()> {
                     .parent()
                     .expect("Cargo.nix has parent")
                     .join("crate-hashes.json")
+            });
+
+            let registry_hashes_json = registry_hashes.unwrap_or_else(|| {
+                output
+                    .parent()
+                    .expect("Cargo.nix has parent")
+                    .join("registry-hashes.json")
             });
 
             let generate_info = crate2nix::GenerateInfo::default();
@@ -461,6 +477,7 @@ fn main() -> anyhow::Result<()> {
                 output: output.clone(),
                 nixpkgs_path,
                 crate_hashes_json,
+                registry_hashes_json,
                 other_metadata_options: feature_metadata_options()?,
                 use_cargo_lock_checksums: !no_cargo_lock_checksums,
                 read_crate_hashes: !dont_read_crate_hashes,

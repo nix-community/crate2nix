@@ -5,9 +5,21 @@ target
 /result*
 /sample_projects/*/result
 crate2nix/result*
-*.json
+/*.json
 *.log
 *~
 
 # cachix tmp file
 store-path-pre-build
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
+
+template/flake.lock

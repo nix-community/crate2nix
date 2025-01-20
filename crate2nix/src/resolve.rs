@@ -33,6 +33,8 @@ pub struct CrateDerivation {
     pub edition: String,
     pub authors: Vec<String>,
     pub version: Version,
+    /// The name of a native library the package is linking to.
+    pub links: Option<String>,
     pub source: ResolvedSource,
     /// The crate types of the lib targets of this crate, e.g. "lib", "dylib", "rlib", ...
     pub lib_crate_types: Vec<String>,
@@ -92,7 +94,7 @@ impl CrateDerivation {
             // name anymore. So we need to extract it from the path.
             let configured_source = package_path
                 .file_name()
-                .and_then(|file_name| crate2nix_json.sources.get(&*file_name).cloned());
+                .and_then(|file_name| crate2nix_json.sources.get(file_name).cloned());
 
             if !crate2nix_json.sources.is_empty() && configured_source.is_none() {
                 eprintln!(
@@ -109,7 +111,7 @@ impl CrateDerivation {
         let source = if let Some(configured) = configured_source {
             configured.into()
         } else {
-            ResolvedSource::new(&config, &package, &package_path)?
+            ResolvedSource::new(config, package, package_path)?
         };
 
         let package_path = package_path.canonicalize().map_err(|e| {
@@ -128,13 +130,13 @@ impl CrateDerivation {
                     k == "lib" || k == "cdylib" || k == "dylib" || k == "rlib" || k == "proc-macro"
                 })
             })
-            .and_then(|target| BuildTarget::new(&target, &package_path).ok());
+            .and_then(|target| BuildTarget::new(target, &package_path).ok());
 
         let build = package
             .targets
             .iter()
             .find(|t| t.kind.iter().any(|k| k == "custom-build"))
-            .and_then(|target| BuildTarget::new(&target, &package_path).ok());
+            .and_then(|target| BuildTarget::new(target, &package_path).ok());
 
         let proc_macro = package
             .targets
@@ -146,7 +148,7 @@ impl CrateDerivation {
             .iter()
             .filter_map(|t| {
                 if t.kind.iter().any(|k| k == "bin") {
-                    BuildTarget::new(&t, &package_path).ok()
+                    BuildTarget::new(t, &package_path).ok()
                 } else {
                     None
                 }
@@ -155,10 +157,11 @@ impl CrateDerivation {
 
         Ok(CrateDerivation {
             crate_name: package.name.clone(),
-            edition: package.edition.clone(),
+            edition: package.edition.to_string(),
             authors: package.authors.clone(),
             package_id: package.id.clone(),
             version: package.version.clone(),
+            links: package.links.clone(),
             source,
             features: package
                 .features
@@ -169,7 +172,7 @@ impl CrateDerivation {
                 .nodes_by_id
                 .get(&package.id)
                 .map(|n| n.features.clone())
-                .unwrap_or_else(Vec::new),
+                .unwrap_or_default(),
             lib_crate_types: package
                 .targets
                 .iter()
@@ -228,7 +231,7 @@ pub fn minimal_resolve() {
         crate_derivation.version,
         semver::Version::parse("1.2.3").unwrap()
     );
-    assert_eq!(crate_derivation.is_root_or_workspace_member, true);
+    assert!(crate_derivation.is_root_or_workspace_member);
     let empty: Vec<String> = vec![];
     assert_eq!(crate_derivation.lib_crate_types, empty);
 
@@ -249,7 +252,7 @@ pub fn configured_source_is_used_instead_of_local_directory() {
     // By simulating this layout, we ensure that we do not canonicalize paths at the "wrong"
     // moment.
     let simulated_store_path = env.temp_dir();
-    std::fs::File::create(&simulated_store_path.join("Cargo.toml")).expect("File creation failed");
+    std::fs::File::create(simulated_store_path.join("Cargo.toml")).expect("File creation failed");
     let workspace_with_symlink = env.temp_dir();
     std::os::unix::fs::symlink(
         &simulated_store_path,
@@ -272,7 +275,7 @@ pub fn configured_source_is_used_instead_of_local_directory() {
         version: semver::Version::from_str("1.2.3").unwrap(),
         sha256: "123".to_string(),
     };
-    crate2nix_json.upsert_source(None, source.clone());
+    crate2nix_json.upsert_source(None, source);
     let crate_derivation =
         CrateDerivation::resolve(&config, &crate2nix_json, &indexed, root_package).unwrap();
 
@@ -358,6 +361,7 @@ impl BuildTarget {
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub enum ResolvedSource {
     CratesIo(CratesIoSource),
+    Registry(RegistrySource),
     Git(GitSource),
     LocalDirectory(LocalDirectorySource),
     Nix(NixSource),
@@ -381,6 +385,17 @@ impl From<crate::config::Source> for ResolvedSource {
                 version,
                 sha256: Some(sha256),
             }),
+            crate::config::Source::Registry {
+                name,
+                version,
+                sha256,
+                registry,
+            } => ResolvedSource::Registry(RegistrySource {
+                name,
+                version,
+                sha256: Some(sha256),
+                registry: registry.parse().unwrap(),
+            }),
             crate::config::Source::Nix { file, attr } => {
                 ResolvedSource::Nix(NixSource { file, attr })
             }
@@ -396,8 +411,15 @@ pub struct CratesIoSource {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
+pub struct RegistrySource {
+    pub registry: Url,
+    pub name: String,
+    pub version: Version,
+    pub sha256: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct GitSource {
-    #[serde(with = "url_serde")]
     pub url: Url,
     pub rev: String,
     pub r#ref: Option<String>,
@@ -432,6 +454,20 @@ impl ResolvedSource {
                     sha256: None,
                 }))
             }
+            Some(source) if source.repr.starts_with("sparse+") => {
+                Ok(ResolvedSource::Registry(RegistrySource {
+                    registry: source
+                        .repr
+                        .split_at("sparse+".len())
+                        .1
+                        .to_string()
+                        .parse()
+                        .unwrap(),
+                    name: package.name.clone(),
+                    version: package.version.clone(),
+                    sha256: None,
+                }))
+            }
             Some(source) => {
                 ResolvedSource::git_or_local_directory(config, package, &package_path, source)
             }
@@ -458,7 +494,6 @@ impl ResolvedSource {
         }
         let mut url = url::Url::parse(&source_string[GIT_SOURCE_PREFIX.len()..])?;
         let mut query_pairs = url.query_pairs();
-
         let branch = query_pairs
             .find(|(k, _)| k == "branch")
             .map(|(_, v)| v.to_string());
@@ -554,9 +589,9 @@ impl ResolvedSource {
 
     pub fn sha256(&self) -> Option<&String> {
         match self {
-            Self::CratesIo(CratesIoSource { sha256, .. }) | Self::Git(GitSource { sha256, .. }) => {
-                sha256.as_ref()
-            }
+            Self::CratesIo(CratesIoSource { sha256, .. })
+            | Self::Registry(RegistrySource { sha256, .. })
+            | Self::Git(GitSource { sha256, .. }) => sha256.as_ref(),
             _ => None,
         }
     }
@@ -564,6 +599,10 @@ impl ResolvedSource {
     pub fn with_sha256(&self, sha256: String) -> Self {
         match self {
             Self::CratesIo(source) => Self::CratesIo(CratesIoSource {
+                sha256: Some(sha256),
+                ..source.clone()
+            }),
+            Self::Registry(source) => Self::Registry(RegistrySource {
                 sha256: Some(sha256),
                 ..source.clone()
             }),
@@ -581,6 +620,10 @@ impl ResolvedSource {
                 sha256: None,
                 ..source.clone()
             }),
+            Self::Registry(source) => Self::Registry(RegistrySource {
+                sha256: None,
+                ..source.clone()
+            }),
             Self::Git(source) => Self::Git(GitSource {
                 sha256: None,
                 ..source.clone()
@@ -594,6 +637,7 @@ impl ToString for ResolvedSource {
     fn to_string(&self) -> String {
         match self {
             Self::CratesIo(source) => source.to_string(),
+            Self::Registry(source) => source.to_string(),
             Self::Git(source) => source.to_string(),
             Self::LocalDirectory(source) => source.to_string(),
             Self::Nix(source) => source.to_string(),
@@ -613,7 +657,19 @@ impl CratesIoSource {
     }
 }
 
+impl RegistrySource {
+    pub fn url(&self) -> String {
+        unimplemented!()
+    }
+}
+
 impl Display for CratesIoSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.url())
+    }
+}
+
+impl Display for RegistrySource {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.url())
     }

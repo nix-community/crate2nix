@@ -176,7 +176,7 @@ fn cfg_to_nix_expr_filter(
             if key.starts_with("cfg(") && key.ends_with(')') {
                 let cfg = &key[4..key.len() - 1];
 
-                let expr = CfgExpr::from_str(&cfg).map_err(|e| {
+                let expr = CfgExpr::from_str(cfg).map_err(|e| {
                     tera::Error::msg(format!(
                         "cfg_to_nix_expr_filter: Could not parse '{}': {}",
                         cfg, e
@@ -184,14 +184,8 @@ fn cfg_to_nix_expr_filter(
                 })?;
                 Ok(tera::Value::String(cfg_to_nix_expr(&expr)))
             } else {
-                // `lib.toRustTarget` has existed since Nixpkgs 21.05. That is
-                // hopefully good enough.
-                //
-                // We are choosing an arbitrary rust version to grab `lib` from,
-                // which is unfortunate, but `lib` has been version-agnostic the
-                // whole time so this is good enough for now.
                 let condition = format!(
-                    "(pkgs.rust.lib.toRustTarget stdenv.hostPlatform == {})",
+                    "(stdenv.hostPlatform.rust.rustcTarget == {})",
                     escape_nix_string(key)
                 );
                 Ok(tera::Value::String(condition))
@@ -224,7 +218,7 @@ fn cfg_to_nix_expr(cfg: &CfgExpr) -> String {
                 } else if key == "target_family" {
                     format!("(builtins.elem {} target.{})", escaped_value, target(key))
                 } else {
-                    format!("({} == target.{})", escaped_value, target(key))
+                    format!("({} == target.{} or null)", escaped_value, target(key))
                 });
             }
             CfgExpr::Not(expr) => {
@@ -292,19 +286,19 @@ fn test_render_cfg_to_nix_expr() {
         &cfg_to_nix_expr(&kv("target_family", "unix"))
     );
     assert_eq!(
-        "(\"linux\" == target.\"os\")",
+        "(\"linux\" == target.\"os\" or null)",
         &cfg_to_nix_expr(&kv("target_os", "linux"))
     );
     assert_eq!(
-        "(!(\"linux\" == target.\"os\"))",
+        "(!(\"linux\" == target.\"os\" or null))",
         &cfg_to_nix_expr(&CfgExpr::Not(Box::new(kv("target_os", "linux"))))
     );
     assert_eq!(
-        "((target.\"unix\" or false) || (\"linux\" == target.\"os\"))",
+        "((target.\"unix\" or false) || (\"linux\" == target.\"os\" or null))",
         &cfg_to_nix_expr(&CfgExpr::Any(vec![name("unix"), kv("target_os", "linux")]))
     );
     assert_eq!(
-        "((target.\"unix\" or false) && (\"linux\" == target.\"os\"))",
+        "((target.\"unix\" or false) && (\"linux\" == target.\"os\" or null))",
         &cfg_to_nix_expr(&CfgExpr::All(vec![name("unix"), kv("target_os", "linux")]))
     );
     assert_eq!("true", &cfg_to_nix_expr(&CfgExpr::All(vec![])));

@@ -1,0 +1,38 @@
+---
+title: Welcome to crate2nix
+description: What is crate2nix?
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Icon } from '@astrojs/starlight/components';
+
+<Card title="What does crate2nix do?">
+`crate2nix` builds your [cargo](https://crates.io/)-based [rust](https://www.rust-lang.org/) project 
+crate-by-crate with [nix](https://nixos.org/nix/).
+
+You can 
+
+* save time by only rebuilding changed crates hermetically in CI, and
+* use `cargo`/`rust-analyzer` locally for a fast developing loop.
+</Card>
+
+**Dependency tree from cargo**: It uses [cargo_metadata](https://github.com/oli-obk/cargo_metadata) to obtain the
+dependency tree from cargo. Therefore, it will use the exact same library versions as cargo and respect any locked down
+version in `Cargo.lock`.
+
+**Smart caching**: It caches the builds of individual crates so that nix rebuilds exactly the crates that need to be rebuilt.
+Compare that to docker layers...
+
+**Nix ecosystem goodness**: You can use all things that make the nix/NixOS ecosystem great, e.g. distributed/remote builds,
+build minimal docker images, deploy your binary as a service to the cloud, ...
+
+**Out of the box support for libraries with non-rust dependencies**: It builds on top of the `buildRustCrate`
+function from [NixOS](https://nixos.org/) so that native dependencies of
+many rust libraries are already correctly fetched when needed. If your library with native dependencies is not yet
+supported, you can customize `defaultCrateOverrides` / `crateOverrides`, see below.
+
+**Optional Import From Derivation**: Optional ability to generate the derived `Cargo.nix` during evaluation time so it does
+no need to be committed.
+
+**Easy to understand nix template**: The actual nix code is generated via `crate2nix/templates/build.nix.tera` so you can
+fix/improve the nix code without knowing rust if all the data is already there.

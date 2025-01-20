@@ -1,0 +1,97 @@
+---
+title: Generating Cargo.nix via IFD
+---
+import { LinkCard } from '@astrojs/starlight/components';
+
+* ✅ No need to install `crate2nix`.
+* ✅ Auto-generates nix from your `Cargo.lock` file.
+* ⚠️ Uses the [import from derivation](https://nixos.org/manual/nix/stable/language/import-from-derivation)
+  feature from Nix which may lead to disabling build parallelism.
+
+There are two commands in the `tools.nix` file:
+
+* `generatedCargoNix` will generate a folder containing a `default.nix`, to be used
+  as a `Cargo.nix` file. The argument it takes are:
+  * `name`: required. The name of the project (need to be a valid nix name
+    identifier, so no space are allowed, but dash are.)
+  * `src`: required. The folder that contain the root of the Rust project.
+  * `cargoToml`: optional. The name and path relative to the `src` root of the
+    `Cargo.toml` to use. Default to `Cargo.toml`.
+  * `additionalCargoNixArgs`: optional, additional argument for `crate2nix`, in a list
+* `appliedCargoNix` take the same argument that `generatedCargoNix`, but also call the
+  generated file with the `pkgs` provided when calling `tools.nix`
+
+In a flake with flake-parts:
+
+```nix "tools.${system}.appliedCargoNix" "crate2nix"
+# flake.nix
+{
+  # ...
+
+  inputs = {
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+    crate2nix.url = "github:nix-community/crate2nix";
+    # ...
+  };
+
+  outputs =
+    inputs @ { self
+    , nixpkgs
+    , flake-parts
+    , rust-overlay
+    , crate2nix
+    , ...
+    }: flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-linux"
+        "aarch64-darwin"
+      ];
+
+      perSystem = { system, pkgs, lib, inputs', ... }:
+        let
+          cargoNix = inputs.crate2nix.tools.${system}.appliedCargoNix {
+            name = "rustnix";
+            src = ./.;
+          };
+        in
+        rec {
+          checks = {
+            rustnix = cargoNix.rootCrate.build.override {
+              runTests = true;
+            };
+          };
+
+          packages = {
+            rustnix = cargoNix.rootCrate.build;
+            default = packages.rustnix;
+          };
+        };
+    };
+}
+```
+
+Without flakes, `crate2nix` needs to point to the root of the `crate2nix` sources:
+
+```nix
+# default.nix
+let
+  crate2nix = ...;
+  crate2nix-tools = pkgs.callPackage "${crate2nix}/tools.nix" {};
+  generated = crate2nix-tools.generatedCargoNix {
+    name = "test-rust-project";
+    src = ./.;
+  };
+  called = pkgs.callPackage "${generated}/default.nix" {};
+in
+  called.rootCrate.build
+```
+
+<LinkCard
+    title="Learn" icon="rocket" 
+    description="How it works."
+    href="/crate2nix/70_design/50_tools_nix/"/>

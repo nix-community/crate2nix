@@ -22,7 +22,7 @@ pub fn nix_build(
         &format!("Building {}", project_dir),
         Command::new("nix")
             .current_dir(&project_dir)
-            .args(&[
+            .args([
                 "--show-trace",
                 "build",
                 "-f",
@@ -42,7 +42,7 @@ pub fn nix_build(
     );
 
     if result.is_err() {
-        dump_with_lines(&project_dir_path.join("default.nix"))?;
+        dump_with_lines(project_dir_path.join("default.nix"))?;
     }
 
     result
@@ -51,7 +51,7 @@ pub fn nix_build(
 /// Dump the content of the specified file with line numbers to stdout.
 pub fn dump_with_lines(file_path: impl AsRef<Path>) -> Result<(), Error> {
     let file_path = file_path.as_ref().to_string_lossy().to_string();
-    let content = std::io::BufReader::new(std::fs::File::open(&file_path)?);
+    let content = std::io::BufReader::new(std::fs::File::open(file_path)?);
     let stdout = std::io::stdout();
     let mut handle = stdout.lock();
     for (idx, line) in content.lines().enumerate() {

@@ -1,0 +1,10 @@
+[package]
+name = "rustnix"
+description = "An example project about rust and nix"
+publish = false
+version = "0.1.0"
+
+edition = "2021"
+
+[dependencies]
+colored = "2.0.4"

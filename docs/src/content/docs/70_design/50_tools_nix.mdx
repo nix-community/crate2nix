@@ -1,0 +1,23 @@
+---
+title: tools.nix
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+The `tools.nix` file contain the necessary code to generate the `Cargo.nix` file
+during evaluation time, which guarantee to always have `Cargo.nix` file up-to-date
+in regard to the `Cargo.lock`. The generated file is imported automatically in Nix
+code via the [import from derivation feature](https://nixos.org/manual/nix/stable/language/import-from-derivation),
+and can then be used like a normal `Cargo.nix` file.
+
+Internally, this work by reading the `Cargo.lock` file with Nix, using the locked
+version and hash present in it to fetch them without introducing impurities.
+The fetched dependencies are then used to generate a vendored folder, and the
+appropriate configuration is generated so that the dependencies are fetched from here.
+`crate2nix` is then called in a derivation that will generate the `Cargo.nix` file
+offline, which can later be imported.
+
+<LinkCard
+    title="Use it" icon="rocket" 
+    description="Checkout the guide for using it in your build."
+    href="/crate2nix/00_guides/31_auto_generating/"/>

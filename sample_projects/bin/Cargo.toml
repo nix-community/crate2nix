@@ -8,3 +8,6 @@ edition = "2018"
 
 [target.'cfg(never_happens)'.dependencies]
 cfg-if = "1"
+
+[target.'cfg(doesnt_exist = "should pass")'.dependencies]
+cfg-if = "1"

@@ -1,32 +1,34 @@
 [package]
 name = "crate2nix"
-version = "0.11.0-rc.4"
+version = "0.14.1"
 authors = ["Peter Kolloch <info@eigenvalue.net>"]
-edition = "2018"
+edition = "2021"
 license = "Apache-2.0"
 description = "crate2nix generates nix (as in NixOS) build files for rust using cargo."
-repository = "https://github.com/kolloch/crate2nix"
+repository = "https://github.com/nix-community/crate2nix"
+homepage = "https://nix-community.github.io/crate2nix/"
+documentation = "https://nix-community.github.io/crate2nix/"
 readme = "../README.md"
-keywords = ["nixos", "nix", "cargo", "build"]
+keywords = ["nix", "cargo", "build", "ci", "cache"]
 resolver = "2"
 
 [dependencies]
 anyhow = "1.0.28"
 cargo = "0.72"
-cargo_metadata = "0.14"
+cargo_metadata = "0.18"
 cargo-platform = "0.1"
 hex = "0.4"
-itertools = "0.9"
+itertools = "0.12"
 lazy_static = "1"
 nix-base32 = "0.1"
-pathdiff = "0.1"
+pathdiff = "0.2"
 structopt = "0.3"
 semver = { version = "1", features = ["serde"] }
 serde = { version = "1.0.107", features = ["derive"] }
 serde_json = { version = "1.0.59", features = ["unbounded_depth"] }
 tera = { version = "1", default-features = false }
 toml = "0.8"
-url = "1"
+url = { version = "2", features = ["serde"] }
 url_serde = "0.2"
 
 [dev-dependencies]
