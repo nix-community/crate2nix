@@ -8,8 +8,8 @@ let
   rootNode = let rootName = flakeLock.root; in builtins.getAttr rootName flakeLock.nodes;
 in
 {
-  # Get a locked flake input value that can be given to builtins.fetchTree. For
-  # example,
+  # Get a locked flake input value that can be given to `builtins.fetchTree` or
+  # to `builtins.getFlake`. For example,
   #
   #     pkgs = import (builtins.fetchTree (flakeInput "nixpkgs")) { }
   #
