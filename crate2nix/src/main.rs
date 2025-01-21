@@ -497,7 +497,7 @@ fn main() -> anyhow::Result<()> {
         }
         Opt::ResolveManifest { cargo_toml } => {
             let manifest = resolve_manifest(&cargo_toml)?;
-            let toml = toml::to_string_pretty(manifest.original_toml())?;
+            let toml = toml::to_string_pretty(manifest.normalized_toml())?;
             println!("{toml}");
         }
     }
