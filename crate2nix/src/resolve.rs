@@ -633,14 +633,14 @@ impl ResolvedSource {
     }
 }
 
-impl ToString for ResolvedSource {
-    fn to_string(&self) -> String {
+impl Display for ResolvedSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::CratesIo(source) => source.to_string(),
-            Self::Registry(source) => source.to_string(),
-            Self::Git(source) => source.to_string(),
-            Self::LocalDirectory(source) => source.to_string(),
-            Self::Nix(source) => source.to_string(),
+            Self::CratesIo(source) => write!(f, "{}", source),
+            Self::Registry(source) => write!(f, "{}", source),
+            Self::Git(source) => write!(f, "{}", source),
+            Self::LocalDirectory(source) => write!(f, "{}", source),
+            Self::Nix(source) => write!(f, "{}", source),
         }
     }
 }
