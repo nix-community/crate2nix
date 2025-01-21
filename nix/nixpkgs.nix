@@ -1,4 +1,4 @@
 let
-  flakeLock = builtins.fromJSON (builtins.readFile ../flake.lock);
+  flakeInput = (import ./lib.nix).flakeInput;
 in
-import "${builtins.fetchTree flakeLock.nodes.nixpkgs.locked}"
+import (builtins.fetchTree (flakeInput "nixpkgs"))
