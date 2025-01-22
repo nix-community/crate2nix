@@ -314,7 +314,7 @@ impl PrefetchableSource for RegistrySource {
 
 impl PrefetchableSource for GitSource {
     fn needs_prefetch(&self) -> bool {
-        self.sha256.is_none()
+        false
     }
 
     fn prefetch(&self) -> Result<String, Error> {

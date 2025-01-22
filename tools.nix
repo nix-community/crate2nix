@@ -390,18 +390,25 @@ rec {
           "git" = { name, version, source, ... } @ package:
             assert (sourceType package) == "git";
             let
-              packageId = toPackageId package;
-              sha256 = extendedHashes.${packageId};
               parsed = parseGitSource source;
-              src = pkgs.fetchgit {
-                name = "${name}-${version}";
-                inherit sha256;
-                inherit (parsed) url;
-                rev =
-                  if isNull parsed.urlFragment
-                  then parsed.rev
-                  else parsed.urlFragment;
+              srcname = "${name}-${version}";
+              ref =
+                if builtins.hasAttr "tag" parsed then "refs/tags/${parsed.tag}"
+                else if builtins.hasAttr "branch" parsed then parsed.branch
+                else if builtins.hasAttr "ref" parsed then parsed.ref
+                else null;
+              src-spec = {
+                  inherit (parsed) url;
+                  allRefs = isNull ref;
+                  name = srcname;
+                  rev =
+                    if isNull parsed.urlFragment
+                    then parsed.rev
+                    else parsed.urlFragment;
+                } // lib.optionalAttrs (!(isNull ref)) {
+                inherit ref;
               };
+              src = builtins.trace src-spec.rev (builtins.trace src-spec (builtins.fetchGit src-spec));
 
               rootCargo = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
               isWorkspace = rootCargo ? "workspace";
@@ -425,7 +432,7 @@ rec {
                 else
                   ".";
             in
-            pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
+            pkgs.runCommand (lib.removeSuffix ".tar.gz" srcname) { }
               ''
                 mkdir -p $out
                 cp -apR ${src}/${pathToExtract}/* $out
