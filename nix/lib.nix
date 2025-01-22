@@ -13,14 +13,18 @@ in
   #
   #     pkgs = import (builtins.fetchTree (flakeInput "nixpkgs")) { }
   #
-  flakeInput = name: (flakeInputNodeOf rootNode name).locked;
-
-  # Get a locked flake input like `flakeInput`, but instead of taking a single
-  # name this function takes a list of nodes to traverse. For example,
+  # This function can also be used to get inputs of inputs using dot-separated
+  # paths. For example,
   #
-  #     flakeNestedInput ["a" "b" "c"]
+  #     pkgs = import (builtins.fetchTree (flakeInput "crate2nix_stable.nixpkgs")) { }
   #
-  # Gets the locked input named "c" which is an input to "b" which is in turn an
-  # input to "a"
-  flakeNestedInput = names: (builtins.foldl' flakeInputNodeOf rootNode names).locked;
+  # Gets the nixpkgs input of the crate2nix_stable input.
+  #
+  flakeInput = name:
+    let
+      parts = builtins.split "[.]" name;
+      inputNames = builtins.filter builtins.isString parts;
+      flakeNode = builtins.foldl' flakeInputNodeOf rootNode inputNames;
+    in
+    flakeNode.locked;
 }

@@ -16,16 +16,22 @@ using the [tools.nix](./31_auto_generating) support:
 ```nix
 # nix/nix-test-runner.nix
 let
-  lib = import ./lib.nix;
-  # Gets the locked test runner source from flake inputs.
-  src = builtins.fetchTree (lib.flakeInput "nix-test-runner");
-in
-{ system ? null # a system must be specified if using default value for pkgs
+  # Reuses the locked flake inputs.
+  flakeInput = (import ./lib.nix).flakeInput;
+  # Gets the locked sources.
+  src = builtins.fetchTree (flakeInput "nix-test-runner");
 
   # Use last pinned crate2nix packages and corresponding nixpkgs to build the
   # test runner so that it works even if we have broken stuff!
-, pkgs ? import (builtins.fetchTree (lib.flakeNestedInput [ "crate2nix_stable" "nixpkgs" ])) { inherit system; }
-, tools ? pkgs.callPackage "${builtins.fetchTree (lib.flakeInput "crate2nix_stable")}/tools.nix" { }
+  crate2nix_stable = builtins.fetchTree (flakeInput "crate2nix_stable");
+  nixpkgs_stable = builtins.fetchTree (flakeInput "crate2nix_stable.nixpkgs");
+in
+{
+  # A system must be specified if using default value for pkgs and calling this
+  # package from a pure evaluation context, such as from the flake devShell.
+  system ? builtins.currentSystem
+, pkgs ? import nixpkgs_stable { inherit system; }
+, tools ? pkgs.callPackage "${crate2nix_stable}/tools.nix" { }
 }:
 let
   nixTestRunner = tools.appliedCargoNix {
