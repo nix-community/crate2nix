@@ -45,7 +45,7 @@ nixTestRunner.rootCrate.build
 ```nix
 # nix/nixpkgs.nix
 let
-  flakeInput = import ./lib.nix;
+  flakeInput = import ./flakeInput.nix;
 in
 import (builtins.fetchTree (flakeInput "nixpkgs"))
 ```
