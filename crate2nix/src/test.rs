@@ -1,4 +1,7 @@
-///! Constructor functions for test data.
+//! Constructor functions for test data.
+
+#![allow(missing_docs)]
+
 use cargo_metadata::{Dependency, Metadata, Node, NodeDep, Package, PackageId, Resolve};
 use std::path::PathBuf;
 use tempdir::TempDir;
@@ -8,6 +11,7 @@ pub fn generate_config() -> crate::GenerateConfig {
     crate::GenerateConfig {
         cargo_toml: vec!["Cargo.toml".into()],
         crate_hashes_json: "crate-hashes.json".into(),
+        registry_hashes_json: "registry-hashes.json".into(),
         nixpkgs_path: "bogus-nixpkgs-path".into(),
         other_metadata_options: vec![],
         output: "Cargo.nix".into(),

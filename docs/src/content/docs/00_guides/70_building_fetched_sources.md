@@ -17,14 +17,21 @@ using the [tools.nix](./31_auto_generating) support:
 # nix/nix-test-runner.nix
 let
   # Reuses the locked flake inputs.
-  flakeLock = builtins.fromJSON (builtins.readFile ../flake.lock);
+  flakeInput = import ./flakeInput.nix;
   # Gets the locked sources.
-  src = builtins.fetchTree flakeLock.nodes.nix-test-runner.locked;
+  src = builtins.fetchTree (flakeInput "nix-test-runner");
+
+  # Use last pinned crate2nix packages and corresponding nixpkgs to build the
+  # test runner so that it works even if we have broken stuff!
+  crate2nix_stable = builtins.fetchTree (flakeInput "crate2nix_stable");
+  nixpkgs_stable = builtins.fetchTree (flakeInput "crate2nix_stable.nixpkgs");
 in
-{ pkgs ? import ./nixpkgs.nix { }
-  # Use last pinned crate2nix packages to build the test runner
-  # so that it works even if we have broken stuff!
-, tools ? pkgs.callPackage "${builtins.fetchTree flakeLock.nodes.crate2nix_stable.locked}/tools.nix" { }
+{
+  # A system must be specified if using default value for pkgs and calling this
+  # package from a pure evaluation context, such as from the flake devShell.
+  system ? builtins.currentSystem
+, pkgs ? import nixpkgs_stable { inherit system; }
+, tools ? pkgs.callPackage "${crate2nix_stable}/tools.nix" { }
 }:
 let
   nixTestRunner = tools.appliedCargoNix {
@@ -38,9 +45,9 @@ nixTestRunner.rootCrate.build
 ```nix
 # nix/nixpkgs.nix
 let
-  flakeLock = builtins.fromJSON (builtins.readFile ../flake.lock);
+  flakeInput = import ./lib.nix;
 in
-import "${builtins.fetchTree flakeLock.nodes.nixpkgs.locked}"
+import (builtins.fetchTree (flakeInput "nixpkgs"))
 ```
 
 ```nix
