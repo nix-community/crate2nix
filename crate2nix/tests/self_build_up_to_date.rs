@@ -31,6 +31,7 @@ fn self_up_to_date() {
             output: PathBuf::from("./Cargo.nix"),
             nixpkgs_path: "../nix/nixpkgs.nix".to_string(),
             crate_hashes_json: PathBuf::from("./crate-hashes.json"),
+            registry_hashes_json: PathBuf::from("./registry-hashes.json"),
             other_metadata_options: vec![],
             use_cargo_lock_checksums: true,
             read_crate_hashes: true,
@@ -76,6 +77,9 @@ fn assert_up_to_date(project_dir: &Path) {
         crate_hashes_json: PathBuf::from("../")
             .join(project_dir)
             .join("./crate-hashes.json"),
+        registry_hashes_json: PathBuf::from("../")
+            .join(project_dir)
+            .join("./registry-hashes.json"),
         other_metadata_options: vec![],
         use_cargo_lock_checksums: true,
         read_crate_hashes: true,
