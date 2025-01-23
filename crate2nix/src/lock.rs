@@ -66,8 +66,7 @@ impl EncodableResolve {
                 None => {
                     // Retrieve legacy checksums.
                     self.metadata.as_ref().and_then(|metadata| {
-                        const CHECKSUM_PREFIX: &str = "checksum";
-                        let checksum_key = format!("{CHECKSUM_PREFIX} {name} {version} ({source})");
+                        let checksum_key = format!("checksum {name} {version} ({source})");
                         metadata.get(&checksum_key)
                     })
                 }
