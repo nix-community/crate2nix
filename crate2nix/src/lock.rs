@@ -50,32 +50,31 @@ impl EncodableResolve {
             ..
         } in self.package.iter()
         {
-            let Some((source, checksum)) = Option::zip(source.as_ref(), checksum.as_ref()) else {
+            let Some(source) = source.as_ref() else {
                 continue;
             };
-            if checksum == "<none>" {
-                continue;
-            }
 
-            if let Some(package_id) =
+            let Some(package_id) =
                 package_id_by_source.get(&(name.as_str(), source.as_str(), version.clone()))
-            {
-                hashes.insert((*package_id).clone(), checksum.clone());
-            }
-        }
+            else {
+                continue;
+            };
 
-        // Retrieve legacy checksums.
-        const CHECKSUM_PREFIX: &str = "checksum ";
-        if let Some(metadata) = &self.metadata {
-            for (key, value) in metadata {
-                if key.starts_with(CHECKSUM_PREFIX) {
-                    let package_id = PackageId {
-                        repr: key.trim_start_matches(CHECKSUM_PREFIX).to_string(),
-                    };
-                    if value != "<none>" {
-                        hashes.insert(package_id, value.clone());
-                    }
+            let checksum = match checksum.as_ref() {
+                Some(checksum) if checksum == "<none>" => None,
+                Some(checksum) => Some(checksum),
+                None => {
+                    // Retrieve legacy checksums.
+                    self.metadata.as_ref().and_then(|metadata| {
+                        const CHECKSUM_PREFIX: &str = "checksum";
+                        let checksum_key = format!("{CHECKSUM_PREFIX} {name} {version} ({source})");
+                        metadata.get(&checksum_key)
+                    })
                 }
+            };
+
+            if let Some(checksum) = checksum {
+                hashes.insert((*package_id).clone(), checksum.to_owned());
             }
         }
 
