@@ -37,6 +37,7 @@ pub mod nix_build;
 mod prefetch;
 pub mod render;
 mod resolve;
+pub mod resolve_manifest;
 pub mod sources;
 #[cfg(test)]
 pub mod test;

@@ -1,3 +1,4 @@
+use crate2nix::resolve_manifest::resolve_manifest;
 use std::path::{Path, PathBuf};
 use structopt::clap::ArgGroup;
 use structopt::StructOpt;
@@ -497,22 +498,10 @@ fn main() -> anyhow::Result<()> {
         }
         Opt::ResolveManifest { cargo_toml } => {
             let manifest = resolve_manifest(&cargo_toml)?;
-            let toml = toml::to_string_pretty(manifest.normalized_toml())?;
+            let toml = toml::to_string_pretty(&manifest)?;
             println!("{toml}");
         }
     }
 
     Ok(())
-}
-
-fn resolve_manifest(cargo_toml: &Path) -> cargo::CargoResult<cargo::core::Manifest> {
-    use cargo::core::SourceId;
-
-    let full_path = cargo_toml.canonicalize()?;
-    let source_id = SourceId::for_path(&full_path)?;
-
-    let context = cargo::GlobalContext::default()?;
-    let pkg = cargo::ops::read_package(&full_path, source_id, &context)?;
-
-    Ok(pkg.manifest().clone())
 }

@@ -14,9 +14,9 @@ resolver = "2"
 
 [dependencies]
 anyhow = "1.0.28"
-cargo = "0.85"
 cargo_metadata = "0.18"
 cargo-platform = "0.1"
+cargo_toml = "0.21.0"
 hex = "0.4"
 itertools = "0.12"
 lazy_static = "1"
@@ -29,7 +29,6 @@ serde_json = { version = "1.0.59", features = ["unbounded_depth"] }
 tera = { version = "1", default-features = false }
 toml = "0.8"
 url = { version = "2", features = ["serde"] }
-url_serde = "0.2"
 
 [dev-dependencies]
 colored-diff = "0.2.2"
