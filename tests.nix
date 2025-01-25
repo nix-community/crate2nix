@@ -300,6 +300,12 @@ let
     }
 
     {
+      name = "bin_with_git_dep_in_workspace";
+      src = ./sample_projects/bin_with_git_dep_in_workspace;
+      expectedOutput = "v0.1.6";
+    }
+
+    {
       name = "bin_with_git_submodule_dep";
       src = ./sample_projects/bin_with_git_submodule_dep;
       pregeneratedBuild = "sample_projects/bin_with_git_submodule_dep/Cargo.nix";
