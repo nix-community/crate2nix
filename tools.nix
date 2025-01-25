@@ -398,13 +398,14 @@ rec {
                 else if builtins.hasAttr "ref" parsed then parsed.ref
                 else null;
               rev =
-                if isNull parsed.rev
-                then parsed.urlFragment
-                else parsed.rev;
+                if builtins.hasAttr "rev" parsed
+                then parsed.rev
+                else builtins.trace parsed parsed.urlFragment;
               src-spec = {
                 inherit (parsed) url;
                 allRefs = isNull ref;
                 name = srcname;
+                submodules = true;
               } // lib.optionalAttrs (!(isNull ref)) {
                 inherit ref;
               } // lib.optionalAttrs (!(isNull rev)) {

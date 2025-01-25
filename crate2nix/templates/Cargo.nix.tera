@@ -159,11 +159,12 @@ rec {
         src = builtins.fetchGit {
           url = {{crate.source.Git.url}};
           rev = {{crate.source.Git.rev}};
-          {%- if crate.source.Git.ref %}
+          {% if crate.source.Git.ref %}
           ref = {{ crate.source.Git.ref }};
           {%- else -%}
           allRefs = true;
           {%- endif %}
+          submodules = true;
         };
         {%- else %}
         src = builtins.throw ''ERROR: Could not resolve source: {{crate.source | json_encode() | safe}}'';

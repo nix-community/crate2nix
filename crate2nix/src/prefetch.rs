@@ -314,6 +314,7 @@ impl PrefetchableSource for RegistrySource {
 
 impl PrefetchableSource for GitSource {
     fn needs_prefetch(&self) -> bool {
+        // self.rev is sufficient for reproducible fetching, and that field is mandatory
         false
     }
 
