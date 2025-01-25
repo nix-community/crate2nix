@@ -397,18 +397,20 @@ rec {
                 else if builtins.hasAttr "branch" parsed then parsed.branch
                 else if builtins.hasAttr "ref" parsed then parsed.ref
                 else null;
+              rev =
+                if isNull parsed.rev
+                then parsed.urlFragment
+                else parsed.rev;
               src-spec = {
-                  inherit (parsed) url;
-                  allRefs = isNull ref;
-                  name = srcname;
-                  rev =
-                    if isNull parsed.urlFragment
-                    then parsed.rev
-                    else parsed.urlFragment;
-                } // lib.optionalAttrs (!(isNull ref)) {
+                inherit (parsed) url;
+                allRefs = isNull ref;
+                name = srcname;
+              } // lib.optionalAttrs (!(isNull ref)) {
                 inherit ref;
+              } // lib.optionalAttrs (!(isNull rev)) {
+                inherit rev;
               };
-              src = builtins.trace src-spec.rev (builtins.trace src-spec (builtins.fetchGit src-spec));
+              src = builtins.fetchGit src-spec;
 
               rootCargo = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
               isWorkspace = rootCargo ? "workspace";
