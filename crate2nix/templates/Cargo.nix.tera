@@ -161,9 +161,7 @@ rec {
           rev = {{crate.source.Git.rev}};
           {% if crate.source.Git.ref %}
           ref = {{ crate.source.Git.ref }};
-          {%- else -%}
-          allRefs = true;
-          {%- endif %}
+          {%- endif -%}
           submodules = true;
         };
         {%- else %}

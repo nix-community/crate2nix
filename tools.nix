@@ -393,17 +393,15 @@ rec {
               parsed = parseGitSource source;
               srcname = "${name}-${version}";
               ref =
-                if builtins.hasAttr "tag" parsed then "refs/tags/${parsed.tag}"
-                else if builtins.hasAttr "branch" parsed then parsed.branch
-                else if builtins.hasAttr "ref" parsed then parsed.ref
+                if parsed ? tag then "refs/tags/${parsed.tag}"
+                else if parsed ? branch then parsed.branch
+                else if parsed ? ref then parsed.ref
                 else null;
               rev =
-                if builtins.hasAttr "rev" parsed
-                then parsed.rev
-                else builtins.trace parsed parsed.urlFragment;
+                if parsed ? rev then parsed.rev
+                else parsed.urlFragment;
               src-spec = {
                 inherit (parsed) url;
-                allRefs = isNull ref;
                 name = srcname;
                 submodules = true;
               } // lib.optionalAttrs (!(isNull ref)) {
