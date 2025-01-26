@@ -334,7 +334,7 @@ impl PrefetchableSource for GitSource {
             self.url.as_str(),
             "--fetch-submodules",
             "--rev",
-            &self.rev,
+            self.rev.as_ref(),
         ];
 
         // TODO: --branch-name isn't documented in nix-prefetch-git --help

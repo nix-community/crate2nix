@@ -1,3 +1,4 @@
+use crate2nix::CommitHash;
 use std::path::{Path, PathBuf};
 use structopt::clap::ArgGroup;
 use structopt::StructOpt;
@@ -273,8 +274,8 @@ pub enum SourceAddingCommands {
         /// E.g. https://github.com/kolloch/crate2nix.git
         url: url::Url,
 
-        #[structopt(long = "rev", parse(from_str), help = "The git revision hash.")]
-        rev: String,
+        #[structopt(long = "rev", parse(try_from_str = CommitHash::try_from), help = "The git revision hash.")]
+        rev: CommitHash,
     },
 
     #[structopt(
