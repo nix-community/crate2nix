@@ -187,23 +187,56 @@ rec {
             l = lib.splitString "=" s;
             key = builtins.elemAt l 0;
           in
-          {
-            # Cargo supports using the now-obsoleted "ref" key in place of
-            # "branch"; see cargo-vendor source
-            name =
-              if key == "ref"
-              then "branch"
-              else key;
-            value = builtins.elemAt l 1;
-          };
+          { name = key; value = builtins.elemAt l 1; };
         queryParams = builtins.listToAttrs (map kv queryParamsList);
+        firstNonNull = lib.lists.findFirst (v: v != null) null;
+        ref =
+          let
+            refParams = [
+              { key = "branch"; refPrefix = "refs/heads/"; }
+              { key = "tag"; refPrefix = "refs/tags/"; }
+              { key = "rev"; refPrefix = ""; }
+              { key = "ref"; refPrefix = ""; }
+            ];
+            parseRef = { key, refPrefix }:
+              let
+                v = if queryParams ? key then queryParams.key else null;
+              in
+              # Rev is usually a commit hash, but in some cases it can be a ref.
+                # Use as a ref only if it is **not** a valid commit hash.
+              if parseCommitHash v != null then null else "{refPrefix}{v}";
+          in
+          firstNonNull
+            (builtins.map parseRef refParams);
+        rev =
+          let
+            fromFragment = parseCommitHash fragment;
+            fromRev = if queryParams ? rev then parseCommitHash queryParams.rev else null;
+          in
+          firstNonNull [ fromFragment fromRev ];
       in
       assert builtins.length splitHash <= 2;
       assert builtins.length splitQuestion <= 2;
+      assert rev != null;
       queryParams // {
+        inherit ref rev;
         url = preQueryParams;
-        urlFragment = fragment;
       };
+
+    # If the input is a valid git commit hash returns a normalized version by
+    # converting alphabetical characters to lower case. If the input is not a
+    # valid hash returns null.
+    parseCommitHash = str:
+      let
+        normalized = lib.toLower str;
+        isValidHash = !(isNull (builtins.match "^[0123456789abcdef]{40}$" normalized));
+      in
+      if builtins.isString str && isValidHash then normalized else null;
+
+    # Returns input unchanged if it is a non-empty string. Otherwise returns
+    # null.
+    parseCommitRef = str:
+      if builtins.isString str && builtins.match "^\s*$" str != null then str else null;
 
     gatherLockFiles = crateDir:
       let
@@ -263,16 +296,11 @@ rec {
           let
             parsed = parseGitSource source;
             src = builtins.fetchGit ({
+              inherit (parsed) url rev;
               submodules = true;
-              inherit (parsed) url;
-              rev =
-                if isNull parsed.urlFragment
-                then parsed.rev
-                else parsed.urlFragment;
-            } // (if (parsed ? branch || parsed ? tag)
-            then { ref = parsed.branch or "refs/tags/${parsed.tag}"; }
-            else { allRefs = true; })
-            );
+            } // lib.optionalAttrs (!(isNull parsed.ref)) {
+              inherit (parsed) ref;
+            });
             hash = pkgs.runCommand "hash-of-${attrs.name}" { nativeBuildInputs = [ pkgs.nix ]; } ''
               echo -n "$(nix-hash --type sha256 --base32 ${src})" > $out
             '';
@@ -392,22 +420,12 @@ rec {
             let
               parsed = parseGitSource source;
               srcname = "${name}-${version}";
-              ref =
-                if parsed ? tag then "refs/tags/${parsed.tag}"
-                else if parsed ? branch then parsed.branch
-                else if parsed ? ref then parsed.ref
-                else null;
-              rev =
-                if parsed ? rev then parsed.rev
-                else parsed.urlFragment;
               src-spec = {
-                inherit (parsed) url;
+                inherit (parsed) url rev;
                 name = srcname;
                 submodules = true;
-              } // lib.optionalAttrs (!(isNull ref)) {
-                inherit ref;
-              } // lib.optionalAttrs (!(isNull rev)) {
-                inherit rev;
+              } // lib.optionalAttrs (!(isNull parsed.ref)) {
+                inherit (parsed) ref;
               };
               src = builtins.fetchGit src-spec;
 

@@ -494,25 +494,27 @@ impl ResolvedSource {
             );
         }
         let mut url = url::Url::parse(&source_string[GIT_SOURCE_PREFIX.len()..])?;
-        let mut query_pairs = url.query_pairs();
+        let query_pairs = url.query_pairs().collect::<HashMap<_, _>>();
 
-        // Locked git sources have optional ?branch or ?tag or ?rev query arguments. It is
+        // Locked git sources have optional ?branch, ?tag, ?rev, or ?ref query arguments. It is
         // important to capture these in case the given commit hash is not reachable from the
         // repo's default HEAD. OTOH if no form of ref is given that is an implication by cargo
         // that the default HEAD should be fetched.
-        let branch = query_pairs
-            .find(|(k, _)| k == "branch")
-            .map(|(_, v)| v.to_string());
-        let tag = query_pairs
-            .find(|(k, _)| k == "tag")
-            .map(|(_, v)| format!("refs/tags/{v}"));
-        let ref_via_rev = query_pairs
-            .find(|(k, _)| k == "rev")
-            // Rev is usually a commit hash, but in some cases it can be a ref. Use as a ref only
-            // if it is not a valid commit hash.
-            .filter(|(_, v)| CommitHash::parse(v).is_none())
-            .map(|(_, v)| v.to_string());
-        let r#ref = branch.or(tag).or(ref_via_rev);
+        const REF_PARAMS: [(&str, &str); 4] = [
+            ("branch", "refs/heads/"),
+            ("tag", "refs/tags/"),
+            ("rev", ""),
+            ("ref", ""),
+        ];
+        let r#ref = REF_PARAMS.iter().find_map(|(key, ref_prefix)| {
+            let v = query_pairs.get(*key)?;
+            if CommitHash::parse(v).is_some() {
+                // Rev is usually a commit hash, but in some cases it can be a ref. Use as a ref
+                // only if it is **not** a valid commit hash.
+                return None;
+            }
+            Some(format!("{ref_prefix}{v}"))
+        });
 
         // In locked sources the git commit hash is given as a URL fragment. It sometimes also
         // given in a ?rev query argument. But in other cases a ?rev argument might not be a commit
@@ -525,8 +527,8 @@ impl ResolvedSource {
         let rev = if let Some(rev) = url.fragment().and_then(CommitHash::parse) {
             rev
         } else if let Some(rev) = query_pairs
-            .find(|(k, _)| k == "rev")
-            .and_then(|(_, rev)| CommitHash::parse(&rev))
+            .get("rev")
+            .and_then(|rev| CommitHash::parse(rev))
         {
             rev
         } else {
