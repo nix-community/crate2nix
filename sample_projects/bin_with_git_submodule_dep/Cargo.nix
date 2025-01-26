@@ -488,7 +488,6 @@ rec {
         src = builtins.fetchGit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
           rev = "66f04df013b6e6bd42b5a8c353406e09a7c7da2a";
-
           submodules = true;
         };
         authors = [
@@ -841,7 +840,6 @@ rec {
         src = builtins.fetchGit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
           rev = "66f04df013b6e6bd42b5a8c353406e09a7c7da2a";
-
           submodules = true;
         };
         authors = [

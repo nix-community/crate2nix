@@ -252,7 +252,6 @@ rec {
         src = builtins.fetchGit {
           url = "https://github.com/diwic/dbus-rs.git";
           rev = "618262f5e3217cdd173d46d705bbac26c5141e21";
-
           submodules = true;
         };
         authors = [
@@ -291,7 +290,6 @@ rec {
         src = builtins.fetchGit {
           url = "https://github.com/diwic/dbus-rs.git";
           rev = "618262f5e3217cdd173d46d705bbac26c5141e21";
-
           submodules = true;
         };
         authors = [
@@ -367,7 +365,6 @@ rec {
         src = builtins.fetchGit {
           url = "https://github.com/diwic/dbus-rs.git";
           rev = "618262f5e3217cdd173d46d705bbac26c5141e21";
-
           submodules = true;
         };
         authors = [

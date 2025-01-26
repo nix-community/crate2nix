@@ -96,7 +96,6 @@ rec {
         src = builtins.fetchGit {
           url = "https://github.com/kolloch/with_sub_crates.git";
           rev = "f8ad2b98ff0eb5fea4962f55e3ced5b0b5afe973";
-
           submodules = true;
         };
         authors = [
@@ -112,7 +111,6 @@ rec {
         src = builtins.fetchGit {
           url = "https://github.com/kolloch/with_sub_crates.git";
           rev = "f8ad2b98ff0eb5fea4962f55e3ced5b0b5afe973";
-
           submodules = true;
         };
         authors = [
