@@ -204,7 +204,7 @@ rec {
               in
               # Rev is usually a commit hash, but in some cases it can be a ref.
                 # Use as a ref only if it is **not** a valid commit hash.
-              if parseCommitHash v != null then null else "{refPrefix}{v}";
+              if parseCommitHash v != null then null else "${refPrefix}${v}";
           in
           firstNonNull
             (builtins.map parseRef refParams);
