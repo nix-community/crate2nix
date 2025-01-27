@@ -159,9 +159,9 @@ rec {
         src = builtins.fetchGit {
           url = {{crate.source.Git.url}};
           rev = {{crate.source.Git.rev}};
-          {% if crate.source.Git.ref %}
+          {%- if crate.source.Git.ref %}
           ref = {{ crate.source.Git.ref }};
-          {%- endif -%}
+          {%- endif %}
           submodules = true;
         };
         {%- else %}
