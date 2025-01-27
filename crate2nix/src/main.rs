@@ -1,4 +1,4 @@
-use crate2nix::resolve_manifest::resolve_manifest;
+use crate2nix::normalize_manifest::normalize_manifest;
 use std::path::{Path, PathBuf};
 use structopt::clap::ArgGroup;
 use structopt::StructOpt;
@@ -162,10 +162,10 @@ pub enum Opt {
     },
 
     #[structopt(
-        name = "resolve-manifest",
+        name = "normalize-manifest",
         about = "Resolve fields inherited from a workspace, so that the manifest can be processed stand-alone."
     )]
-    ResolveManifest {
+    NormalizeManifest {
         #[structopt(
             short = "f",
             long = "cargo-toml",
@@ -496,8 +496,8 @@ fn main() -> anyhow::Result<()> {
         } => {
             command.execute(&crate2nix_json)?;
         }
-        Opt::ResolveManifest { cargo_toml } => {
-            let manifest = resolve_manifest(&cargo_toml)?;
+        Opt::NormalizeManifest { cargo_toml } => {
+            let manifest = normalize_manifest(&cargo_toml)?;
             let toml = toml::to_string_pretty(&manifest)?;
             println!("{toml}");
         }

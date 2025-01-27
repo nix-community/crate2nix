@@ -439,7 +439,7 @@ rec {
                 cd $out
 
                 mv ./Cargo.toml ./Cargo.toml.orig
-                ${crate2nix}/bin/crate2nix resolve-manifest --cargo-toml ${src}/${pathToExtract}/Cargo.toml > ./Cargo.toml
+                ${crate2nix}/bin/crate2nix normalize-manifest --cargo-toml ${src}/${pathToExtract}/Cargo.toml > ./Cargo.toml
 
                 echo '{"package":null,"files":{}}' > $out/.cargo-checksum.json
               '';

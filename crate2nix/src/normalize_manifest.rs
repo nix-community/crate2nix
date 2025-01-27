@@ -9,7 +9,7 @@ use cargo_toml::Manifest;
 /// Automatically locates the corresponding manifest if there is one to fill in inherited values.
 ///
 /// For example `version.workspace = true` becomes `version = "1.2.3"`
-pub fn resolve_manifest(cargo_toml: &Path) -> Result<toml::Value, anyhow::Error> {
+pub fn normalize_manifest(cargo_toml: &Path) -> Result<toml::Value, anyhow::Error> {
     // Expands most, but not all, inherited workspace values. See note below.
     let manifest = Manifest::from_path(cargo_toml)?;
 
