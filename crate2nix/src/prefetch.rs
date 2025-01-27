@@ -131,7 +131,12 @@ pub fn prefetch(
         let (sha256, hash_source) = if let Some(HashWithSource { sha256, source }) = hash {
             (sha256.trim().to_string(), source)
         } else {
-            eprintln!("Prefetching {:>4}/{}: {}", idx, without_hash_num, source);
+            eprintln!(
+                "Prefetching {:>4}/{}: {}",
+                idx,
+                without_hash_num,
+                source.to_string()
+            );
             idx += 1;
             (source.prefetch()?, HashSource::Prefetched)
         };
@@ -197,7 +202,7 @@ pub fn prefetch_registries(
                 &[&format!(
                     "{}{}config.json",
                     e.key(),
-                    if e.key().ends_with('/') { "" } else { "/" }
+                    if e.key().ends_with("/") { "" } else { "/" }
                 )],
             )?;
             e.insert(out);
