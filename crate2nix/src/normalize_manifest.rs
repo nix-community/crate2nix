@@ -9,9 +9,14 @@ use cargo_toml::Manifest;
 /// Automatically locates the corresponding manifest if there is one to fill in inherited values.
 ///
 /// For example `version.workspace = true` becomes `version = "1.2.3"`
-pub fn normalize_manifest(cargo_toml: &Path) -> Result<toml::Value, anyhow::Error> {
+pub fn normalize_manifest(cargo_toml: impl AsRef<Path>) -> Result<String, anyhow::Error> {
     // Expands most, but not all, inherited workspace values. See note below.
-    let manifest = Manifest::from_path(cargo_toml)?;
+    let manifest = Manifest::from_path(&cargo_toml)?;
+
+    // If there is no parent workspace then no further processing is needed.
+    if manifest.workspace.is_none() {
+        return Ok(toml::to_string_pretty(&manifest)?);
+    }
 
     // As of this comment cargo_toml does not expand inherited lints. For example manifest content
     // like this:
@@ -26,14 +31,14 @@ pub fn normalize_manifest(cargo_toml: &Path) -> Result<toml::Value, anyhow::Erro
     let toml = toml::Value::try_from(manifest).with_context(|| {
         format!(
             "error converting manifest at {} back to TOML after normalization",
-            cargo_toml.to_string_lossy()
+            cargo_toml.as_ref().to_string_lossy()
         )
     })?;
 
     let toml =
         prune_workspace_references(toml).unwrap_or(toml::Value::Table(toml::map::Map::new()));
 
-    Ok(toml)
+    Ok(toml::to_string_pretty(&toml)?)
 }
 
 fn prune_workspace_references(toml: toml::Value) -> Option<toml::Value> {
@@ -62,4 +67,118 @@ fn prune_workspace_references(toml: toml::Value) -> Option<toml::Value> {
 
 fn is_workspace_reference((key, value): &(String, toml::Value)) -> bool {
     key == "workspace" && value == &toml::Value::Boolean(true)
+}
+
+#[cfg(test)]
+mod tests {
+    use std::{
+        env::temp_dir,
+        fs::{create_dir_all, File},
+        io::Write as _,
+        path::PathBuf,
+    };
+
+    use super::normalize_manifest;
+
+    #[test]
+    fn normalizes_a_package_manifest_in_a_workspace() -> anyhow::Result<()> {
+        let TestWorkspace {
+            package_manifest, ..
+        } = test_workspace()?;
+        let normalized = normalize_manifest(&package_manifest)?;
+        assert_eq!(
+            normalized.trim(),
+            r#"
+[package]
+name = "package"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+itertools = "^0.13.0"
+"#
+            .trim()
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn produces_consistent_output_for_normalized_manifest() -> anyhow::Result<()> {
+        let TestWorkspace {
+            package_manifest, ..
+        } = test_workspace()?;
+        let normalized = normalize_manifest(&package_manifest)?;
+        for _ in 1..10 {
+            let normalized_again = normalize_manifest(&package_manifest)?;
+            assert_eq!(normalized_again, normalized);
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn skips_normalizing_manifest_that_is_not_in_a_workspace() -> anyhow::Result<()> {
+        let project_dir = temp_dir();
+        let original_content = br#"
+[package]
+name = "package"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+itertools = "^0.13.0"
+"#;
+        let package_manifest = project_dir.join("Cargo.toml");
+        File::create(&package_manifest)?.write_all(original_content)?;
+
+        let normalized = normalize_manifest(&package_manifest)?;
+        assert_eq!(normalized.trim(), String::from_utf8_lossy(original_content).trim());
+        Ok(())
+    }
+
+    #[derive(Debug)]
+    struct TestWorkspace {
+        package_manifest: PathBuf,
+    }
+
+    fn test_workspace() -> anyhow::Result<TestWorkspace> {
+        let workspace_dir = temp_dir();
+
+        let workspace_manifest = workspace_dir.join("Cargo.toml");
+        File::create(workspace_manifest)?.write_all(
+            br#"
+[workspace.package]
+version = "1.0.0"
+edition = "2021"
+
+[workspace]
+members = [
+  "crates/package"
+]
+resolver = "2"
+
+[workspace.dependencies]
+itertools = "^0.13.0"
+"#,
+        )?;
+
+        create_dir_all(workspace_dir.join("crates").join("package"))?;
+        let package_manifest = workspace_dir
+            .join("crates")
+            .join("package")
+            .join("Cargo.toml");
+        File::create(&package_manifest)?.write_all(
+            br#"
+[package]
+name = "package"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+itertools = { workspace = true }
+"#,
+        )?;
+
+        Ok(TestWorkspace { package_manifest })
+    }
 }
