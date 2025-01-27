@@ -233,11 +233,6 @@ rec {
       in
       if builtins.isString str && isValidHash then normalized else null;
 
-    # Returns input unchanged if it is a non-empty string. Otherwise returns
-    # null.
-    parseCommitRef = str:
-      if builtins.isString str && builtins.match "^\s*$" str != null then str else null;
-
     gatherLockFiles = crateDir:
       let
         fromCrateDir =
