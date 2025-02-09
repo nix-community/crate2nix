@@ -292,6 +292,7 @@ rec {
           rev = "618262f5e3217cdd173d46d705bbac26c5141e21";
           submodules = true;
         };
+        libName = "dbus_codegen";
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
         ];
@@ -323,6 +324,7 @@ rec {
         version = "0.1.19";
         edition = "2018";
         sha256 = "0cxcm8093nf5fyn114w8vxbrbcyvv91d4015rdnlgfll7cs6gd32";
+        libName = "hermit_abi";
         authors = [
           "Stefan Lankes"
         ];
@@ -367,6 +369,7 @@ rec {
           rev = "618262f5e3217cdd173d46d705bbac26c5141e21";
           submodules = true;
         };
+        libName = "libdbus_sys";
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
         ];
@@ -390,6 +393,7 @@ rec {
         version = "0.3.28";
         edition = "2015";
         sha256 = "16kgffwncx5hsppsdf54z6jnjkhwywqy601cxk3rqncyi9zmilv9";
+        libName = "pkg_config";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -429,6 +433,7 @@ rec {
         version = "0.1.11";
         edition = "2015";
         sha256 = "11ds4ydhg8g7l06rlmh712q41qsrd0j0h00n1jm74kww3kqk65z5";
+        libName = "unicode_width";
         authors = [
           "kwantam <kwantam@gmail.com>"
           "Manish Goregaokar <manishsmail@gmail.com>"
@@ -509,6 +514,7 @@ rec {
         version = "0.4.0";
         edition = "2015";
         sha256 = "1dmpa6mvcvzz16zg6d5vrfy4bxgg541wxrcip7cnshi06v38ffxc";
+        libName = "winapi_i686_pc_windows_gnu";
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -519,6 +525,7 @@ rec {
         version = "0.4.0";
         edition = "2015";
         sha256 = "0gqq64czqb64kskjryj8isp62m2sgvx25yyj3kpc2myh85w24bki";
+        libName = "winapi_x86_64_pc_windows_gnu";
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];

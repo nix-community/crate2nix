@@ -132,7 +132,10 @@ itertools = "^0.13.0"
         File::create(&package_manifest)?.write_all(original_content)?;
 
         let normalized = normalize_manifest(&package_manifest)?;
-        assert_eq!(normalized.trim(), String::from_utf8_lossy(original_content).trim());
+        assert_eq!(
+            normalized.trim(),
+            String::from_utf8_lossy(original_content).trim()
+        );
         Ok(())
     }
 
