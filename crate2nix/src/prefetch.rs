@@ -309,7 +309,8 @@ impl PrefetchableSource for RegistrySource {
 
 impl PrefetchableSource for GitSource {
     fn needs_prefetch(&self) -> bool {
-        self.sha256.is_none()
+        // self.rev is sufficient for reproducible fetching, and that field is mandatory
+        false
     }
 
     fn prefetch(&self) -> Result<String, Error> {
@@ -328,7 +329,7 @@ impl PrefetchableSource for GitSource {
             self.url.as_str(),
             "--fetch-submodules",
             "--rev",
-            &self.rev,
+            self.rev.as_ref(),
         ];
 
         // TODO: --branch-name isn't documented in nix-prefetch-git --help

@@ -1,4 +1,3 @@
-use crate2nix::normalize_manifest::normalize_manifest;
 use std::path::{Path, PathBuf};
 use structopt::clap::ArgGroup;
 use structopt::StructOpt;
@@ -7,7 +6,8 @@ use anyhow::format_err;
 use anyhow::{bail, Error};
 use crate2nix::{
     config::{Config, NixFile},
-    render,
+    normalize_manifest::normalize_manifest,
+    render, CommitHash,
 };
 use semver::Version;
 use serde::Deserialize;
@@ -288,8 +288,8 @@ pub enum SourceAddingCommands {
         /// E.g. https://github.com/kolloch/crate2nix.git
         url: url::Url,
 
-        #[structopt(long = "rev", parse(from_str), help = "The git revision hash.")]
-        rev: String,
+        #[structopt(long = "rev", parse(try_from_str = CommitHash::try_from), help = "The git revision hash.")]
+        rev: CommitHash,
     },
 
     #[structopt(

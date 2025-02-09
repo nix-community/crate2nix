@@ -156,12 +156,13 @@ rec {
         src = lib.cleanSourceWith { filter = sourceFilter;  src = {{crate.source.LocalDirectory.path | safe}}; };
         {%- elif crate.source.Git %}
         workspace_member = null;
-        src = pkgs.fetchgit {
+        src = builtins.fetchGit {
           url = {{crate.source.Git.url}};
           rev = {{crate.source.Git.rev}};
-          {%- if crate.source.Git.sha256 %}
-          sha256 = {{ crate.source.Git.sha256 }};
+          {%- if crate.source.Git.ref %}
+          ref = {{ crate.source.Git.ref }};
           {%- endif %}
+          submodules = true;
         };
         {%- else %}
         src = builtins.throw ''ERROR: Could not resolve source: {{crate.source | json_encode() | safe}}'';
