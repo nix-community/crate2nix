@@ -498,8 +498,7 @@ fn main() -> anyhow::Result<()> {
         }
         Opt::NormalizeManifest { cargo_toml } => {
             let manifest = normalize_manifest(&cargo_toml)?;
-            let toml = toml::to_string_pretty(&manifest)?;
-            println!("{toml}");
+            print!("{manifest}");
         }
     }
 
