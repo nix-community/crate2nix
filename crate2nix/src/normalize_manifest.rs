@@ -13,11 +13,6 @@ pub fn normalize_manifest(cargo_toml: impl AsRef<Path>) -> Result<String, anyhow
     // Expands most, but not all, inherited workspace values. See note below.
     let manifest = Manifest::from_path(&cargo_toml)?;
 
-    // If there is no parent workspace then no further processing is needed.
-    if manifest.workspace.is_none() {
-        return Ok(toml::to_string_pretty(&manifest)?);
-    }
-
     // As of this comment cargo_toml does not expand inherited lints. For example manifest content
     // like this:
     //
@@ -89,13 +84,13 @@ mod tests {
         assert_eq!(
             normalized.trim(),
             r#"
-[package]
-name = "package"
-version = "1.0.0"
-edition = "2021"
-
 [dependencies]
 itertools = "^0.13.0"
+
+[package]
+edition = "2021"
+name = "package"
+version = "1.0.0"
 "#
             .trim()
         );
@@ -113,29 +108,6 @@ itertools = "^0.13.0"
             assert_eq!(normalized_again, normalized);
         }
 
-        Ok(())
-    }
-
-    #[test]
-    fn skips_normalizing_manifest_that_is_not_in_a_workspace() -> anyhow::Result<()> {
-        let project_dir = temp_dir();
-        let original_content = br#"
-[package]
-name = "package"
-version = "1.0.0"
-edition = "2021"
-
-[dependencies]
-itertools = "^0.13.0"
-"#;
-        let package_manifest = project_dir.join("Cargo.toml");
-        File::create(&package_manifest)?.write_all(original_content)?;
-
-        let normalized = normalize_manifest(&package_manifest)?;
-        assert_eq!(
-            normalized.trim(),
-            String::from_utf8_lossy(original_content).trim()
-        );
         Ok(())
     }
 
@@ -162,6 +134,9 @@ resolver = "2"
 
 [workspace.dependencies]
 itertools = "^0.13.0"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
 "#,
         )?;
 
@@ -179,6 +154,9 @@ edition.workspace = true
 
 [dependencies]
 itertools = { workspace = true }
+
+[lints]
+workspace = true
 "#,
         )?;
 
