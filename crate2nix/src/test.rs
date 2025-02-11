@@ -13,6 +13,7 @@ pub fn generate_config() -> crate::GenerateConfig {
         output: "Cargo.nix".into(),
         use_cargo_lock_checksums: true,
         read_crate_hashes: true,
+        registry_hashes_json: "registry-hashes.json".into(),
     }
 }
 
