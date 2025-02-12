@@ -1,9 +1,6 @@
 # Provided by callPackage or also directly usable via nix-build with defaults.
 { pkgs ? (
-    let
-      flakeLock = builtins.fromJSON (builtins.readFile ../flake.lock);
-    in
-    import "${builtins.fetchTree flakeLock.nodes.nixpkgs.locked}" { }
+    import (builtins.fetchTree (import ../nix/flakeInput.nix "nixpkgs")) { }
   )
 , stdenv ? pkgs.stdenv
 , lib ? pkgs.lib
