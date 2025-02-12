@@ -10,6 +10,8 @@ use std::{
     path::Path,
 };
 
+use crate::CommitHash;
+
 impl Config {
     /// Read config from path.
     pub fn read_from_or_default(path: &Path) -> Result<Config, Error> {
@@ -112,7 +114,7 @@ pub enum Source {
         /// E.g. https://github.com/kolloch/crate2nix.git
         url: url::Url,
         /// The revision hash.
-        rev: String,
+        rev: CommitHash,
         /// The sha256 of the fetched result.
         sha256: String,
     },
