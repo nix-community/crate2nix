@@ -4,6 +4,7 @@ use crate::{
     config,
     prefetch::PrefetchableSource,
     resolve::{CratesIoSource, GitSource, RegistrySource},
+    CommitHash,
 };
 use anyhow::{bail, format_err, Context, Error};
 use semver::Version;
@@ -59,7 +60,7 @@ pub fn registry_source(
 }
 
 /// Returns the completed Source::Git definition by prefetching the hash.
-pub fn git_io_source(url: Url, rev: String) -> Result<config::Source, Error> {
+pub fn git_io_source(url: Url, rev: CommitHash) -> Result<config::Source, Error> {
     let prefetchable = GitSource {
         url: url.clone(),
         rev: rev.clone(),

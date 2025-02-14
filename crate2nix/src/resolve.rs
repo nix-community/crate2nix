@@ -20,6 +20,7 @@ use std::path::{Path, PathBuf};
 use crate::metadata::IndexedMetadata;
 #[cfg(test)]
 use crate::test;
+use crate::CommitHash;
 use crate::GenerateConfig;
 use itertools::Itertools;
 use std::{collections::btree_map::BTreeMap, fmt::Display};
@@ -421,7 +422,7 @@ pub struct RegistrySource {
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
 pub struct GitSource {
     pub url: Url,
-    pub rev: String,
+    pub rev: CommitHash,
     pub r#ref: Option<String>,
     pub sha256: Option<String>,
 }
@@ -493,14 +494,43 @@ impl ResolvedSource {
             );
         }
         let mut url = url::Url::parse(&source_string[GIT_SOURCE_PREFIX.len()..])?;
-        let mut query_pairs = url.query_pairs();
-        let branch = query_pairs
-            .find(|(k, _)| k == "branch")
-            .map(|(_, v)| v.to_string());
-        let rev = if let Some((_, rev)) = query_pairs.find(|(k, _)| k == "rev") {
-            rev.to_string()
-        } else if let Some(rev) = url.fragment() {
-            rev.to_string()
+        let query_pairs = url.query_pairs().collect::<HashMap<_, _>>();
+
+        // Locked git sources have optional ?branch, ?tag, ?rev, or ?ref query arguments. It is
+        // important to capture these in case the given commit hash is not reachable from the
+        // repo's default HEAD. OTOH if no form of ref is given that is an implication by cargo
+        // that the default HEAD should be fetched.
+        const REF_PARAMS: [(&str, &str); 4] = [
+            ("branch", "refs/heads/"),
+            ("tag", "refs/tags/"),
+            ("rev", ""),
+            ("ref", ""),
+        ];
+        let r#ref = REF_PARAMS.iter().find_map(|(key, ref_prefix)| {
+            let v = query_pairs.get(*key)?;
+            if CommitHash::parse(v).is_some() {
+                // Rev is usually a commit hash, but in some cases it can be a ref. Use as a ref
+                // only if it is **not** a valid commit hash.
+                return None;
+            }
+            Some(format!("{ref_prefix}{v}"))
+        });
+
+        // In locked sources the git commit hash is given as a URL fragment. It sometimes also
+        // given in a ?rev query argument. But in other cases a ?rev argument might not be a commit
+        // hash: the [cargo reference docs][] give an example of a rev argument of `"refs/pull/493/head"`.
+        //
+        // [cargo reference docs]: https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html
+        //
+        // That example applies to a Cargo.toml manifest - but such rev arguments do seem to be
+        // preserved in the lock file.
+        let rev = if let Some(rev) = url.fragment().and_then(CommitHash::parse) {
+            rev
+        } else if let Some(rev) = query_pairs
+            .get("rev")
+            .and_then(|rev| CommitHash::parse(rev))
+        {
+            rev
         } else {
             return ResolvedSource::fallback_to_local_directory(
                 config,
@@ -509,12 +539,13 @@ impl ResolvedSource {
                 "No git revision found.",
             );
         };
+
         url.set_query(None);
         url.set_fragment(None);
         Ok(ResolvedSource::Git(GitSource {
             url,
             rev,
-            r#ref: branch,
+            r#ref,
             sha256: None,
         }))
     }

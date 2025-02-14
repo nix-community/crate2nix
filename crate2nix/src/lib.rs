@@ -42,6 +42,8 @@ pub mod sources;
 pub mod test;
 pub mod util;
 
+pub use util::CommitHash;
+
 /// The resolved build info and the input for rendering the build.nix.tera template.
 #[derive(Debug, Deserialize, Serialize)]
 pub struct BuildInfo {
