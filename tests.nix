@@ -523,8 +523,8 @@ let
     }
 
     {
-      name = "two_references_to_same_git_dep_with_different_versions";
-      src = ./sample_projects/two_references_to_same_git_dep_with_different_versions;
+      name = "aliased_dependencies";
+      src = ./sample_projects/aliased-dependencies;
       expectedOutput = "Hello World !\nHello World !";
     }
   ];
