@@ -521,6 +521,12 @@ let
       # # FIXME: https://github.com/nix-community/crate2nix/issues/319
       skip = true;
     }
+
+    {
+      name = "two_references_to_same_git_dep_with_different_versions";
+      src = ./sample_projects/two_references_to_same_git_dep_with_different_versions;
+      expectedOutput = "Hello World !\nHello World !";
+    }
   ];
   buildTestDerivationAttrSet =
     let
