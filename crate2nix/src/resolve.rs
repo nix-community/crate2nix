@@ -851,7 +851,7 @@ fn sources_match(
     package_source: Option<&Source>,
 ) -> Result<bool, anyhow::Error> {
     let Some(dependency_source) = dependency_source else {
-        return Ok(true);
+        return Ok(package_source.is_none());
     };
     let Some(package_source) = package_source else {
         return Ok(false); // fail if dependency has a source, but package does not
