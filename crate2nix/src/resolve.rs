@@ -778,6 +778,28 @@ impl<'a> ResolvedDependencies<'a> {
                             .filter(|p| package_dep.req.matches(&p.version))
                             .collect::<Vec<_>>();
 
+                        // Strip prerelease/build info from versions if we
+                        // did not find an exact match.
+                        //
+                        // E.g. "*" does not match a prerelease version in this
+                        // library but cargo thinks differently.
+                        let matches = if matches.is_empty() {
+                            packages
+                                .iter()
+                                .filter(|p| {
+                                    let without_metadata = {
+                                        let mut version = p.version.clone();
+                                        version.pre = semver::Prerelease::EMPTY;
+                                        version.build = semver::BuildMetadata::EMPTY;
+                                        version
+                                    };
+                                    package_dep.req.matches(&without_metadata)
+                                })
+                                .collect()
+                        } else {
+                            matches
+                        };
+
                         // It is possible to have multiple packages that match the name and version
                         // requirement of the dependency. In particular if there are multiple
                         // dependencies on the same package via git at different revisions - in
@@ -796,25 +818,13 @@ impl<'a> ResolvedDependencies<'a> {
                             matches
                         };
 
-                        let exact_match = if matches.len() == 1 {
+                        if matches.len() == 1 {
                             Some(matches[0])
                         } else if matches.is_empty() {
                             None
                         } else {
                             panic!("Could not find an unambiguous package match for dependency, {}. Candidates are: {}", &package_dep.name, matches.iter().map(|p| &p.id).join(", "));
-                        };
-
-                        exact_match.or_else(|| {
-                            packages.iter().find(|p| {
-                                let without_metadata = {
-                                    let mut version = p.version.clone();
-                                    version.pre = semver::Prerelease::EMPTY;
-                                    version.build = semver::BuildMetadata::EMPTY;
-                                    version
-                                };
-                                package_dep.req.matches(&without_metadata)
-                            })
-                        })
+                        }
                     });
 
                 let dep_package = resolved?;
