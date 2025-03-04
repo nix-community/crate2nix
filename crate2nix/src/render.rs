@@ -184,10 +184,7 @@ fn cfg_to_nix_expr_filter(
                 })?;
                 Ok(tera::Value::String(cfg_to_nix_expr(&expr)))
             } else {
-                let condition = format!(
-                    "(stdenv.hostPlatform.rust.rustcTarget == {})",
-                    escape_nix_string(key)
-                );
+                let condition = format!("(target.name == {})", escape_nix_string(key));
                 Ok(tera::Value::String(condition))
             }
         }
