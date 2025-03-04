@@ -202,7 +202,7 @@ pub fn prefetch_registries(
                 &[&format!(
                     "{}{}config.json",
                     e.key(),
-                    if e.key().ends_with("/") { "" } else { "/" }
+                    if e.key().ends_with('/') { "" } else { "/" }
                 )],
             )?;
             e.insert(out);

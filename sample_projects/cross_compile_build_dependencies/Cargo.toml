@@ -1,0 +1,7 @@
+[package]
+name = "cross_compile_build_dependencies"
+version = "1.0.0"
+edition = "2021"
+
+[build-dependencies]
+alice.path = "./alice"

@@ -156,6 +156,8 @@ rec {
     This corresponds roughly to what buildRustCrate is setting.
   */
   makeDefaultTarget = platform: {
+    name = platform.rust.rustcTarget;
+
     unix = platform.isUnix;
     windows = platform.isWindows;
     fuchsia = true;
@@ -470,7 +472,7 @@ rec {
                   packageId: value: buildByPackageIdForPkgsImpl self pkgs packageId
                 )
                 crateConfigs;
-              target = makeTarget stdenv.hostPlatform;
+              target = makeTarget pkgs.stdenv.hostPlatform;
               build = mkBuiltByPackageIdByPkgs pkgs.buildPackages;
             };
           in

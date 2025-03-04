@@ -1,0 +1,7 @@
+[package]
+name = "alice"
+version = "1.0.0"
+edition = "2021"
+
+[target.'cfg(unix)'.dependencies]
+bob.path = "./bob"
