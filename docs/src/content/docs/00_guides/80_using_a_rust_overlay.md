@@ -52,7 +52,7 @@ In a flake with flake-parts:
               cargo = pkgs.rust-bin.stable.latest.default;
             };
             
-          generatedCargoNix = inputs.crate2nix.tools.${system}.appliedCargoNix {
+          generatedCargoNix = inputs.crate2nix.tools.${system}.generatedCargoNix {
             name = "rustnix";
             src = ./.;
           };
