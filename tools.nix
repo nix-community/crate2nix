@@ -13,6 +13,7 @@
 let
   cargoNix = pkgs.callPackage ./crate2nix/Cargo.nix { inherit strictDeprecation; };
   crate2nix = cargoNix.rootCrate.build;
+  pathsFromPathPattern = (pkgs.callPackage ./nix/lib/paths-from-path-pattern.nix).pathsFromPathPattern;
 in
 rec {
 
@@ -406,7 +407,8 @@ rec {
               rootCargo = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
               isWorkspace = rootCargo ? "workspace";
               isPackage = rootCargo ? "package";
-              containedCrates = rootCargo.workspace.members ++ (if isPackage then [ "." ] else [ ]);
+              containedCrates = lib.flatten (builtins.map (pathsFromPathPattern src) rootCargo.workspace.members)
+                ++ (if isPackage then [ "." ] else [ ]);
 
               getCrateNameFromPath = path:
                 let
@@ -436,3 +438,4 @@ rec {
       };
   };
 }
+
