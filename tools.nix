@@ -13,7 +13,7 @@
 let
   cargoNix = pkgs.callPackage ./crate2nix/Cargo.nix { inherit strictDeprecation; };
   crate2nix = cargoNix.rootCrate.build;
-  pathsFromPathPattern = (pkgs.callPackage ./nix/lib/paths-from-path-pattern.nix).pathsFromPathPattern;
+  pathsFromPathPattern = (pkgs.callPackage ./nix/lib/paths-from-path-pattern.nix { }).pathsFromPathPattern;
 in
 rec {
 
