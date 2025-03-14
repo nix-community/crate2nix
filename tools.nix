@@ -403,32 +403,30 @@ rec {
                   else parsed.urlFragment;
               };
 
-              rootCargo = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
-              isWorkspace = rootCargo ? "workspace";
-              isPackage = rootCargo ? "package";
-              containedCrates = rootCargo.workspace.members ++ (if isPackage then [ "." ] else [ ]);
+              allCargoTomls = lib.filter
+                (lib.hasSuffix "Cargo.toml")
+                (lib.filesystem.listFilesRecursive src);
 
               getCrateNameFromPath = path:
                 let
-                  cargoTomlCrate = builtins.fromTOML (builtins.readFile "${src}/${path}/Cargo.toml");
+                  cargoTomlCrate = builtins.fromTOML (builtins.readFile path);
                 in
-                cargoTomlCrate.package.name;
+                  cargoTomlCrate.package.name or null;
 
-              pathToExtract =
-                if isWorkspace then
-                  builtins.head
-                    (builtins.filter
-                      (to_filter:
-                        (getCrateNameFromPath to_filter) == name
-                      )
-                      containedCrates)
-                else
-                  ".";
+              packageCargoToml =
+                builtins.head
+                  (builtins.filter
+                    (to_filter:
+                      (getCrateNameFromPath to_filter) == name
+                    )
+                    allCargoTomls);
+
+              pathToExtract = lib.removeSuffix "Cargo.toml" packageCargoToml;
             in
             pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
               ''
                 mkdir -p $out
-                cp -apR ${src}/${pathToExtract}/* $out
+                cp -apR ${pathToExtract}/* $out
                 echo '{"package":null,"files":{}}' > $out/.cargo-checksum.json
               '';
 
