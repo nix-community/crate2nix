@@ -677,7 +677,10 @@ rec {
           let
             drv = testCrate.override (_: {
               buildTests = true;
-            });
+            } // (lib.optionalAttrs (testCrate ? testedCrate) {
+              # if nixpkgs is recent enough to support testedCrate, provide it
+              testedCrate = testCrate;
+            }));
             # If the user hasn't set any pre/post commands, we don't want to
             # insert empty lines. This means that any existing users of crate2nix
             # don't get a spurious rebuild unless they set these explicitly.

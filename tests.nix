@@ -378,6 +378,20 @@ let
     }
 
     {
+      name = "integration_test_with_envvar";
+      src = ./sample_projects/integration_test_with_envvar;
+      cargoToml = "Cargo.toml";
+      customBuild = "sample_projects/integration_test_with_envvar/test.nix";
+      expectedOutput = "main.rs";
+      expectedTestOutputs = [
+        "test test_exe ... ok"
+        "test test_exe2 ... ok"
+        "test test_main ... ok"
+
+      ];
+    }
+
+    {
       name = "cross_compile_build_dependencies";
       src = ./sample_projects/cross_compile_build_dependencies;
       customBuild = "sample_projects/cross_compile_build_dependencies/default.nix";
