@@ -61,7 +61,7 @@ rec {
         cp ${vendor.cargoConfig} $out/cargo/config
 
         crate_hashes="$out/crate-hashes.json"
-        echo -n '${builtins.toJSON vendor.extendedHashes}' | jq > "$crate_hashes"
+        echo -n '${builtins.toJSON vendor.extendedHashes'}' | jq > "$crate_hashes"
         # Remove last trailing newline, which crate2nix doesn't (yet) include
         truncate -s -1 "$crate_hashes"
 
@@ -244,6 +244,14 @@ rec {
       , hashes ? { }
       }:
       rec {
+        packageIdsFile = pkgs.runCommand "package-ids" { nativeBuildInputs = with pkgs; [ cargo jq ]; } ''
+            mkdir -p "$out/cargo"
+            export CARGO_HOME=$out/cargo
+            cp ${cargoConfig} $out/cargo/config
+            cargo metadata --manifest-path ${crateDir}/Cargo.toml --locked --offline --format-version 1 | jq -r > $out/cargo-metadata.json
+        '';
+        packageIds = builtins.listToAttrs (builtins.map ({name, version, source, id, ...}@package: {name = toPackageId package; value = id;}) (builtins.filter (p: p.source != null) (builtins.fromJSON (builtins.unsafeDiscardStringContext (builtins.readFile "${packageIdsFile}/cargo-metadata.json"))).packages));
+
         toPackageId = { name, version, source, ... }:
           "${name} ${version} (${source})";
 
@@ -288,6 +296,11 @@ rec {
 
         extendedHashes = hashes
           // builtins.listToAttrs (map mkGitHash (packagesByType.git or [ ]));
+
+        extendedHashes' = builtins.listToAttrs (builtins.map 
+            (nixId: { name = builtins.getAttr nixId packageIds; value = builtins.getAttr nixId extendedHashes; })
+            (builtins.attrNames extendedHashes)
+        );
 
         packages =
           let
