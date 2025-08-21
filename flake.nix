@@ -42,18 +42,17 @@
       # inputs.nixpkgs.follows = "nixpkgs";
       inputs.devenv.follows = "";
       inputs.flake-compat.follows = "";
-      inputs.pre-commit-hooks.follows = "";
+      inputs.git-hooks.follows = "";
     };
 
-    pre-commit-hooks = {
-      url = "github:cachix/pre-commit-hooks.nix";
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
       inputs.flake-compat.follows = "flake-compat";
     };
   };
 
-  outputs = inputs@{ nixpkgs, self, flake-parts, devshell, pre-commit-hooks, ... }: flake-parts.lib.mkFlake { inherit inputs; } {
+  outputs = inputs@{ nixpkgs, self, flake-parts, devshell, ... }: flake-parts.lib.mkFlake { inherit inputs; } {
     systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
 
     imports = [
