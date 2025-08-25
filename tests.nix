@@ -383,6 +383,20 @@ let
       customBuild = "sample_projects/cross_compile_build_dependencies/default.nix";
     }
 
+    {
+      name = "cross_compile_wasi_cfg_target_env";
+      src = ./sample_projects/cross_compile_wasi_cfg_target_env;
+      customBuild = "sample_projects/cross_compile_wasi_cfg_target_env/default.nix";
+      derivationAttrPath = [ "workspaceMembers" "a" ];
+    }
+
+    {
+      name = "cross_compile_linux_gnu_cfg_target_env";
+      src = ./sample_projects/cross_compile_linux_gnu_cfg_target_env;
+      customBuild = "sample_projects/cross_compile_linux_gnu_cfg_target_env/default.nix";
+      derivationAttrPath = [ "workspaceMembers" "a" ];
+    }
+
     #
     # Prefetch tests
     #

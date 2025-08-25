@@ -1385,7 +1385,6 @@ rec {
       vendor
       ;
     family = platform.rust.platform.target-family;
-    env = "gnu";
     endian = if platform.parsed.cpu.significantByte.name == "littleEndian" then "little" else "big";
     pointer_width = toString platform.parsed.cpu.bits;
     debug_assertions = false;
