@@ -3,6 +3,11 @@ title: CHANGELOG
 description: A list of all major changes per version.
 ---
 
+## (unreleased)
+
+* [#403](https://github.com/nix-community/crate2nix/pull/403): use `rust.platform.env` where set for conditional
+  compilation ([issue #402](https://github.com/nix-community/crate2nix/issues/402)).
+
 ## 0.15.0 (2026-01-28)
 
 ### New features
