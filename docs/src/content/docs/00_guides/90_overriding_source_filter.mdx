@@ -1,0 +1,24 @@
+---
+title: Overriding Source Filter
+---
+
+There is a defaultSourceFilter function that is built in to crate2nix, which is used to pass a clean source tree to the derivation. It has sane defaults but it can be helpful to be able override it on a project specific basis.
+
+When importing the build file pass in a `sourceFilter`. `sourceFilter` is a `(path -> type -> bool)` filter function that will be passed into [`lib.cleanSourceWith`](https://nixos.org/manual/nixpkgs/stable/#function-library-lib.sources.cleanSourceWith).
+
+This would allow all files through:
+
+```nix
+let cargo_nix = callPackage ./Cargo.nix { sourceFilter = _: _: true };
+  crate2nix = cargo_nix.rootCrate.build;
+in ...
+```
+
+You could also use something like [gitignore.nix](https://github.com/hercules-ci/gitignore.nix) to filter out files included in your `.gitignore`:
+
+```nix
+let gitignoreFilter = gitignore.lib.gitignoreFilter ./.;
+  cargo_nix = callPackage ./Cargo.nix { sourceFilter = gitignoreFilter; };
+  crate2nix = cargo_nix.rootCrate.build;
+in ...
+```
