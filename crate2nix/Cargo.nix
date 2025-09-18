@@ -26,6 +26,8 @@
   ? if builtins.pathExists ./crate-config.nix
     then pkgs.callPackage ./crate-config.nix {}
     else {}
+  # Custom source filter function
+, sourceFilter ? null
 }:
 
 rec {
@@ -480,7 +482,7 @@ rec {
             requiredFeatures = [ ];
           }
         ];
-        src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
+        src = lib.cleanSourceWith { filter = (if sourceFilter == null then defaultSourceFilter else sourceFilter); src = ./.; };
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
@@ -3214,7 +3216,7 @@ rec {
 
   # Filters common temp files and build files.
   # TODO(pkolloch): Substitute with gitignore filter
-  sourceFilter =
+  defaultSourceFilter =
     name: type:
     let
       baseName = builtins.baseNameOf (builtins.toString name);
