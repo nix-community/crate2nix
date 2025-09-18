@@ -6,6 +6,7 @@ description: A list of all major changes per version.
 ## 0.14.x - 0.15.0 (unreleased)
 
 * [#359](https://github.com/nix-community/crate2nix/issues/359): Document using `rust-overlay`.
+* [#405](https://github.com/nix-community/crate2nix/pull/405): Allow settting a custom sourceFilter when calling build file.
 
 ## 0.14.x - 0.14.1 (2024-06-30)
 

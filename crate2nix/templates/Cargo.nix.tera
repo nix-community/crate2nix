@@ -28,6 +28,8 @@
   ? if builtins.pathExists ./crate-config.nix
     then pkgs.callPackage ./crate-config.nix {}
     else {}
+  # Custom source filter function
+, sourceFilter ? null
 }:
 
 rec {
@@ -153,7 +155,7 @@ rec {
         {%- elif crate.source.Nix.file.package %}
         src = pkgs.callPackage {{crate.source.Nix.file.package | safe}} {};
         {%- elif crate.source.LocalDirectory.path %}
-        src = lib.cleanSourceWith { filter = sourceFilter;  src = {{crate.source.LocalDirectory.path | safe}}; };
+        src = lib.cleanSourceWith { filter = (if sourceFilter == null then defaultSourceFilter else sourceFilter); src = {{crate.source.LocalDirectory.path | safe}}; };
         {%- elif crate.source.Git %}
         workspace_member = null;
         src = pkgs.fetchgit {

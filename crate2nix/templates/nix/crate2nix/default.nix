@@ -15,6 +15,7 @@
 , rootFeatures ? [ ]
 , targetFeatures ? [ ]
 , release ? true
+, sourceFilter ? null
 ,
 }:
 rec {
@@ -85,7 +86,7 @@ rec {
 
   # Filters common temp files and build files.
   # TODO(pkolloch): Substitute with gitignore filter
-  sourceFilter =
+  defaultSourceFilter =
     name: type:
     let
       baseName = builtins.baseNameOf (builtins.toString name);
