@@ -472,7 +472,7 @@ impl ResolvedSource {
                 ResolvedSource::git_or_local_directory(config, package, &package_path, source)
             }
             None => Ok(ResolvedSource::LocalDirectory(LocalDirectorySource {
-                path: ResolvedSource::relative_directory(config, package_path)?,
+                path: PathBuf::from("/").join(ResolvedSource::relative_directory(config, package_path)?),
             })),
         }
     }
