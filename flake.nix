@@ -1,6 +1,6 @@
 {
   description = ''
-    crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) 
+    crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/)
     crates using [cargo](https://crates.io/).
   '';
 
@@ -11,7 +11,7 @@
   };
 
   inputs = {
-    nixpkgs.url = "nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz";
 
