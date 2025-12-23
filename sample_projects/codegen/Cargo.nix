@@ -727,7 +727,7 @@ rec {
       in
       pkgs.runCommand "${crate.name}-linked"
         {
-          inherit (crate) outputs crateName;
+          inherit (crate) outputs crateName meta;
           passthru = (crate.passthru or { }) // {
             inherit test;
           };
