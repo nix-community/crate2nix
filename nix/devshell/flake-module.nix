@@ -20,7 +20,7 @@
           niv
           coreutils
           gnugrep
-          utillinux
+          util-linux
           cacert
         ];
 
@@ -32,7 +32,7 @@
           { package = nix-prefetch-git; category = "nix"; }
           {
             name = "nix-test";
-            package = (import ../nix-test-runner.nix { inherit pkgs; });
+            package = (import ../nix-test-runner.nix { inherit system; });
             category = "nix";
             help = "nix test runner for unit tests.";
           }

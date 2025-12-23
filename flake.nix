@@ -42,13 +42,11 @@
       # inputs.nixpkgs.follows = "nixpkgs";
       inputs.devenv.follows = "";
       inputs.flake-compat.follows = "";
-      inputs.pre-commit-hooks.follows = "";
     };
 
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
       inputs.flake-compat.follows = "flake-compat";
     };
   };
