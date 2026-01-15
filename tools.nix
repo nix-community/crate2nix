@@ -44,7 +44,7 @@ rec {
     stdenv.mkDerivation {
       name = "${name}-crate2nix";
 
-      buildInputs = [ pkgs.cargo pkgs.jq crate2nix ];
+      buildInputs = [ pkgs.cargo pkgs.jq crate2nix pkgs.nix-prefetch-git pkgs.nix pkgs.git pkgs.cacert ];
       preferLocalBuild = true;
 
       inherit src;
@@ -140,6 +140,54 @@ rec {
       appliedCargoNix;
 
   internal = rec {
+    # Helper to check if any value in a nested structure has workspace = true
+    hasWorkspaceTrue = value:
+      if builtins.isAttrs value then
+        (value.workspace or false == true) || lib.any hasWorkspaceTrue (builtins.attrValues value)
+      else if builtins.isList value then
+        lib.any hasWorkspaceTrue value
+      else
+        false;
+
+    # Resolve a single dependency that may use workspace inheritance
+    resolveDependency = workspaceDeps: name: dep:
+      if builtins.isAttrs dep && dep.workspace or false == true then
+        let
+          baseDep = workspaceDeps.${name} or (throw "Workspace dependency ${name} not found");
+          baseDepAttrs = if builtins.isString baseDep then { version = baseDep; } else baseDep;
+          overrides = lib.filterAttrs (k: v: k != "workspace") dep;
+        in
+        baseDepAttrs // overrides
+      else
+        dep;
+
+    # Resolve workspace inheritance in a Cargo.toml attrset
+    resolveWorkspaceInheritance = cargoToml: workspaceCargoToml:
+      let
+        workspaceDeps = workspaceCargoToml.workspace.dependencies or {};
+        workspacePackage = workspaceCargoToml.workspace.package or {};
+
+        resolveDeps = deps: lib.mapAttrs (resolveDependency workspaceDeps) deps;
+
+        resolvePackageField = field: value:
+          if builtins.isAttrs value && value.workspace or false == true then
+            workspacePackage.${field} or (throw "Workspace package.${field} not found")
+          else
+            value;
+      in
+      cargoToml // {
+        package = lib.mapAttrs resolvePackageField (cargoToml.package or {});
+        dependencies = resolveDeps (cargoToml.dependencies or {});
+        dev-dependencies = resolveDeps (cargoToml.dev-dependencies or {});
+        build-dependencies = resolveDeps (cargoToml.build-dependencies or {});
+        target = lib.mapAttrs (targetName: targetCfg:
+          targetCfg // {
+            dependencies = resolveDeps (targetCfg.dependencies or {});
+            dev-dependencies = resolveDeps (targetCfg.dev-dependencies or {});
+            build-dependencies = resolveDeps (targetCfg.build-dependencies or {});
+          }
+        ) (cargoToml.target or {});
+      };
     # Unpack sources and add a .cargo-checksum.json file to make cargo happy.
     unpacked = { sha256, src }:
       assert builtins.isString sha256;
@@ -424,13 +472,41 @@ rec {
                       containedCrates)
                 else
                   ".";
+
+              # Check if this crate uses workspace inheritance
+              crateCargoTomlParsed = lib.importTOML "${src}/${pathToExtract}/Cargo.toml";
+              usesWorkspaceInheritance = isWorkspace && hasWorkspaceTrue crateCargoTomlParsed;
+
+              # Resolve workspace inheritance by inlining dependency specs
+              resolvedCargoToml = resolveWorkspaceInheritance crateCargoTomlParsed rootCargo;
+              patchedCargoTomlFile = (pkgs.formats.toml {}).generate "${name}-Cargo.toml" resolvedCargoToml;
             in
             pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
-              ''
-                mkdir -p $out
-                cp -apR ${src}/${pathToExtract}/* $out
-                echo '{"package":null,"files":{}}' > $out/.cargo-checksum.json
-              '';
+              (if usesWorkspaceInheritance then
+                ''
+                  mkdir -p $out
+                  # Copy all files except Cargo.toml
+                  for f in ${src}/${pathToExtract}/*; do
+                    if [ "$(basename "$f")" != "Cargo.toml" ]; then
+                      cp -apR "$f" $out/
+                    fi
+                  done
+                  # Copy hidden files too
+                  for f in ${src}/${pathToExtract}/.*; do
+                    if [ -e "$f" ] && [ "$(basename "$f")" != "." ] && [ "$(basename "$f")" != ".." ]; then
+                      cp -apR "$f" $out/
+                    fi
+                  done
+                  # Use the patched Cargo.toml with resolved workspace inheritance
+                  cp ${patchedCargoTomlFile} $out/Cargo.toml
+                  echo '{"package":null,"files":{}}' > $out/.cargo-checksum.json
+                ''
+              else
+                ''
+                  mkdir -p $out
+                  cp -apR ${src}/${pathToExtract}/* $out
+                  echo '{"package":null,"files":{}}' > $out/.cargo-checksum.json
+                '');
 
         };
       };

@@ -73,6 +73,14 @@ echo -e "\e[1m=== Running nix unit tests\e[0m" >&2
     exit 1
 }
 
+echo -e "\e[1m=== Running tools.nix unit tests\e[0m" >&2
+./nix-test.sh ./tools-tests.nix || {
+    echo "" >&2
+    echo "==================" >&2
+    echo "$top/nix-test.sh $top/tools-tests.nix: FAILED" >&2
+    exit 1
+}
+
 cd "$top"/crate2nix
 echo -e "\e[1m=== Running cargo clippy\e[0m" >&2
 if [ -z "${NO_CARGO_BUILD}" ]; then
