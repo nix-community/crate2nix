@@ -164,8 +164,8 @@ rec {
     # Resolve workspace inheritance in a Cargo.toml attrset
     resolveWorkspaceInheritance = cargoToml: workspaceCargoToml:
       let
-        workspaceDeps = workspaceCargoToml.workspace.dependencies or {};
-        workspacePackage = workspaceCargoToml.workspace.package or {};
+        workspaceDeps = workspaceCargoToml.workspace.dependencies or { };
+        workspacePackage = workspaceCargoToml.workspace.package or { };
 
         resolveDeps = deps: lib.mapAttrs (resolveDependency workspaceDeps) deps;
 
@@ -176,17 +176,19 @@ rec {
             value;
       in
       cargoToml // {
-        package = lib.mapAttrs resolvePackageField (cargoToml.package or {});
-        dependencies = resolveDeps (cargoToml.dependencies or {});
-        dev-dependencies = resolveDeps (cargoToml.dev-dependencies or {});
-        build-dependencies = resolveDeps (cargoToml.build-dependencies or {});
-        target = lib.mapAttrs (targetName: targetCfg:
-          targetCfg // {
-            dependencies = resolveDeps (targetCfg.dependencies or {});
-            dev-dependencies = resolveDeps (targetCfg.dev-dependencies or {});
-            build-dependencies = resolveDeps (targetCfg.build-dependencies or {});
-          }
-        ) (cargoToml.target or {});
+        package = lib.mapAttrs resolvePackageField (cargoToml.package or { });
+        dependencies = resolveDeps (cargoToml.dependencies or { });
+        dev-dependencies = resolveDeps (cargoToml.dev-dependencies or { });
+        build-dependencies = resolveDeps (cargoToml.build-dependencies or { });
+        target = lib.mapAttrs
+          (targetName: targetCfg:
+            targetCfg // {
+              dependencies = resolveDeps (targetCfg.dependencies or { });
+              dev-dependencies = resolveDeps (targetCfg.dev-dependencies or { });
+              build-dependencies = resolveDeps (targetCfg.build-dependencies or { });
+            }
+          )
+          (cargoToml.target or { });
       };
     # Unpack sources and add a .cargo-checksum.json file to make cargo happy.
     unpacked = { sha256, src }:
@@ -479,7 +481,7 @@ rec {
 
               # Resolve workspace inheritance by inlining dependency specs
               resolvedCargoToml = resolveWorkspaceInheritance crateCargoTomlParsed rootCargo;
-              patchedCargoTomlFile = (pkgs.formats.toml {}).generate "${name}-Cargo.toml" resolvedCargoToml;
+              patchedCargoTomlFile = (pkgs.formats.toml { }).generate "${name}-Cargo.toml" resolvedCargoToml;
             in
             pkgs.runCommand (lib.removeSuffix ".tar.gz" src.name) { }
               (if usesWorkspaceInheritance then
