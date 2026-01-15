@@ -14,6 +14,7 @@
 , crates ? { }
 , rootFeatures ? [ ]
 , targetFeatures ? [ ]
+, extraTargetFlags ? { }
 , release ? true
 ,
 }:
@@ -42,7 +43,7 @@ rec {
     endian = if platform.parsed.cpu.significantByte.name == "littleEndian" then "little" else "big";
     pointer_width = toString platform.parsed.cpu.bits;
     debug_assertions = false;
-  };
+  } // extraTargetFlags;
 
   registryUrl =
     { registries
