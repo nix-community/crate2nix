@@ -46,7 +46,7 @@ Here is an example flake using [fenix]:
         };
 
         crate2nix' = pkgs.callPackage (import "${crate2nix}/tools.nix") {};
-        cargoNix = crate2nix.appliedCargoNix {
+        cargoNix = crate2nix'.appliedCargoNix {
           name = "my-crate";
           src = ./.;
         };
