@@ -19,6 +19,11 @@
   # (separated by `,`, prefixed with `+`).
   # Used for conditional compilation based on CPU feature detection.
 , targetFeatures ? []
+  # Additional target attributes for conditional dependencies.
+  # Use this for custom cfg flags that are passed via rustcflags but need to
+  # be known at Nix evaluation time for dependency resolution.
+  # Example: { tracing_unstable = true; } for crates using cfg(tracing_unstable).
+, extraTargetFlags ? {}
   # Whether to perform release builds: longer compile times, faster binaries.
 , release ? true
   # Additional crate2nix configuration if it exists.
@@ -1402,7 +1407,7 @@ rec {
     endian = if platform.parsed.cpu.significantByte.name == "littleEndian" then "little" else "big";
     pointer_width = toString platform.parsed.cpu.bits;
     debug_assertions = false;
-  };
+  } // extraTargetFlags;
 
   registryUrl =
     { registries
@@ -1565,7 +1570,7 @@ rec {
       in
       pkgs.runCommand "${crate.name}-linked"
         {
-          inherit (crate) outputs crateName;
+          inherit (crate) outputs crateName meta;
           passthru = (crate.passthru or { }) // {
             inherit test;
           };
