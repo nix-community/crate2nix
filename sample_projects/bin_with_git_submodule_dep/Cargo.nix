@@ -490,10 +490,10 @@ rec {
         edition = "2018";
         links = "rocksdb";
         workspace_member = null;
-        src = pkgs.fetchgit {
+        src = builtins.fetchGit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
           rev = "66f04df013b6e6bd42b5a8c353406e09a7c7da2a";
-          sha256 = "1rchvjrjamdaznx26gy4bmjj10rrf00mgc1wvkc489r9z1nh4h1h";
+          submodules = true;
         };
         authors = [
           "Karl Hobley <karlhobley10@gmail.com>"
@@ -842,10 +842,10 @@ rec {
         version = "0.21.0";
         edition = "2018";
         workspace_member = null;
-        src = pkgs.fetchgit {
+        src = builtins.fetchGit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
           rev = "66f04df013b6e6bd42b5a8c353406e09a7c7da2a";
-          sha256 = "1rchvjrjamdaznx26gy4bmjj10rrf00mgc1wvkc489r9z1nh4h1h";
+          submodules = true;
         };
         authors = [
           "Tyler Neely <t@jujit.su>"

@@ -98,10 +98,10 @@ rec {
         version = "0.1.0";
         edition = "2018";
         workspace_member = null;
-        src = pkgs.fetchgit {
+        src = builtins.fetchGit {
           url = "https://github.com/kolloch/with_sub_crates.git";
           rev = "f8ad2b98ff0eb5fea4962f55e3ced5b0b5afe973";
-          sha256 = "0nlw7rg28p6bya040cbipq4jdcdp4h3q9shdjygfk2xkva9bjl8w";
+          submodules = true;
         };
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
@@ -113,10 +113,10 @@ rec {
         version = "0.1.0";
         edition = "2018";
         workspace_member = null;
-        src = pkgs.fetchgit {
+        src = builtins.fetchGit {
           url = "https://github.com/kolloch/with_sub_crates.git";
           rev = "f8ad2b98ff0eb5fea4962f55e3ced5b0b5afe973";
-          sha256 = "0nlw7rg28p6bya040cbipq4jdcdp4h3q9shdjygfk2xkva9bjl8w";
+          submodules = true;
         };
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
