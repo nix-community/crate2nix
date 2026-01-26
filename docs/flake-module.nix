@@ -1,6 +1,6 @@
 {
   perSystem = { config, self', inputs', pkgs, lib, system, ... }:
-    let nodejs = pkgs.nodejs_21; in {
+    let nodejs = pkgs.nodejs_22; in {
       devshells.default = {
         commands = [
           { package = nodejs; category = "docs"; }
@@ -14,25 +14,25 @@
           hooks = {
             markdownlint = {
               enable = true;
-            };
-          };
-          # https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc
-          settings.markdownlint.config = {
-            # MD013/line-length : Line length : https://github.com/DavidAnson/markdownlint/blob/v0.32.1/doc/md013.md
-            "MD013" = {
-              "line_length" = 120;
-              "code_block_line_length" = 120;
-              "tables" = false;
-            };
+              # https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc
+              settings.configuration = {
+                # MD013/line-length : Line length : https://github.com/DavidAnson/markdownlint/blob/v0.32.1/doc/md013.md
+                "MD013" = {
+                  "line_length" = 120;
+                  "code_block_line_length" = 120;
+                  "tables" = false;
+                };
 
-            # MD024/no-duplicate-heading : Multiple headings with the same content : https://github.com/DavidAnson/markdownlint/blob/v0.32.1/doc/md024.md
-            "MD024" = {
-              # we have multiple Bugfixes/Upgrading headings in the CHANGELOG for consistency.
-              "siblings_only" = true;
-            };
+                # MD024/no-duplicate-heading : Multiple headings with the same content : https://github.com/DavidAnson/markdownlint/blob/v0.32.1/doc/md024.md
+                "MD024" = {
+                  # we have multiple Bugfixes/Upgrading headings in the CHANGELOG for consistency.
+                  "siblings_only" = true;
+                };
 
-            "MD033" = {
-              "allowed_elements" = [ "Card" ];
+                "MD033" = {
+                  "allowed_elements" = [ "Card" ];
+                };
+              };
             };
           };
         };

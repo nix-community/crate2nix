@@ -1,4 +1,7 @@
-///! Constructor functions for test data.
+//! Constructor functions for test data.
+
+#![allow(missing_docs)]
+
 use cargo_metadata::{Dependency, Metadata, Node, NodeDep, Package, PackageId, Resolve};
 use std::path::PathBuf;
 use tempdir::TempDir;

@@ -153,8 +153,8 @@ This was debugged by @symphorien, thank you!
 Enable a feature with the same name of an optional dependency, if the optional
 dependency is indirectly enabled by enabling one of its features.
 
-This mimicks the behavior of Cargo which is explained in the note
-[here](https://doc.rust-lang.org/nightly/cargo/reference/features.html#dependency-features).
+This mimicks the behavior of Cargo which is explained in [this
+note](https://doc.rust-lang.org/nightly/cargo/reference/features.html#dependency-features).
 
 Thank you @pandaman64!
 

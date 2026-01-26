@@ -1,6 +1,6 @@
 {
   description = ''
-    crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/) 
+    crate2nix generates [nix](https://nixos.org/nix/) build files for [rust](https://www.rust-lang.org/)
     crates using [cargo](https://crates.io/).
   '';
 
@@ -11,7 +11,7 @@
   };
 
   inputs = {
-    nixpkgs.url = "nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz";
 
@@ -42,13 +42,11 @@
       # inputs.nixpkgs.follows = "nixpkgs";
       inputs.devenv.follows = "";
       inputs.flake-compat.follows = "";
-      inputs.pre-commit-hooks.follows = "";
     };
 
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
       inputs.flake-compat.follows = "flake-compat";
     };
   };
