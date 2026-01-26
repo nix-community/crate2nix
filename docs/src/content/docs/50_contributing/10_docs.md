@@ -52,24 +52,24 @@ are in the docs folder of the source repo.
 
 All commands are run from the docs folder of the project, from a terminal:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
+| Command                   | Action                                                                 |
+| :------------------------ | :-----------------------------------------------                       |
 | `nix develop`             | Enter a dev shell if you haven't enabled [direnv](https://direnv.net/) |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+| `npm install`             | Installs dependencies                                                  |
+| `npm run dev`             | Starts local dev server at `localhost:4321`                     `      |
+| `npm run build`           | Build your production site to `./dist/`                                |
+| `npm run preview`         | Preview your build locally, before deploying                           |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check`                       |
+| `npm run astro -- --help` | Get help using the Astro CLI                                           |
 
 ### 🧞 Linting, checking, building
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
+| Command                   | Action                                                                 |
+| :------------------------ | :-----------------------------------------------                       |
 | `nix develop`             | Enter a dev shell if you haven't enabled [direnv](https://direnv.net/) |
-| `nix build .#docs`        | Building docs with nix                           |
-| `nix flake check`         | Running build AND lints                          |
-| `pre-commit`              | Running pre-commit lints without committing.     |
+| `nix build .#docs`        | Building docs with nix                                                 |
+| `nix flake check`         | Running build AND lints                                                |
+| `pre-commit`              | Running pre-commit lints without committing.                           |
 
 ## 🚀 Docs Project Structure
 
