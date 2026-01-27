@@ -3204,7 +3204,8 @@ rec {
       vendor
       ;
     family = platform.rust.platform.target-family;
-    env = "gnu";
+    # Can't rely on env being set by nixpkgs (https://github.com/NixOS/nixpkgs/issues/436832), but if there's one explicitly set we should use it or else breakage happens (https://github.com/nix-community/crate2nix/issues/402). For compatibility with the previous state of affairs, the unset fallback is "gnu".
+    env = if platform.rust.platform ? env then platform.rust.platform.env else "gnu";
     endian = if platform.parsed.cpu.significantByte.name == "littleEndian" then "little" else "big";
     pointer_width = toString platform.parsed.cpu.bits;
     debug_assertions = false;

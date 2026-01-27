@@ -6,6 +6,7 @@ description: A list of all major changes per version.
 ## 0.14.x - 0.15.0 (unreleased)
 
 * [#359](https://github.com/nix-community/crate2nix/issues/359): Document using `rust-overlay`.
+* [#403](https://github.com/nix-community/crate2nix/pull/403): use `rust.platform.env` where set for conditional compilation ([issue #402](https://github.com/nix-community/crate2nix/issues/402)).
 
 ## 0.14.x - 0.14.1 (2024-06-30)
 
