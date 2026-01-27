@@ -375,6 +375,7 @@ impl From<crate::config::Source> for ResolvedSource {
                 rev,
                 r#ref: None,
                 sha256: Some(sha256),
+                resolved_cargo_toml: None,
             }),
             crate::config::Source::CratesIo {
                 name,
@@ -424,6 +425,8 @@ pub struct GitSource {
     pub rev: String,
     pub r#ref: Option<String>,
     pub sha256: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub resolved_cargo_toml: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
@@ -511,11 +514,22 @@ impl ResolvedSource {
         };
         url.set_query(None);
         url.set_fragment(None);
+
+        let resolved_cargo_toml = {
+            let manifest = package.manifest_path.as_std_path();
+            let content = std::fs::read_to_string(manifest).ok();
+            match content {
+                Some(c) if c.contains("workspace = true") => Some(reconstruct_cargo_toml(package)),
+                _ => None,
+            }
+        };
+
         Ok(ResolvedSource::Git(GitSource {
             url,
             rev,
             r#ref: branch,
             sha256: None,
+            resolved_cargo_toml,
         }))
     }
 
@@ -700,6 +714,292 @@ impl Display for NixSource {
             write!(f, "{}", self.file)
         }
     }
+}
+
+/// Reconstruct a standalone Cargo.toml from a `cargo_metadata::Package`.
+///
+/// When cargo resolves workspace inheritance, the `Package` struct contains
+/// all resolved values. This function serializes those back into a valid
+/// standalone Cargo.toml that doesn't reference any workspace.
+fn reconstruct_cargo_toml(package: &Package) -> String {
+    use toml::Value;
+
+    let mut doc = toml::map::Map::new();
+
+    // [package] section
+    let mut pkg = toml::map::Map::new();
+    pkg.insert("name".into(), Value::String(package.name.clone()));
+    pkg.insert("version".into(), Value::String(package.version.to_string()));
+    pkg.insert("edition".into(), Value::String(package.edition.to_string()));
+    if !package.authors.is_empty() {
+        pkg.insert(
+            "authors".into(),
+            Value::Array(
+                package
+                    .authors
+                    .iter()
+                    .map(|a| Value::String(a.clone()))
+                    .collect(),
+            ),
+        );
+    }
+    if let Some(ref description) = package.description {
+        pkg.insert("description".into(), Value::String(description.clone()));
+    }
+    if let Some(ref license) = package.license {
+        pkg.insert("license".into(), Value::String(license.clone()));
+    }
+    if let Some(ref links) = package.links {
+        pkg.insert("links".into(), Value::String(links.clone()));
+    }
+    if let Some(ref repository) = package.repository {
+        pkg.insert("repository".into(), Value::String(repository.clone()));
+    }
+    if let Some(ref homepage) = package.homepage {
+        pkg.insert("homepage".into(), Value::String(homepage.clone()));
+    }
+    if let Some(ref documentation) = package.documentation {
+        pkg.insert("documentation".into(), Value::String(documentation.clone()));
+    }
+    if let Some(ref readme) = package.readme {
+        pkg.insert("readme".into(), Value::String(readme.to_string()));
+    }
+    if let Some(ref rust_version) = package.rust_version {
+        pkg.insert(
+            "rust-version".into(),
+            Value::String(rust_version.to_string()),
+        );
+    }
+    if let Some(ref default_run) = package.default_run {
+        pkg.insert("default-run".into(), Value::String(default_run.clone()));
+    }
+    if let Some(ref publish) = package.publish {
+        pkg.insert(
+            "publish".into(),
+            Value::Array(publish.iter().map(|s| Value::String(s.clone())).collect()),
+        );
+    }
+    doc.insert("package".into(), Value::Table(pkg));
+
+    // [lib] target
+    for target in &package.targets {
+        if target.kind.iter().any(|k| {
+            k == "lib" || k == "rlib" || k == "dylib" || k == "cdylib" || k == "proc-macro"
+        }) {
+            let mut lib = toml::map::Map::new();
+            lib.insert("name".into(), Value::String(target.name.clone()));
+            if let Some(rel_path) = relative_target_path(package, target) {
+                lib.insert("path".into(), Value::String(rel_path));
+            }
+            if target.kind.iter().any(|k| k == "proc-macro") {
+                lib.insert("proc-macro".into(), Value::Boolean(true));
+            }
+            let non_default_types: Vec<_> = target
+                .crate_types
+                .iter()
+                .filter(|ct| *ct != "lib")
+                .cloned()
+                .collect();
+            if !non_default_types.is_empty() {
+                lib.insert(
+                    "crate-type".into(),
+                    Value::Array(
+                        target
+                            .crate_types
+                            .iter()
+                            .map(|s| Value::String(s.clone()))
+                            .collect(),
+                    ),
+                );
+            }
+            doc.insert("lib".into(), Value::Table(lib));
+        }
+    }
+
+    // [[bin]] targets
+    let bins: Vec<_> = package
+        .targets
+        .iter()
+        .filter(|t| t.kind.iter().any(|k| k == "bin"))
+        .collect();
+    if !bins.is_empty() {
+        let bin_array: Vec<Value> = bins
+            .iter()
+            .map(|target| {
+                let mut bin = toml::map::Map::new();
+                bin.insert("name".into(), Value::String(target.name.clone()));
+                if let Some(rel_path) = relative_target_path(package, target) {
+                    bin.insert("path".into(), Value::String(rel_path));
+                }
+                if !target.required_features.is_empty() {
+                    bin.insert(
+                        "required-features".into(),
+                        Value::Array(
+                            target
+                                .required_features
+                                .iter()
+                                .map(|f| Value::String(f.clone()))
+                                .collect(),
+                        ),
+                    );
+                }
+                Value::Table(bin)
+            })
+            .collect();
+        doc.insert("bin".into(), Value::Array(bin_array));
+    }
+
+    // Dependencies grouped by kind and target
+    let mut deps = toml::map::Map::new();
+    let mut dev_deps = toml::map::Map::new();
+    let mut build_deps = toml::map::Map::new();
+    let mut target_deps: BTreeMap<
+        String,
+        (
+            toml::map::Map<String, Value>,
+            toml::map::Map<String, Value>,
+            toml::map::Map<String, Value>,
+        ),
+    > = BTreeMap::new();
+
+    for dep in &package.dependencies {
+        let dep_value = dependency_to_toml(dep);
+        let target_key = dep.target.as_ref().map(|t| t.to_string());
+
+        match (dep.kind, target_key) {
+            (DependencyKind::Normal | DependencyKind::Unknown, None) => {
+                deps.insert(dep.name.clone(), dep_value);
+            }
+            (DependencyKind::Development, None) => {
+                dev_deps.insert(dep.name.clone(), dep_value);
+            }
+            (DependencyKind::Build, None) => {
+                build_deps.insert(dep.name.clone(), dep_value);
+            }
+            (kind, Some(target_str)) => {
+                let entry = target_deps.entry(target_str).or_insert_with(|| {
+                    (
+                        toml::map::Map::new(),
+                        toml::map::Map::new(),
+                        toml::map::Map::new(),
+                    )
+                });
+                match kind {
+                    DependencyKind::Normal | DependencyKind::Unknown => {
+                        entry.0.insert(dep.name.clone(), dep_value);
+                    }
+                    DependencyKind::Development => {
+                        entry.1.insert(dep.name.clone(), dep_value);
+                    }
+                    DependencyKind::Build => {
+                        entry.2.insert(dep.name.clone(), dep_value);
+                    }
+                }
+            }
+        }
+    }
+
+    if !deps.is_empty() {
+        doc.insert("dependencies".into(), Value::Table(deps));
+    }
+    if !dev_deps.is_empty() {
+        doc.insert("dev-dependencies".into(), Value::Table(dev_deps));
+    }
+    if !build_deps.is_empty() {
+        doc.insert("build-dependencies".into(), Value::Table(build_deps));
+    }
+
+    // [target.'cfg(...)'.dependencies]
+    if !target_deps.is_empty() {
+        let mut target_table = toml::map::Map::new();
+        for (target_str, (normal, dev, build)) in target_deps {
+            let mut t = toml::map::Map::new();
+            if !normal.is_empty() {
+                t.insert("dependencies".into(), Value::Table(normal));
+            }
+            if !dev.is_empty() {
+                t.insert("dev-dependencies".into(), Value::Table(dev));
+            }
+            if !build.is_empty() {
+                t.insert("build-dependencies".into(), Value::Table(build));
+            }
+            target_table.insert(target_str, Value::Table(t));
+        }
+        doc.insert("target".into(), Value::Table(target_table));
+    }
+
+    // [features]
+    if !package.features.is_empty() {
+        let mut features = toml::map::Map::new();
+        for (name, feature_list) in &package.features {
+            features.insert(
+                name.clone(),
+                Value::Array(
+                    feature_list
+                        .iter()
+                        .map(|f| Value::String(f.clone()))
+                        .collect(),
+                ),
+            );
+        }
+        doc.insert("features".into(), Value::Table(features));
+    }
+
+    toml::to_string(&Value::Table(doc)).expect("failed to serialize reconstructed Cargo.toml")
+}
+
+/// Compute a relative path from the package manifest directory to a target's source path.
+fn relative_target_path(package: &Package, target: &Target) -> Option<String> {
+    let manifest_dir = package.manifest_path.parent()?;
+    let src_path = target.src_path.as_std_path();
+    let manifest_dir_path = manifest_dir.as_std_path();
+    pathdiff::diff_paths(src_path, manifest_dir_path).map(|p| p.to_string_lossy().into_owned())
+}
+
+/// Convert a `Dependency` to a TOML value for Cargo.toml serialization.
+fn dependency_to_toml(dep: &Dependency) -> toml::Value {
+    use toml::Value;
+
+    let version_str = dep.req.to_string();
+
+    // If the dependency is simple (just a version, no extras), emit as a string
+    let has_extras = dep.optional
+        || !dep.uses_default_features
+        || !dep.features.is_empty()
+        || dep.rename.is_some()
+        || dep.registry.is_some();
+
+    if !has_extras {
+        return Value::String(version_str);
+    }
+
+    let mut table = toml::map::Map::new();
+    table.insert("version".into(), Value::String(version_str));
+    if dep.optional {
+        table.insert("optional".into(), Value::Boolean(true));
+    }
+    if !dep.uses_default_features {
+        table.insert("default-features".into(), Value::Boolean(false));
+    }
+    if !dep.features.is_empty() {
+        table.insert(
+            "features".into(),
+            Value::Array(
+                dep.features
+                    .iter()
+                    .map(|f| Value::String(f.clone()))
+                    .collect(),
+            ),
+        );
+    }
+    if let Some(ref rename) = dep.rename {
+        table.insert("package".into(), Value::String(rename.clone()));
+    }
+    if let Some(ref registry) = dep.registry {
+        table.insert("registry".into(), Value::String(registry.clone()));
+    }
+
+    Value::Table(table)
 }
 
 /// Normalize a package name such as cargo does.
