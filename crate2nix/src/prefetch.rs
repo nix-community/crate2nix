@@ -13,6 +13,27 @@ use cargo_metadata::PackageId;
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashMap};
 
+/// Extracts `(name, version)` from a package ID string in either format:
+/// - Old: `"name version (source)"` → split on spaces, take first two tokens
+/// - New: `"source#name@version"` → split on `#`, then on `@`
+///
+/// Returns `None` for malformed IDs or new-format IDs without a name (e.g. `"source#version"`).
+fn parse_package_id_components(repr: &str) -> Option<(String, String)> {
+    if repr.contains(' ') {
+        // Old format: "name version (source)" or "name version"
+        let mut parts = repr.split_whitespace();
+        let name = parts.next()?;
+        let version = parts.next()?;
+        Some((name.to_string(), version.to_string()))
+    } else if let Some(fragment) = repr.split_once('#').map(|(_, f)| f) {
+        // New format: "source#name@version"
+        let (name, version) = fragment.split_once('@')?;
+        Some((name.to_string(), version.to_string()))
+    } else {
+        None
+    }
+}
+
 /// The source is important because we need to store only hashes for which we performed
 /// a prefetch.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -51,6 +72,13 @@ pub fn prefetch(
     };
 
     let old_prefetched_hashes: BTreeMap<PackageId, String> = serde_json::from_str(&hashes_string)?;
+
+    // Build a fallback index keyed by (name, version) so we can match hashes
+    // even when the package ID format differs (old vs new cargo format).
+    let hashes_by_name_version: HashMap<(String, String), &String> = old_prefetched_hashes
+        .iter()
+        .filter_map(|(id, hash)| parse_package_id_components(&id.repr).map(|key| (key, hash)))
+        .collect();
 
     // Only copy used hashes over to the new map.
     let mut hashes = BTreeMap::<PackageId, String>::new();
@@ -91,6 +119,16 @@ pub fn prefetch(
                                 .get(id_shortener.lengthen_ref(&p.package_id))
                                 .map(|hash| HashWithSource {
                                     sha256: hash.clone(),
+                                    source: HashSource::Prefetched,
+                                })
+                        })
+                        .or_else(|| {
+                            // Fallback: match by (name, version) when the package ID
+                            // format differs between the hashes file and cargo metadata.
+                            hashes_by_name_version
+                                .get(&(p.crate_name.clone(), p.version.to_string()))
+                                .map(|hash| HashWithSource {
+                                    sha256: (*hash).clone(),
                                     source: HashSource::Prefetched,
                                 })
                         })
@@ -346,5 +384,78 @@ impl PrefetchableSource for GitSource {
         let json = get_command_output("nix-prefetch-git", &args)?;
         let prefetch_info: NixPrefetchGitInfo = serde_json::from_str(&json)?;
         Ok(prefetch_info.sha256)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parse_package_id_components;
+
+    #[test]
+    fn old_format_crates_io() {
+        let id = "serde 1.0.160 (registry+https://github.com/rust-lang/crates.io-index)";
+        assert_eq!(
+            parse_package_id_components(id),
+            Some(("serde".to_string(), "1.0.160".to_string()))
+        );
+    }
+
+    #[test]
+    fn old_format_git() {
+        let id = "pkg-config 0.3.33 (git+https://github.com/rust-lang/pkg-config-rs?branch=main#abcdef1)";
+        assert_eq!(
+            parse_package_id_components(id),
+            Some(("pkg-config".to_string(), "0.3.33".to_string()))
+        );
+    }
+
+    #[test]
+    fn new_format_with_name() {
+        let id = "git+https://github.com/example/repo#pkg-config@0.3.33";
+        assert_eq!(
+            parse_package_id_components(id),
+            Some(("pkg-config".to_string(), "0.3.33".to_string()))
+        );
+    }
+
+    #[test]
+    fn new_format_registry() {
+        let id = "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.160";
+        assert_eq!(
+            parse_package_id_components(id),
+            Some(("serde".to_string(), "1.0.160".to_string()))
+        );
+    }
+
+    #[test]
+    fn new_format_without_name() {
+        // "source#version" with no @ means no name — should return None
+        let id = "git+https://github.com/example/repo#0.3.33";
+        assert_eq!(parse_package_id_components(id), None);
+    }
+
+    #[test]
+    fn old_format_short_no_source() {
+        let id = "serde 1.0.160";
+        assert_eq!(
+            parse_package_id_components(id),
+            Some(("serde".to_string(), "1.0.160".to_string()))
+        );
+    }
+
+    #[test]
+    fn single_token_returns_none() {
+        let id = "serde";
+        assert_eq!(parse_package_id_components(id), None);
+    }
+
+    #[test]
+    fn new_format_version_with_build_metadata() {
+        let id =
+            "registry+https://github.com/rust-lang/crates.io-index#libsqlite3-sys@0.15.0+8.9.1";
+        assert_eq!(
+            parse_package_id_components(id),
+            Some(("libsqlite3-sys".to_string(), "0.15.0+8.9.1".to_string()))
+        );
     }
 }
