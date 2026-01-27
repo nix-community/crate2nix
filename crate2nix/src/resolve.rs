@@ -860,16 +860,19 @@ fn reconstruct_cargo_toml(package: &Package) -> String {
     for dep in &package.dependencies {
         let dep_value = dependency_to_toml(dep);
         let target_key = dep.target.as_ref().map(|t| t.to_string());
+        // In cargo metadata, `name` is the real package name and `rename` is
+        // the local alias. In Cargo.toml the key is the alias.
+        let toml_key = dep.rename.as_ref().unwrap_or(&dep.name).clone();
 
         match (dep.kind, target_key) {
             (DependencyKind::Normal | DependencyKind::Unknown, None) => {
-                deps.insert(dep.name.clone(), dep_value);
+                deps.insert(toml_key, dep_value);
             }
             (DependencyKind::Development, None) => {
-                dev_deps.insert(dep.name.clone(), dep_value);
+                dev_deps.insert(toml_key, dep_value);
             }
             (DependencyKind::Build, None) => {
-                build_deps.insert(dep.name.clone(), dep_value);
+                build_deps.insert(toml_key, dep_value);
             }
             (kind, Some(target_str)) => {
                 let entry = target_deps
@@ -877,13 +880,13 @@ fn reconstruct_cargo_toml(package: &Package) -> String {
                     .or_insert_with(|| (TomlMap::new(), TomlMap::new(), TomlMap::new()));
                 match kind {
                     DependencyKind::Normal | DependencyKind::Unknown => {
-                        entry.0.insert(dep.name.clone(), dep_value);
+                        entry.0.insert(toml_key, dep_value);
                     }
                     DependencyKind::Development => {
-                        entry.1.insert(dep.name.clone(), dep_value);
+                        entry.1.insert(toml_key, dep_value);
                     }
                     DependencyKind::Build => {
-                        entry.2.insert(dep.name.clone(), dep_value);
+                        entry.2.insert(toml_key, dep_value);
                     }
                 }
             }
@@ -983,8 +986,11 @@ fn dependency_to_toml(dep: &Dependency) -> toml::Value {
             ),
         );
     }
-    if let Some(ref rename) = dep.rename {
-        table.insert("package".into(), Value::String(rename.clone()));
+    if dep.rename.is_some() {
+        // When renamed, `name` is the real package name and goes in the
+        // `package` field. The alias (rename) is used as the TOML key by
+        // the caller.
+        table.insert("package".into(), Value::String(dep.name.clone()));
     }
     if let Some(ref registry) = dep.registry {
         table.insert("registry".into(), Value::String(registry.clone()));
@@ -1419,9 +1425,63 @@ mod reconstruct_cargo_toml_tests {
 
         let toml_str = reconstruct_cargo_toml(&pkg);
         let parsed: toml::Value = toml::from_str(&toml_str).expect("invalid TOML output");
-        let dep = parsed["dependencies"]["futures"].as_table().unwrap();
+        // The TOML key is the alias (rename), `package` is the real crate name
+        let dep = parsed["dependencies"]["futures01"].as_table().unwrap();
         assert_eq!(dep["version"].as_str().unwrap(), "^0.1");
-        assert_eq!(dep["package"].as_str().unwrap(), "futures01");
+        assert_eq!(dep["package"].as_str().unwrap(), "futures");
+    }
+
+    #[test]
+    fn renamed_and_non_renamed_deps_use_correct_keys() {
+        let pkg = make_package(serde_json::json!({
+            "name": "my-crate",
+            "version": "0.1.0",
+            "id": "my-crate 0.1.0",
+            "manifest_path": "/tmp/Cargo.toml",
+            "dependencies": [
+                {
+                    "name": "serde",
+                    "req": "^1.0",
+                    "kind": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "rename": null,
+                    "registry": null,
+                    "source": null,
+                },
+                {
+                    "name": "futures",
+                    "req": "^0.1",
+                    "kind": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "rename": "futures01",
+                    "registry": null,
+                    "source": null,
+                }
+            ],
+            "targets": [],
+            "features": {},
+        }));
+
+        let toml_str = reconstruct_cargo_toml(&pkg);
+        let parsed: toml::Value = toml::from_str(&toml_str).expect("invalid TOML output");
+        let deps = parsed["dependencies"].as_table().unwrap();
+
+        // Non-renamed: key is the package name, no `package` field
+        assert_eq!(deps["serde"].as_str().unwrap(), "^1.0");
+
+        // Renamed: key is the alias, `package` is the real crate name
+        let renamed = deps["futures01"].as_table().unwrap();
+        assert_eq!(renamed["version"].as_str().unwrap(), "^0.1");
+        assert_eq!(renamed["package"].as_str().unwrap(), "futures");
+
+        // The real package name should NOT appear as a key
+        assert!(deps.get("futures").is_none());
     }
 
     #[test]
