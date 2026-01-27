@@ -10,7 +10,7 @@ jobs:
           - macos-15
     runs-on: ${{ matrix.platform }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: cachix/install-nix-action@v31
       with:
         install_url: "https://releases.nixos.org/nix/nix-2.33.0/install"

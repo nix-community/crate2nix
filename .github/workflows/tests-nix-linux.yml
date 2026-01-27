@@ -10,7 +10,7 @@ jobs:
           - ubuntu-latest
     runs-on: ${{ matrix.platform }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: wimpysworld/nothing-but-nix@main
     - uses: cachix/install-nix-action@v31
       with:
