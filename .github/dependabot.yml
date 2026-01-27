@@ -8,3 +8,11 @@ updates:
     schedule:
       # Check for updates to GitHub Actions every weekday
       interval: "daily"
+
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    exclude-paths:
+      - "sample_projects/**"
+      - "sample_workspace/**"
