@@ -724,6 +724,8 @@ impl Display for NixSource {
 fn reconstruct_cargo_toml(package: &Package) -> String {
     use toml::Value;
 
+    type TomlMap = toml::map::Map<String, toml::Value>;
+
     let mut doc = toml::map::Map::new();
 
     // [package] section
@@ -853,14 +855,7 @@ fn reconstruct_cargo_toml(package: &Package) -> String {
     let mut deps = toml::map::Map::new();
     let mut dev_deps = toml::map::Map::new();
     let mut build_deps = toml::map::Map::new();
-    let mut target_deps: BTreeMap<
-        String,
-        (
-            toml::map::Map<String, Value>,
-            toml::map::Map<String, Value>,
-            toml::map::Map<String, Value>,
-        ),
-    > = BTreeMap::new();
+    let mut target_deps: BTreeMap<String, (TomlMap, TomlMap, TomlMap)> = BTreeMap::new();
 
     for dep in &package.dependencies {
         let dep_value = dependency_to_toml(dep);
@@ -877,13 +872,9 @@ fn reconstruct_cargo_toml(package: &Package) -> String {
                 build_deps.insert(dep.name.clone(), dep_value);
             }
             (kind, Some(target_str)) => {
-                let entry = target_deps.entry(target_str).or_insert_with(|| {
-                    (
-                        toml::map::Map::new(),
-                        toml::map::Map::new(),
-                        toml::map::Map::new(),
-                    )
-                });
+                let entry = target_deps
+                    .entry(target_str)
+                    .or_insert_with(|| (TomlMap::new(), TomlMap::new(), TomlMap::new()));
                 match kind {
                     DependencyKind::Normal | DependencyKind::Unknown => {
                         entry.0.insert(dep.name.clone(), dep_value);
@@ -1289,4 +1280,316 @@ pub struct ResolvedDependency {
     pub uses_default_features: bool,
     /// Extra-enabled features.
     pub features: Vec<String>,
+}
+
+#[cfg(test)]
+mod reconstruct_cargo_toml_tests {
+    use super::*;
+
+    fn make_package(json: serde_json::Value) -> Package {
+        serde_json::from_value(json).expect("invalid test Package JSON")
+    }
+
+    #[test]
+    fn basic_package_fields() {
+        let pkg = make_package(serde_json::json!({
+            "name": "my-crate",
+            "version": "1.2.3",
+            "id": "my-crate 1.2.3",
+            "edition": "2021",
+            "authors": ["Alice <alice@example.com>"],
+            "description": "A test crate",
+            "license": "MIT",
+            "manifest_path": "/tmp/Cargo.toml",
+            "dependencies": [],
+            "targets": [],
+            "features": {},
+        }));
+
+        let toml_str = reconstruct_cargo_toml(&pkg);
+        let parsed: toml::Value = toml::from_str(&toml_str).expect("invalid TOML output");
+        let table = parsed.as_table().unwrap();
+        let package = table["package"].as_table().unwrap();
+
+        assert_eq!(package["name"].as_str().unwrap(), "my-crate");
+        assert_eq!(package["version"].as_str().unwrap(), "1.2.3");
+        assert_eq!(package["edition"].as_str().unwrap(), "2021");
+        assert_eq!(package["description"].as_str().unwrap(), "A test crate");
+        assert_eq!(package["license"].as_str().unwrap(), "MIT");
+        let authors = package["authors"].as_array().unwrap();
+        assert_eq!(authors[0].as_str().unwrap(), "Alice <alice@example.com>");
+    }
+
+    #[test]
+    fn simple_dependencies() {
+        let pkg = make_package(serde_json::json!({
+            "name": "my-crate",
+            "version": "0.1.0",
+            "id": "my-crate 0.1.0",
+            "manifest_path": "/tmp/Cargo.toml",
+            "dependencies": [
+                {
+                    "name": "serde",
+                    "req": "^1.0",
+                    "kind": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "rename": null,
+                    "registry": null,
+                    "source": null,
+                }
+            ],
+            "targets": [],
+            "features": {},
+        }));
+
+        let toml_str = reconstruct_cargo_toml(&pkg);
+        let parsed: toml::Value = toml::from_str(&toml_str).expect("invalid TOML output");
+        let deps = parsed["dependencies"].as_table().unwrap();
+        // Simple dep with no extras should be a string
+        assert_eq!(deps["serde"].as_str().unwrap(), "^1.0");
+    }
+
+    #[test]
+    fn dependency_with_features_and_optional() {
+        let pkg = make_package(serde_json::json!({
+            "name": "my-crate",
+            "version": "0.1.0",
+            "id": "my-crate 0.1.0",
+            "manifest_path": "/tmp/Cargo.toml",
+            "dependencies": [
+                {
+                    "name": "serde",
+                    "req": "^1.0",
+                    "kind": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": ["derive", "alloc"],
+                    "target": null,
+                    "rename": null,
+                    "registry": null,
+                    "source": null,
+                }
+            ],
+            "targets": [],
+            "features": {},
+        }));
+
+        let toml_str = reconstruct_cargo_toml(&pkg);
+        let parsed: toml::Value = toml::from_str(&toml_str).expect("invalid TOML output");
+        let dep = parsed["dependencies"]["serde"].as_table().unwrap();
+        assert_eq!(dep["version"].as_str().unwrap(), "^1.0");
+        assert_eq!(dep["optional"].as_bool().unwrap(), true);
+        assert_eq!(dep["default-features"].as_bool().unwrap(), false);
+        let features: Vec<&str> = dep["features"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v.as_str().unwrap())
+            .collect();
+        assert_eq!(features, vec!["derive", "alloc"]);
+    }
+
+    #[test]
+    fn dependency_with_rename() {
+        let pkg = make_package(serde_json::json!({
+            "name": "my-crate",
+            "version": "0.1.0",
+            "id": "my-crate 0.1.0",
+            "manifest_path": "/tmp/Cargo.toml",
+            "dependencies": [
+                {
+                    "name": "futures",
+                    "req": "^0.1",
+                    "kind": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "rename": "futures01",
+                    "registry": null,
+                    "source": null,
+                }
+            ],
+            "targets": [],
+            "features": {},
+        }));
+
+        let toml_str = reconstruct_cargo_toml(&pkg);
+        let parsed: toml::Value = toml::from_str(&toml_str).expect("invalid TOML output");
+        let dep = parsed["dependencies"]["futures"].as_table().unwrap();
+        assert_eq!(dep["version"].as_str().unwrap(), "^0.1");
+        assert_eq!(dep["package"].as_str().unwrap(), "futures01");
+    }
+
+    #[test]
+    fn build_and_dev_dependencies() {
+        let pkg = make_package(serde_json::json!({
+            "name": "my-crate",
+            "version": "0.1.0",
+            "id": "my-crate 0.1.0",
+            "manifest_path": "/tmp/Cargo.toml",
+            "dependencies": [
+                {
+                    "name": "cc",
+                    "req": "^1.0",
+                    "kind": "build",
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "rename": null,
+                    "registry": null,
+                    "source": null,
+                },
+                {
+                    "name": "tempdir",
+                    "req": "^0.3",
+                    "kind": "dev",
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "rename": null,
+                    "registry": null,
+                    "source": null,
+                }
+            ],
+            "targets": [],
+            "features": {},
+        }));
+
+        let toml_str = reconstruct_cargo_toml(&pkg);
+        let parsed: toml::Value = toml::from_str(&toml_str).expect("invalid TOML output");
+        assert_eq!(parsed["build-dependencies"]["cc"].as_str().unwrap(), "^1.0");
+        assert_eq!(
+            parsed["dev-dependencies"]["tempdir"].as_str().unwrap(),
+            "^0.3"
+        );
+        // Should not have regular dependencies section
+        assert!(parsed.get("dependencies").is_none());
+    }
+
+    #[test]
+    fn target_specific_dependencies() {
+        let pkg = make_package(serde_json::json!({
+            "name": "my-crate",
+            "version": "0.1.0",
+            "id": "my-crate 0.1.0",
+            "manifest_path": "/tmp/Cargo.toml",
+            "dependencies": [
+                {
+                    "name": "libc",
+                    "req": "^0.2",
+                    "kind": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": "cfg(unix)",
+                    "rename": null,
+                    "registry": null,
+                    "source": null,
+                }
+            ],
+            "targets": [],
+            "features": {},
+        }));
+
+        let toml_str = reconstruct_cargo_toml(&pkg);
+        let parsed: toml::Value = toml::from_str(&toml_str).expect("invalid TOML output");
+        let target_deps = parsed["target"]["cfg(unix)"]["dependencies"]
+            .as_table()
+            .unwrap();
+        assert_eq!(target_deps["libc"].as_str().unwrap(), "^0.2");
+    }
+
+    #[test]
+    fn features_section() {
+        let pkg = make_package(serde_json::json!({
+            "name": "my-crate",
+            "version": "0.1.0",
+            "id": "my-crate 0.1.0",
+            "manifest_path": "/tmp/Cargo.toml",
+            "dependencies": [],
+            "targets": [],
+            "features": {
+                "default": ["std"],
+                "std": [],
+                "alloc": ["dep:serde"],
+            },
+        }));
+
+        let toml_str = reconstruct_cargo_toml(&pkg);
+        let parsed: toml::Value = toml::from_str(&toml_str).expect("invalid TOML output");
+        let features = parsed["features"].as_table().unwrap();
+        let default_features: Vec<&str> = features["default"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v.as_str().unwrap())
+            .collect();
+        assert_eq!(default_features, vec!["std"]);
+        assert!(features["std"].as_array().unwrap().is_empty());
+    }
+
+    #[test]
+    fn output_is_valid_toml() {
+        let pkg = make_package(serde_json::json!({
+            "name": "complex-crate",
+            "version": "2.0.0-alpha.1",
+            "id": "complex-crate 2.0.0-alpha.1",
+            "edition": "2021",
+            "authors": ["Bob <bob@test.com>"],
+            "manifest_path": "/tmp/Cargo.toml",
+            "dependencies": [
+                {
+                    "name": "serde",
+                    "req": "^1.0",
+                    "kind": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": ["derive"],
+                    "target": null,
+                    "rename": null,
+                    "registry": null,
+                    "source": null,
+                },
+                {
+                    "name": "libc",
+                    "req": "^0.2",
+                    "kind": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": "cfg(unix)",
+                    "rename": null,
+                    "registry": null,
+                    "source": null,
+                },
+                {
+                    "name": "cc",
+                    "req": "^1",
+                    "kind": "build",
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "rename": null,
+                    "registry": null,
+                    "source": null,
+                },
+            ],
+            "targets": [],
+            "features": {
+                "default": ["serde"],
+                "full": ["serde", "std"],
+            },
+        }));
+
+        let toml_str = reconstruct_cargo_toml(&pkg);
+        // Should parse without error
+        let _: toml::Value = toml::from_str(&toml_str).expect("invalid TOML output");
+    }
 }
