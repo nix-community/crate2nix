@@ -1,0 +1,7 @@
+[package]
+name = "bin_with_workspace_git_dep"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nix-conf-parser = { git = "https://github.com/cachix/devenv", rev = "dbed697d9c4189ad0b2d6d66050e4f4bb6096ac7" }

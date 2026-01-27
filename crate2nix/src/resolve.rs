@@ -376,6 +376,7 @@ impl From<crate::config::Source> for ResolvedSource {
                 r#ref: None,
                 sha256: Some(sha256),
                 resolved_cargo_toml: None,
+                resolved_cargo_toml_sub_dir: None,
             }),
             crate::config::Source::CratesIo {
                 name,
@@ -427,6 +428,8 @@ pub struct GitSource {
     pub sha256: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub resolved_cargo_toml: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub resolved_cargo_toml_sub_dir: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Hash)]
@@ -515,12 +518,16 @@ impl ResolvedSource {
         url.set_query(None);
         url.set_fragment(None);
 
-        let resolved_cargo_toml = {
+        let (resolved_cargo_toml, resolved_cargo_toml_sub_dir) = {
             let manifest = package.manifest_path.as_std_path();
             let content = std::fs::read_to_string(manifest).ok();
             match content {
-                Some(c) if c.contains("workspace = true") => Some(reconstruct_cargo_toml(package)),
-                _ => None,
+                Some(c) if c.contains("workspace = true") => {
+                    let toml = reconstruct_cargo_toml(package);
+                    let sub_dir = find_git_workspace_sub_dir(manifest);
+                    (Some(toml), sub_dir)
+                }
+                _ => (None, None),
             }
         };
 
@@ -530,6 +537,7 @@ impl ResolvedSource {
             r#ref: branch,
             sha256: None,
             resolved_cargo_toml,
+            resolved_cargo_toml_sub_dir,
         }))
     }
 
@@ -940,6 +948,31 @@ fn reconstruct_cargo_toml(package: &Package) -> String {
     }
 
     toml::to_string(&Value::Table(doc)).expect("failed to serialize reconstructed Cargo.toml")
+}
+
+/// Find the subdirectory of a crate within its git workspace.
+///
+/// Walks up from the crate's manifest path looking for a parent directory
+/// containing a `Cargo.toml` with a `[workspace]` section. Returns the
+/// relative path from that workspace root to the crate's directory, or
+/// `None` if the crate is at the workspace root.
+fn find_git_workspace_sub_dir(manifest_path: &Path) -> Option<String> {
+    let crate_dir = manifest_path.parent()?;
+    let mut current = crate_dir.parent()?;
+    loop {
+        let candidate = current.join("Cargo.toml");
+        if let Ok(content) = std::fs::read_to_string(&candidate) {
+            if content.contains("[workspace]") {
+                let rel = pathdiff::diff_paths(crate_dir, current)?;
+                let sub_dir = rel.to_string_lossy().into_owned();
+                if sub_dir.is_empty() {
+                    return None;
+                }
+                return Some(sub_dir);
+            }
+        }
+        current = current.parent()?;
+    }
 }
 
 /// Compute a relative path from the package manifest directory to a target's source path.

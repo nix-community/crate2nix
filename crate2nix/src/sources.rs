@@ -66,6 +66,7 @@ pub fn git_io_source(url: Url, rev: String) -> Result<config::Source, Error> {
         r#ref: None,
         sha256: None,
         resolved_cargo_toml: None,
+        resolved_cargo_toml_sub_dir: None,
     };
 
     eprint!("Prefetching {}: ", prefetchable);

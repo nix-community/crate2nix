@@ -432,10 +432,11 @@ rec {
                     });
                 in
                 if crateConfig ? resolvedCargoToml then
+                  let subDir = crateConfig.resolvedCargoTomlSubDir or ""; in
                   pkgs.runCommand "${crateConfig.crateName}-${crateConfig.version}-src" { } ''
                     cp -a ${rawSrc} $out
                     chmod -R u+w $out
-                    cp ${builtins.toFile "Cargo.toml" crateConfig.resolvedCargoToml} $out/Cargo.toml
+                    cp ${builtins.toFile "Cargo.toml" crateConfig.resolvedCargoToml} $out/${subDir}/Cargo.toml
                   ''
                 else
                   rawSrc;

@@ -215,6 +215,13 @@ let
     }
 
     {
+      name = "bin_with_workspace_git_dep";
+      src = ./sample_projects/bin_with_workspace_git_dep;
+      pregeneratedBuild = "sample_projects/bin_with_workspace_git_dep/Cargo.nix";
+      expectedOutput = "Hello from bin_with_workspace_git_dep! features=flakes nix-command";
+    }
+
+    {
       name = "bin_with_rerenamed_lib_dep";
       src = ./sample_projects;
       cargoToml = "bin_with_rerenamed_lib_dep/Cargo.toml";
