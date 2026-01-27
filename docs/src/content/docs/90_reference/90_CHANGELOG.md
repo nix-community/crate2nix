@@ -5,7 +5,28 @@ description: A list of all major changes per version.
 
 ## 0.14.x - 0.15.0 (unreleased)
 
+### New features
+
+* [#366](https://github.com/nix-community/crate2nix/pull/366): Support for private registries. Thank you, @P-E-Meunier!
+* [#390](https://github.com/nix-community/crate2nix/pull/390): Allow selected toolchain in `generatedCargoNix`. Thank you, @bengsparks!
+* [#416](https://github.com/nix-community/crate2nix/pull/416): Add `extraTargetFlags` parameter for custom cfg conditions.
+
+### Fixes
+
+* [#357](https://github.com/nix-community/crate2nix/pull/357): Use `mkDerivation` with `src` instead of `runCommand` for test derivation.
+* [#372](https://github.com/nix-community/crate2nix/pull/372): Fix build-dependencies resolution when cross-compiling. Thank you, @pnmadelaine!
+* [#375](https://github.com/nix-community/crate2nix/pull/375): Fix cargo tests and clippy warnings. Thank you, @pnmadelaine!
+* [#407](https://github.com/nix-community/crate2nix/pull/407): Inherit the main crate's `meta` when building with tests. Thank you, @jrobsonchase!
+* Fix parsing checksums from v1 manifests with latest cargo. Thank you, @hallettj!
+
+### Documentation
+
 * [#359](https://github.com/nix-community/crate2nix/issues/359): Document using `rust-overlay`.
+* [#417](https://github.com/nix-community/crate2nix/pull/417): Document custom toolchains. Thank you, @qknight!
+
+### Internal
+
+* [#414](https://github.com/nix-community/crate2nix/pull/414): Update flake inputs. Thank you, @jrobsonchase!
 
 ## 0.14.x - 0.14.1 (2024-06-30)
 
