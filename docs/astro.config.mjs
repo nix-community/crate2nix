@@ -20,8 +20,24 @@ export default defineConfig({
 					link: '/',
 				},
 				{
-					label: 'Guides',
-					autogenerate: { directory: '00_guides' },
+					label: 'Getting Started',
+					autogenerate: { directory: '10_getting_started' },
+				},
+				{
+					label: 'Generating',
+					autogenerate: { directory: '20_generating' },
+				},
+				{
+					label: 'Building',
+					autogenerate: { directory: '30_building' },
+				},
+				{
+					label: 'Toolchains',
+					autogenerate: { directory: '35_toolchains' },
+				},
+				{
+					label: 'External Sources',
+					autogenerate: { directory: '40_external_sources' },
 				},
 				{
 					label: 'Contributing',

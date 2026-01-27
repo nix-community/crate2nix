@@ -8,15 +8,19 @@ description: A list of all major changes per version.
 ### New features
 
 * [#366](https://github.com/nix-community/crate2nix/pull/366): Support for private registries. Thank you, @P-E-Meunier!
-* [#390](https://github.com/nix-community/crate2nix/pull/390): Allow selected toolchain in `generatedCargoNix`. Thank you, @bengsparks!
+* [#390](https://github.com/nix-community/crate2nix/pull/390): Allow selected toolchain in `generatedCargoNix`.
+  Thank you, @bengsparks!
 * [#416](https://github.com/nix-community/crate2nix/pull/416): Add `extraTargetFlags` parameter for custom cfg conditions.
 
 ### Fixes
 
-* [#357](https://github.com/nix-community/crate2nix/pull/357): Use `mkDerivation` with `src` instead of `runCommand` for test derivation.
-* [#372](https://github.com/nix-community/crate2nix/pull/372): Fix build-dependencies resolution when cross-compiling. Thank you, @pnmadelaine!
+* [#357](https://github.com/nix-community/crate2nix/pull/357): Use `mkDerivation` with `src` instead of
+  `runCommand` for test derivation.
+* [#372](https://github.com/nix-community/crate2nix/pull/372): Fix build-dependencies resolution when
+  cross-compiling. Thank you, @pnmadelaine!
 * [#375](https://github.com/nix-community/crate2nix/pull/375): Fix cargo tests and clippy warnings. Thank you, @pnmadelaine!
-* [#407](https://github.com/nix-community/crate2nix/pull/407): Inherit the main crate's `meta` when building with tests. Thank you, @jrobsonchase!
+* [#407](https://github.com/nix-community/crate2nix/pull/407): Inherit the main crate's `meta` when building
+  with tests. Thank you, @jrobsonchase!
 * Fix parsing checksums from v1 manifests with latest cargo. Thank you, @hallettj!
 
 ### Documentation
@@ -84,7 +88,7 @@ The related convenience functions are now also available via the flake attribute
 # ...
 ```
 
-Check out the [documentation](https://nix-community.github.io/crate2nix/00_guides/31_auto_generating/).
+Check out the [documentation](https://nix-community.github.io/crate2nix/20_generating/20_auto_generating/).
 
 ### Flakify the crate2nix build itself
 
