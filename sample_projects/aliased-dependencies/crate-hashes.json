@@ -1,0 +1,4 @@
+{
+  "git+https://github.com/ludndev/rustlang-hello-world-lib.git?tag=v0.1.1#ludndev-hello-world@0.1.1": "0ayzrhha2kl636qy0v3k1m29rf9hwy6d9pfyv5v68rrlqfsqn954",
+  "git+https://github.com/ludndev/rustlang-hello-world-lib?tag=v0.1.0#ludndev-hello-world@0.1.0": "0ab12fsfk45wasqnpv7xmcs59vgqy1i3a6ly16054q0mmnzwjz5x"
+}
