@@ -419,15 +419,26 @@ rec {
             crateConfig
             // {
               src =
-                crateConfig.src or (fetchurl rec {
-                  name = "${crateConfig.crateName}-${crateConfig.version}.tar.gz";
-                  # https://www.pietroalbini.org/blog/downloading-crates-io/
-                  # Not rate-limited, CDN URL.
-                  url = "https://static.crates.io/crates/${crateConfig.crateName}/${crateConfig.crateName}-${crateConfig.version}.crate";
-                  sha256 =
-                    assert (lib.assertMsg (crateConfig ? sha256) "Missing sha256 for ${name}");
-                    crateConfig.sha256;
-                });
+                let
+                  rawSrc =
+                    crateConfig.src or (fetchurl rec {
+                      name = "${crateConfig.crateName}-${crateConfig.version}.tar.gz";
+                      # https://www.pietroalbini.org/blog/downloading-crates-io/
+                      # Not rate-limited, CDN URL.
+                      url = "https://static.crates.io/crates/${crateConfig.crateName}/${crateConfig.crateName}-${crateConfig.version}.crate";
+                      sha256 =
+                        assert (lib.assertMsg (crateConfig ? sha256) "Missing sha256 for ${name}");
+                        crateConfig.sha256;
+                    });
+                in
+                if crateConfig ? resolvedCargoToml then
+                  pkgs.runCommand "${crateConfig.crateName}-${crateConfig.version}-src" { } ''
+                    cp -a ${rawSrc} $out
+                    chmod -R u+w $out
+                    cp ${builtins.toFile "Cargo.toml" crateConfig.resolvedCargoToml} $out/Cargo.toml
+                  ''
+                else
+                  rawSrc;
               extraRustcOpts =
                 lib.lists.optional (targetFeatures != [ ])
                   "-C target-feature=${lib.concatMapStringsSep "," (x: "+${x}") targetFeatures}";
