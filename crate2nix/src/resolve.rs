@@ -773,27 +773,58 @@ impl<'a> ResolvedDependencies<'a> {
                 let resolved = resolved_packages_by_crate_name
                     .get(&name)
                     .and_then(|packages| {
-                        let exact_match = packages
+                        let matches = packages
                             .iter()
-                            .find(|p| package_dep.req.matches(&p.version));
+                            .filter(|p| package_dep.req.matches(&p.version))
+                            .collect::<Vec<_>>();
 
                         // Strip prerelease/build info from versions if we
                         // did not find an exact match.
                         //
                         // E.g. "*" does not match a prerelease version in this
                         // library but cargo thinks differently.
+                        let matches = if matches.is_empty() {
+                            packages
+                                .iter()
+                                .filter(|p| {
+                                    let without_metadata = {
+                                        let mut version = p.version.clone();
+                                        version.pre = semver::Prerelease::EMPTY;
+                                        version.build = semver::BuildMetadata::EMPTY;
+                                        version
+                                    };
+                                    package_dep.req.matches(&without_metadata)
+                                })
+                                .collect()
+                        } else {
+                            matches
+                        };
 
-                        exact_match.or_else(|| {
-                            packages.iter().find(|p| {
-                                let without_metadata = {
-                                    let mut version = p.version.clone();
-                                    version.pre = semver::Prerelease::EMPTY;
-                                    version.build = semver::BuildMetadata::EMPTY;
-                                    version
-                                };
-                                package_dep.req.matches(&without_metadata)
-                            })
-                        })
+                        // It is possible to have multiple packages that match the name and version
+                        // requirement of the dependency. In particular if there are multiple
+                        // dependencies on the same package via git at different revisions - in
+                        // that case `package_dep.req` is set to `*` so we can't use the version
+                        // requirement to match the appropriate locked package with the dependency.
+                        // Instead it's necessary to compare by source instead.
+                        let matches = if matches.len() > 1 {
+                            matches
+                                .into_iter()
+                                .filter(|p| {
+                                    sources_match(package_dep.source.as_deref(), p.source.as_ref())
+                                        .unwrap_or(false)
+                                })
+                                .collect()
+                        } else {
+                            matches
+                        };
+
+                        if matches.len() == 1 {
+                            Some(matches[0])
+                        } else if matches.is_empty() {
+                            None
+                        } else {
+                            panic!("Could not find an unambiguous package match for dependency, {}. Candidates are: {}", &package_dep.name, matches.iter().map(|p| &p.id).join(", "));
+                        }
                     });
 
                 let dep_package = resolved?;
@@ -813,6 +844,35 @@ impl<'a> ResolvedDependencies<'a> {
         resolved.sort_by(|d1, d2| d1.package_id.cmp(&d2.package_id));
         resolved
     }
+}
+
+fn sources_match(
+    dependency_source: Option<&str>,
+    package_source: Option<&Source>,
+) -> Result<bool, anyhow::Error> {
+    let Some(dependency_source) = dependency_source else {
+        return Ok(package_source.is_none());
+    };
+    let Some(package_source) = package_source else {
+        return Ok(false); // fail if dependency has a source, but package does not
+    };
+
+    let dependency = Url::parse(dependency_source)?;
+    let package = Url::parse(&package_source.repr)?;
+
+    let scheme_matches = dependency.scheme() == package.scheme();
+    let domain_matches = dependency.domain() == package.domain();
+    let path_matches = dependency.path() == package.path();
+    let query_matches = {
+        let package_query = package.query_pairs().collect::<HashMap<_, _>>();
+        dependency.query_pairs().all(|(key, dep_value)| {
+            package_query
+                .get(&key)
+                .is_some_and(|pkg_value| &dep_value == pkg_value)
+        })
+    };
+
+    Ok(scheme_matches && domain_matches && path_matches && query_matches)
 }
 
 /// Converts one type into another by serializing/deserializing it.

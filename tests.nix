@@ -527,6 +527,12 @@ let
       # # FIXME: https://github.com/nix-community/crate2nix/issues/319
       skip = true;
     }
+
+    {
+      name = "aliased_dependencies";
+      src = ./sample_projects/aliased-dependencies;
+      expectedOutput = "Hello World !\nHello World !";
+    }
   ];
   buildTestDerivationAttrSet =
     let

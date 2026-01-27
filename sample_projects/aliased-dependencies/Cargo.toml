@@ -1,0 +1,9 @@
+[package]
+name = "aliased-dependencies"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hello = { package = "ludndev-hello-world", git = "https://github.com/ludndev/rustlang-hello-world-lib.git", tag = "v0.1.1" }
+hello_v010 = { package = "ludndev-hello-world", git = "https://github.com/ludndev/rustlang-hello-world-lib", tag = "v0.1.0" }
+hello_path = { package = "ludndev-hello-world", path = "./hello" }
