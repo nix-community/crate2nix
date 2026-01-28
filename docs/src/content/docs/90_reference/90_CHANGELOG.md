@@ -3,7 +3,7 @@ title: CHANGELOG
 description: A list of all major changes per version.
 ---
 
-## 0.14.x - 0.15.0 (unreleased)
+## 0.15.0 (2025-01-28)
 
 ### New features
 

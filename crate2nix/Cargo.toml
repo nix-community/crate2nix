@@ -1,6 +1,6 @@
 [package]
 name = "crate2nix"
-version = "0.14.1"
+version = "0.15.0"
 authors = ["Peter Kolloch <info@eigenvalue.net>"]
 edition = "2021"
 license = "Apache-2.0"

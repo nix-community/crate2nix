@@ -70,6 +70,7 @@ symlinkJoin {
         name = "Peter Kolloch";
       }
       lib.maintainers.andir
+      lib.maintainers.domenkozar
     ];
     mainProgram = "crate2nix";
     platforms = lib.platforms.all;
