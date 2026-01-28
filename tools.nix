@@ -248,6 +248,13 @@ rec {
         toPackageId = { name, version, source, ... }:
           "${name} ${version} (${source})";
 
+        # New-format package ID matching cargo 1.78+, used as crate-hashes.json
+        # keys. Strips the commit fragment from the Cargo.lock source URL and
+        # replaces it with "name@version".
+        toHashKey = { name, version, source, ... }:
+          let sourceBase = builtins.head (lib.splitString "#" source);
+          in "${sourceBase}#${name}@${version}";
+
         locked =
           let
             parseFile = cargoLock: lib.importTOML cargoLock;
@@ -279,9 +286,9 @@ rec {
             '';
           in
           rec {
-            name = toPackageId attrs;
+            name = toHashKey attrs;
             # Fetching git submodules with builtins.fetchGit is only supported in nix > 2.3
-            value = hashes.${name} or
+            value = hashes.${name} or hashes.${toPackageId attrs} or
               (if lib.versionAtLeast builtins.nixVersion "2.4"
               then builtins.readFile hash
               else builtins.throw "Checksum for ${name} not found in `hashes`");
@@ -391,8 +398,8 @@ rec {
           "git" = { name, version, source, ... } @ package:
             assert (sourceType package) == "git";
             let
-              packageId = toPackageId package;
-              sha256 = extendedHashes.${packageId};
+              hashKey = toHashKey package;
+              sha256 = extendedHashes.${hashKey} or extendedHashes.${toPackageId package};
               parsed = parseGitSource source;
               src = pkgs.fetchgit {
                 name = "${name}-${version}";
