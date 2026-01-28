@@ -33,8 +33,8 @@
       };
 
       config.pre-commit = {
+        settings.package = pkgs.prek;
         settings.settings.rust.cargoManifestPath = "crate2nix/Cargo.toml";
-
         settings.hooks = {
           # rust
           rustfmt.enable = true;
