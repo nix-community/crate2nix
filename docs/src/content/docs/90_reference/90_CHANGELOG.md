@@ -19,6 +19,10 @@ description: A list of all major changes per version.
 * [#372](https://github.com/nix-community/crate2nix/pull/372): Fix build-dependencies resolution when
   cross-compiling. Thank you, @pnmadelaine!
 * [#375](https://github.com/nix-community/crate2nix/pull/375): Fix cargo tests and clippy warnings. Thank you, @pnmadelaine!
+* [#388](https://github.com/nix-community/crate2nix/pull/388): Respect `fetchurl` passed via top-level
+  Cargo.nix. Thank you, @weihanglo!
+* [#391](https://github.com/nix-community/crate2nix/pull/391): Fix incorrect resolution of aliased git
+  dependencies when multiple versions of the same package are referenced. Thank you, @hallettj!
 * [#407](https://github.com/nix-community/crate2nix/pull/407): Inherit the main crate's `meta` when building
   with tests. Thank you, @jrobsonchase!
 * Fix parsing checksums from v1 manifests with latest cargo. Thank you, @hallettj!
