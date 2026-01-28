@@ -168,6 +168,12 @@ rec {
           sha256 = {{ crate.source.Git.sha256 }};
           {%- endif %}
         };
+        {%- if crate.source.Git.resolved_cargo_toml %}
+        resolvedCargoToml = {{crate.source.Git.resolved_cargo_toml}};
+        {%- endif %}
+        {%- if crate.source.Git.resolved_cargo_toml_sub_dir %}
+        resolvedCargoTomlSubDir = {{crate.source.Git.resolved_cargo_toml_sub_dir}};
+        {%- endif %}
         {%- else %}
         src = builtins.throw ''ERROR: Could not resolve source: {{crate.source | json_encode() | safe}}'';
         {%- endif -%}
