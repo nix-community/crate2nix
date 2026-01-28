@@ -33,7 +33,7 @@
       };
 
       config.pre-commit = {
-        settings.settings.rust.cargoManifestPath = "${self}/crate2nix/Cargo.toml";
+        settings.settings.rust.cargoManifestPath = "crate2nix/Cargo.toml";
 
         settings.hooks = {
           # rust
