@@ -26,7 +26,7 @@
 
         commands = with pkgs; [
           { package = gitMinimal; }
-          { package = pre-commit; }
+          { package = prek; }
           { package = nixpkgs-fmt; category = "nix"; }
           { package = nix; category = "nix"; }
           { package = nix-prefetch-git; category = "nix"; }

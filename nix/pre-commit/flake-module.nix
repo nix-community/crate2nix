@@ -12,6 +12,7 @@
       pre-commit = {
         check.enable = true;
 
+        settings.package = pkgs.prek;
         settings.hooks = {
           # # lint shell scripts
           # # TODO: https://github.com/NixOS/nix/issues/8761
