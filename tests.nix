@@ -235,6 +235,15 @@ let
       pregeneratedBuild = "sample_projects/sub_dir_crates/Cargo.nix";
     }
 
+    # Test for PR #394: git dependencies with subcrates in nested directories
+    # This exercises the IFD path in tools.nix that handles finding the correct
+    # Cargo.toml when a git repo has multiple crates without a root workspace
+    {
+      name = "sub_dir_crates_ifd";
+      src = ./sample_projects/sub_dir_crates;
+      expectedOutput = "main with lib1 lib2";
+    }
+
     {
       name = "cfg_test";
       src = ./sample_projects/cfg-test;

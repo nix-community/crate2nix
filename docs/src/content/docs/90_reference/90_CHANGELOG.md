@@ -26,6 +26,8 @@ description: A list of all major changes per version.
 * [#407](https://github.com/nix-community/crate2nix/pull/407): Inherit the main crate's `meta` when building
   with tests. Thank you, @jrobsonchase!
 * Fix parsing checksums from v1 manifests with latest cargo. Thank you, @hallettj!
+* [#394](https://github.com/nix-community/crate2nix/pull/394): Fix handling of git dependencies with
+  wildcard workspace members and subcrates in nested directories. Thank you, @Pacman99!
 
 ### Documentation
 
