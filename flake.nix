@@ -29,6 +29,8 @@
 
     crate2nix_stable = {
       url = "github:nix-community/crate2nix/0.15.0";
+      # https://github.com/nix-community/crate2nix/issues/371
+      inputs.crate2nix_stable.follows = "crate2nix_stable";
     };
 
     nix-test-runner = {
