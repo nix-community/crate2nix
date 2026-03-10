@@ -79,6 +79,54 @@ in
 
 Or the shorthand `appliedCargoNix` which combines generation and import.
 
+## JSON output (experimental)
+
+`crate2nix generate --format json` emits a pre-resolved JSON file instead of
+`Cargo.nix`. All dependency resolution — feature expansion, `cfg()` platform
+filtering, optional dep activation — happens in Rust, so the Nix side is a
+trivial data consumer with no O(n×m) eval-time logic.
+
+### Generating
+
+```bash
+crate2nix generate --format json
+```
+
+This writes `./Cargo.json` by default (use `-o` to override). The output is
+compact: empty fields and already-resolved feature maps are omitted, so the
+JSON is typically smaller than the equivalent `Cargo.nix`.
+
+### Consuming in Nix
+
+Use `lib/build-from-json.nix` (shipped in this repo) to turn the JSON into
+`buildRustCrate` derivations:
+
+```nix
+let
+  cargoNix = import ./lib/build-from-json.nix {
+    inherit pkgs;
+    src = ./.;
+    resolvedJson = ./Cargo.json;
+  };
+in {
+  # Single crate
+  my-binary = cargoNix.workspaceMembers.my-crate.build;
+
+  # Root crate (if the workspace has one)
+  default = cargoNix.rootCrate.build;
+
+  # All workspace members linked together
+  all = cargoNix.allWorkspaceMembers;
+}
+```
+
+The consumer accepts two optional arguments for customisation:
+
+- `buildRustCrateForPkgs` — override the `buildRustCrate` used (e.g. for a
+  custom toolchain)
+- `defaultCrateOverrides` — per-crate build fixups, same as the existing
+  `Cargo.nix` workflow
+
 ## Documentation
 
 Full documentation is at

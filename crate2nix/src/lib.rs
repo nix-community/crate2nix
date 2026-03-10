@@ -31,6 +31,7 @@ use resolve::CratesIoSource;
 
 mod command;
 pub mod config;
+pub mod json_output;
 mod lock;
 mod metadata;
 pub mod nix_build;
@@ -59,6 +60,8 @@ pub struct BuildInfo {
     pub info: GenerateInfo,
     /// The generation configuration.
     pub config: GenerateConfig,
+    /// Workspace root directory path (from cargo metadata).
+    pub workspace_root: Option<String>,
 }
 
 impl BuildInfo {
@@ -157,6 +160,7 @@ impl BuildInfo {
                     CrateDerivation::resolve(config, &crate2nix_json, &metadata, package)
                 })
                 .collect::<Result<_, Error>>()?,
+            workspace_root: metadata.workspace_root.clone(),
             indexed_metadata: metadata,
             info: info.clone(),
             config: config.clone(),

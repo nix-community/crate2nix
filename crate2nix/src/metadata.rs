@@ -25,6 +25,8 @@ pub struct MergedMetadata {
     pub(crate) packages: Vec<Package>,
     root: Option<PackageId>,
     nodes: Vec<Node>,
+    /// The workspace root directory (from the first metadata).
+    pub workspace_root: Option<String>,
 }
 
 impl MergedMetadata {
@@ -35,6 +37,8 @@ impl MergedMetadata {
         let mut packages = Vec::new();
         let mut node_package_ids = HashSet::new();
         let mut nodes = Vec::new();
+        // Take workspace_root from the first metadata (primary workspace).
+        let workspace_root = metadatas.first().map(|m| m.workspace_root.to_string());
 
         for metadata in metadatas.into_iter() {
             let resolve = metadata
@@ -73,6 +77,7 @@ impl MergedMetadata {
             root,
             workspace_members: workspace_members.into_iter().unique().collect(),
             nodes,
+            workspace_root,
         })
     }
 }
@@ -85,6 +90,8 @@ pub struct IndexedMetadata {
     pub pkgs_by_id: BTreeMap<PackageId, Package>,
     pub nodes_by_id: BTreeMap<PackageId, Node>,
     pub id_shortener: PackageIdShortener,
+    /// The workspace root directory path.
+    pub workspace_root: Option<String>,
 }
 
 impl IndexedMetadata {
@@ -99,6 +106,7 @@ impl IndexedMetadata {
             workspace_members,
             packages,
             nodes,
+            workspace_root,
         }: &MergedMetadata,
     ) -> Result<IndexedMetadata, Error> {
         let id_shortener = PackageIdShortener::new(packages.iter());
@@ -132,6 +140,7 @@ impl IndexedMetadata {
             pkgs_by_id,
             nodes_by_id,
             id_shortener,
+            workspace_root: workspace_root.clone(),
         })
     }
 
