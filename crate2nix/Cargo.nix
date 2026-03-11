@@ -3395,6 +3395,8 @@ rec {
     , features ? rootFeatures
     , crateOverrides ? defaultCrateOverrides
     , buildRustCrateForPkgsFunc ? null
+    , runClippy ? false
+    , clippyArgs ? [ "-Dwarnings" ]
     , runTests ? false
     , testCrateFlags ? [ ]
     , testInputs ? [ ]
@@ -3408,6 +3410,8 @@ rec {
       (
         { features
         , crateOverrides
+        , runClippy
+        , clippyArgs
         , runTests
         , testCrateFlags
         , testInputs
@@ -3430,15 +3434,23 @@ rec {
                   }
               );
           builtRustCrates = lib.makeOverridable builtRustCratesWithFeatures {
-            inherit packageId features;
+            inherit packageId features clippyArgs;
             buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
             runTests = false;
+            runClippy = false;
           };
           builtTestRustCrates = builtRustCrates.override {
             runTests = true;
           };
+          # Note: this overrides the test crates so that clippy runs against tests as well.
+          builtClippyRustCrates = builtTestRustCrates.override {
+            runClippy = true;
+          };
           crate = builtRustCrates.crates.${packageId};
           testCrate = builtTestRustCrates.crates.${packageId};
+          clippyCrate = pkgs.runCommand "clippy-log" { } ''
+            cp ${builtClippyRustCrates.crates.${packageId}}/clippy.log $out
+          '';
           testDrv = runRustTests {
             inherit
               crate
@@ -3454,6 +3466,7 @@ rec {
         in
         crateWithChecks crate
           (lib.mergeAttrsList (map (apply lib.optionalAttrs) [
+            [ runClippy { clippy = clippyCrate; } ]
             [ runTests { test = testDrv; } ]
           ]))
       )
@@ -3461,6 +3474,8 @@ rec {
         inherit
           features
           crateOverrides
+          runClippy
+          clippyArgs
           runTests
           testCrateFlags
           testInputs
@@ -3468,6 +3483,39 @@ rec {
           testPostRun
           ;
       };
+
+  # Using the provided toolchain, create a new one in which rustc is replaced with a script
+  # that runs clippy-driver instead.
+  # Requires that the toolchain in question already provides clippy.
+  mkClippyWrapper = pkgs: toolchain: clippyArgs:
+    let
+      rustcWrapped = pkgs.writeShellScriptBin "rustc" ''
+        export PATH="${toolchain}/bin":$PATH
+
+        args="$@"
+
+        if [[ "$args" =~ "--version" ]]; then
+          exec clippy-driver --rustc $args
+        else
+          # Disable the lint cap
+          args="$(echo "$args" | sed 's/ --cap-lints allow//')"
+          export CLIPPY_ARGS="${lib.concatStringsSep "__CLIPPY_HACKERY__" clippyArgs}"
+        fi
+
+        # This will be invoked multiple times for lib, bin, integration test, etc. targets.
+        # Make sure we can differentiate.
+        echo "clippy-driver $args" >> clippy.log
+
+        exec clippy-driver $args 2> >(tee -a clippy.log >&2)
+      '';
+    in
+    pkgs.symlinkJoin {
+      name = "rustc-clippy-wrapped";
+      paths = [
+        rustcWrapped
+        toolchain
+      ];
+    };
 
   /*
     Returns an attr set with packageId mapped to the result of buildRustCrateForPkgsFunc
@@ -3478,6 +3526,8 @@ rec {
     , features
     , crateConfigs ? crates
     , buildRustCrateForPkgsFunc
+    , runClippy
+    , clippyArgs
     , runTests
     , makeTarget ? makeDefaultTarget
     ,
@@ -3487,6 +3537,8 @@ rec {
       assert (builtins.isList features);
       assert (builtins.isAttrs (makeTarget stdenv.hostPlatform));
       assert (builtins.isBool runTests);
+      assert (builtins.isBool runClippy);
+      assert (builtins.isList clippyArgs);
       let
         rootPackageId = packageId;
         mergedFeatures = mergePackageFeatures (
@@ -3579,8 +3631,31 @@ rec {
                   };
               in
               lib.mapAttrs (name: builtins.map versionAndRename) grouped;
+
+            maybeClippyCrateForPkgsFunc =
+              if runClippy && isRootPackage then
+                pkgs:
+                let
+                  buildRustCrate = buildRustCrateForPkgsFunc pkgs;
+                  clippyRustCrate = buildRustCrate.override (attrs: {
+                    rustc = mkClippyWrapper pkgs attrs.rustc clippyArgs;
+                  });
+                  copyClippyLog = crate: crate.overrideAttrs (attrs: {
+                    postInstall = (attrs.postInstall or "") + ''
+                      cp clippy.log $out/clippy.log
+                    '';
+                  });
+                  clippyRustCrateWithPost = config: lib.pipe config [
+                    clippyRustCrate
+                    copyClippyLog
+                  ];
+                in
+                clippyRustCrateWithPost
+              else
+                buildRustCrateForPkgsFunc;
+
           in
-          buildRustCrateForPkgsFunc pkgs (
+          maybeClippyCrateForPkgsFunc pkgs (
             crateConfig
             // {
               src =
