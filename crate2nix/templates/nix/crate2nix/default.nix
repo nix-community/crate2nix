@@ -129,13 +129,15 @@ rec {
       );
 
   /*
-    Returns a crate which depends on successful test execution
-    of crate given as the second argument.
+    Run the tests for the provided crate.
 
-    testCrateFlags: list of flags to pass to the test exectuable
-    testInputs: list of packages that should be available during test execution
-  */
-  crateWithTest =
+    The `crate` argument is expected to hold the main crate derivation.
+    `testCrate` should contain the crate built with dev dependencies and --test passed to rustc.
+    `testCrateFlags` may contain a list of arguments to be passed to the test binary.
+    `testInputs` may contain any additional runtime dependency derivations for test execution.
+    The pre and post-run arguments may contain additional shell snippets to run before and after test execution.
+    */
+  runRustTests =
     { crate
     , testCrate
     , testCrateFlags
@@ -149,15 +151,9 @@ rec {
       assert builtins.typeOf testPreRun == "string";
       assert builtins.typeOf testPostRun == "string";
       let
-        # override the `crate` so that it will build and execute tests instead of
-        # building the actual lib and bin targets We just have to pass `--test`
-        # to rustc and it will do the right thing.  We execute the tests and copy
-        # their log and the test executables to $out for later inspection.
+        # We execute the tests and copy their log and the test executables to $out for later inspection.
         test =
           let
-            drv = testCrate.override (_: {
-              buildTests = true;
-            });
             # If the user hasn't set any pre/post commands, we don't want to
             # insert empty lines. This means that any existing users of crate2nix
             # don't get a spurious rebuild unless they set these explicitly.
@@ -197,7 +193,7 @@ rec {
               # this allows to prevent name collision with the main
               # executables of the crate
               hash=$(basename $out)
-              for file in ${drv}/tests/*; do
+              for file in ${testCrate}/tests/*; do
                 f=$testRoot/$(basename $file)-$hash
                 cp $file $f
                 ${testCommand}
@@ -205,21 +201,29 @@ rec {
             '';
           };
       in
-      pkgs.runCommand "${crate.name}-linked"
+      test;
+
+  /*
+    Returns a crate which depends on successful auxilliary checks.
+
+    The first argument is the compiled crate and the second is an attr set of checks.
+    If the set of checks is empty, the crate will be returned as-is.
+  */
+  crateWithChecks = crate: checks:
+    if checks == { } then
+      crate
+    else
+      pkgs.runCommand "${crate.name}-checked"
         {
           inherit (crate) outputs crateName meta;
-          passthru = (crate.passthru or { }) // {
-            inherit test;
-          };
+          passthru =
+            (crate.passthru or { })
+            // checks;
         }
-        (
-          lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
-            echo tested by ${test}
-          ''
-          + ''
-            ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
-          ''
-        );
+        ''
+          ${lib.concatMapAttrsStringSep "\n" (name: value: "echo Ran check '${name}': ${value}") checks}
+          ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
+        '';
 
   # A restricted overridable version of builtRustCratesWithFeatures.
   buildRustCrateWithFeatures =
@@ -261,35 +265,33 @@ rec {
                     defaultCrateOverrides = crateOverrides;
                   }
               );
-          builtRustCrates = builtRustCratesWithFeatures {
+          builtRustCrates = lib.makeOverridable builtRustCratesWithFeatures {
             inherit packageId features;
             buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
             runTests = false;
           };
-          builtTestRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
-            buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
+          builtTestRustCrates = builtRustCrates.override {
             runTests = true;
           };
-          drv = builtRustCrates.crates.${packageId};
-          testDrv = builtTestRustCrates.crates.${packageId};
-          derivation =
-            if runTests then
-              crateWithTest
-                {
-                  crate = drv;
-                  testCrate = testDrv;
-                  inherit
-                    testCrateFlags
-                    testInputs
-                    testPreRun
-                    testPostRun
-                    ;
-                }
-            else
-              drv;
+          crate = builtRustCrates.crates.${packageId};
+          testCrate = builtTestRustCrates.crates.${packageId};
+          testDrv = runRustTests {
+            inherit
+              crate
+              testCrate
+              testCrateFlags
+              testInputs
+              testPreRun
+              testPostRun
+              ;
+          };
+          # Does this really not exist somewhere in lib?
+          apply = f: l: lib.foldl' (acc: it: acc it) (f (lib.head l)) (lib.tail l);
         in
-        derivation
+        crateWithChecks crate
+          (lib.mergeAttrsList (map (apply lib.optionalAttrs) [
+            [ runTests { test = testDrv; } ]
+          ]))
       )
       {
         inherit
@@ -351,15 +353,14 @@ rec {
         buildByPackageIdForPkgsImpl =
           self: pkgs: packageId:
           let
+            isRootPackage = packageId == rootPackageId;
             features = mergedFeatures."${packageId}" or [ ];
             crateConfig' = crateConfigs."${packageId}";
             crateConfig = builtins.removeAttrs crateConfig' [
               "resolvedDefaultFeatures"
               "devDependencies"
             ];
-            devDependencies = lib.optionals (runTests && packageId == rootPackageId) (
-              crateConfig'.devDependencies or [ ]
-            );
+            devDependencies = lib.optionals (runTests && isRootPackage) (crateConfig'.devDependencies or [ ]);
             dependencies = dependencyDerivations {
               inherit features;
               inherit (self) target;
@@ -439,6 +440,7 @@ rec {
                 release
                 ;
             }
+            // lib.optionalAttrs (isRootPackage && runTests) { buildTests = true; }
           );
       in
       builtByPackageIdByPkgs;
