@@ -94,11 +94,6 @@ pub struct EncodableResolve {
     metadata: Option<BTreeMap<String, String>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default)]
-struct Patch {
-    unused: Vec<EncodableDependency>,
-}
-
 #[derive(Serialize, Deserialize, Debug, PartialOrd, Ord, PartialEq, Eq)]
 pub struct EncodableDependency {
     name: String,
