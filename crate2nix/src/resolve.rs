@@ -577,7 +577,7 @@ impl ResolvedSource {
         } else {
             let path = diff_paths(package_path.as_ref(), &output_build_file_directory)
                 .unwrap_or_else(|| package_path.as_ref().to_path_buf());
-            if path == PathBuf::from("../") {
+            if &path == "../" {
                 path.join(PathBuf::from("."))
             } else if path.starts_with("../") {
                 path
@@ -633,14 +633,14 @@ impl ResolvedSource {
     }
 }
 
-impl ToString for ResolvedSource {
-    fn to_string(&self) -> String {
+impl Display for ResolvedSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::CratesIo(source) => source.to_string(),
-            Self::Registry(source) => source.to_string(),
-            Self::Git(source) => source.to_string(),
-            Self::LocalDirectory(source) => source.to_string(),
-            Self::Nix(source) => source.to_string(),
+            Self::CratesIo(source) => source.fmt(f),
+            Self::Registry(source) => source.fmt(f),
+            Self::Git(source) => source.fmt(f),
+            Self::LocalDirectory(source) => source.fmt(f),
+            Self::Nix(source) => source.fmt(f),
         }
     }
 }
