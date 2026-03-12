@@ -136,7 +136,7 @@ let
     in
     if skip
     then
-      pkgs.runCommandNoCCLocal "skip_${name}"
+      pkgs.runCommandLocal "skip_${name}"
         {
           passthru = { forceSkipped = testDerivation; };
         } ''
@@ -794,7 +794,7 @@ in
     #
     # "source generate" tests
     #
-    withFetchedSources = pkgs.runCommandNoCCLocal "with-fetched-sources" { } ''
+    withFetchedSources = pkgs.runCommandLocal "with-fetched-sources" { } ''
       mkdir $out
       ln -s ${crate2nixJsonWithRipgrep}/* $out
       ln -s ${sourcesMemberDirectory} $out/crate2nix-sources
