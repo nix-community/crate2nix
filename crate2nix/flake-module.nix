@@ -18,6 +18,7 @@
         ];
 
         packages = with pkgs; [
+          rust-analyzer
           clippy
           rustc
           rustfmt
