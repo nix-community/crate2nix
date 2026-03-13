@@ -43,5 +43,6 @@
 
       config.packages.default = pkgs.callPackage ./default.nix { };
       config.packages.crate2nix-from-json = pkgs.callPackage ./default-json.nix { };
+      config.checks = (pkgs.callPackage ../tests.nix { }).checks;
     };
 }

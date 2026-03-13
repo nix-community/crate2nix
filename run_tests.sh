@@ -105,12 +105,12 @@ fi
 cd "$top"
 echo -e "\e[1m=== Building ./tests.nix (= Running Integration Tests)\e[0m" >&2
 rm -rf target/nix-result*
-nix build -L "${NIX_OPTIONS[@]}" "${NIX_TESTS_OPTIONS[@]}" -f ./tests.nix || {
+nix build -L "${NIX_OPTIONS[@]}" "${NIX_TESTS_OPTIONS[@]}" -f ./tests.nix checks || {
     echo "==================" >&2
     echo "cd $top" >&2
     echo "nix build -L \\" >&2
     echo "  ${NIX_OPTIONS[*]} ${NIX_TESTS_OPTIONS[*]} \\" >&2
-    echo "   -f ./tests.nix"
+    echo "   -f ./tests.nix checks"
     echo "=> FAILED" >&2
     exit 5
 }
