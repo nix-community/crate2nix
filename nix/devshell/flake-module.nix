@@ -31,8 +31,8 @@
           { package = nix; category = "nix"; }
           { package = nix-prefetch-git; category = "nix"; }
           {
+            inherit (callPackage ../nix-test-runner { }) package;
             name = "nix-test";
-            package = (import ../nix-test-runner.nix { inherit system; });
             category = "nix";
             help = "nix test runner for unit tests.";
           }

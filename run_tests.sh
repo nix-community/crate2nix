@@ -64,15 +64,6 @@ cd "$top"/crate2nix
 echo "=== Reformatting rust code" >&2
 ../cargo.sh fmt
 
-cd "$top"
-echo -e "\e[1m=== Running nix unit tests\e[0m" >&2
-./nix-test.sh ./crate2nix/templates/nix/crate2nix/tests/default.nix || {
-    echo "" >&2
-    echo "==================" >&2
-    echo "$top/nix-test.sh $top/crate2nix/templates/nix/crate2nix/tests/default.nix: FAILED" >&2
-    exit 1
-}
-
 cd "$top"/crate2nix
 echo -e "\e[1m=== Running cargo clippy\e[0m" >&2
 if [ -z "${NO_CARGO_BUILD}" ]; then
@@ -103,14 +94,13 @@ else
 fi
 
 cd "$top"
-echo -e "\e[1m=== Building ./tests.nix (= Running Integration Tests)\e[0m" >&2
+echo -e "\e[1m=== Running 'nix flake check' (= Running Integration Tests)\e[0m" >&2
 rm -rf target/nix-result*
-nix build -L "${NIX_OPTIONS[@]}" "${NIX_TESTS_OPTIONS[@]}" -f ./tests.nix || {
+nix flake check -L "${NIX_OPTIONS[@]}" || {
     echo "==================" >&2
     echo "cd $top" >&2
-    echo "nix build -L \\" >&2
-    echo "  ${NIX_OPTIONS[*]} ${NIX_TESTS_OPTIONS[*]} \\" >&2
-    echo "   -f ./tests.nix"
+    echo "nix flake check -L \\" >&2
+    echo "  ${NIX_OPTIONS[*]}" >&2
     echo "=> FAILED" >&2
     exit 5
 }

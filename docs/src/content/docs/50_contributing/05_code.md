@@ -27,7 +27,7 @@ To run just an individual test (in this example "bin_with_lib_dep"):
 
 ```shell
 nix-build \
-  -o ./crate2nix/target/nix-results ./tests.nix -A bin_with_lib_dep
+  -o ./crate2nix/target/nix-results ./tests.nix -A checks.bin_with_lib_dep
 ```
 
 If you want to run a test that is currently marked as skip, you can do so
@@ -35,7 +35,7 @@ with:
 
 ```shell
 nix-build \
-    -o ./crate2nix/target/nix-results ./tests.nix -A empty_cross.forceSkipped
+    -o ./crate2nix/target/nix-results ./tests.nix -A checks.empty_cross.forceSkipped
 ```
 
 ### Regenerating Cargo.nix files for tests
@@ -72,14 +72,14 @@ nixpkgs. Let's assume you are in the `crate2nix` project directory and you
 cloned `nixpkgs` to a sibling directory:
 
 ```shell
-nix-build --arg nixpkgs ../nixpkgs -o ./crate2nix/target/nix-results ./tests.nix
+nix-build --arg nixpkgs ../nixpkgs -o ./crate2nix/target/nix-results ./tests.nix checks
 ```
 
 Or run just an individual test (in this example "bin_with_lib_dep"):
 
 ```shell
 nix-build --arg nixpkgs ../nixpkgs \
-  -o ./crate2nix/target/nix-results ./tests.nix -A bin_with_lib_dep
+  -o ./crate2nix/target/nix-results ./tests.nix -A checks.bin_with_lib_dep
 ```
 
 (The "-o" argument is just to avoid a lot of top-level result directories.)
@@ -95,7 +95,7 @@ If you are fixing an issue in `buildRustCrate` that you can reproduce with a
 
 ```shell
 nix-build --arg buildTestNixpkgs ../nixpkgs \
-  -o ./crate2nix/target/nix-results ./tests.nix -A bin_with_lib_dep
+  -o ./crate2nix/target/nix-results ./tests.nix -A checks.bin_with_lib_dep
 ```
 
 Notice `--arg buildTestNixpkgs` instead of `--arg nixpkgs`. That will not
