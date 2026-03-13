@@ -757,8 +757,8 @@ in
       '';
     };
 
-    buildNixTestWithLatestCrate2nix = pkgs.callPackage ./nix/nix-test-runner.nix {
-      inherit tools;
+    buildNixTestWithLatestCrate2nix = pkgs.callPackage ./nix/nix-test-runner/package.nix {
+      crate2nixTools = tools;
     };
   }
   // rec {
