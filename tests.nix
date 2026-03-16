@@ -19,6 +19,7 @@ let
     , skip ? false
     , expectedOutput ? null
     , expectedTestOutputs ? [ ]
+    , expectedClippyOutputs ? [ ]
     , pregeneratedBuild ? null
     , additionalCargoNixArgs ? [ ]
     , customBuild ? null
@@ -83,60 +84,91 @@ let
         name = "${name}_buildTest";
         phases = [ "buildPhase" ];
         buildInputs = [ derivation ];
+        passthru = {
+          crate = derivation;
+        };
         inherit derivation generatedCargoNix;
 
         sanitizedBuildTree = debugFile "sanitizedBuildTree";
         buildPhase =
           # Need tests if there is expected test output
           assert lib.length expectedTestOutputs > 0 -> derivation ? test;
+          # Need clippy if there is expected clippy output
+          assert lib.length expectedClippyOutputs > 0 -> derivation ? clippy;
           ''
-                      echo === DEBUG INFO
-                      echo ${debugFile "sanitizedBuildTree"}
-                      echo ${debugFile "dependencyTree"}
-                      echo ${debugFile "mergedPackageFeatures"}
-                      echo ${debugFile "diffedDefaultPackageFeatures"}
+            echo === DEBUG INFO
+            echo ${debugFile "sanitizedBuildTree"}
+            echo ${debugFile "dependencyTree"}
+            echo ${debugFile "mergedPackageFeatures"}
+            echo ${debugFile "diffedDefaultPackageFeatures"}
 
-                      mkdir -p $out
+            mkdir -p $out
 
-                      ${if expectedOutput == null then ''
-                        echo === SKIP RUNNING
-                        echo "(no executables)"
-                      '' else ''
-                        echo === RUNNING
-                        ${derivation.crateName} | tee $out/run.log
-                        echo === VERIFYING expectedOutput
-                        grep '${expectedOutput}' $out/run.log || {
-                          echo '${expectedOutput}' not found in:
-                          cat $out/run.log
-                          exit 23
-                        }
-                      ''}
+            ${if expectedOutput == null then ''
+              echo === SKIP RUNNING
+              echo "(no executables)"
+            '' else ''
+              echo === RUNNING
+              ${derivation.crateName} | tee $out/run.log
+              echo === VERIFYING expectedOutput
+              grep '${expectedOutput}' $out/run.log || {
+                echo '${expectedOutput}' not found in:
+                cat $out/run.log
+                exit 23
+              }
+            ''}
 
-                      ${if lib.length expectedTestOutputs == 0 then ''
-                        echo === SKIP RUNNING TESTS
-                        echo "(no tests)"
-                      '' else ''
-                        echo === RUNNING TESTS
-                        cp ${derivation.test} $out/tests.log
-                        echo === VERIFYING expectedTestOutputs
-                      ''}
-                      ${lib.concatMapStringsSep "\n"
-                        (
-                            output: ''
-                            grep '${output}' $out/tests.log || {
-                              echo '${output}' not found in:
-                              cat $out/tests.log
-                              exit 23
-                            }
-                          ''
-                          )
-            expectedTestOutputs}
+            ${if lib.length expectedTestOutputs == 0 then ''
+              echo === SKIP RUNNING TESTS
+              echo "(no tests)"
+            '' else ''
+              echo === RUNNING TESTS
+              cp ${derivation.test} $out/tests.log
+              echo === VERIFYING expectedTestOutputs
+            ''}
+            ${lib.concatMapStringsSep "\n"
+              (
+                  output: ''
+                  grep '${output}' $out/tests.log || {
+                    echo '${output}' not found in:
+                    cat $out/tests.log
+                    exit 23
+                  }
+                ''
+                )
+              expectedTestOutputs}
+            ${if lib.length expectedClippyOutputs > 0 || derivation ? clippy then ''
+              echo === RUNNING CLIPPY
+              cp ${derivation.clippy} $out/clippy.log
+              echo === VERIFYING expectedClippyOutputs
+            '' else ''
+              echo === SKIP RUNNING CLIPPY
+              echo "(no clippy)"
+            ''}
+            ${lib.concatMapStringsSep "\n"
+              (
+                  output: ''
+                  grep '${output}' $out/clippy.log || {
+                    echo '${output}' not found in:
+                    cat $out/clippy.log
+                    exit 23
+                  }
+                ''
+                )
+              expectedClippyOutputs}
+            ${lib.optionalString (derivation ? clippy && lib.length expectedClippyOutputs == 0) ''
+              [ "$(cat $out/clippy.log | grep -v '^clippy-driver' | wc -l)" == 0 ] || {
+                echo Expected empty clippy log, got:
+                cat $out/clippy.log
+                exit 23
+              }
+            ''}
           '';
       };
     in
     if skip
     then
-      pkgs.runCommandNoCCLocal "skip_${name}"
+      pkgs.runCommandLocal "skip_${name}"
         {
           passthru = { forceSkipped = testDerivation; };
         } ''
@@ -384,6 +416,29 @@ let
         "test read_source_file ... ok"
         "test write_output_file ... ok"
       ];
+    }
+
+    {
+      name = "clippy";
+      src = ./sample_projects/clippy;
+      cargoToml = "Cargo.toml";
+      customBuild = "sample_projects/clippy/test.nix";
+      expectedOutput = "expected one argument";
+      expectedClippyOutputs = [
+        "src/lib.rs:2:5"
+        "src/main.rs:3:5"
+        "src/main.rs:17:5"
+        "src/main.rs:24:9"
+        "tests/integration_test.rs:5:5"
+      ];
+    }
+
+    {
+      name = "clippy_empty";
+      src = ./sample_projects/clippy_empty;
+      cargoToml = "Cargo.toml";
+      customBuild = "sample_projects/clippy_empty/test.nix";
+      expectedClippyOutputs = [ ];
     }
 
     {
@@ -765,7 +820,7 @@ in
     #
     # "source generate" tests
     #
-    withFetchedSources = pkgs.runCommandNoCCLocal "with-fetched-sources" { } ''
+    withFetchedSources = pkgs.runCommandLocal "with-fetched-sources" { } ''
       mkdir $out
       ln -s ${crate2nixJsonWithRipgrep}/* $out
       ln -s ${sourcesMemberDirectory} $out/crate2nix-sources

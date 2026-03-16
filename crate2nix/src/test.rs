@@ -63,7 +63,7 @@ impl MetadataEnv {
         self.metadata.resolve.get_or_insert_with(empty_resolve)
     }
 
-    pub fn add_package_and_node(&mut self, name: &str) -> PackageAndNode {
+    pub fn add_package_and_node<'a>(&'a mut self, name: &str) -> PackageAndNode<'a> {
         let package = package(name, "0.1.0");
         let package_idx = self.metadata.packages.len();
         self.metadata.packages.push(package.clone());

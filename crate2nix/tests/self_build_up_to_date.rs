@@ -40,7 +40,15 @@ fn self_up_to_date() {
     .unwrap();
     let rerendered_default_nix = render::CARGO_NIX.render(&metadata).unwrap();
     let actual_default_nix = std::fs::read_to_string("./Cargo.nix").unwrap();
-    assert_eq!(actual_default_nix, rerendered_default_nix);
+    assert_eq!(
+        actual_default_nix,
+        rerendered_default_nix,
+        "Pregenerated build files differ, please rerun ./regenerate_cargo_nix.sh.\n{}",
+        PrettyDifference {
+            actual: &actual_default_nix,
+            expected: &rerendered_default_nix
+        }
+    );
 
     if rerendered_default_nix.contains(" /home/") || rerendered_default_nix.contains(".cargo") {
         dump_with_lines("./Cargo.nix").unwrap();

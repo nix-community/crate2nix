@@ -164,7 +164,7 @@ impl Source {
             Source::CratesIo { name, .. } => Some(name),
             Source::Git { url, .. } => {
                 let path = url.path();
-                let after_last_slash = path.split('/').last().unwrap_or(path);
+                let after_last_slash = path.split('/').next_back().unwrap_or(path);
                 let without_dot_git = after_last_slash
                     .strip_suffix(".git")
                     .unwrap_or(after_last_slash);
@@ -172,7 +172,7 @@ impl Source {
             }
             Source::Nix {
                 attr: Some(attr), ..
-            } => attr.split('.').last().or(if attr.trim().is_empty() {
+            } => attr.split('.').next_back().or(if attr.trim().is_empty() {
                 None
             } else {
                 Some(attr.trim())

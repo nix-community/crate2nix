@@ -7,7 +7,11 @@
     { pkgs
     , system
     , ...
-    }@perSystem: {
+    }@perSystem:
+    let
+      crate2nix = pkgs.callPackage ./default.nix { };
+    in
+    {
       # imports = [
       #   inputs.pre-commit-hooks.flakeModule
       # ];
@@ -42,7 +46,11 @@
         };
       };
 
-      config.packages.default = pkgs.callPackage ./default.nix { };
+      config.packages.default = crate2nix;
+      config.checks.crate2nix = crate2nix.crate.override {
+        runClippy = true;
+        runTests = true;
+      };
       config.packages.crate2nix-from-json = pkgs.callPackage ./default-json.nix { };
       config.checks =
         let
