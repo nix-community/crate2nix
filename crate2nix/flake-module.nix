@@ -5,6 +5,7 @@
 
   perSystem =
     { pkgs
+    , system
     , ...
     }@perSystem:
     let
@@ -51,5 +52,16 @@
         runTests = true;
       };
       config.packages.crate2nix-from-json = pkgs.callPackage ./default-json.nix { };
+      config.checks =
+        let
+          # Note: This uses the build of the nix-test binary using the stable nixpkgs/crate2nix.
+          #       The "unstable" build is tested in the tests.nix checks.
+          nixTestRunner = import "${self}/nix/nix-test-runner" { inherit system; };
+        in
+        {
+          unit-tests = pkgs.callPackage ./templates/nix/crate2nix/tests/run.nix {
+            inherit nixTestRunner;
+          };
+        } // (pkgs.callPackage ../tests.nix { }).checks;
     };
 }
