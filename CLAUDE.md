@@ -33,7 +33,7 @@ nix build                            # Build crate2nix via Nix
 ./cargo.sh test                      # Rust unit tests only
 ./cargo.sh test test_name            # Single Rust test
 ./nix-test.sh ./crate2nix/templates/nix/crate2nix/tests/default.nix
-nix build -L -f ./tests.nix          # Nix integration tests
+nix flake check                      # Nix integration tests
 ```
 
 ### Lint & Format

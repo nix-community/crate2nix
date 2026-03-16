@@ -39,7 +39,7 @@ The best way to do this is to submit a PR that adds a sample project to `sample_
 1. Create a minimal Cargo project that reproduces the issue
 2. Add it to `sample_projects/your_project_name/`
 3. Run `./regenerate_cargo_nix.sh` to generate the `Cargo.nix`
-4. The test suite (`./run_tests.sh` or `nix build -L -f ./tests.nix`) should demonstrate the failure
+4. The test suite (`./run_tests.sh` or `nix flake check`) should demonstrate the failure
 
 See existing projects in `sample_projects/` for examples of the expected structure.
 
