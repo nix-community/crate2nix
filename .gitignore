@@ -23,3 +23,7 @@ devenv.local.nix
 .pre-commit-config.yaml
 
 template/flake.lock
+
+# Editor configuration
+.zed/settings.json
+.vscode/settings.json
