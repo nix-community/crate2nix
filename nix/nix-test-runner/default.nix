@@ -1,9 +1,22 @@
 let
-  flakeInput = import ../flakeInput.nix;
-  nixpkgs_stable = builtins.fetchTree (flakeInput "crate2nix_stable.nixpkgs");
-  # Use last pinned crate2nix packages and corresponding nixpkgs to build the
-  # test runner so that it works even if we have broken stuff!
-  crate2nix_stable = builtins.fetchTree (flakeInput "crate2nix_stable");
+  # Use last stable crate2nix release to build the test runner so that it
+  # works even if the current branch has broken stuff.
+  # Pinned directly instead of via flake input to avoid bloating the
+  # dependency graph (see https://github.com/nix-community/crate2nix/issues/371).
+  crate2nix_stable = builtins.fetchTree {
+    type = "github";
+    owner = "nix-community";
+    repo = "crate2nix";
+    rev = "7c33e664668faecf7655fa53861d7a80c9e464a2"; # 0.15.0
+    narHash = "sha256-SUuruvw1/moNzCZosHaa60QMTL+L9huWdsCBN6XZIic=";
+  };
+  nixpkgs_stable = builtins.fetchTree {
+    type = "github";
+    owner = "NixOS";
+    repo = "nixpkgs";
+    rev = "addf7cf5f383a3101ecfba091b98d0a1263dc9b8"; # crate2nix 0.15.0's nixpkgs
+    narHash = "sha256-hM20uyap1a0M9d344I692r+ik4gTMyj60cQWO+hAYP8=";
+  };
 in
 { system ? builtins.currentSystem
 , pkgs ? import nixpkgs_stable { inherit system; }
