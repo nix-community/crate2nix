@@ -16,7 +16,7 @@ jobs:
       with:
         install_url: "https://releases.nixos.org/nix/nix-2.33.0/install"
         nix_path: nixpkgs=channel:nixos-unstable
-    - uses: cachix/cachix-action@v16
+    - uses: cachix/cachix-action@v17
       with:
         name: eigenvalue
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
