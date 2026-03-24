@@ -760,6 +760,35 @@ in
     buildNixTestWithLatestCrate2nix = pkgs.callPackage ./nix/nix-test-runner/package.nix {
       crate2nixTools = tools;
     };
+
+    # PR #453: verify JSON-mode buildTests wires dev-dependencies.
+    # Without the fix, rustc fails with "unresolved import cli_test_dir".
+    json_build_tests =
+      let
+        cargoNix = import ./lib/build-from-json.nix {
+          inherit pkgs;
+          src = ./sample_projects/integration_test;
+          resolvedJson = ./sample_projects/integration_test/Cargo.json;
+        };
+        testDrv = cargoNix.rootCrate.buildTests;
+      in
+      pkgs.stdenv.mkDerivation {
+        name = "json_build_tests";
+        phases = [ "buildPhase" ];
+        buildPhase = ''
+          mkdir -p $out
+
+          echo === VERIFYING test binary exists
+          test -x ${testDrv}/tests/integration_test
+          echo "test binary compiled successfully with dev-dependencies"
+
+          echo === VERIFYING test binary lists expected tests
+          # --list prints test names without running them
+          ${testDrv}/tests/integration_test --list 2>&1 | tee $out/test-list.log
+          grep 'read_source_file' $out/test-list.log
+          grep 'write_output_file' $out/test-list.log
+        '';
+      };
   }
   // rec {
     #

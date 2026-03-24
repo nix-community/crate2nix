@@ -478,6 +478,20 @@
           "packageId": "url"
         }
       ],
+      "devDependencies": [
+        {
+          "name": "colored-diff",
+          "packageId": "colored-diff"
+        },
+        {
+          "name": "fs_extra",
+          "packageId": "fs_extra"
+        },
+        {
+          "name": "tempdir",
+          "packageId": "tempdir"
+        }
+      ],
       "crateBin": [
         {
           "name": "crate2nix",

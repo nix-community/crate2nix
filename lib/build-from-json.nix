@@ -163,34 +163,43 @@ let
     )
     deps;
 
+  # Build a crate graph. When testRootPackageId is non-null, the crate with
+  # that ID gets its devDependencies merged into dependencies and buildTests
+  # set so buildRustCrate compiles test targets instead of lib/bin.
   mkBuiltByPackageIdByPkgs =
-    cratePkgs:
+    { testRootPackageId ? null }:
     let
-      buildRustCrate =
+      go =
+        cratePkgs:
         let
-          base = buildRustCrateForPkgs cratePkgs;
-        in
-        if defaultCrateOverrides != pkgs.defaultCrateOverrides then
-          base.override { defaultCrateOverrides = defaultCrateOverrides; }
-        else
-          base;
+          buildRustCrate =
+            let
+              base = buildRustCrateForPkgs cratePkgs;
+            in
+            if defaultCrateOverrides != pkgs.defaultCrateOverrides then
+              base.override { defaultCrateOverrides = defaultCrateOverrides; }
+            else
+              base;
 
-      self = {
-        crates = lib.mapAttrs
-          (
-            packageId: _: buildCrate self cratePkgs buildRustCrate packageId
-          )
-          resolved.crates;
-        build = mkBuiltByPackageIdByPkgs cratePkgs.buildPackages;
-      };
+          self = {
+            crates = lib.mapAttrs
+              (
+                packageId: _: buildCrate self cratePkgs buildRustCrate testRootPackageId packageId
+              )
+              resolved.crates;
+            build = go cratePkgs.buildPackages;
+          };
+        in
+        self;
     in
-    self;
+    go pkgs;
 
   buildCrate =
-    self: cratePkgs: buildRustCrate: packageId:
+    self: cratePkgs: buildRustCrate: testRootPackageId: packageId:
     let
       crateInfo = resolved.crates.${packageId};
       targetPlatform = cratePkgs.stdenv.hostPlatform;
+      isTestRoot = testRootPackageId != null && packageId == testRootPackageId;
 
       # Resolve a regular dependency. Proc-macro crates must be built for
       # the build platform since they execute as compiler plugins.
@@ -208,12 +217,17 @@ let
       # them must be built for that platform (not just proc-macros).
       buildDepDrv = dep: self.build.crates.${dep.packageId};
 
-      dependencies = map depDrv (filterDeps (crateInfo.dependencies or [ ]) targetPlatform);
+      # Dev-deps only merge for the crate under test, not its transitive deps.
+      # This mirrors the template mode's `packageId == rootPackageId` guard.
+      devDeps = lib.optionals isTestRoot (crateInfo.devDependencies or [ ]);
+      normalDeps = (crateInfo.dependencies or [ ]) ++ devDeps;
+
+      dependencies = map depDrv (filterDeps normalDeps targetPlatform);
       buildDependencies = map buildDepDrv (filterDeps (crateInfo.buildDependencies or [ ]) targetPlatform);
 
       allDeps = filterDeps
         (
-          (crateInfo.dependencies or [ ]) ++ (crateInfo.buildDependencies or [ ])
+          normalDeps ++ (crateInfo.buildDependencies or [ ])
         )
         targetPlatform;
       renamedDeps = lib.filter (d: d ? rename && d.rename != null) allDeps;
@@ -242,6 +256,9 @@ let
         procMacro = crateInfo.procMacro or false;
         crateBin = crateInfo.crateBin or [ ];
       }
+      // lib.optionalAttrs isTestRoot {
+        buildTests = true;
+      }
       // lib.optionalAttrs ((crateInfo.build or null) != null) {
         build = crateInfo.build;
       }
@@ -259,7 +276,13 @@ let
       }
     );
 
-  builtCrates = mkBuiltByPackageIdByPkgs pkgs;
+  builtCrates = mkBuiltByPackageIdByPkgs { };
+
+  # Builds the test binaries for a single workspace member, merging its
+  # devDependencies into the dependency set. Transitive deps are shared
+  # with the normal build graph since only the root crate differs.
+  buildTestsFor = packageId:
+    (mkBuiltByPackageIdByPkgs { testRootPackageId = packageId; }).crates.${packageId};
 
 in
 {
@@ -268,6 +291,7 @@ in
       name: packageId: {
         inherit packageId;
         build = builtCrates.crates.${packageId};
+        buildTests = buildTestsFor packageId;
       }
     )
     resolved.workspaceMembers;
@@ -277,6 +301,7 @@ in
       {
         packageId = resolved.root;
         build = builtCrates.crates.${resolved.root};
+        buildTests = buildTestsFor resolved.root;
       }
     else
       null;

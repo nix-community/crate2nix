@@ -49,6 +49,10 @@ pub struct ResolvedCrate {
     /// Build dependencies, already filtered by platform and optional dep activation.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub build_dependencies: Vec<DepInfo>,
+    /// Dev dependencies (for tests/benches/examples). Only populated for
+    /// workspace members since transitive deps' tests are never built.
+    #[serde(skip_serializing_if = "Vec::is_empty", default)]
+    pub dev_dependencies: Vec<DepInfo>,
     /// The resolved features for this crate.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub resolved_default_features: Vec<String>,
@@ -270,11 +274,12 @@ pub fn to_resolved_workspace(build_info: &BuildInfo) -> ResolvedWorkspace {
     for crate_deriv in &build_info.crates {
         let id = &crate_deriv.package_id.repr;
 
-        // All deps (normal + build) for optional dep activation
+        // All deps (normal + build + dev) for optional dep activation
         let all_deps: Vec<&ResolvedDependency> = crate_deriv
             .dependencies
             .iter()
             .chain(crate_deriv.build_dependencies.iter())
+            .chain(crate_deriv.dev_dependencies.iter())
             .collect();
 
         // Compute activated optional deps from resolved features
@@ -286,6 +291,13 @@ pub fn to_resolved_workspace(build_info: &BuildInfo) -> ResolvedWorkspace {
 
         let dependencies = resolve_deps(&crate_deriv.dependencies, &activated);
         let build_dependencies = resolve_deps(&crate_deriv.build_dependencies, &activated);
+        // Only emit dev-deps for workspace members — transitive deps' tests
+        // are never built, so their dev-deps would just bloat the JSON.
+        let dev_dependencies = if crate_deriv.is_root_or_workspace_member {
+            resolve_deps(&crate_deriv.dev_dependencies, &activated)
+        } else {
+            vec![]
+        };
 
         let lib_name = crate_deriv.lib.as_ref().map(|l| normalize_name(&l.name));
 
@@ -299,6 +311,7 @@ pub fn to_resolved_workspace(build_info: &BuildInfo) -> ResolvedWorkspace {
                 source: convert_source(&crate_deriv.source, &workspace_root),
                 dependencies,
                 build_dependencies,
+                dev_dependencies,
                 resolved_default_features: crate_deriv.resolved_default_features.clone(),
                 proc_macro: crate_deriv.proc_macro,
                 build: crate_deriv.build.as_ref().and_then(|b| {
