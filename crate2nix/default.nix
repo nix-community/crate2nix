@@ -18,7 +18,18 @@
 , release ? true
 }:
 let
-  cargoNix = callPackage cargoNixPath { inherit release; };
+  cargoNix = callPackage cargoNixPath {
+    inherit release;
+    buildRustCrateForPkgs = pkgs: pkgs.buildRustCrate.override {
+      rustc = pkgs.symlinkJoin {
+        name = "rustc";
+        paths = [
+          pkgs.rustc
+          pkgs.clippy
+        ];
+      };
+    };
+  };
   withoutTemplates = name: type:
     let
       baseName = builtins.baseNameOf (builtins.toString name);
@@ -26,7 +37,7 @@ let
       !(baseName == "templates" && type == "directory");
   rootCrate = cargoNix.rootCrate.build.override {
     testCrateFlags = [
-      "--skip nix_integration_tests"
+      "--skip up_to_date"
     ];
     crateOverrides = defaultCrateOverrides // {
       crate2nix = { src, ... }: {

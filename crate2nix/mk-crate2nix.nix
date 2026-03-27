@@ -27,6 +27,9 @@ symlinkJoin {
   name = crate2nix.name;
   paths = [ crate2nix ];
   buildInputs = [ makeWrapper cargo ];
+  passthru = {
+    crate = crate2nix;
+  };
   meta = {
     description = "Nix build file generator for rust crates.";
     longDescription = ''
