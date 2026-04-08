@@ -230,9 +230,9 @@ rec {
     , runTests ? false
     , testCrateFlags ? [ ]
     , testInputs ? [ ]
-    , # Any command to run immediatelly before a test is executed.
+    , # Any command to run immediately before a test is executed.
       testPreRun ? ""
-    , # Any command run immediatelly after a test is executed.
+    , # Any command run immediately after a test is executed.
       testPostRun ? ""
     ,
     }:
