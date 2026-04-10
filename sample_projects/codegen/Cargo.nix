@@ -674,12 +674,14 @@ rec {
     , testInputs
     , testPreRun
     , testPostRun
+    , useNextest ? false
     ,
     }:
       assert builtins.typeOf testCrateFlags == "list";
       assert builtins.typeOf testInputs == "list";
       assert builtins.typeOf testPreRun == "string";
       assert builtins.typeOf testPostRun == "string";
+      assert builtins.typeOf useNextest == "bool";
       let
         # override the `crate` so that it will build and execute tests instead of
         # building the actual lib and bin targets We just have to pass `--test`
@@ -710,6 +712,10 @@ rec {
 
             buildInputs = testInputs;
 
+            nativeBuildInputs = lib.optionals useNextest [
+              pkgs.cargo-nextest
+            ];
+
             buildPhase = ''
               set -e
               export RUST_BACKTRACE=1
@@ -732,8 +738,45 @@ rec {
               for file in ${drv}/tests/*; do
                 f=$testRoot/$(basename $file)-$hash
                 cp $file $f
-                ${testCommand}
+                ${if useNextest then "" else testCommand}
               done
+            '' + lib.optionalString useNextest ''
+
+              # Generate synthetic cargo and nextest metadata to run
+              # pre-built test binaries via cargo-nextest.
+              crateName="${testCrate.crateName or testCrate.name}"
+              pkgId="$crateName 0.0.0 (path+file://$(pwd))"
+
+              # Minimal cargo metadata
+              cat > cargo-metadata.json <<CARGO_META_EOF
+              {"packages":[{"name":"$crateName","version":"0.0.0","id":"$pkgId","manifest_path":"$(pwd)/Cargo.toml","targets":[],"features":{},"dependencies":[],"edition":"2021","source":null}],"workspace_members":["$pkgId"],"workspace_default_members":["$pkgId"],"resolve":null,"target_directory":"$(pwd)/target","version":1,"workspace_root":"$(pwd)"}
+              CARGO_META_EOF
+
+              # Nextest binaries metadata
+              printf '{"rust-build-meta":{"target-directory":"%s/target","base-output-directories":["debug"],"non-test-binaries":{},"linked-paths":[]},"rust-binaries":{' \
+                "$(pwd)" > binaries-metadata.json
+
+              first=true
+              for file in ${drv}/tests/*; do
+                name=$(basename "$file")
+                binPath=$(pwd)/$testRoot/$name-$hash
+                if [ "$first" = true ]; then
+                  first=false
+                else
+                  printf ',' >> binaries-metadata.json
+                fi
+                printf '"%s::test/%s":{"binary-id":"%s::test/%s","binary-name":"%s","package-id":"%s","kind":"test","binary-path":"%s","build-platform":"target"}' \
+                  "$crateName" "$name" "$crateName" "$name" "$name" "$pkgId" "$binPath" >> binaries-metadata.json
+              done
+              printf '}}' >> binaries-metadata.json
+
+              ${testPreRun}
+              cargo-nextest nextest run \
+                --binaries-metadata "$(pwd)/binaries-metadata.json" \
+                --cargo-metadata "$(pwd)/cargo-metadata.json" \
+                --workspace-remap "$(pwd)" \
+                $testCrateFlags 2>&1 | tee -a $out
+              ${testPostRun}
             '';
           };
       in
@@ -766,6 +809,8 @@ rec {
       testPreRun ? ""
     , # Any command run immediatelly after a test is executed.
       testPostRun ? ""
+    , # Use cargo-nextest to run tests instead of running test binaries directly.
+      useNextest ? false
     ,
     }:
     lib.makeOverridable
@@ -777,6 +822,7 @@ rec {
         , testInputs
         , testPreRun
         , testPostRun
+        , useNextest
         ,
         }:
         let
@@ -816,6 +862,7 @@ rec {
                     testInputs
                     testPreRun
                     testPostRun
+                    useNextest
                     ;
                 }
             else
@@ -832,6 +879,7 @@ rec {
           testInputs
           testPreRun
           testPostRun
+          useNextest
           ;
       };
 

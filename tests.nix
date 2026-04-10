@@ -387,15 +387,17 @@ let
     }
 
     {
-      name = "integration_test_nextest";
-      src = ./sample_projects/integration_test;
+      name = "cfg_test-with-tests-nextest";
+      src = ./sample_projects/cfg-test;
       cargoToml = "Cargo.toml";
-      customBuild = "sample_projects/integration_test/test-nextest.nix";
-      expectedOutput = "expected one argument";
+      customBuild = "sample_projects/cfg-test/test-nextest.nix";
+      expectedOutput = "Hello, cfg-test!";
       expectedTestOutputs = [
-        "read_source_file"
-        "write_output_file"
-        "2 passed"
+        "echo_foo_test"
+        "lib_test"
+        "in_source_dir"
+        "exec_cowsay"
+        "4 passed"
       ];
     }
 
