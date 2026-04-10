@@ -16,3 +16,8 @@ updates:
     exclude-paths:
       - "sample_projects/**"
       - "sample_workspace/**"
+
+  - package-ecosystem: "nix"
+    directory: "/"
+    schedule:
+      interval: "weekly"
