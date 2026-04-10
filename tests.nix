@@ -387,6 +387,19 @@ let
     }
 
     {
+      name = "integration_test_nextest";
+      src = ./sample_projects/integration_test;
+      cargoToml = "Cargo.toml";
+      customBuild = "sample_projects/integration_test/test-nextest.nix";
+      expectedOutput = "expected one argument";
+      expectedTestOutputs = [
+        "read_source_file"
+        "write_output_file"
+        "2 passed"
+      ];
+    }
+
+    {
       name = "cross_compile_build_dependencies";
       src = ./sample_projects/cross_compile_build_dependencies;
       customBuild = "sample_projects/cross_compile_build_dependencies/default.nix";
