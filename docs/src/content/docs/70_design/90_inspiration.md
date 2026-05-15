@@ -11,7 +11,7 @@ Unfortunately, it failed to generate correct builds for
 fix `carnix` itself, he gave up and started `crate2nix`. That said, big kudos for all the
 work on `buildRustCrate` and showing the way!
 
-The [NixOS Wiki Rust Page](https://nixos.wiki/wiki/Rust#Packaging_Rust_projects_with_nix)
+The [NixOS Wiki Rust Page](https://wiki.nixos.org/wiki/Rust#Packaging_Rust_projects_with_nix)
 contains a nice overview over currently available approaches for building
 rust projects with nix.
 
