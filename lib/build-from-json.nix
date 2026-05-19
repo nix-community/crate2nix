@@ -24,6 +24,14 @@
   buildRustCrateForPkgs ? pkgs: pkgs.buildRustCrate
 , # Optional: default crate overrides
   defaultCrateOverrides ? pkgs.defaultCrateOverrides
+, # Optional: names of cargo-hakari workspace-hack crates whose dependencies
+  # should be dropped. cargo-hakari's job is feature unification at lock time;
+  # crate2nix already bakes the unified feature set into each dependency's
+  # `resolvedDefaultFeatures`, so building the workspace-hack crate's (often
+  # 100+) dependencies just to produce empty rlibs is pure overhead. Listing
+  # the crate here keeps per-crate targets from dragging in the full workspace
+  # dependency closure.
+  hakariStubCrates ? [ ]
 ,
 }:
 
@@ -217,19 +225,31 @@ let
       # them must be built for that platform (not just proc-macros).
       buildDepDrv = dep: self.build.crates.${dep.packageId};
 
+      # cargo-hakari workspace-hack crates exist only to unify feature
+      # selection at lock time. crate2nix bakes the unified feature set into
+      # each dependency's `resolvedDefaultFeatures`, so the workspace-hack
+      # crate's own dependency closure is dead weight: empty rlibs that
+      # drag the full workspace closure into every per-crate target. Drop
+      # the deps here, before they reach buildRustCrate; buildRustCrate
+      # threads dependencies/buildDependencies through makeOverridable
+      # defaults from the crate record, so a crateOverride can't replace
+      # them later.
+      isHakariStub = lib.elem crateInfo.crateName hakariStubCrates;
+
       # Dev-deps only merge for the crate under test, not its transitive deps.
       # This mirrors the template mode's `packageId == rootPackageId` guard.
       devDeps = lib.optionals isTestRoot (crateInfo.devDependencies or [ ]);
-      normalDeps = (crateInfo.dependencies or [ ]) ++ devDeps;
+      normalDeps =
+        if isHakariStub then [ ]
+        else (crateInfo.dependencies or [ ]) ++ devDeps;
+      rawBuildDeps =
+        if isHakariStub then [ ]
+        else crateInfo.buildDependencies or [ ];
 
       dependencies = map depDrv (filterDeps normalDeps targetPlatform);
-      buildDependencies = map buildDepDrv (filterDeps (crateInfo.buildDependencies or [ ]) targetPlatform);
+      buildDependencies = map buildDepDrv (filterDeps rawBuildDeps targetPlatform);
 
-      allDeps = filterDeps
-        (
-          normalDeps ++ (crateInfo.buildDependencies or [ ])
-        )
-        targetPlatform;
+      allDeps = filterDeps (normalDeps ++ rawBuildDeps) targetPlatform;
       renamedDeps = lib.filter (d: d ? rename && d.rename != null) allDeps;
       crateRenames =
         let
