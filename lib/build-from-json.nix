@@ -166,20 +166,59 @@ let
   # Build a crate graph. When testRootPackageId is non-null, the crate with
   # that ID gets its devDependencies merged into dependencies and buildTests
   # set so buildRustCrate compiles test targets instead of lib/bin.
+  #
+  # Two graphs are resolved: the *target* graph (`self.crates` — rlib deps
+  # and workspace members, what the workspace links against) and the *host*
+  # graph (`self.build` — build scripts, proc-macros, and their transitive
+  # dependency closures, run on the build host). Both call
+  # `buildRustCrateForPkgs`, but on a non-cross build `pkgs.buildPackages
+  # == pkgs`, so `cratePkgs` alone cannot tell the consumer which graph a
+  # crate belongs to.
+  #
+  # Surface the distinction via an extra curried `{ isHost }` argument
+  # between `cratePkgs` and the crate record. This is *opt-in*: it is only
+  # supplied when the function returned by `buildRustCrateForPkgs cratePkgs`
+  # declares `isHost` in its argument pattern, i.e. when the consumer's
+  # function has the shape
+  #
+  #   buildRustCrateForPkgs = pkgs: { isHost ? false }: crate_: pkgs.buildRustCrate (crate_ // { ... });
+  #
+  # A bare `pkgs: crate_: drv` consumer — including the default
+  # `pkgs.buildRustCrate` — has empty `functionArgs` on the returned
+  # function, so the extra argument is never applied and the call site
+  # is byte-for-byte identical to before. Because the flag travels as a
+  # curried argument and never lands on the crate record, it cannot leak
+  # into `mkDerivation` (via `extraDerivationAttrs`) and perturb existing
+  # derivation hashes for consumers that don't opt in.
+  #
+  # Use case: tools that compile target crates with a custom rustc driver
+  # and flags (kani-compiler, miri, coverage instrumentation) but need
+  # host artifacts to compile with vanilla rustc — proc-macros and build
+  # scripts are loaded/executed by rustc at compile time and cannot carry
+  # the custom flags. Mirrors cargo's `-Z target-applies-to-host`.
   mkBuiltByPackageIdByPkgs =
     { testRootPackageId ? null }:
     let
       go =
-        cratePkgs:
+        cratePkgs: isHost:
         let
           buildRustCrate =
             let
               base = buildRustCrateForPkgs cratePkgs;
+              withOverrides =
+                if defaultCrateOverrides != pkgs.defaultCrateOverrides then
+                  base.override { defaultCrateOverrides = defaultCrateOverrides; }
+                else
+                  base;
+              # Opt-in detection: a consumer that wants the host/target
+              # distinction declares `{ isHost ? false }:` as the *next*
+              # curried argument after `cratePkgs`. `functionArgs` of a
+              # positional lambda (`crate_: drv`) is `{}`, so the default
+              # `pkgs.buildRustCrate` and any non-opted-in wrapper fall
+              # through to the legacy shape unchanged.
+              wantsIsHost = (lib.functionArgs base) ? isHost;
             in
-            if defaultCrateOverrides != pkgs.defaultCrateOverrides then
-              base.override { defaultCrateOverrides = defaultCrateOverrides; }
-            else
-              base;
+            if wantsIsHost then withOverrides { inherit isHost; } else withOverrides;
 
           self = {
             crates = lib.mapAttrs
@@ -187,12 +226,12 @@ let
                 packageId: _: buildCrate self cratePkgs buildRustCrate testRootPackageId packageId
               )
               resolved.crates;
-            build = go cratePkgs.buildPackages;
+            build = go cratePkgs.buildPackages true;
           };
         in
         self;
     in
-    go pkgs;
+    go pkgs false;
 
   buildCrate =
     self: cratePkgs: buildRustCrate: testRootPackageId: packageId:
