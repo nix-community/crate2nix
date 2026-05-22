@@ -177,6 +177,10 @@ rec {
             inherit testCrateFlags;
 
             buildInputs = testInputs;
+ 
+            passthru = {
+              testCrate = drv;
+            };
 
             buildPhase = ''
               set -e
