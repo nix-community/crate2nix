@@ -3293,13 +3293,15 @@ rec {
       );
 
   /*
-    Returns a crate which depends on successful test execution
-    of crate given as the second argument.
+    Run the tests for the provided crate.
 
-    testCrateFlags: list of flags to pass to the test exectuable
-    testInputs: list of packages that should be available during test execution
-  */
-  crateWithTest =
+    The `crate` argument is expected to hold the main crate derivation.
+    `testCrate` should contain the crate built with dev dependencies and --test passed to rustc.
+    `testCrateFlags` may contain a list of arguments to be passed to the test binary.
+    `testInputs` may contain any additional runtime dependency derivations for test execution.
+    The pre and post-run arguments may contain additional shell snippets to run before and after test execution.
+    */
+  runRustTests =
     { crate
     , testCrate
     , testCrateFlags
@@ -3313,15 +3315,9 @@ rec {
       assert builtins.typeOf testPreRun == "string";
       assert builtins.typeOf testPostRun == "string";
       let
-        # override the `crate` so that it will build and execute tests instead of
-        # building the actual lib and bin targets We just have to pass `--test`
-        # to rustc and it will do the right thing.  We execute the tests and copy
-        # their log and the test executables to $out for later inspection.
+        # We execute the tests and copy their log and the test executables to $out for later inspection.
         test =
           let
-            drv = testCrate.override (_: {
-              buildTests = true;
-            });
             # If the user hasn't set any pre/post commands, we don't want to
             # insert empty lines. This means that any existing users of crate2nix
             # don't get a spurious rebuild unless they set these explicitly.
@@ -3361,7 +3357,7 @@ rec {
               # this allows to prevent name collision with the main
               # executables of the crate
               hash=$(basename $out)
-              for file in ${drv}/tests/*; do
+              for file in ${testCrate}/tests/*; do
                 f=$testRoot/$(basename $file)-$hash
                 cp $file $f
                 ${testCommand}
@@ -3369,21 +3365,29 @@ rec {
             '';
           };
       in
-      pkgs.runCommand "${crate.name}-linked"
+      test;
+
+  /*
+    Returns a crate which depends on successful auxilliary checks.
+
+    The first argument is the compiled crate and the second is an attr set of checks.
+    If the set of checks is empty, the crate will be returned as-is.
+  */
+  crateWithChecks = crate: checks:
+    if checks == { } then
+      crate
+    else
+      pkgs.runCommand "${crate.name}-checked"
         {
           inherit (crate) outputs crateName meta;
-          passthru = (crate.passthru or { }) // {
-            inherit test;
-          };
+          passthru =
+            (crate.passthru or { })
+            // checks;
         }
-        (
-          lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
-            echo tested by ${test}
-          ''
-          + ''
-            ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
-          ''
-        );
+        ''
+          ${lib.concatMapAttrsStringSep "\n" (name: value: "echo Ran check '${name}': ${value}") checks}
+          ${lib.concatMapStringsSep "\n" (output: "ln -s ${crate.${output}} ${"$"}${output}") crate.outputs}
+        '';
 
   # A restricted overridable version of builtRustCratesWithFeatures.
   buildRustCrateWithFeatures =
@@ -3391,6 +3395,8 @@ rec {
     , features ? rootFeatures
     , crateOverrides ? defaultCrateOverrides
     , buildRustCrateForPkgsFunc ? null
+    , runClippy ? false
+    , clippyArgs ? [ "-Dwarnings" ]
     , runTests ? false
     , testCrateFlags ? [ ]
     , testInputs ? [ ]
@@ -3404,6 +3410,8 @@ rec {
       (
         { features
         , crateOverrides
+        , runClippy
+        , clippyArgs
         , runTests
         , testCrateFlags
         , testInputs
@@ -3425,40 +3433,49 @@ rec {
                     defaultCrateOverrides = crateOverrides;
                   }
               );
-          builtRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
+          builtRustCrates = lib.makeOverridable builtRustCratesWithFeatures {
+            inherit packageId features clippyArgs;
             buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
             runTests = false;
+            runClippy = false;
           };
-          builtTestRustCrates = builtRustCratesWithFeatures {
-            inherit packageId features;
-            buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
+          builtTestRustCrates = builtRustCrates.override {
             runTests = true;
           };
-          drv = builtRustCrates.crates.${packageId};
-          testDrv = builtTestRustCrates.crates.${packageId};
-          derivation =
-            if runTests then
-              crateWithTest
-                {
-                  crate = drv;
-                  testCrate = testDrv;
-                  inherit
-                    testCrateFlags
-                    testInputs
-                    testPreRun
-                    testPostRun
-                    ;
-                }
-            else
-              drv;
+          # Note: this overrides the test crates so that clippy runs against tests as well.
+          builtClippyRustCrates = builtTestRustCrates.override {
+            runClippy = true;
+          };
+          crate = builtRustCrates.crates.${packageId};
+          testCrate = builtTestRustCrates.crates.${packageId};
+          clippyCrate = pkgs.runCommand "clippy-log" { } ''
+            cp ${builtClippyRustCrates.crates.${packageId}}/clippy.log $out
+          '';
+          testDrv = runRustTests {
+            inherit
+              crate
+              testCrate
+              testCrateFlags
+              testInputs
+              testPreRun
+              testPostRun
+              ;
+          };
+          # Does this really not exist somewhere in lib?
+          apply = f: l: lib.foldl' (acc: it: acc it) (f (lib.head l)) (lib.tail l);
         in
-        derivation
+        crateWithChecks crate
+          (lib.mergeAttrsList (map (apply lib.optionalAttrs) [
+            [ runClippy { clippy = clippyCrate; } ]
+            [ runTests { test = testDrv; } ]
+          ]))
       )
       {
         inherit
           features
           crateOverrides
+          runClippy
+          clippyArgs
           runTests
           testCrateFlags
           testInputs
@@ -3466,6 +3483,39 @@ rec {
           testPostRun
           ;
       };
+
+  # Using the provided toolchain, create a new one in which rustc is replaced with a script
+  # that runs clippy-driver instead.
+  # Requires that the toolchain in question already provides clippy.
+  mkClippyWrapper = pkgs: toolchain: clippyArgs:
+    let
+      rustcWrapped = pkgs.writeShellScriptBin "rustc" ''
+        export PATH="${toolchain}/bin":$PATH
+
+        args="$@"
+
+        if [[ "$args" =~ "--version" ]]; then
+          exec clippy-driver --rustc $args
+        else
+          # Disable the lint cap
+          args="$(echo "$args" | sed 's/ --cap-lints allow//')"
+          export CLIPPY_ARGS="${lib.concatStringsSep "__CLIPPY_HACKERY__" clippyArgs}"
+        fi
+
+        # This will be invoked multiple times for lib, bin, integration test, etc. targets.
+        # Make sure we can differentiate.
+        echo "clippy-driver $args" >> clippy.log
+
+        exec clippy-driver $args 2> >(tee -a clippy.log >&2)
+      '';
+    in
+    pkgs.symlinkJoin {
+      name = "rustc-clippy-wrapped";
+      paths = [
+        rustcWrapped
+        toolchain
+      ];
+    };
 
   /*
     Returns an attr set with packageId mapped to the result of buildRustCrateForPkgsFunc
@@ -3476,6 +3526,8 @@ rec {
     , features
     , crateConfigs ? crates
     , buildRustCrateForPkgsFunc
+    , runClippy
+    , clippyArgs
     , runTests
     , makeTarget ? makeDefaultTarget
     ,
@@ -3485,6 +3537,8 @@ rec {
       assert (builtins.isList features);
       assert (builtins.isAttrs (makeTarget stdenv.hostPlatform));
       assert (builtins.isBool runTests);
+      assert (builtins.isBool runClippy);
+      assert (builtins.isList clippyArgs);
       let
         rootPackageId = packageId;
         mergedFeatures = mergePackageFeatures (
@@ -3515,15 +3569,14 @@ rec {
         buildByPackageIdForPkgsImpl =
           self: pkgs: packageId:
           let
+            isRootPackage = packageId == rootPackageId;
             features = mergedFeatures."${packageId}" or [ ];
             crateConfig' = crateConfigs."${packageId}";
             crateConfig = builtins.removeAttrs crateConfig' [
               "resolvedDefaultFeatures"
               "devDependencies"
             ];
-            devDependencies = lib.optionals (runTests && packageId == rootPackageId) (
-              crateConfig'.devDependencies or [ ]
-            );
+            devDependencies = lib.optionals (runTests && isRootPackage) (crateConfig'.devDependencies or [ ]);
             dependencies = dependencyDerivations {
               inherit features;
               inherit (self) target;
@@ -3578,8 +3631,31 @@ rec {
                   };
               in
               lib.mapAttrs (name: builtins.map versionAndRename) grouped;
+
+            maybeClippyCrateForPkgsFunc =
+              if runClippy && isRootPackage then
+                pkgs:
+                let
+                  buildRustCrate = buildRustCrateForPkgsFunc pkgs;
+                  clippyRustCrate = buildRustCrate.override (attrs: {
+                    rustc = mkClippyWrapper pkgs attrs.rustc clippyArgs;
+                  });
+                  copyClippyLog = crate: crate.overrideAttrs (attrs: {
+                    postInstall = (attrs.postInstall or "") + ''
+                      cp clippy.log $out/clippy.log
+                    '';
+                  });
+                  clippyRustCrateWithPost = config: lib.pipe config [
+                    clippyRustCrate
+                    copyClippyLog
+                  ];
+                in
+                clippyRustCrateWithPost
+              else
+                buildRustCrateForPkgsFunc;
+
           in
-          buildRustCrateForPkgsFunc pkgs (
+          maybeClippyCrateForPkgsFunc pkgs (
             crateConfig
             // {
               src =
@@ -3603,6 +3679,7 @@ rec {
                 release
                 ;
             }
+            // lib.optionalAttrs (isRootPackage && runTests) { buildTests = true; }
           );
       in
       builtByPackageIdByPkgs;

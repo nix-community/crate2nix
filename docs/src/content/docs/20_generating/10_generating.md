@@ -14,7 +14,7 @@ feature from nix which might disable build parallelism.
 
 Here is a simple example which uses all the defaults and will generate a `Cargo.nix` file.
 
-If you [installed crate2nix locally](../20_installing_crate2nix/):
+If you [installed crate2nix locally](../../10_getting_started/20_installing_crate2nix/):
 
 ```bash
 # From the project directory with the Cargo.toml.
