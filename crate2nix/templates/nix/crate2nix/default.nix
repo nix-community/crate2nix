@@ -177,7 +177,7 @@ rec {
             inherit testCrateFlags;
 
             buildInputs = testInputs;
- 
+
             passthru = {
               testCrate = drv;
             };
