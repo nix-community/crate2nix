@@ -53,6 +53,19 @@ let
       features = { };
     };
 
+    # A crate that declares no `default` feature, depended on with default
+    # features left on (the implicit default for the edge). Cargo enables
+    # nothing in this case, so neither should crate2nix.
+    "pkg_no_default_root" = {
+      crateName = "no_default_root";
+      dependencies = [
+        {
+          name = "id3";
+          packageId = "pkg_id3";
+        }
+      ];
+    };
+
     "pkg_numtest" = {
       crateName = "numtest";
       dependencies = [
@@ -106,7 +119,8 @@ in
   testNumTestDependencies = {
     expr = packageFeatures "pkg_numtest" [ "default" ];
     expected = {
-      "pkg_numtest" = [ "default" ];
+      # pkg_numtest declares no `default` feature → "default" enables nothing.
+      "pkg_numtest" = [ ];
       "pkg_num" = [ "default" "num-bigint" "num-bigint/std" "std" ];
       "pkg_num_bigint" = [ "std" ];
     };
@@ -129,7 +143,9 @@ in
   testRootPackage = {
     expr = packageFeatures "pkg_root" [ "default" ];
     expected = {
-      "pkg_root" = [ "default" ];
+      # pkg_root declares no `default` feature, so the requested "default"
+      # enables nothing — matching `cargo build` (previously [ "default" ]).
+      "pkg_root" = [ ];
       "pkg_id1" = [ "default" ];
       "pkg_id3" = [ ];
     };
@@ -138,9 +154,25 @@ in
   testRootPackageWithOptional = {
     expr = packageFeatures "pkg_root" [ "default" "optional_id2" ];
     expected = {
-      "pkg_root" = [ "default" "optional_id2" ];
+      # "default" dropped (pkg_root declares none); "optional_id2" is real.
+      "pkg_root" = [ "optional_id2" ];
       "pkg_id1" = [ "default" ];
-      "pkg_id2" = [ "default" ];
+      # pkg_id2 declares no `default` feature, so `default-features = true` on
+      # the edge enables nothing — matching Cargo (previously [ "default" ]).
+      "pkg_id2" = [ ];
+      "pkg_id3" = [ ];
+    };
+  };
+
+  # Regression test: requesting "default" on a crate that declares no `default`
+  # feature must not synthesize a phantom "default" — whether it arrives via a
+  # default-features-on dependency edge (pkg_id3 below) or as a root feature
+  # (testRootPackage above). Otherwise the crate forks from any path that
+  # reaches it without "default".
+  testDefaultFeaturesNoOpWhenUndeclared = {
+    expr = packageFeatures "pkg_no_default_root" [ ];
+    expected = {
+      "pkg_no_default_root" = [ ];
       "pkg_id3" = [ ];
     };
   };

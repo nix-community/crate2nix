@@ -584,7 +584,20 @@ rec {
       assert (builtins.isBool runTests);
       let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
-        expandedFeatures = expandFeatures (crateConfig.features or { }) features;
+        # Cargo treats `default-features = true` on a crate that declares no
+        # `default` feature as a no-op (it enables nothing). crate2nix otherwise
+        # keeps the synthesized "default" — from a default-features-on dependency
+        # edge or from the root's default `rootFeatures = [ "default" ]` — and
+        # stamps a phantom `--cfg feature="default"`, forking the crate's
+        # derivation (different `-C metadata`) from any path that reaches it
+        # without "default". Strip it here, the single point every crate's
+        # feature set flows through, so both cases are covered at once.
+        requestedFeatures =
+          if (crateConfig.features or { }) ? "default" then
+            features
+          else
+            lib.filter (f: f != "default") features;
+        expandedFeatures = expandFeatures (crateConfig.features or { }) requestedFeatures;
         enabledFeatures = enableFeatures (crateConfig.dependencies or [ ]) expandedFeatures;
         depWithResolvedFeatures =
           dependency:
