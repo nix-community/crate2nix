@@ -120,12 +120,16 @@ in {
 }
 ```
 
-The consumer accepts two optional arguments for customisation:
+The consumer accepts three optional arguments for customisation:
 
 - `buildRustCrateForPkgs` — override the `buildRustCrate` used (e.g. for a
   custom toolchain)
 - `defaultCrateOverrides` — per-crate build fixups, same as the existing
   `Cargo.nix` workflow
+- `hakariStubCrates` — list of [cargo-hakari](https://docs.rs/cargo-hakari) workspace-hack
+  crate names whose dependencies should be dropped. crate2nix bakes the unified feature set
+  into every dependency at lock time, so the workspace-hack crate's own dependency closure
+  is dead weight; stubbing it keeps per-crate builds small.
 
 ## Documentation
 
