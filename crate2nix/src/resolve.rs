@@ -32,6 +32,12 @@ pub struct CrateDerivation {
     pub crate_name: String,
     pub edition: String,
     pub authors: Vec<String>,
+    /// The SPDX license expression of the crate, as declared in its `Cargo.toml`.
+    pub license: Option<String>,
+    /// The URL of the crate's source repository, as declared in its `Cargo.toml`.
+    pub repository: Option<String>,
+    /// The URL of the crate's homepage, as declared in its `Cargo.toml`.
+    pub homepage: Option<String>,
     pub version: Version,
     /// The name of a native library the package is linking to.
     pub links: Option<String>,
@@ -159,6 +165,9 @@ impl CrateDerivation {
             crate_name: package.name.clone(),
             edition: package.edition.to_string(),
             authors: package.authors.clone(),
+            license: package.license.clone(),
+            repository: package.repository.clone(),
+            homepage: package.homepage.clone(),
             package_id: package.id.clone(),
             version: package.version.clone(),
             links: package.links.clone(),

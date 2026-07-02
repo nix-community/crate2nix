@@ -102,6 +102,9 @@ rec {
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "Unlicense OR MIT";
+        repository = "https://github.com/BurntSushi/aho-corasick";
+        homepage = "https://github.com/BurntSushi/aho-corasick";
         dependencies = [
           {
             name = "memchr";
@@ -128,6 +131,9 @@ rec {
           "Ryan Scheel (Havvy) <ryan.havvy@gmail.com>"
           "Josh Triplett <josh@joshtriplett.org>"
         ];
+        license = "MIT";
+        repository = "https://github.com/ogham/rust-ansi-term";
+        homepage = "https://github.com/ogham/rust-ansi-term";
         dependencies = [
           {
             name = "winapi";
@@ -149,6 +155,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/dtolnay/anyhow";
         features = {
           "backtrace" = [ "dep:backtrace" ];
           "default" = [ "std" ];
@@ -163,6 +171,9 @@ rec {
         authors = [
           "softprops <d.tangren@gmail.com>"
         ];
+        license = "MIT";
+        repository = "https://github.com/softprops/atty";
+        homepage = "https://github.com/softprops/atty";
         dependencies = [
           {
             name = "hermit-abi";
@@ -192,6 +203,9 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/bitflags/bitflags";
+        homepage = "https://github.com/bitflags/bitflags";
         features = {
           "compiler_builtins" = [ "dep:compiler_builtins" ];
           "core" = [ "dep:core" ];
@@ -207,6 +221,9 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/bitflags/bitflags";
+        homepage = "https://github.com/bitflags/bitflags";
         features = {
           "arbitrary" = [ "dep:arbitrary" ];
           "bytemuck" = [ "dep:bytemuck" ];
@@ -225,6 +242,8 @@ rec {
         authors = [
           "RustCrypto Developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/RustCrypto/utils";
         dependencies = [
           {
             name = "generic-array";
@@ -241,6 +260,9 @@ rec {
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/BurntSushi/bstr";
+        homepage = "https://github.com/BurntSushi/bstr";
         dependencies = [
           {
             name = "memchr";
@@ -274,6 +296,8 @@ rec {
           "Steve Klabnik <steve@steveklabnik.com>"
           "Rain <rain@sunshowers.io>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/camino-rs/camino";
         dependencies = [
           {
             name = "serde";
@@ -296,6 +320,9 @@ rec {
         edition = "2021";
         sha256 = "1z5b7ivbj508wkqdg2vb0hw4vi1k1pyhcn6h1h1b8svcb8vg1c94";
         libName = "cargo_platform";
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-lang/cargo";
+        homepage = "https://github.com/rust-lang/cargo";
         dependencies = [
           {
             name = "serde";
@@ -312,6 +339,8 @@ rec {
         authors = [
           "Oliver Schneider <git-spam-no-reply9815368754983@oli-obk.de>"
         ];
+        license = "MIT";
+        repository = "https://github.com/oli-obk/cargo_metadata";
         dependencies = [
           {
             name = "camino";
@@ -357,6 +386,9 @@ rec {
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/alexcrichton/cfg-if";
+        homepage = "https://github.com/alexcrichton/cfg-if";
         features = {
           "compiler_builtins" = [ "dep:compiler_builtins" ];
           "core" = [ "dep:core" ];
@@ -371,6 +403,9 @@ rec {
         authors = [
           "Kevin K. <kbknapp@gmail.com>"
         ];
+        license = "MIT";
+        repository = "https://github.com/clap-rs/clap";
+        homepage = "https://clap.rs/";
         dependencies = [
           {
             name = "ansi_term";
@@ -429,6 +464,8 @@ rec {
         edition = "2015";
         sha256 = "1dfwjxd13f8l8bdzm76kkp6cp4sr1pyc8lavp52avwy313mhh0j1";
         libName = "colored_diff";
+        license = "MIT OR Unlicense";
+        repository = "https://github.com/CAD97/colored-diff";
         dependencies = [
           {
             name = "ansi_term";
@@ -454,6 +491,8 @@ rec {
         authors = [
           "RustCrypto Developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/RustCrypto/utils";
         dependencies = [
           {
             name = "libc";
@@ -493,6 +532,9 @@ rec {
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
+        license = "Apache-2.0";
+        repository = "https://github.com/nix-community/crate2nix";
+        homepage = "https://nix-community.github.io/crate2nix/";
         dependencies = [
           {
             name = "anyhow";
@@ -582,6 +624,9 @@ rec {
         edition = "2021";
         sha256 = "03bp38ljx4wj6vvy4fbhx41q8f585zyqix6pncz1mkz93z08qgv1";
         libName = "crossbeam_deque";
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/crossbeam-rs/crossbeam";
+        homepage = "https://github.com/crossbeam-rs/crossbeam/tree/master/crossbeam-deque";
         dependencies = [
           {
             name = "crossbeam-epoch";
@@ -606,6 +651,9 @@ rec {
         edition = "2021";
         sha256 = "03j2np8llwf376m3fxqx859mgp9f83hj1w34153c7a9c7i5ar0jv";
         libName = "crossbeam_epoch";
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/crossbeam-rs/crossbeam";
+        homepage = "https://github.com/crossbeam-rs/crossbeam/tree/master/crossbeam-epoch";
         dependencies = [
           {
             name = "crossbeam-utils";
@@ -628,6 +676,9 @@ rec {
         edition = "2021";
         sha256 = "100fksq5mm1n7zj242cclkw6yf7a4a8ix3lvpfkhxvdhbda9kv12";
         libName = "crossbeam_utils";
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/crossbeam-rs/crossbeam";
+        homepage = "https://github.com/crossbeam-rs/crossbeam/tree/master/crossbeam-utils";
         features = {
           "default" = [ "std" ];
           "loom" = [ "dep:loom" ];
@@ -643,6 +694,8 @@ rec {
         authors = [
           "RustCrypto Developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/RustCrypto/traits";
         dependencies = [
           {
             name = "generic-array";
@@ -667,6 +720,8 @@ rec {
         authors = [
           "RustCrypto Developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/RustCrypto/traits";
         dependencies = [
           {
             name = "block-buffer";
@@ -701,6 +756,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "Apache-2.0";
+        repository = "https://github.com/dtolnay/dissimilar";
 
       };
       "either" = rec {
@@ -711,6 +768,8 @@ rec {
         authors = [
           "bluss"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rayon-rs/either";
         features = {
           "default" = [ "use_std" ];
           "serde" = [ "dep:serde" ];
@@ -722,6 +781,8 @@ rec {
         version = "1.0.1";
         edition = "2015";
         sha256 = "1malmx5f4lkfvqasz319lq6gb3ddg19yzf9s8cykfsgzdmyq0hsl";
+        license = "Apache-2.0 OR MIT";
+        repository = "https://github.com/cuviper/equivalent";
 
       };
       "form_urlencoded" = rec {
@@ -732,6 +793,8 @@ rec {
         authors = [
           "The rust-url developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/servo/rust-url";
         dependencies = [
           {
             name = "percent-encoding";
@@ -754,6 +817,9 @@ rec {
         authors = [
           "Denis Kurilenko <webdesus@gmail.com>"
         ];
+        license = "MIT";
+        repository = "https://github.com/webdesus/fs_extra";
+        homepage = "https://github.com/webdesus/fs_extra";
 
       };
       "fuchsia-cprng" = rec {
@@ -765,6 +831,7 @@ rec {
         authors = [
           "Erick Tryzelaar <etryzelaar@google.com>"
         ];
+        repository = "https://fuchsia.googlesource.com/fuchsia/+/master/garnet/public/rust/fuchsia-cprng";
 
       };
       "generic-array" = rec {
@@ -777,6 +844,8 @@ rec {
           "Bartłomiej Kamiński <fizyk20@gmail.com>"
           "Aaron Trent <novacrazy@gmail.com>"
         ];
+        license = "MIT";
+        repository = "https://github.com/fizyk20/generic-array.git";
         dependencies = [
           {
             name = "typenum";
@@ -803,6 +872,9 @@ rec {
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "Unlicense OR MIT";
+        repository = "https://github.com/BurntSushi/ripgrep/tree/master/crates/globset";
+        homepage = "https://github.com/BurntSushi/ripgrep/tree/master/crates/globset";
         dependencies = [
           {
             name = "aho-corasick";
@@ -848,6 +920,8 @@ rec {
         authors = [
           "Gilad Naaman <gilad@naaman.io>"
         ];
+        license = "MIT";
+        repository = "https://github.com/gilnaa/globwalk";
         dependencies = [
           {
             name = "bitflags";
@@ -872,6 +946,8 @@ rec {
         authors = [
           "Amanieu d'Antras <amanieu@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-lang/hashbrown";
         features = {
           "ahash" = [ "dep:ahash" ];
           "alloc" = [ "dep:alloc" ];
@@ -896,6 +972,9 @@ rec {
         authors = [
           "Without Boats <woboats@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/withoutboats/heck";
+        homepage = "https://github.com/withoutboats/heck";
         dependencies = [
           {
             name = "unicode-segmentation";
@@ -913,6 +992,8 @@ rec {
         authors = [
           "Stefan Lankes"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/hermitcore/libhermit-rs";
         dependencies = [
           {
             name = "libc";
@@ -935,6 +1016,8 @@ rec {
         authors = [
           "KokaKiwi <kokakiwi@kokakiwi.net>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/KokaKiwi/rust-hex";
         features = {
           "default" = [ "std" ];
           "serde" = [ "dep:serde" ];
@@ -950,6 +1033,8 @@ rec {
         authors = [
           "The rust-url developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/servo/rust-url/";
         dependencies = [
           {
             name = "unicode-bidi";
@@ -977,6 +1062,9 @@ rec {
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "Unlicense OR MIT";
+        repository = "https://github.com/BurntSushi/ripgrep/tree/master/crates/ignore";
+        homepage = "https://github.com/BurntSushi/ripgrep/tree/master/crates/ignore";
         dependencies = [
           {
             name = "crossbeam-deque";
@@ -1022,6 +1110,8 @@ rec {
         version = "2.2.6";
         edition = "2021";
         sha256 = "09hgwi2ig0wyj5rjziia76zmhgfj95k0jb4ic3iiawm4vlavg3qn";
+        license = "Apache-2.0 OR MIT";
+        repository = "https://github.com/indexmap-rs/indexmap";
         dependencies = [
           {
             name = "equivalent";
@@ -1054,6 +1144,8 @@ rec {
         authors = [
           "bluss"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/rust-itertools/itertools";
         dependencies = [
           {
             name = "either";
@@ -1074,6 +1166,8 @@ rec {
         authors = [
           "bluss"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-itertools/itertools";
         dependencies = [
           {
             name = "either";
@@ -1095,6 +1189,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/dtolnay/itoa";
         features = {
           "no-panic" = [ "dep:no-panic" ];
         };
@@ -1107,6 +1203,8 @@ rec {
         authors = [
           "Marvin Löbel <loebel.marvin@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-lang-nursery/lazy-static.rs";
         features = {
           "spin" = [ "dep:spin" ];
           "spin_no_std" = [ "spin" ];
@@ -1120,6 +1218,9 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-lang/libc";
+        homepage = "https://github.com/rust-lang/libc";
         features = {
           "default" = [ "std" ];
           "rustc-dep-of-std" = [ "align" "rustc-std-workspace-core" ];
@@ -1136,6 +1237,8 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-lang/log";
         features = {
           "kv_serde" = [ "kv_std" "value-bag/serde" "serde" ];
           "kv_std" = [ "std" "kv" "value-bag/error" ];
@@ -1159,6 +1262,9 @@ rec {
           "Andrew Gallant <jamslam@gmail.com>"
           "bluss"
         ];
+        license = "Unlicense OR MIT";
+        repository = "https://github.com/BurntSushi/memchr";
+        homepage = "https://github.com/BurntSushi/memchr";
         features = {
           "compiler_builtins" = [ "dep:compiler_builtins" ];
           "core" = [ "dep:core" ];
@@ -1179,6 +1285,8 @@ rec {
         authors = [
           "Peter Kolloch <info@eigenvalue.net>"
         ];
+        license = "Apache-2.0";
+        repository = "https://github.com/kolloch/nix-base32";
 
       };
       "once_cell" = rec {
@@ -1189,6 +1297,8 @@ rec {
         authors = [
           "Aleksey Kladov <aleksey.kladov@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/matklad/once_cell";
         features = {
           "alloc" = [ "race" ];
           "atomic-polyfill" = [ "critical-section" ];
@@ -1208,6 +1318,8 @@ rec {
         authors = [
           "Manish Goregaokar <manishsmail@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/Manishearth/pathdiff";
         features = {
           "camino" = [ "dep:camino" ];
         };
@@ -1221,6 +1333,8 @@ rec {
         authors = [
           "The rust-url developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/servo/rust-url/";
         features = {
           "default" = [ "std" ];
           "std" = [ "alloc" ];
@@ -1235,6 +1349,9 @@ rec {
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/pest-parser/pest";
+        homepage = "https://pest.rs/";
         dependencies = [
           {
             name = "memchr";
@@ -1269,6 +1386,9 @@ rec {
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/pest-parser/pest";
+        homepage = "https://pest.rs/";
         dependencies = [
           {
             name = "pest";
@@ -1297,6 +1417,9 @@ rec {
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/pest-parser/pest";
+        homepage = "https://pest.rs/";
         dependencies = [
           {
             name = "pest";
@@ -1336,6 +1459,9 @@ rec {
         authors = [
           "Dragoș Tiselice <dragostiselice@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/pest-parser/pest";
+        homepage = "https://pest.rs/";
         dependencies = [
           {
             name = "once_cell";
@@ -1367,6 +1493,8 @@ rec {
         authors = [
           "CreepySkeleton <creepy-skeleton@yandex.ru>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://gitlab.com/CreepySkeleton/proc-macro-error";
         dependencies = [
           {
             name = "proc-macro-error-attr";
@@ -1410,6 +1538,8 @@ rec {
         authors = [
           "CreepySkeleton <creepy-skeleton@yandex.ru>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://gitlab.com/CreepySkeleton/proc-macro-error";
         dependencies = [
           {
             name = "proc-macro2";
@@ -1438,6 +1568,8 @@ rec {
           "David Tolnay <dtolnay@gmail.com>"
           "Alex Crichton <alex@alexcrichton.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/dtolnay/proc-macro2";
         dependencies = [
           {
             name = "unicode-ident";
@@ -1457,6 +1589,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/dtolnay/quote";
         dependencies = [
           {
             name = "proc-macro2";
@@ -1478,6 +1612,9 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/rust-lang-nursery/rand";
+        homepage = "https://github.com/rust-lang-nursery/rand";
         dependencies = [
           {
             name = "fuchsia-cprng";
@@ -1525,6 +1662,9 @@ rec {
           "The Rand Project Developers"
           "The Rust Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/rust-random/rand";
+        homepage = "https://crates.io/crates/rand_core";
         dependencies = [
           {
             name = "rand_core";
@@ -1547,6 +1687,9 @@ rec {
           "The Rand Project Developers"
           "The Rust Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/rust-random/rand";
+        homepage = "https://crates.io/crates/rand_core";
         features = {
           "serde" = [ "dep:serde" ];
           "serde1" = [ "serde" "serde_derive" ];
@@ -1562,6 +1705,8 @@ rec {
         authors = [
           "Simonas Kazlauskas <rdrand@kazlauskas.me>"
         ];
+        license = "ISC";
+        repository = "https://github.com/nagisa/rust_rdrand/";
         dependencies = [
           {
             name = "rand_core";
@@ -1583,6 +1728,9 @@ rec {
           "The Rust Project Developers"
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-lang/regex";
+        homepage = "https://github.com/rust-lang/regex";
         dependencies = [
           {
             name = "aho-corasick";
@@ -1642,6 +1790,8 @@ rec {
           "The Rust Project Developers"
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-lang/regex/tree/master/regex-automata";
         dependencies = [
           {
             name = "aho-corasick";
@@ -1703,6 +1853,8 @@ rec {
           "The Rust Project Developers"
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-lang/regex/tree/master/regex-syntax";
         features = {
           "arbitrary" = [ "dep:arbitrary" ];
           "default" = [ "std" "unicode" ];
@@ -1718,6 +1870,8 @@ rec {
         authors = [
           "Aaronepower <theaaronepower@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/XAMPPRocky/remove_dir_all.git";
         dependencies = [
           {
             name = "winapi";
@@ -1736,6 +1890,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "Apache-2.0 OR BSL-1.0";
+        repository = "https://github.com/dtolnay/ryu";
         features = {
           "no-panic" = [ "dep:no-panic" ];
         };
@@ -1749,6 +1905,9 @@ rec {
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "Unlicense/MIT";
+        repository = "https://github.com/BurntSushi/same-file";
+        homepage = "https://github.com/BurntSushi/same-file";
         dependencies = [
           {
             name = "winapi-util";
@@ -1766,6 +1925,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/dtolnay/semver";
         dependencies = [
           {
             name = "serde";
@@ -1789,6 +1950,9 @@ rec {
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/serde-rs/serde";
+        homepage = "https://serde.rs";
         dependencies = [
           {
             name = "serde_derive";
@@ -1824,6 +1988,9 @@ rec {
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/serde-rs/serde";
+        homepage = "https://serde.rs";
         dependencies = [
           {
             name = "proc-macro2";
@@ -1857,6 +2024,8 @@ rec {
           "Erick Tryzelaar <erick.tryzelaar@gmail.com>"
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/serde-rs/json";
         dependencies = [
           {
             name = "itoa";
@@ -1893,6 +2062,9 @@ rec {
         version = "0.6.6";
         edition = "2021";
         sha256 = "1839b6m5p9ijjmcwamiya2r612ks2vg6w2pp95yg76lr3zh79rkr";
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/toml-rs/toml";
+        homepage = "https://github.com/toml-rs/toml";
         dependencies = [
           {
             name = "serde";
@@ -1919,6 +2091,8 @@ rec {
         authors = [
           "RustCrypto Developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/RustCrypto/hashes";
         dependencies = [
           {
             name = "cfg-if";
@@ -1958,6 +2132,9 @@ rec {
         authors = [
           "Danny Guo <dannyguo91@gmail.com>"
         ];
+        license = "MIT";
+        repository = "https://github.com/dguo/strsim-rs";
+        homepage = "https://github.com/dguo/strsim-rs";
 
       };
       "structopt" = rec {
@@ -1969,6 +2146,8 @@ rec {
           "Guillaume Pinot <texitoi@texitoi.eu>"
           "others"
         ];
+        license = "Apache-2.0 OR MIT";
+        repository = "https://github.com/TeXitoi/structopt";
         dependencies = [
           {
             name = "clap";
@@ -2009,6 +2188,8 @@ rec {
         authors = [
           "Guillaume Pinot <texitoi@texitoi.eu>"
         ];
+        license = "Apache-2.0/MIT";
+        repository = "https://github.com/TeXitoi/structopt";
         dependencies = [
           {
             name = "heck";
@@ -2043,6 +2224,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/dtolnay/syn";
         dependencies = [
           {
             name = "proc-macro2";
@@ -2077,6 +2260,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/dtolnay/syn";
         dependencies = [
           {
             name = "proc-macro2";
@@ -2110,6 +2295,9 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/rust-lang/tempdir";
+        homepage = "https://github.com/rust-lang/tempdir";
         dependencies = [
           {
             name = "rand";
@@ -2130,6 +2318,9 @@ rec {
         authors = [
           "Vincent Prouillet <hello@prouilletvincent.com>"
         ];
+        license = "MIT";
+        repository = "https://github.com/Keats/tera";
+        homepage = "https://keats.github.io/tera/";
         dependencies = [
           {
             name = "globwalk";
@@ -2186,6 +2377,8 @@ rec {
         authors = [
           "Martin Geisler <martin@geisler.net>"
         ];
+        license = "MIT";
+        repository = "https://github.com/mgeisler/textwrap";
         dependencies = [
           {
             name = "unicode-width";
@@ -2205,6 +2398,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/dtolnay/thiserror";
         dependencies = [
           {
             name = "thiserror-impl";
@@ -2223,6 +2418,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/dtolnay/thiserror";
         dependencies = [
           {
             name = "proc-macro2";
@@ -2247,6 +2444,8 @@ rec {
         authors = [
           "Lokathor <zefria@gmail.com>"
         ];
+        license = "Zlib OR Apache-2.0 OR MIT";
+        repository = "https://github.com/Lokathor/tinyvec";
         dependencies = [
           {
             name = "tinyvec_macros";
@@ -2273,6 +2472,8 @@ rec {
         authors = [
           "Soveu <marx.tomasz@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0 OR Zlib";
+        repository = "https://github.com/Soveu/tinyvec_macros";
 
       };
       "toml" = rec {
@@ -2283,6 +2484,9 @@ rec {
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/toml-rs/toml";
+        homepage = "https://github.com/toml-rs/toml";
         dependencies = [
           {
             name = "serde";
@@ -2330,6 +2534,9 @@ rec {
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/toml-rs/toml";
+        homepage = "https://github.com/toml-rs/toml";
         dependencies = [
           {
             name = "serde";
@@ -2351,6 +2558,8 @@ rec {
           "Andronik Ordian <write@reusable.software>"
           "Ed Page <eopage@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/toml-rs/toml";
         dependencies = [
           {
             name = "indexmap";
@@ -2396,6 +2605,8 @@ rec {
           "Paho Lurie-Gregg <paho@paholg.com>"
           "Andre Bogus <bogusandre@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/paholg/typenum";
         features = {
           "scale-info" = [ "dep:scale-info" ];
           "scale_info" = [ "scale-info/derive" ];
@@ -2410,6 +2621,9 @@ rec {
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/BurntSushi/ucd-generate";
+        homepage = "https://github.com/BurntSushi/ucd-generate";
         features = {
           "default" = [ "std" ];
         };
@@ -2424,6 +2638,8 @@ rec {
         authors = [
           "The UNIC Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/open-i18n/rust-unic/";
         dependencies = [
           {
             name = "unic-char-range";
@@ -2441,6 +2657,8 @@ rec {
         authors = [
           "The UNIC Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/open-i18n/rust-unic/";
         features = {
           "rayon" = [ "dep:rayon" ];
           "unstable" = [ "exact-size-is-empty" "fused" "trusted-len" ];
@@ -2456,6 +2674,8 @@ rec {
         authors = [
           "The UNIC Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/open-i18n/rust-unic/";
         features = {
         };
         resolvedDefaultFeatures = [ "default" ];
@@ -2469,6 +2689,8 @@ rec {
         authors = [
           "The UNIC Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/open-i18n/rust-unic/";
         dependencies = [
           {
             name = "unic-ucd-segment";
@@ -2486,6 +2708,8 @@ rec {
         authors = [
           "The UNIC Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/open-i18n/rust-unic/";
         dependencies = [
           {
             name = "unic-char-property";
@@ -2511,6 +2735,8 @@ rec {
         authors = [
           "The UNIC Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/open-i18n/rust-unic/";
         dependencies = [
           {
             name = "unic-common";
@@ -2528,6 +2754,8 @@ rec {
         authors = [
           "The Servo Project Developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/servo/unicode-bidi";
         features = {
           "default" = [ "std" "hardcoded-data" ];
           "flame" = [ "dep:flame" ];
@@ -2547,6 +2775,8 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
+        license = "(MIT OR Apache-2.0) AND Unicode-DFS-2016";
+        repository = "https://github.com/dtolnay/unicode-ident";
 
       };
       "unicode-normalization" = rec {
@@ -2559,6 +2789,9 @@ rec {
           "kwantam <kwantam@gmail.com>"
           "Manish Goregaokar <manishsmail@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/unicode-rs/unicode-normalization";
+        homepage = "https://github.com/unicode-rs/unicode-normalization";
         dependencies = [
           {
             name = "tinyvec";
@@ -2581,6 +2814,9 @@ rec {
           "kwantam <kwantam@gmail.com>"
           "Manish Goregaokar <manishsmail@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/unicode-rs/unicode-segmentation";
+        homepage = "https://github.com/unicode-rs/unicode-segmentation";
         features = {
         };
       };
@@ -2594,6 +2830,9 @@ rec {
           "kwantam <kwantam@gmail.com>"
           "Manish Goregaokar <manishsmail@gmail.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/unicode-rs/unicode-width";
+        homepage = "https://github.com/unicode-rs/unicode-width";
         features = {
           "compiler_builtins" = [ "dep:compiler_builtins" ];
           "core" = [ "dep:core" ];
@@ -2610,6 +2849,8 @@ rec {
         authors = [
           "The rust-url developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/servo/rust-url";
         dependencies = [
           {
             name = "form_urlencoded";
@@ -2675,6 +2916,9 @@ rec {
           "Sean McArthur <sean.monstar@gmail.com>"
           "Vadim Petrochenkov <>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/contain-rs/vec-map";
+        homepage = "https://github.com/contain-rs/vec-map";
         features = {
           "eders" = [ "serde" ];
           "serde" = [ "dep:serde" ];
@@ -2688,6 +2932,8 @@ rec {
         authors = [
           "Sergio Benitez <sb@sergio.bz>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/SergioBenitez/version_check";
 
       };
       "walkdir" = rec {
@@ -2698,6 +2944,9 @@ rec {
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "Unlicense/MIT";
+        repository = "https://github.com/BurntSushi/walkdir";
+        homepage = "https://github.com/BurntSushi/walkdir";
         dependencies = [
           {
             name = "same-file";
@@ -2719,6 +2968,8 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/retep998/winapi-rs";
         dependencies = [
           {
             name = "winapi-i686-pc-windows-gnu";
@@ -2745,6 +2996,8 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/retep998/winapi-rs";
 
       };
       "winapi-util" = rec {
@@ -2756,6 +3009,9 @@ rec {
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
         ];
+        license = "Unlicense OR MIT";
+        repository = "https://github.com/BurntSushi/winapi-util";
+        homepage = "https://github.com/BurntSushi/winapi-util";
         dependencies = [
           {
             name = "windows-sys";
@@ -2775,6 +3031,8 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/retep998/winapi-rs";
 
       };
       "windows-sys" = rec {
@@ -2786,6 +3044,8 @@ rec {
         authors = [
           "Microsoft"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/microsoft/windows-rs";
         dependencies = [
           {
             name = "windows-targets";
@@ -3034,6 +3294,8 @@ rec {
         authors = [
           "Microsoft"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/microsoft/windows-rs";
         dependencies = [
           {
             name = "windows_aarch64_gnullvm";
@@ -3086,6 +3348,8 @@ rec {
         authors = [
           "Microsoft"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/microsoft/windows-rs";
 
       };
       "windows_aarch64_msvc" = rec {
@@ -3096,6 +3360,8 @@ rec {
         authors = [
           "Microsoft"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/microsoft/windows-rs";
 
       };
       "windows_i686_gnu" = rec {
@@ -3106,6 +3372,8 @@ rec {
         authors = [
           "Microsoft"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/microsoft/windows-rs";
 
       };
       "windows_i686_gnullvm" = rec {
@@ -3116,6 +3384,8 @@ rec {
         authors = [
           "Microsoft"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/microsoft/windows-rs";
 
       };
       "windows_i686_msvc" = rec {
@@ -3126,6 +3396,8 @@ rec {
         authors = [
           "Microsoft"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/microsoft/windows-rs";
 
       };
       "windows_x86_64_gnu" = rec {
@@ -3136,6 +3408,8 @@ rec {
         authors = [
           "Microsoft"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/microsoft/windows-rs";
 
       };
       "windows_x86_64_gnullvm" = rec {
@@ -3146,6 +3420,8 @@ rec {
         authors = [
           "Microsoft"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/microsoft/windows-rs";
 
       };
       "windows_x86_64_msvc" = rec {
@@ -3156,6 +3432,8 @@ rec {
         authors = [
           "Microsoft"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/microsoft/windows-rs";
 
       };
       "winnow" = rec {
@@ -3163,6 +3441,8 @@ rec {
         version = "0.6.13";
         edition = "2021";
         sha256 = "189b0mrr9lkckdyr0177hwj1c59igxc2lsl71f4wg8wrqbvfbdar";
+        license = "MIT";
+        repository = "https://github.com/winnow-rs/winnow";
         dependencies = [
           {
             name = "memchr";

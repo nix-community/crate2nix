@@ -103,6 +103,9 @@ rec {
           "Ryan Scheel (Havvy) <ryan.havvy@gmail.com>"
           "Josh Triplett <josh@joshtriplett.org>"
         ];
+        license = "MIT";
+        repository = "https://github.com/ogham/rust-ansi-term";
+        homepage = "https://github.com/ogham/rust-ansi-term";
         dependencies = [
           {
             name = "winapi";
@@ -124,6 +127,9 @@ rec {
         authors = [
           "softprops <d.tangren@gmail.com>"
         ];
+        license = "MIT";
+        repository = "https://github.com/softprops/atty";
+        homepage = "https://github.com/softprops/atty";
         dependencies = [
           {
             name = "hermit-abi";
@@ -153,6 +159,9 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/bitflags/bitflags";
+        homepage = "https://github.com/bitflags/bitflags";
         features = {
           "compiler_builtins" = [ "dep:compiler_builtins" ];
           "core" = [ "dep:core" ];
@@ -168,6 +177,9 @@ rec {
         authors = [
           "Kevin K. <kbknapp@gmail.com>"
         ];
+        license = "MIT";
+        repository = "https://github.com/clap-rs/clap";
+        homepage = "https://clap.rs/";
         dependencies = [
           {
             name = "ansi_term";
@@ -262,6 +274,8 @@ rec {
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
         ];
+        license = "Apache-2.0/MIT";
+        repository = "https://github.com/diwic/dbus-rs";
         dependencies = [
           {
             name = "libc";
@@ -301,6 +315,8 @@ rec {
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
         ];
+        license = "Apache-2.0/MIT";
+        repository = "https://github.com/diwic/dbus-rs";
         dependencies = [
           {
             name = "clap";
@@ -333,6 +349,8 @@ rec {
         authors = [
           "Stefan Lankes"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/hermitcore/libhermit-rs";
         dependencies = [
           {
             name = "libc";
@@ -355,6 +373,9 @@ rec {
         authors = [
           "The Rust Project Developers"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-lang/libc";
+        homepage = "https://github.com/rust-lang/libc";
         features = {
           "default" = [ "std" ];
           "rustc-dep-of-std" = [ "align" "rustc-std-workspace-core" ];
@@ -378,6 +399,8 @@ rec {
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
         ];
+        license = "Apache-2.0/MIT";
+        repository = "https://github.com/diwic/dbus-rs";
         buildDependencies = [
           {
             name = "pkg-config";
@@ -402,6 +425,8 @@ rec {
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
+        license = "MIT OR Apache-2.0";
+        repository = "https://github.com/rust-lang/pkg-config-rs";
 
       };
       "strsim" = rec {
@@ -412,6 +437,9 @@ rec {
         authors = [
           "Danny Guo <dannyguo91@gmail.com>"
         ];
+        license = "MIT";
+        repository = "https://github.com/dguo/strsim-rs";
+        homepage = "https://github.com/dguo/strsim-rs";
 
       };
       "textwrap" = rec {
@@ -422,6 +450,8 @@ rec {
         authors = [
           "Martin Geisler <martin@geisler.net>"
         ];
+        license = "MIT";
+        repository = "https://github.com/mgeisler/textwrap";
         dependencies = [
           {
             name = "unicode-width";
@@ -443,6 +473,9 @@ rec {
           "kwantam <kwantam@gmail.com>"
           "Manish Goregaokar <manishsmail@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/unicode-rs/unicode-width";
+        homepage = "https://github.com/unicode-rs/unicode-width";
         features = {
           "compiler_builtins" = [ "dep:compiler_builtins" ];
           "core" = [ "dep:core" ];
@@ -484,6 +517,9 @@ rec {
           "Sean McArthur <sean.monstar@gmail.com>"
           "Vadim Petrochenkov <>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/contain-rs/vec-map";
+        homepage = "https://github.com/contain-rs/vec-map";
         features = {
           "eders" = [ "serde" ];
           "serde" = [ "dep:serde" ];
@@ -497,6 +533,8 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/retep998/winapi-rs";
         dependencies = [
           {
             name = "winapi-i686-pc-windows-gnu";
@@ -523,6 +561,8 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/retep998/winapi-rs";
 
       };
       "winapi-x86_64-pc-windows-gnu" = rec {
@@ -534,6 +574,8 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
+        license = "MIT/Apache-2.0";
+        repository = "https://github.com/retep998/winapi-rs";
 
       };
       "xml-rs" = rec {
@@ -546,6 +588,9 @@ rec {
         authors = [
           "Vladimir Matveev <vmatveev@citrine.cc>"
         ];
+        license = "MIT";
+        repository = "https://github.com/kornelski/xml-rs";
+        homepage = "https://lib.rs/crates/xml-rs";
 
       };
     };

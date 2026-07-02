@@ -3,6 +3,14 @@ title: CHANGELOG
 description: A list of all major changes per version.
 ---
 
+## Unreleased
+
+### New features
+
+* Forward each crate's `license`, `repository`, and `homepage` from its
+  `Cargo.toml` into the generated `Cargo.nix`, alongside the existing `authors`.
+  This makes the metadata available to consumers such as SBOM generators.
+
 ## 0.15.0 (2026-01-28)
 
 ### New features

@@ -209,6 +209,18 @@ rec {
         ];
         {%- endif -%}
 
+        {%- if crate.license %}
+        license = {{crate.license}};
+        {%- endif -%}
+
+        {%- if crate.repository %}
+        repository = {{crate.repository}};
+        {%- endif -%}
+
+        {%- if crate.homepage %}
+        homepage = {{crate.homepage}};
+        {%- endif -%}
+
         {%- if crate.dependencies|length > 0 %}
         dependencies = [
         {%- for dependency in crate.dependencies %}
