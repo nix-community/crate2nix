@@ -600,7 +600,43 @@ rec {
       assert (builtins.isBool runTests);
       let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
-        expandedFeatures = expandFeatures (crateConfig.features or { }) features;
+        # crate2nix synthesizes "default" for a crate whenever it is reached with
+        # default features on — from a default-features-on dependency edge or from
+        # the root's default `rootFeatures = [ "default" ]` — and stamps a
+        # `--cfg feature="default"` that changes the crate's `-C metadata` hash.
+        # When the crate is *also* reached without "default", it forks into two
+        # derivations and the fork propagates to everything downstream. We
+        # reconcile the requested feature set with what Cargo actually resolves,
+        # which depends on whether — and how — the crate declares `default`:
+        #
+        #   1. Declares a non-empty `default = [ ... ]`
+        #      (`crateConfig.features ? "default"`): Cargo resolves it normally
+        #      and crate2nix already matches — pass `features` through untouched.
+        #
+        #   2. Declares an *empty* `default = []`: crate2nix omits an empty
+        #      default from `crateConfig.features` (so case 1's test misses it),
+        #      but records it in `crateConfig.resolvedDefaultFeatures`. "default"
+        #      enables no extra features, yet the crate's source may still gate on
+        #      `cfg(feature = "default")` (e.g. document-features carries
+        #      `#[cfg(not(feature = "default"))] compile_error!(...)`), so we must
+        #      NOT strip it. `resolvedDefaultFeatures` is Cargo's single global
+        #      resolution, so we force "default" on in every closure that reaches
+        #      the crate: the cfg stays satisfied and the derivation stays unique
+        #      (consistently-on dedups exactly as consistently-off would).
+        #
+        #   3. Declares no `default` at all (absent from both `features` and
+        #      `resolvedDefaultFeatures`): Cargo never sets `cfg(feature =
+        #      "default")`, so the synthesized "default" is a phantom — strip it,
+        #      collapsing the fork. `default-features = true` on such a crate is a
+        #      Cargo no-op.
+        requestedFeatures =
+          if (crateConfig.features or { }) ? "default" then
+            features
+          else if builtins.elem "default" (crateConfig.resolvedDefaultFeatures or [ ]) then
+            features ++ [ "default" ]
+          else
+            lib.filter (f: f != "default") features;
+        expandedFeatures = expandFeatures (crateConfig.features or { }) requestedFeatures;
         enabledFeatures = enableFeatures (crateConfig.dependencies or [ ]) expandedFeatures;
         depWithResolvedFeatures =
           dependency:
