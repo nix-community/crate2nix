@@ -176,7 +176,7 @@ let
             let
               base = buildRustCrateForPkgs cratePkgs;
             in
-            if defaultCrateOverrides != pkgs.defaultCrateOverrides then
+            if base ? override && defaultCrateOverrides != pkgs.defaultCrateOverrides then
               base.override { defaultCrateOverrides = defaultCrateOverrides; }
             else
               base;
