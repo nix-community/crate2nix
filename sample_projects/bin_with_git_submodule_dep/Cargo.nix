@@ -1403,7 +1403,8 @@ rec {
       vendor
       ;
     family = platform.rust.platform.target-family;
-    env = "gnu";
+    # Nixpkgs only learned about target_env on 2026-06-16 in https://github.com/NixOS/nixpkgs/pull/531986, so handle missing rust.platform.env until then. For compatibility with the previous state of affairs, the unset fallback is "gnu".
+    env = if platform.rust.platform ? env then platform.rust.platform.env else "gnu";
     endian = if platform.parsed.cpu.significantByte.name == "littleEndian" then "little" else "big";
     pointer_width = toString platform.parsed.cpu.bits;
     debug_assertions = false;

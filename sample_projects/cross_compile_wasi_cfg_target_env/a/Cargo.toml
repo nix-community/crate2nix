@@ -1,0 +1,10 @@
+[package]
+name = "a"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "a"
+
+[target.'cfg(not(target_env = "p1"))'.dependencies]
+b = { path = "../b" }
