@@ -229,6 +229,12 @@ let
     }
 
     {
+      name = "build_rs_needs_readme";
+      src = ./sample_projects/build_rs_needs_readme;
+      expectedOutput = "Hello, world!!!!";
+    }
+
+    {
       name = "sub_dir_crates";
       src = ./sample_projects/sub_dir_crates;
       expectedOutput = "main with lib1 lib2";
