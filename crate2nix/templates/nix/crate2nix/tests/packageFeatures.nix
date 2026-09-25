@@ -44,6 +44,30 @@ let
         "default" = [ ];
       };
     };
+    "pkg_with_proc_macro" = {
+      crateName = "with_proc_macro";
+      dependencies = [
+        {
+          name = "id1";
+          packageId = "pkg_id1";
+        }
+        {
+          name = "proc_macro";
+          packageId = "pkg_proc_macro";
+        }
+      ];
+    };
+    "pkg_proc_macro" = {
+      crateName = "proc_macro";
+      procMacro = true;
+      dependencies = [
+        {
+          name = "id1";
+          packageId = "pkg_id1";
+          features = [ "for_proc_macro" ];
+        }
+      ];
+    };
     "pkg_id2" = {
       crateName = "id2";
       features = { };
@@ -88,6 +112,16 @@ let
     crate2nix.mergePackageFeatures
       {
         target = crate2nix.makeDefaultTarget stdenv.hostPlatform;
+        runTests = false;
+        rootPackageId = packageId;
+        inherit crateConfigs packageId features;
+      };
+  packageFeaturesByKind =
+    packageId: features:
+    crate2nix.mergePackageFeaturesByKind
+      {
+        target = crate2nix.makeDefaultTarget stdenv.hostPlatform;
+        splitHost = true;
         runTests = false;
         rootPackageId = packageId;
         inherit crateConfigs packageId features;
@@ -150,6 +184,42 @@ in
     expected = {
       "pkg_with_feature_clash" = [ ];
       "pkg_id1" = [ "default" "for_build" ];
+    };
+  };
+
+  testPackageWithFeatureClashSplitHost = {
+    expr = packageFeaturesByKind "pkg_with_feature_clash" [ ];
+    expected = {
+      target = {
+        "pkg_with_feature_clash" = [ ];
+        "pkg_id1" = [ "default" ];
+      };
+      host = {
+        "pkg_id1" = [ "default" "for_build" ];
+      };
+    };
+  };
+
+  testProcMacroDependencyUnified = {
+    expr = packageFeatures "pkg_with_proc_macro" [ ];
+    expected = {
+      "pkg_with_proc_macro" = [ ];
+      "pkg_proc_macro" = [ "default" ];
+      "pkg_id1" = [ "default" "for_proc_macro" ];
+    };
+  };
+
+  testProcMacroDependencySplitHost = {
+    expr = packageFeaturesByKind "pkg_with_proc_macro" [ ];
+    expected = {
+      target = {
+        "pkg_with_proc_macro" = [ ];
+        "pkg_id1" = [ "default" ];
+      };
+      host = {
+        "pkg_proc_macro" = [ "default" ];
+        "pkg_id1" = [ "default" "for_proc_macro" ];
+      };
     };
   };
 }

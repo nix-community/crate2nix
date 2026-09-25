@@ -26,6 +26,9 @@
 , extraTargetFlags ? {}
   # Whether to perform release builds: longer compile times, faster binaries.
 , release ? true
+  # Cargo's feature resolver version. "2" and later resolve the features of
+  # build dependencies and proc-macros separately from the target's.
+, resolverVersion ? "1"
   # Additional crate2nix configuration if it exists.
 , crateConfig
   ? if builtins.pathExists ./crate-config.nix
@@ -97,6 +100,7 @@ rec {
         crateName = "aho-corasick";
         version = "1.1.2";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1w510wnixvlgimkx1zjbvlxh6xps2vjgfqgwf5a6adlbjp5rv5mj";
         libName = "aho_corasick";
         authors = [
@@ -146,6 +150,7 @@ rec {
         crateName = "bindgen";
         version = "0.69.1";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1hkrccfri0223b2r5cvacy83ld6s76n2m68518bsfilrhk1ypz4z";
         libPath = "lib.rs";
         authors = [
@@ -225,6 +230,7 @@ rec {
         crateName = "bitflags";
         version = "2.4.1";
         edition = "2021";
+        readme = "README.md";
         sha256 = "01ryy3kd671b0ll4bhdvhsz67vwz1lz53fz504injrd7wpv64xrj";
         authors = [
           "The Rust Project Developers"
@@ -273,6 +279,7 @@ rec {
         crateName = "cc";
         version = "1.0.83";
         edition = "2018";
+        readme = "README.md";
         crateBin = [];
         sha256 = "1l643zidlb5iy1dskc5ggqs4wqa29a02f44piczqc8zcnsq4y5zi";
         authors = [
@@ -319,6 +326,7 @@ rec {
         crateName = "cfg-if";
         version = "1.0.0";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1za0vb97n4brpzpv8lsbnzmq5r8f2b0cpqqr0sy8h5bn751xxwds";
         libName = "cfg_if";
         authors = [
@@ -335,6 +343,7 @@ rec {
         version = "1.7.0";
         edition = "2015";
         links = "clang";
+        readme = "README.md";
         sha256 = "1lb9ffil7bidvpsfg38wkkfj55946v82ia07ss4ikkp39cxkllk7";
         libName = "clang_sys";
         authors = [
@@ -396,6 +405,7 @@ rec {
         crateName = "glob";
         version = "0.3.1";
         edition = "2015";
+        readme = "README.md";
         sha256 = "16zca52nglanv23q5qrwd5jinw3d3as5ylya6y1pbx47vkxvrynj";
         authors = [
           "The Rust Project Developers"
@@ -406,6 +416,7 @@ rec {
         crateName = "jobserver";
         version = "0.1.27";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0z9w6vfqwbr6hfk9yaw7kydlh6f7k39xdlszxlh39in4acwzcdwc";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
@@ -423,6 +434,7 @@ rec {
         crateName = "lazy_static";
         version = "1.4.0";
         edition = "2015";
+        readme = "README.md";
         sha256 = "0in6ikhw8mgl33wjv6q6xfrb5b9jr16q8ygjy803fay4zcisvaz2";
         authors = [
           "Marvin Löbel <loebel.marvin@gmail.com>"
@@ -436,6 +448,7 @@ rec {
         crateName = "lazycell";
         version = "1.3.0";
         edition = "2015";
+        readme = "README.md";
         sha256 = "0m8gw7dn30i0zjjpjdyf6pc16c34nl71lpv461mix50x3p70h3c3";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
@@ -451,6 +464,7 @@ rec {
         crateName = "libc";
         version = "0.2.152";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1rsnma7hnw22w7jh9yqg43slddvfbnfzrvm3s7s4kinbj1jvzqqk";
         authors = [
           "The Rust Project Developers"
@@ -467,6 +481,7 @@ rec {
         crateName = "libloading";
         version = "0.8.1";
         edition = "2015";
+        readme = "README.mkd";
         sha256 = "0q812zvfag4m803ak640znl6cf8ngdd0ilzky498r6pwvmvbcwf5";
         authors = [
           "Simonas Kazlauskas <libloading@kazlauskas.me>"
@@ -491,6 +506,7 @@ rec {
         version = "0.15.0+8.9.1";
         edition = "2018";
         links = "rocksdb";
+        readme = "README.md";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
@@ -560,6 +576,7 @@ rec {
         version = "1.1.12";
         edition = "2018";
         links = "z";
+        readme = "README.md";
         sha256 = "0yqahz2m5g44mpgfdy0k53hpfkfs5rfiv3a1y7p766ijbsr3fwfr";
         libName = "libz_sys";
         authors = [
@@ -593,6 +610,7 @@ rec {
         crateName = "memchr";
         version = "2.7.1";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0jf1kicqa4vs9lyzj4v4y1p90q0dh87hvhsdd5xvhnp527sw8gaj";
         authors = [
           "Andrew Gallant <jamslam@gmail.com>"
@@ -613,6 +631,7 @@ rec {
         crateName = "minimal-lexical";
         version = "0.2.1";
         edition = "2018";
+        readme = "README.md";
         sha256 = "16ppc5g84aijpri4jzv14rvcnslvlpphbszc7zzp6vfkddf4qdb8";
         libName = "minimal_lexical";
         authors = [
@@ -627,6 +646,7 @@ rec {
         crateName = "nom";
         version = "7.1.3";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0jha9901wxam390jcf5pfa0qqfrgh8li787jx2ip0yk5b8y9hwyj";
         authors = [
           "contact@geoffroycouprie.com"
@@ -653,6 +673,7 @@ rec {
         crateName = "peeking_take_while";
         version = "0.1.2";
         edition = "2015";
+        readme = "./README.md";
         sha256 = "16bhqr6rdyrp12zv381cxaaqqd0pwysvm1q8h2ygihvypvfprc8r";
         authors = [
           "Nick Fitzgerald <fitzgen@gmail.com>"
@@ -663,6 +684,7 @@ rec {
         crateName = "pkg-config";
         version = "0.3.28";
         edition = "2015";
+        readme = "README.md";
         sha256 = "16kgffwncx5hsppsdf54z6jnjkhwywqy601cxk3rqncyi9zmilv9";
         libName = "pkg_config";
         authors = [
@@ -674,6 +696,7 @@ rec {
         crateName = "proc-macro2";
         version = "1.0.76";
         edition = "2021";
+        readme = "README.md";
         sha256 = "136cp0fgl6rg5ljm3b1xpc0bn0lyvagzzmxvbxgk5hxml36mdz4m";
         libName = "proc_macro2";
         authors = [
@@ -695,6 +718,7 @@ rec {
         crateName = "quote";
         version = "1.0.35";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1vv8r2ncaz4pqdr78x7f138ka595sp2ncr1sa2plm4zxbsmwj7i9";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
@@ -716,6 +740,7 @@ rec {
         crateName = "regex";
         version = "1.10.2";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0hxkd814n4irind8im5c9am221ri6bprx49nc7yxv02ykhd9a2rq";
         authors = [
           "The Rust Project Developers"
@@ -772,6 +797,7 @@ rec {
         crateName = "regex-automata";
         version = "0.4.3";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0gs8q9yhd3kcg4pr00ag4viqxnh5l7jpyb9fsfr8hzh451w4r02z";
         libName = "regex_automata";
         authors = [
@@ -833,6 +859,7 @@ rec {
         crateName = "regex-syntax";
         version = "0.8.2";
         edition = "2021";
+        readme = "README.md";
         sha256 = "17rd2s8xbiyf6lb4aj2nfi44zqlj98g2ays8zzj2vfs743k79360";
         libName = "regex_syntax";
         authors = [
@@ -850,6 +877,7 @@ rec {
         crateName = "rocksdb";
         version = "0.21.0";
         edition = "2018";
+        readme = "README.md";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/rust-rocksdb/rust-rocksdb";
@@ -888,6 +916,7 @@ rec {
         crateName = "rustc-hash";
         version = "1.1.0";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1qkc5khrmv5pqi5l5ca9p5nl5hs742cagrndhbrlk3dhlrx3zm08";
         libName = "rustc_hash";
         authors = [
@@ -902,6 +931,7 @@ rec {
         crateName = "shlex";
         version = "1.2.0";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1033pj9dyb76nm5yv597nnvj3zpvr2aw9rm5wy0gah3dk99f1km7";
         authors = [
           "comex <comexk@gmail.com>"
@@ -916,6 +946,7 @@ rec {
         crateName = "syn";
         version = "2.0.48";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0gqgfygmrxmp8q32lia9p294kdd501ybn6kn2h4gqza0irik2d8g";
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
@@ -950,6 +981,7 @@ rec {
         crateName = "unicode-ident";
         version = "1.0.12";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0jzf1znfpb2gx8nr8mvmyqs1crnv79l57nxnbiszc7xf7ynbjm1k";
         libName = "unicode_ident";
         authors = [
@@ -961,6 +993,7 @@ rec {
         crateName = "vcpkg";
         version = "0.2.15";
         edition = "2015";
+        readme = "README.md";
         sha256 = "09i4nf5y8lig6xgj3f7fyrvzd3nlaw4znrihw8psidvv5yk4xkdc";
         authors = [
           "Jim McGrath <jimmc2@gmail.com>"
@@ -971,6 +1004,7 @@ rec {
         crateName = "windows-sys";
         version = "0.48.0";
         edition = "2018";
+        readme = "readme.md";
         sha256 = "1aan23v5gs7gya1lc46hqn9mdh8yph3fhxmhxlw36pn6pqc28zb7";
         libName = "windows_sys";
         authors = [
@@ -1265,6 +1299,7 @@ rec {
         crateName = "windows-targets";
         version = "0.48.5";
         edition = "2018";
+        readme = "readme.md";
         sha256 = "034ljxqshifs1lan89xwpcy1hp0lhdh4b5n0d2z4fwjx2piacbws";
         libName = "windows_targets";
         authors = [
@@ -1384,6 +1419,10 @@ rec {
     #
 # crate2nix/default.nix (excerpt start)
 #
+
+  # Cargo's feature resolver "2" and later keep the features of build
+  # dependencies, proc-macros and their dependencies separate from the target's.
+  splitHostFeatures = resolverVersion != "1";
 
   /*
     Target (platform) data for conditional dependencies.
@@ -1686,20 +1725,22 @@ rec {
       assert (builtins.isBool runTests);
       let
         rootPackageId = packageId;
-        mergedFeatures = mergePackageFeatures (
+        mergedFeatures = mergePackageFeaturesByKind (
           args
           // {
             inherit rootPackageId;
             target = makeTarget stdenv.hostPlatform // {
               test = runTests;
             };
+            hostTarget = makeTarget stdenv.buildPlatform;
           }
         );
         # Memoize built packages so that reappearing packages are only built once.
-        builtByPackageIdByPkgs = mkBuiltByPackageIdByPkgs pkgs;
+        builtByPackageIdByPkgs = mkBuiltByPackageIdByPkgs pkgs false;
         mkBuiltByPackageIdByPkgs =
-          pkgs:
+          pkgs: forHost:
           let
+            isNative = pkgs.stdenv.buildPlatform.config == pkgs.stdenv.hostPlatform.config;
             self = {
               crates = lib.mapAttrs
                 (
@@ -1707,22 +1748,24 @@ rec {
                 )
                 crateConfigs;
               target = makeTarget pkgs.stdenv.hostPlatform;
+              features =
+                if forHost && splitHostFeatures then mergedFeatures.host else mergedFeatures.target;
               # Build-time dependency graph (for proc-macros and build
-              # dependencies). When not cross-compiling it equals the host
-              # graph, so reuse `self`; otherwise build it for
-              # `pkgs.buildPackages`.
+              # dependencies). It equals this graph when not cross-compiling
+              # and host features are not split off (or this is already the
+              # build-time graph), so reuse `self` then.
               build =
-                if pkgs.stdenv.buildPlatform.config == pkgs.stdenv.hostPlatform.config then
+                if isNative && (forHost || !splitHostFeatures) then
                   self
                 else
-                  mkBuiltByPackageIdByPkgs pkgs.buildPackages;
+                  mkBuiltByPackageIdByPkgs (if isNative then pkgs else pkgs.buildPackages) true;
             };
           in
           self;
         buildByPackageIdForPkgsImpl =
           self: pkgs: packageId:
           let
-            features = mergedFeatures."${packageId}" or [ ];
+            features = self.features."${packageId}" or [ ];
             crateConfig' = crateConfigs."${packageId}";
             crateConfig = builtins.removeAttrs crateConfig' [
               "resolvedDefaultFeatures"
@@ -1931,15 +1974,33 @@ rec {
     corresponding feature sets are merged. Features in rust are additive.
   */
   mergePackageFeatures =
-    args: builtins.mapAttrs (_packageId: builtins.attrNames) (mergePackageFeaturesImpl args);
+    args: (mergePackageFeaturesByKind (args // { splitHost = false; })).target;
+
+  /*
+    Like `mergePackageFeatures`, but returns `{ target; host; }`. With
+    `splitHost`, crates built for the build platform (build dependencies,
+    proc-macros and everything they depend on) get their features resolved
+    into `host`, separately from `target`, like Cargo's feature resolver "2".
+  */
+  mergePackageFeaturesByKind =
+    { splitHost ? splitHostFeatures, ... }@args:
+    let
+      toLists = builtins.mapAttrs (_packageId: builtins.attrNames);
+      featuresByKind = mergePackageFeaturesImpl (args // { inherit splitHost; });
+    in
+    {
+      target = toLists featuresByKind.target;
+      host = toLists featuresByKind.host;
+    };
 
   /*
     Core of the feature-resolution fixpoint. The cache (`featuresByPackageId`)
-    maps each packageId to a feature *set* (an attrset `feature -> 1`) rather
-    than a sorted list, so the fold merges with `//` and detects convergence
-    with attrset equality instead of re-concatenating and re-sorting the
-    accumulated feature list on every step. `mergePackageFeatures` projects the
-    result back to canonical sorted lists.
+    maps each kind (`target`, `host`) and packageId to a feature *set* (an
+    attrset `feature -> 1`) rather than a sorted list, so the fold merges with
+    `//` and detects convergence with attrset equality instead of
+    re-concatenating and re-sorting the accumulated feature list on every step.
+    `mergePackageFeaturesByKind` projects the result back to canonical sorted
+    lists.
   */
   mergePackageFeaturesImpl =
     { crateConfigs ? crates
@@ -1947,8 +2008,13 @@ rec {
     , rootPackageId ? packageId
     , features ? rootFeatures
     , dependencyPath ? [ crates.${packageId}.crateName ]
-    , featuresByPackageId ? { }
+    , featuresByPackageId ? { target = { }; host = { }; }
     , target
+    , # Platform of crates resolved into `host`.
+      hostTarget ? target
+    , splitHost ? false
+    , # Whether this crate is resolved into `host`.
+      forHost ? false
     , # Adds devDependencies to the crate with rootPackageId.
       runTests ? false
     , ...
@@ -1960,41 +2026,39 @@ rec {
       assert (builtins.isList dependencyPath);
       assert (builtins.isAttrs featuresByPackageId);
       assert (builtins.isAttrs target);
+      assert (builtins.isAttrs hostTarget);
+      assert (builtins.isBool splitHost);
+      assert (builtins.isBool forHost);
       assert (builtins.isBool runTests);
       let
+        kind = if forHost then "host" else "target";
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
-        expandedFeatures = expandFeatures (crateConfig.features or { }) features;
-        enabledFeatures = enableFeatures (crateConfig.dependencies or [ ]) expandedFeatures;
-        depWithResolvedFeatures =
-          dependency:
-          let
-            inherit (dependency) packageId;
-            features = dependencyFeatures enabledFeatures dependency;
-          in
-          {
-            inherit packageId features;
-          };
+        enabledFeatures = expandAndEnableFeatures (crateConfig.features or { }) (crateConfig.dependencies or [ ]) features;
+        isHostDependency =
+          dependency: forHost || (splitHost && (crateConfigs.${dependency.packageId}.procMacro or false));
         resolveDependencies =
-          cache: path: dependencies:
+          cache: dependencyTarget: isHost: dependencies:
             assert (builtins.isAttrs cache);
             assert (builtins.isList dependencies);
             let
               enabledDependencies = filterEnabledDependencies {
-                inherit dependencies target;
+                inherit dependencies;
+                target = dependencyTarget;
                 features = enabledFeatures;
               };
-              directDependencies = map depWithResolvedFeatures enabledDependencies;
-              foldOverCache = op: lib.foldl op cache directDependencies;
+              foldOverCache = op: lib.foldl op cache enabledDependencies;
             in
             foldOverCache (
-              cache:
-              { packageId, features }:
+              cache: dependency:
               let
-                cacheFeatures = cache.${packageId} or { };
-                # `features` is the (small) incoming list; merge it into the set.
-                combinedFeatures = cacheFeatures // listToSet features;
+                inherit (dependency) packageId;
+                forHost = isHost dependency;
+                dependencyKind = if forHost then "host" else "target";
+                cacheFeatures = cache.${dependencyKind}.${packageId} or { };
+                # The incoming feature list is small; merge it into the set.
+                combinedFeatures = cacheFeatures // listToSet (dependencyFeatures enabledFeatures dependency);
               in
-              if cache ? ${packageId} && cacheFeatures == combinedFeatures then
+              if cache.${dependencyKind} ? ${packageId} && cacheFeatures == combinedFeatures then
                 cache
               else
                 mergePackageFeaturesImpl {
@@ -2004,6 +2068,9 @@ rec {
                     crateConfigs
                     packageId
                     target
+                    hostTarget
+                    splitHost
+                    forHost
                     runTests
                     rootPackageId
                     ;
@@ -2011,18 +2078,20 @@ rec {
             );
         cacheWithSelf =
           let
-            cacheFeatures = featuresByPackageId.${packageId} or { };
+            cacheFeatures = featuresByPackageId.${kind}.${packageId} or { };
             combinedFeatures = cacheFeatures // listToSet enabledFeatures;
           in
           featuresByPackageId
           // {
-            "${packageId}" = combinedFeatures;
+            ${kind} = featuresByPackageId.${kind} // {
+              "${packageId}" = combinedFeatures;
+            };
           };
-        cacheWithDependencies = resolveDependencies cacheWithSelf "dep" (
+        cacheWithDependencies = resolveDependencies cacheWithSelf (if forHost then hostTarget else target) isHostDependency (
           crateConfig.dependencies or [ ]
-          ++ lib.optionals (runTests && packageId == rootPackageId) (crateConfig.devDependencies or [ ])
+          ++ lib.optionals (runTests && !forHost && packageId == rootPackageId) (crateConfig.devDependencies or [ ])
         );
-        cacheWithAll = resolveDependencies cacheWithDependencies "build" (
+        cacheWithAll = resolveDependencies cacheWithDependencies hostTarget (_: splitHost) (
           crateConfig.buildDependencies or [ ]
         );
       in
@@ -2095,6 +2164,38 @@ rec {
         seen = expandFeaturesNoCycle { } inputFeatures;
       in
       sortedUnique (builtins.attrNames seen);
+
+  /*
+    Returns `inputFeatures` expanded by `featureMap` together with the optional
+    dependencies they enable. Like Cargo, `dep/feature` on an optional
+    dependency also enables a feature named `dep` if the crate defines one
+    (`dep:dep` and `dep?/feature` do not), which can enable more features.
+  */
+  expandAndEnableFeatures =
+    featureMap: dependencies: inputFeatures:
+    let
+      expanded = expandFeatures featureMap inputFeatures;
+      sameNamedFeatures = lib.concatMap
+        (
+          dependency:
+          let
+            name = dependency.rename or dependency.name;
+          in
+          lib.optional
+            (
+              (dependency.optional or false)
+              && featureMap ? ${name}
+              && builtins.any (lib.hasPrefix "${name}/") expanded
+            )
+            name
+        )
+        dependencies;
+      withSameNamedFeatures = expandFeatures featureMap (expanded ++ sameNamedFeatures);
+    in
+    if withSameNamedFeatures == expanded then
+      enableFeatures dependencies expanded
+    else
+      expandAndEnableFeatures featureMap dependencies withSameNamedFeatures;
 
   /*
     This function adds optional dependencies as features if they are enabled

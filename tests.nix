@@ -360,6 +360,12 @@ let
     }
 
     {
+      name = "split_host_features";
+      src = ./sample_projects/split_host_features;
+      expectedOutput = "target build without host-only";
+    }
+
+    {
       name = "cdylib";
       src = ./sample_projects/cdylib;
       customBuild = "sample_projects/cdylib/test.nix";

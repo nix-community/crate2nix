@@ -1,0 +1,11 @@
+[package]
+name = "split_host_features"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+shared = { path = "./shared" }
+
+[build-dependencies]
+shared = { path = "./shared", features = ["host-only"] }
+codegen = { path = "./codegen" }

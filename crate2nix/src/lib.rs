@@ -62,6 +62,8 @@ pub struct BuildInfo {
     pub config: GenerateConfig,
     /// Workspace root directory path (from cargo metadata).
     pub workspace_root: Option<String>,
+    /// Cargo's feature resolver version of the workspace ("1", "2", ...).
+    pub resolver_version: String,
 }
 
 impl BuildInfo {
@@ -161,11 +163,71 @@ impl BuildInfo {
                 })
                 .collect::<Result<_, Error>>()?,
             workspace_root: metadata.workspace_root.clone(),
+            resolver_version: match &metadata.workspace_root {
+                Some(workspace_root) => resolver_version(Path::new(workspace_root))?,
+                None => "1".to_string(),
+            },
             indexed_metadata: metadata,
             info: info.clone(),
             config: config.clone(),
         })
     }
+}
+
+/// Returns Cargo's feature resolver version for the workspace at `workspace_root`.
+///
+/// Cargo reads it from the root manifest only: an explicit `resolver`, else the
+/// root package's edition.
+fn resolver_version(workspace_root: &Path) -> Result<String, Error> {
+    let manifest_path = workspace_root.join("Cargo.toml");
+    let manifest: toml::Value = toml::from_str(
+        &std::fs::read_to_string(&manifest_path)
+            .with_context(|| format!("while reading {}", manifest_path.display()))?,
+    )
+    .with_context(|| format!("while parsing {}", manifest_path.display()))?;
+    Ok(resolver_version_of_manifest(&manifest).to_string())
+}
+
+fn resolver_version_of_manifest(manifest: &toml::Value) -> &str {
+    let get = |path: &[&str]| path.iter().try_fold(manifest, |value, key| value.get(key));
+    let get_str = |path: &[&str]| get(path)?.as_str();
+    if let Some(resolver) =
+        get_str(&["workspace", "resolver"]).or(get_str(&["package", "resolver"]))
+    {
+        return resolver;
+    }
+    let edition = get_str(&["package", "edition"]).or_else(|| {
+        get(&["package", "edition", "workspace"])?;
+        get_str(&["workspace", "package", "edition"])
+    });
+    match edition {
+        Some("2024") => "3",
+        Some("2021") => "2",
+        _ => "1",
+    }
+}
+
+#[test]
+fn resolver_version_from_manifest() {
+    let version = |manifest: &str| {
+        resolver_version_of_manifest(&toml::from_str(manifest).unwrap()).to_string()
+    };
+    assert_eq!(version("[workspace]\nmembers = []"), "1");
+    assert_eq!(version("[workspace]\nresolver = \"2\""), "2");
+    assert_eq!(version("[package]\nname = \"a\"\nedition = \"2018\""), "1");
+    assert_eq!(version("[package]\nname = \"a\"\nedition = \"2021\""), "2");
+    assert_eq!(version("[package]\nname = \"a\"\nedition = \"2024\""), "3");
+    assert_eq!(
+        version("[package]\nname = \"a\"\nedition = \"2021\"\nresolver = \"1\""),
+        "1"
+    );
+    assert_eq!(
+        version(
+            "[package]\nname = \"a\"\nedition.workspace = true\n\
+             [workspace.package]\nedition = \"2021\""
+        ),
+        "2"
+    );
 }
 
 /// Call `cargo metadata` and return result.

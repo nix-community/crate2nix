@@ -77,6 +77,9 @@ pub struct ResolvedCrate {
     /// Native library this crate links to (the `links` field in Cargo.toml).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub links: Option<String>,
+    /// The `readme` field in Cargo.toml.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub readme: Option<String>,
     /// Crate authors.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub authors: Vec<String>,
@@ -351,6 +354,7 @@ pub fn to_resolved_workspace(build_info: &BuildInfo) -> ResolvedWorkspace {
                 },
                 lib_crate_types: crate_deriv.lib_crate_types.clone(),
                 links: crate_deriv.links.clone(),
+                readme: crate_deriv.readme.clone(),
                 authors: crate_deriv.authors.clone(),
             },
         );

@@ -271,6 +271,9 @@ let
       // lib.optionalAttrs ((crateInfo.links or null) != null) {
         links = crateInfo.links;
       }
+      // lib.optionalAttrs ((crateInfo.readme or null) != null) {
+        readme = crateInfo.readme;
+      }
       // lib.optionalAttrs (crateInfo.libCrateTypes or [ ] != [ ]) {
         type = crateInfo.libCrateTypes;
       }

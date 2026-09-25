@@ -28,6 +28,9 @@
 , extraTargetFlags ? {}
   # Whether to perform release builds: longer compile times, faster binaries.
 , release ? true
+  # Cargo's feature resolver version. "2" and later resolve the features of
+  # build dependencies and proc-macros separately from the target's.
+, resolverVersion ? {{resolver_version}}
   # Additional crate2nix configuration if it exists.
 , crateConfig
   ? if builtins.pathExists ./crate-config.nix
@@ -117,6 +120,9 @@ rec {
         edition = {{crate.edition}};
         {%- if crate.links %}
         links = {{crate.links}};
+        {%- endif %}
+        {%- if crate.readme %}
+        readme = {{crate.readme}};
         {%- endif %}
 
         {%- if crate.binaries|length > 0 and not crate.is_root_or_workspace_member %}
