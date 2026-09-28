@@ -201,6 +201,10 @@ rec {
         {%- endif -%}
         {%- endif -%}
 
+        {%- if crate.license %}
+        license = {{ crate.license }};
+        {%- endif %}
+
         {%- if crate.authors|length > 0 %}
         authors = [
         {%- for author in crate.authors %}

@@ -31,6 +31,7 @@ pub struct CrateDerivation {
     pub package_id: PackageId,
     pub crate_name: String,
     pub edition: String,
+    pub license: Option<String>,
     pub authors: Vec<String>,
     pub version: Version,
     /// The name of a native library the package is linking to.
@@ -158,6 +159,7 @@ impl CrateDerivation {
         Ok(CrateDerivation {
             crate_name: package.name.clone(),
             edition: package.edition.to_string(),
+            license: package.license.clone(),
             authors: package.authors.clone(),
             package_id: package.id.clone(),
             version: package.version.clone(),
