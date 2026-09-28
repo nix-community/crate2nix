@@ -181,14 +181,20 @@ let
             else
               base;
 
-          self = {
-            crates = lib.mapAttrs
-              (
-                packageId: _: buildCrate self cratePkgs buildRustCrate testRootPackageId packageId
-              )
-              resolved.crates;
-            build = go cratePkgs.buildPackages;
-          };
+          self =
+            if testRootPackageId != null then {
+              crates = builtCrates.crates // {
+                ${testRootPackageId} = buildCrate self cratePkgs buildRustCrate testRootPackageId testRootPackageId;
+              };
+              build = builtCrates.build;
+            } else {
+              crates = lib.mapAttrs
+                (
+                  packageId: _: buildCrate self cratePkgs buildRustCrate testRootPackageId packageId
+                )
+                resolved.crates;
+              build = go cratePkgs.buildPackages;
+            };
         in
         self;
     in
