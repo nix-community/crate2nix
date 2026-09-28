@@ -98,6 +98,7 @@ rec {
         version = "0.12.1";
         edition = "2015";
         sha256 = "1ljmkbilxgmhavxvxqa7qvm6f3fjggi7q2l3a72q9x0cxjvrnanm";
+        license = "MIT";
         authors = [
           "ogham@bsago.me"
           "Ryan Scheel (Havvy) <ryan.havvy@gmail.com>"
@@ -121,6 +122,7 @@ rec {
         version = "0.2.14";
         edition = "2015";
         sha256 = "1s7yslcs6a28c5vz7jwj63lkfgyx8mx99fdirlhi9lbhhzhrpcyr";
+        license = "MIT";
         authors = [
           "softprops <d.tangren@gmail.com>"
         ];
@@ -150,6 +152,7 @@ rec {
         version = "1.3.2";
         edition = "2018";
         sha256 = "12ki6w8gn1ldq7yz9y680llwk5gmrhrzszaa17g1sbrw2r2qvwxy";
+        license = "MIT/Apache-2.0";
         authors = [
           "The Rust Project Developers"
         ];
@@ -165,6 +168,7 @@ rec {
         version = "2.34.0";
         edition = "2018";
         sha256 = "071q5d8jfwbazi6zhik9xwpacx5i6kb2vkzy060vhf0c3120aqd0";
+        license = "MIT";
         authors = [
           "Kevin K. <kbknapp@gmail.com>"
         ];
@@ -259,6 +263,7 @@ rec {
           rev = "618262f5e3217cdd173d46d705bbac26c5141e21";
           sha256 = "0gvhz2knd1k799l7ssh4rdm5qw0vhazzr3bxpmlgq7fhy6hjazrs";
         };
+        license = "Apache-2.0/MIT";
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
         ];
@@ -298,6 +303,7 @@ rec {
           sha256 = "0gvhz2knd1k799l7ssh4rdm5qw0vhazzr3bxpmlgq7fhy6hjazrs";
         };
         libName = "dbus_codegen";
+        license = "Apache-2.0/MIT";
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
         ];
@@ -330,6 +336,7 @@ rec {
         edition = "2018";
         sha256 = "0cxcm8093nf5fyn114w8vxbrbcyvv91d4015rdnlgfll7cs6gd32";
         libName = "hermit_abi";
+        license = "MIT/Apache-2.0";
         authors = [
           "Stefan Lankes"
         ];
@@ -352,6 +359,7 @@ rec {
         version = "0.2.152";
         edition = "2015";
         sha256 = "1rsnma7hnw22w7jh9yqg43slddvfbnfzrvm3s7s4kinbj1jvzqqk";
+        license = "MIT OR Apache-2.0";
         authors = [
           "The Rust Project Developers"
         ];
@@ -375,6 +383,7 @@ rec {
           sha256 = "0gvhz2knd1k799l7ssh4rdm5qw0vhazzr3bxpmlgq7fhy6hjazrs";
         };
         libName = "libdbus_sys";
+        license = "Apache-2.0/MIT";
         authors = [
           "David Henningsson <diwic@ubuntu.com>"
         ];
@@ -399,6 +408,7 @@ rec {
         edition = "2015";
         sha256 = "16kgffwncx5hsppsdf54z6jnjkhwywqy601cxk3rqncyi9zmilv9";
         libName = "pkg_config";
+        license = "MIT OR Apache-2.0";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
@@ -409,6 +419,7 @@ rec {
         version = "0.8.0";
         edition = "2015";
         sha256 = "0sjsm7hrvjdifz661pjxq5w4hf190hx53fra8dfvamacvff139cf";
+        license = "MIT";
         authors = [
           "Danny Guo <dannyguo91@gmail.com>"
         ];
@@ -419,6 +430,7 @@ rec {
         version = "0.11.0";
         edition = "2015";
         sha256 = "0q5hky03ik3y50s9sz25r438bc4nwhqc6dqwynv4wylc807n29nk";
+        license = "MIT";
         authors = [
           "Martin Geisler <martin@geisler.net>"
         ];
@@ -439,6 +451,7 @@ rec {
         edition = "2015";
         sha256 = "11ds4ydhg8g7l06rlmh712q41qsrd0j0h00n1jm74kww3kqk65z5";
         libName = "unicode_width";
+        license = "MIT/Apache-2.0";
         authors = [
           "kwantam <kwantam@gmail.com>"
           "Manish Goregaokar <manishsmail@gmail.com>"
@@ -456,6 +469,7 @@ rec {
         version = "0.8.2";
         edition = "2015";
         sha256 = "1481w9g1dw9rxp3l6snkdqihzyrd2f8vispzqmwjwsdyhw8xzggi";
+        license = "MIT/Apache-2.0";
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
           "Jorge Aparicio <japaricious@gmail.com>"
@@ -494,6 +508,7 @@ rec {
         version = "0.3.9";
         edition = "2015";
         sha256 = "06gl025x418lchw1wxj64ycr7gha83m44cjr5sarhynd9xkrm0sw";
+        license = "MIT/Apache-2.0";
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -520,6 +535,7 @@ rec {
         edition = "2015";
         sha256 = "1dmpa6mvcvzz16zg6d5vrfy4bxgg541wxrcip7cnshi06v38ffxc";
         libName = "winapi_i686_pc_windows_gnu";
+        license = "MIT/Apache-2.0";
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -531,6 +547,7 @@ rec {
         edition = "2015";
         sha256 = "0gqq64czqb64kskjryj8isp62m2sgvx25yyj3kpc2myh85w24bki";
         libName = "winapi_x86_64_pc_windows_gnu";
+        license = "MIT/Apache-2.0";
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
@@ -543,6 +560,7 @@ rec {
         crateBin = [];
         sha256 = "0nnpvk3fv32hgh7vs9gbg2swmzxx5yz73f4b7rak7q39q2x9rjqg";
         libName = "xml";
+        license = "MIT";
         authors = [
           "Vladimir Matveev <vmatveev@citrine.cc>"
         ];
