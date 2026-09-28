@@ -26,6 +26,9 @@
 , extraTargetFlags ? {}
   # Whether to perform release builds: longer compile times, faster binaries.
 , release ? true
+  # Cargo's feature resolver version. "2" and later resolve the features of
+  # build dependencies and proc-macros separately from the target's.
+, resolverVersion ? "2"
   # Additional crate2nix configuration if it exists.
 , crateConfig
   ? if builtins.pathExists ./crate-config.nix
@@ -97,6 +100,7 @@ rec {
         crateName = "aho-corasick";
         version = "1.1.3";
         edition = "2021";
+        readme = "README.md";
         sha256 = "05mrpkvdgp5d20y2p989f187ry9diliijgwrs254fs9s1m1x6q4f";
         libName = "aho_corasick";
         license = "Unlicense OR MIT";
@@ -123,6 +127,7 @@ rec {
         crateName = "ansi_term";
         version = "0.12.1";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1ljmkbilxgmhavxvxqa7qvm6f3fjggi7q2l3a72q9x0cxjvrnanm";
         license = "MIT";
         authors = [
@@ -147,6 +152,7 @@ rec {
         crateName = "anyhow";
         version = "1.0.86";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1nk301x8qhpdaks6a9zvcp7yakjqnczjmqndbg7vk4494d3d1ldk";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -162,6 +168,7 @@ rec {
         crateName = "atty";
         version = "0.2.14";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1s7yslcs6a28c5vz7jwj63lkfgyx8mx99fdirlhi9lbhhzhrpcyr";
         license = "MIT";
         authors = [
@@ -192,6 +199,7 @@ rec {
         crateName = "bitflags";
         version = "1.3.2";
         edition = "2018";
+        readme = "README.md";
         sha256 = "12ki6w8gn1ldq7yz9y680llwk5gmrhrzszaa17g1sbrw2r2qvwxy";
         license = "MIT/Apache-2.0";
         authors = [
@@ -208,6 +216,7 @@ rec {
         crateName = "bitflags";
         version = "2.6.0";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1pkidwzn3hnxlsl8zizh0bncgbjnw7c41cx7bby26ncbzmiznj5h";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -226,6 +235,7 @@ rec {
         crateName = "block-buffer";
         version = "0.10.4";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0w9sa2ypmrsqqvc20nhwr75wbb5cjr4kkyhpjm1z1lv2kdicfy1h";
         libName = "block_buffer";
         license = "MIT OR Apache-2.0";
@@ -244,6 +254,7 @@ rec {
         crateName = "bstr";
         version = "1.9.1";
         edition = "2021";
+        readme = "README.md";
         sha256 = "01ipr5rncw3kf4dyc1p2g00njn1df2b0xpviwhb8830iv77wbvq5";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -275,6 +286,7 @@ rec {
         crateName = "camino";
         version = "1.1.7";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0ff28kc3qjcrmi8k88b2j2p7mzrvbag20yqcrj9sl30n3fanpv70";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -318,6 +330,7 @@ rec {
         crateName = "cargo_metadata";
         version = "0.18.1";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0drh0zndl4qgndy6kg6783cydbvhxgv0hcg7d9hhqx0zwi3nb21d";
         license = "MIT";
         authors = [
@@ -363,6 +376,7 @@ rec {
         crateName = "cfg-if";
         version = "1.0.0";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1za0vb97n4brpzpv8lsbnzmq5r8f2b0cpqqr0sy8h5bn751xxwds";
         libName = "cfg_if";
         license = "MIT/Apache-2.0";
@@ -379,6 +393,7 @@ rec {
         crateName = "clap";
         version = "2.34.0";
         edition = "2018";
+        readme = "README.md";
         sha256 = "071q5d8jfwbazi6zhik9xwpacx5i6kb2vkzy060vhf0c3120aqd0";
         license = "MIT";
         authors = [
@@ -440,6 +455,7 @@ rec {
         crateName = "colored-diff";
         version = "0.2.3";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1dfwjxd13f8l8bdzm76kkp6cp4sr1pyc8lavp52avwy313mhh0j1";
         libName = "colored_diff";
         license = "MIT OR Unlicense";
@@ -464,6 +480,7 @@ rec {
         crateName = "cpufeatures";
         version = "0.2.12";
         edition = "2018";
+        readme = "README.md";
         sha256 = "012m7rrak4girqlii3jnqwrr73gv1i980q4wra5yyyhvzwk5xzjk";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -497,6 +514,7 @@ rec {
         crateName = "crate2nix";
         version = "0.15.0";
         edition = "2021";
+        readme = "../README.md";
         crateBin = [
           {
             name = "crate2nix";
@@ -596,6 +614,7 @@ rec {
         crateName = "crossbeam-deque";
         version = "0.8.5";
         edition = "2021";
+        readme = "README.md";
         sha256 = "03bp38ljx4wj6vvy4fbhx41q8f585zyqix6pncz1mkz93z08qgv1";
         libName = "crossbeam_deque";
         license = "MIT OR Apache-2.0";
@@ -621,6 +640,7 @@ rec {
         crateName = "crossbeam-epoch";
         version = "0.9.18";
         edition = "2021";
+        readme = "README.md";
         sha256 = "03j2np8llwf376m3fxqx859mgp9f83hj1w34153c7a9c7i5ar0jv";
         libName = "crossbeam_epoch";
         license = "MIT OR Apache-2.0";
@@ -644,6 +664,7 @@ rec {
         crateName = "crossbeam-utils";
         version = "0.8.20";
         edition = "2021";
+        readme = "README.md";
         sha256 = "100fksq5mm1n7zj242cclkw6yf7a4a8ix3lvpfkhxvdhbda9kv12";
         libName = "crossbeam_utils";
         license = "MIT OR Apache-2.0";
@@ -657,6 +678,7 @@ rec {
         crateName = "crypto-common";
         version = "0.1.6";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1cvby95a6xg7kxdz5ln3rl9xh66nz66w46mm3g56ri1z5x815yqv";
         libName = "crypto_common";
         license = "MIT OR Apache-2.0";
@@ -683,6 +705,7 @@ rec {
         crateName = "digest";
         version = "0.10.7";
         edition = "2018";
+        readme = "README.md";
         sha256 = "14p2n6ih29x81akj097lvz7wi9b6b9hvls0lwrv7b6xwyy0s5ncy";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -718,6 +741,7 @@ rec {
         crateName = "dissimilar";
         version = "1.0.9";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0bcn4s99ghigd3yadpd7i3gljv5z2hkr07ijvvxvsxmz3yfygy2r";
         license = "Apache-2.0";
         authors = [
@@ -729,6 +753,7 @@ rec {
         crateName = "either";
         version = "1.13.0";
         edition = "2018";
+        readme = "README-crates.io.md";
         sha256 = "1w2c1mybrd7vljyxk77y9f4w9dyjrmp3yp82mk7bcm8848fazcb0";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -744,6 +769,7 @@ rec {
         crateName = "equivalent";
         version = "1.0.1";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1malmx5f4lkfvqasz319lq6gb3ddg19yzf9s8cykfsgzdmyq0hsl";
         license = "Apache-2.0 OR MIT";
 
@@ -775,6 +801,7 @@ rec {
         crateName = "fs_extra";
         version = "1.3.0";
         edition = "2018";
+        readme = "README.md";
         sha256 = "075i25z70j2mz9r7i9p9r521y8xdj81q7skslyb7zhqnnw33fw22";
         license = "MIT";
         authors = [
@@ -786,6 +813,7 @@ rec {
         crateName = "fuchsia-cprng";
         version = "0.1.1";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1fnkqrbz7ixxzsb04bsz9p0zzazanma8znfdqjvh39n14vapfvx0";
         libName = "fuchsia_cprng";
         authors = [
@@ -797,6 +825,7 @@ rec {
         crateName = "generic-array";
         version = "0.14.7";
         edition = "2015";
+        readme = "README.md";
         sha256 = "16lyyrzrljfq424c3n8kfwkqihlimmsg5nhshbbp48np3yjrqr45";
         libName = "generic_array";
         license = "MIT";
@@ -826,6 +855,7 @@ rec {
         crateName = "globset";
         version = "0.4.14";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1qab0c1drpybgm4nc92lf8b46x0ap44c9y4k23rndgc5bfdkpnjp";
         license = "Unlicense OR MIT";
         authors = [
@@ -872,6 +902,7 @@ rec {
         crateName = "globwalk";
         version = "0.9.1";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0mz7bsa66p2rrgnz3l94ac4kbklh7mq8j30iizyxjy4qyvmn1xqb";
         license = "MIT";
         authors = [
@@ -897,6 +928,7 @@ rec {
         crateName = "hashbrown";
         version = "0.14.5";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1wa1vy1xs3mp11bn3z9dv0jricgr6a2j0zkf1g19yz3vw4il89z5";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -922,6 +954,7 @@ rec {
         crateName = "heck";
         version = "0.3.3";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0b0kkr790p66lvzn9nsmfjvydrbmh9z5gb664jchwgw64vxiwqkd";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -939,6 +972,7 @@ rec {
         crateName = "hermit-abi";
         version = "0.1.19";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0cxcm8093nf5fyn114w8vxbrbcyvv91d4015rdnlgfll7cs6gd32";
         libName = "hermit_abi";
         license = "MIT/Apache-2.0";
@@ -963,6 +997,7 @@ rec {
         crateName = "hex";
         version = "0.4.3";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0w1a4davm1lgzpamwnba907aysmlrnygbqmfis2mqjx5m552a93z";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1007,6 +1042,7 @@ rec {
         crateName = "ignore";
         version = "0.4.22";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1wcaqpi6djqgi1brghrdyw4d5qgnwzhqrqyn4mar4vp677gi0s5l";
         license = "Unlicense OR MIT";
         authors = [
@@ -1056,6 +1092,7 @@ rec {
         crateName = "indexmap";
         version = "2.2.6";
         edition = "2021";
+        readme = "README.md";
         sha256 = "09hgwi2ig0wyj5rjziia76zmhgfj95k0jb4ic3iiawm4vlavg3qn";
         license = "Apache-2.0 OR MIT";
         dependencies = [
@@ -1086,6 +1123,7 @@ rec {
         crateName = "itertools";
         version = "0.10.5";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0ww45h7nxx5kj6z2y6chlskxd1igvs4j507anr6dzg99x1h25zdh";
         license = "MIT/Apache-2.0";
         authors = [
@@ -1107,6 +1145,7 @@ rec {
         crateName = "itertools";
         version = "0.12.1";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0s95jbb3ndj1lvfxyq5wanc0fm0r6hg6q4ngb92qlfdxvci10ads";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1129,6 +1168,7 @@ rec {
         crateName = "itoa";
         version = "1.0.11";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0nv9cqjwzr3q58qz84dcz63ggc54yhf1yqar1m858m1kfd4g3wa9";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1142,6 +1182,7 @@ rec {
         crateName = "lazy_static";
         version = "1.5.0";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1zk6dqqni0193xg6iijh7i3i44sryglwgvx20spdvwk3r6sbrlmv";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1156,6 +1197,7 @@ rec {
         crateName = "libc";
         version = "0.2.155";
         edition = "2015";
+        readme = "README.md";
         sha256 = "0z44c53z54znna8n322k5iwg80arxxpdzjj5260pxxzc9a58icwp";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1173,6 +1215,7 @@ rec {
         crateName = "log";
         version = "0.4.22";
         edition = "2021";
+        readme = "README.md";
         sha256 = "093vs0wkm1rgyykk7fjbqp2lwizbixac1w52gv109p5r4jh0p9x7";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1196,6 +1239,7 @@ rec {
         crateName = "memchr";
         version = "2.7.4";
         edition = "2021";
+        readme = "README.md";
         sha256 = "18z32bhxrax0fnjikv475z7ii718hq457qwmaryixfxsl2qrmjkq";
         license = "Unlicense OR MIT";
         authors = [
@@ -1217,6 +1261,7 @@ rec {
         crateName = "nix-base32";
         version = "0.1.1";
         edition = "2018";
+        readme = "README.md";
         sha256 = "04jnq6arig0amz0scadavbzn9bg9k4zphmrm1562n6ygfj1dnj45";
         libName = "nix_base32";
         license = "Apache-2.0";
@@ -1229,6 +1274,7 @@ rec {
         crateName = "once_cell";
         version = "1.19.0";
         edition = "2021";
+        readme = "README.md";
         sha256 = "14kvw7px5z96dk4dwdm1r9cqhhy2cyj1l5n5b29mynbb8yr15nrz";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1278,6 +1324,7 @@ rec {
         crateName = "pest";
         version = "2.7.10";
         edition = "2021";
+        readme = "_README.md";
         sha256 = "1s4fvis7h6l872g6nk17r130kcllj4c0hjvwkzd3hi196g3320an";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1312,6 +1359,7 @@ rec {
         crateName = "pest_derive";
         version = "2.7.10";
         edition = "2021";
+        readme = "_README.md";
         sha256 = "0n8lsk9s21dp7958p9yarbk2gsc8wg0rvdzr7cd7pjpvjf8kqa96";
         procMacro = true;
         license = "MIT OR Apache-2.0";
@@ -1342,6 +1390,7 @@ rec {
         crateName = "pest_generator";
         version = "2.7.10";
         edition = "2021";
+        readme = "_README.md";
         sha256 = "11s6q0vf25lckbzak0qndzpv87ksaxy6pa9cvn2hlizvsgvjmhiy";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1382,6 +1431,7 @@ rec {
         crateName = "pest_meta";
         version = "2.7.10";
         edition = "2021";
+        readme = "_README.md";
         sha256 = "1kdxl164yyjsmn01lvllsll4sz3xbgy4dmkq33n63hrp5w1418np";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1413,6 +1463,7 @@ rec {
         crateName = "proc-macro-error";
         version = "1.0.4";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1373bhxaf0pagd8zkyd03kkx6bchzf6g0dkwrwzsnal9z47lj9fs";
         libName = "proc_macro_error";
         license = "MIT OR Apache-2.0";
@@ -1485,6 +1536,7 @@ rec {
         crateName = "proc-macro2";
         version = "1.0.86";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0xrv22p8lqlfdf1w0pj4si8n2ws4aw0kilmziwf0vpv5ys6rwway";
         libName = "proc_macro2";
         license = "MIT OR Apache-2.0";
@@ -1507,6 +1559,7 @@ rec {
         crateName = "quote";
         version = "1.0.36";
         edition = "2018";
+        readme = "README.md";
         sha256 = "19xcmh445bg6simirnnd4fvkmp6v2qiwxh5f6rw4a70h76pnm9qg";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1529,6 +1582,7 @@ rec {
         crateName = "rand";
         version = "0.4.6";
         edition = "2015";
+        readme = "README.md";
         sha256 = "14qjfv3gggzhnma20k0sc1jf8y6pplsaq7n1j9ls5c8kf2wl0a2m";
         license = "MIT/Apache-2.0";
         authors = [
@@ -1576,6 +1630,7 @@ rec {
         crateName = "rand_core";
         version = "0.3.1";
         edition = "2015";
+        readme = "README.md";
         sha256 = "0jzdgszfa4bliigiy4hi66k7fs3gfwi2qxn8vik84ph77fwdwvvs";
         license = "MIT/Apache-2.0";
         authors = [
@@ -1599,6 +1654,7 @@ rec {
         crateName = "rand_core";
         version = "0.4.2";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1p09ynysrq1vcdlmcqnapq4qakl2yd1ng3kxh3qscpx09k2a6cww";
         license = "MIT/Apache-2.0";
         authors = [
@@ -1637,6 +1693,7 @@ rec {
         crateName = "regex";
         version = "1.10.5";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0zsiqk2sxc1kd46qw0yp87s2a14ialwyxinpl0k266ddkm1i64mr";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1696,6 +1753,7 @@ rec {
         crateName = "regex-automata";
         version = "0.4.7";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1pwjdi4jckpbaivpl6x4v5g4crb37zr2wac93wlfsbzgqn6gbjiq";
         libName = "regex_automata";
         license = "MIT OR Apache-2.0";
@@ -1758,6 +1816,7 @@ rec {
         crateName = "regex-syntax";
         version = "0.8.4";
         edition = "2021";
+        readme = "README.md";
         sha256 = "16r0kjy20vx33dr4mhasj5l1f87czas714x2fz6zl0f8wwxa0rks";
         libName = "regex_syntax";
         license = "MIT OR Apache-2.0";
@@ -1776,6 +1835,7 @@ rec {
         crateName = "remove_dir_all";
         version = "0.5.3";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1rzqbsgkmr053bxxl04vmvsd1njyz0nxvly97aip6aa2cmb15k9s";
         license = "MIT/Apache-2.0";
         authors = [
@@ -1795,6 +1855,7 @@ rec {
         crateName = "ryu";
         version = "1.0.18";
         edition = "2018";
+        readme = "README.md";
         sha256 = "17xx2s8j1lln7iackzd9p0sv546vjq71i779gphjq923vjh5pjzk";
         license = "Apache-2.0 OR BSL-1.0";
         authors = [
@@ -1808,6 +1869,7 @@ rec {
         crateName = "same-file";
         version = "1.0.6";
         edition = "2018";
+        readme = "README.md";
         sha256 = "00h5j1w87dmhnvbv9l8bic3y7xxsnjmssvifw2ayvgx9mb1ivz4k";
         libName = "same_file";
         license = "Unlicense/MIT";
@@ -1827,6 +1889,7 @@ rec {
         crateName = "semver";
         version = "1.0.23";
         edition = "2018";
+        readme = "README.md";
         sha256 = "12wqpxfflclbq4dv8sa6gchdh92ahhwn4ci1ls22wlby3h57wsb1";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1850,6 +1913,7 @@ rec {
         crateName = "serde";
         version = "1.0.203";
         edition = "2018";
+        readme = "crates-io.md";
         sha256 = "1500ghq198n6py5anvz5qbqagd9h1hq04f4qpsvjzrvix56snlvj";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1885,6 +1949,7 @@ rec {
         crateName = "serde_derive";
         version = "1.0.203";
         edition = "2015";
+        readme = "crates-io.md";
         sha256 = "1fmmqmfza3mwxb1v80737dj01gznrh8mhgqgylkndx5npq7bq32h";
         procMacro = true;
         license = "MIT OR Apache-2.0";
@@ -1920,6 +1985,7 @@ rec {
         crateName = "serde_json";
         version = "1.0.118";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1r7jpqdfnrv8skn5va1r202g6lhdhka0vyn42vm5g21x2srzciyr";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -1961,6 +2027,7 @@ rec {
         crateName = "serde_spanned";
         version = "0.6.6";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1839b6m5p9ijjmcwamiya2r612ks2vg6w2pp95yg76lr3zh79rkr";
         license = "MIT OR Apache-2.0";
         dependencies = [
@@ -1985,6 +2052,7 @@ rec {
         crateName = "sha2";
         version = "0.10.8";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1j1x78zk9il95w9iv46dh9wm73r6xrgj32y6lzzw7bxws9dbfgbr";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -2025,6 +2093,7 @@ rec {
         crateName = "strsim";
         version = "0.8.0";
         edition = "2015";
+        readme = "README.md";
         sha256 = "0sjsm7hrvjdifz661pjxq5w4hf190hx53fra8dfvamacvff139cf";
         license = "MIT";
         authors = [
@@ -2036,6 +2105,7 @@ rec {
         crateName = "structopt";
         version = "0.3.26";
         edition = "2018";
+        readme = "README.md";
         sha256 = "043sg3qxllann6q9i71d05qp3q13scmcvhxhd950ka2v8ij5qsqc";
         license = "Apache-2.0 OR MIT";
         authors = [
@@ -2113,6 +2183,7 @@ rec {
         crateName = "syn";
         version = "1.0.109";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0ds2if4600bd59wsv7jjgfkayfzy3hnazs394kz6zdkmna8l3dkj";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -2148,6 +2219,7 @@ rec {
         crateName = "syn";
         version = "2.0.68";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1sf1y2hajhjav38ipg63c934xrgkz4v42fz24a0ckmmri06sf7wh";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -2182,6 +2254,7 @@ rec {
         crateName = "tempdir";
         version = "0.3.7";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1n5n86zxpgd85y0mswrp5cfdisizq2rv3la906g6ipyc03xvbwhm";
         license = "MIT/Apache-2.0";
         authors = [
@@ -2203,6 +2276,7 @@ rec {
         crateName = "tera";
         version = "1.20.0";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1vnj9imw2h9szkd1izsrhwrc9jvazvdsp84x65wg2rg88ldqb7db";
         license = "MIT";
         authors = [
@@ -2260,6 +2334,7 @@ rec {
         crateName = "textwrap";
         version = "0.11.0";
         edition = "2015";
+        readme = "README.md";
         sha256 = "0q5hky03ik3y50s9sz25r438bc4nwhqc6dqwynv4wylc807n29nk";
         license = "MIT";
         authors = [
@@ -2280,6 +2355,7 @@ rec {
         crateName = "thiserror";
         version = "1.0.61";
         edition = "2021";
+        readme = "README.md";
         sha256 = "028prh962l16cmjivwb1g9xalbpqip0305zhq006mg74dc6whin5";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -2324,6 +2400,7 @@ rec {
         crateName = "tinyvec";
         version = "1.6.1";
         edition = "2018";
+        readme = "README.md";
         sha256 = "10idfhsvp7zhbr8pn37wfra2bn02vr5xg6mhdvrbxlp2zg31alf5";
         license = "Zlib OR Apache-2.0 OR MIT";
         authors = [
@@ -2362,6 +2439,7 @@ rec {
         crateName = "toml";
         version = "0.8.14";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0dgk8bacrza09npifba1xsx7wyjjvhz3igxpdnyjcbqxn8mfnjbg";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -2410,6 +2488,7 @@ rec {
         crateName = "toml_datetime";
         version = "0.6.6";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1grcrr3gh7id3cy3j700kczwwfbn04p5ncrrj369prjaj9bgvbab";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -2431,6 +2510,7 @@ rec {
         crateName = "toml_edit";
         version = "0.22.14";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0f2fw0viqvisjhqwjavgypz5mgbldh53przrsjlrrggijyppl77j";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -2476,6 +2556,7 @@ rec {
         crateName = "typenum";
         version = "1.17.0";
         edition = "2018";
+        readme = "README.md";
         sha256 = "09dqxv69m9lj9zvv6xw5vxaqx15ps0vxyy5myg33i0kbqvq0pzs2";
         build = "build/main.rs";
         license = "MIT OR Apache-2.0";
@@ -2492,6 +2573,7 @@ rec {
         crateName = "ucd-trie";
         version = "0.1.6";
         edition = "2021";
+        readme = "README.md";
         sha256 = "1ff4yfksirqs37ybin9aw71aa5gva00hw7jdxbw8w668zy964r7d";
         libName = "ucd_trie";
         license = "MIT OR Apache-2.0";
@@ -2541,6 +2623,7 @@ rec {
         crateName = "unic-common";
         version = "0.9.0";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1g1mm954m0zr497dl4kx3vr09yaly290zs33bbl4wrbaba1gzmw0";
         libName = "unic_common";
         license = "MIT/Apache-2.0";
@@ -2555,6 +2638,7 @@ rec {
         crateName = "unic-segment";
         version = "0.9.0";
         edition = "2018";
+        readme = "README.md";
         sha256 = "08wgz2q6vrdvmbd23kf9pbg8cyzm5q8hq9spc4blzy2ppqk5vvg4";
         libName = "unic_segment";
         license = "MIT/Apache-2.0";
@@ -2617,6 +2701,7 @@ rec {
         crateName = "unicode-bidi";
         version = "0.3.15";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0xcdxm7h0ydyprwpcbh436rbs6s6lph7f3gr527lzgv6lw053y88";
         libName = "unicode_bidi";
         license = "MIT OR Apache-2.0";
@@ -2637,6 +2722,7 @@ rec {
         crateName = "unicode-ident";
         version = "1.0.12";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0jzf1znfpb2gx8nr8mvmyqs1crnv79l57nxnbiszc7xf7ynbjm1k";
         libName = "unicode_ident";
         license = "(MIT OR Apache-2.0) AND Unicode-DFS-2016";
@@ -2649,6 +2735,7 @@ rec {
         crateName = "unicode-normalization";
         version = "0.1.23";
         edition = "2018";
+        readme = "README.md";
         sha256 = "1x81a50h2zxigj74b9bqjsirxxbyhmis54kg600xj213vf31cvd5";
         libName = "unicode_normalization";
         license = "MIT/Apache-2.0";
@@ -2672,6 +2759,7 @@ rec {
         crateName = "unicode-segmentation";
         version = "1.11.0";
         edition = "2018";
+        readme = "README.md";
         sha256 = "00kjpwp1g8fqm45drmwivlacn3y9jx73bvs09n6s3x73nqi7vj6l";
         libName = "unicode_segmentation";
         license = "MIT/Apache-2.0";
@@ -2686,6 +2774,7 @@ rec {
         crateName = "unicode-width";
         version = "0.1.13";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0p92vl8n7qc8mxz45xn6qbgi0259z96n32a158l6vj5bywwdadh3";
         libName = "unicode_width";
         license = "MIT OR Apache-2.0";
@@ -2705,6 +2794,7 @@ rec {
         crateName = "url";
         version = "2.5.2";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0v2dx50mx7xzl9454cl5qmpjnhkbahmn59gd3apyipbgyyylsy12";
         license = "MIT OR Apache-2.0";
         authors = [
@@ -2746,6 +2836,7 @@ rec {
         crateName = "vec_map";
         version = "0.8.2";
         edition = "2015";
+        readme = "README.md";
         sha256 = "1481w9g1dw9rxp3l6snkdqihzyrd2f8vispzqmwjwsdyhw8xzggi";
         license = "MIT/Apache-2.0";
         authors = [
@@ -2785,6 +2876,7 @@ rec {
         crateName = "version_check";
         version = "0.9.4";
         edition = "2015";
+        readme = "README.md";
         sha256 = "0gs8grwdlgh0xq660d7wr80x14vxbizmd8dbp29p2pdncx8lp1s9";
         license = "MIT/Apache-2.0";
         authors = [
@@ -2796,6 +2888,7 @@ rec {
         crateName = "walkdir";
         version = "2.5.0";
         edition = "2018";
+        readme = "README.md";
         sha256 = "0jsy7a710qv8gld5957ybrnc07gavppp963gs32xk4ag8130jy99";
         license = "Unlicense/MIT";
         authors = [
@@ -2818,6 +2911,7 @@ rec {
         crateName = "winapi";
         version = "0.3.9";
         edition = "2015";
+        readme = "README.md";
         sha256 = "06gl025x418lchw1wxj64ycr7gha83m44cjr5sarhynd9xkrm0sw";
         license = "MIT/Apache-2.0";
         authors = [
@@ -2856,6 +2950,7 @@ rec {
         crateName = "winapi-util";
         version = "0.1.8";
         edition = "2021";
+        readme = "README.md";
         sha256 = "0svcgddd2rw06mj4r76gj655qsa1ikgz3d3gzax96fz7w62c6k2d";
         libName = "winapi_util";
         license = "Unlicense OR MIT";
@@ -2888,6 +2983,7 @@ rec {
         crateName = "windows-sys";
         version = "0.52.0";
         edition = "2021";
+        readme = "readme.md";
         sha256 = "0gd3v4ji88490zgb6b5mq5zgbvwv7zx1ibn8v3x83rwcdbryaar8";
         libName = "windows_sys";
         license = "MIT OR Apache-2.0";
@@ -3137,6 +3233,7 @@ rec {
         crateName = "windows-targets";
         version = "0.52.5";
         edition = "2021";
+        readme = "readme.md";
         sha256 = "1sz7jrnkygmmlj1ia8fk85wbyil450kq5qkh5qh9sh2rcnj161vg";
         libName = "windows_targets";
         license = "MIT OR Apache-2.0";
@@ -3279,6 +3376,7 @@ rec {
         crateName = "winnow";
         version = "0.6.13";
         edition = "2021";
+        readme = "README.md";
         sha256 = "189b0mrr9lkckdyr0177hwj1c59igxc2lsl71f4wg8wrqbvfbdar";
         license = "MIT";
         dependencies = [
@@ -3303,6 +3401,10 @@ rec {
     #
 # crate2nix/default.nix (excerpt start)
 #
+
+  # Cargo's feature resolver "2" and later keep the features of build
+  # dependencies, proc-macros and their dependencies separate from the target's.
+  splitHostFeatures = resolverVersion != "1";
 
   /*
     Target (platform) data for conditional dependencies.
@@ -3605,20 +3707,22 @@ rec {
       assert (builtins.isBool runTests);
       let
         rootPackageId = packageId;
-        mergedFeatures = mergePackageFeatures (
+        mergedFeatures = mergePackageFeaturesByKind (
           args
           // {
             inherit rootPackageId;
             target = makeTarget stdenv.hostPlatform // {
               test = runTests;
             };
+            hostTarget = makeTarget stdenv.buildPlatform;
           }
         );
         # Memoize built packages so that reappearing packages are only built once.
-        builtByPackageIdByPkgs = mkBuiltByPackageIdByPkgs pkgs;
+        builtByPackageIdByPkgs = mkBuiltByPackageIdByPkgs pkgs false;
         mkBuiltByPackageIdByPkgs =
-          pkgs:
+          pkgs: forHost:
           let
+            isNative = pkgs.stdenv.buildPlatform.config == pkgs.stdenv.hostPlatform.config;
             self = {
               crates = lib.mapAttrs
                 (
@@ -3626,22 +3730,24 @@ rec {
                 )
                 crateConfigs;
               target = makeTarget pkgs.stdenv.hostPlatform;
+              features =
+                if forHost && splitHostFeatures then mergedFeatures.host else mergedFeatures.target;
               # Build-time dependency graph (for proc-macros and build
-              # dependencies). When not cross-compiling it equals the host
-              # graph, so reuse `self`; otherwise build it for
-              # `pkgs.buildPackages`.
+              # dependencies). It equals this graph when not cross-compiling
+              # and host features are not split off (or this is already the
+              # build-time graph), so reuse `self` then.
               build =
-                if pkgs.stdenv.buildPlatform.config == pkgs.stdenv.hostPlatform.config then
+                if isNative && (forHost || !splitHostFeatures) then
                   self
                 else
-                  mkBuiltByPackageIdByPkgs pkgs.buildPackages;
+                  mkBuiltByPackageIdByPkgs (if isNative then pkgs else pkgs.buildPackages) true;
             };
           in
           self;
         buildByPackageIdForPkgsImpl =
           self: pkgs: packageId:
           let
-            features = mergedFeatures."${packageId}" or [ ];
+            features = self.features."${packageId}" or [ ];
             crateConfig' = crateConfigs."${packageId}";
             crateConfig = builtins.removeAttrs crateConfig' [
               "resolvedDefaultFeatures"
@@ -3850,15 +3956,33 @@ rec {
     corresponding feature sets are merged. Features in rust are additive.
   */
   mergePackageFeatures =
-    args: builtins.mapAttrs (_packageId: builtins.attrNames) (mergePackageFeaturesImpl args);
+    args: (mergePackageFeaturesByKind (args // { splitHost = false; })).target;
+
+  /*
+    Like `mergePackageFeatures`, but returns `{ target; host; }`. With
+    `splitHost`, crates built for the build platform (build dependencies,
+    proc-macros and everything they depend on) get their features resolved
+    into `host`, separately from `target`, like Cargo's feature resolver "2".
+  */
+  mergePackageFeaturesByKind =
+    { splitHost ? splitHostFeatures, ... }@args:
+    let
+      toLists = builtins.mapAttrs (_packageId: builtins.attrNames);
+      featuresByKind = mergePackageFeaturesImpl (args // { inherit splitHost; });
+    in
+    {
+      target = toLists featuresByKind.target;
+      host = toLists featuresByKind.host;
+    };
 
   /*
     Core of the feature-resolution fixpoint. The cache (`featuresByPackageId`)
-    maps each packageId to a feature *set* (an attrset `feature -> 1`) rather
-    than a sorted list, so the fold merges with `//` and detects convergence
-    with attrset equality instead of re-concatenating and re-sorting the
-    accumulated feature list on every step. `mergePackageFeatures` projects the
-    result back to canonical sorted lists.
+    maps each kind (`target`, `host`) and packageId to a feature *set* (an
+    attrset `feature -> 1`) rather than a sorted list, so the fold merges with
+    `//` and detects convergence with attrset equality instead of
+    re-concatenating and re-sorting the accumulated feature list on every step.
+    `mergePackageFeaturesByKind` projects the result back to canonical sorted
+    lists.
   */
   mergePackageFeaturesImpl =
     { crateConfigs ? crates
@@ -3866,8 +3990,13 @@ rec {
     , rootPackageId ? packageId
     , features ? rootFeatures
     , dependencyPath ? [ crates.${packageId}.crateName ]
-    , featuresByPackageId ? { }
+    , featuresByPackageId ? { target = { }; host = { }; }
     , target
+    , # Platform of crates resolved into `host`.
+      hostTarget ? target
+    , splitHost ? false
+    , # Whether this crate is resolved into `host`.
+      forHost ? false
     , # Adds devDependencies to the crate with rootPackageId.
       runTests ? false
     , ...
@@ -3879,41 +4008,39 @@ rec {
       assert (builtins.isList dependencyPath);
       assert (builtins.isAttrs featuresByPackageId);
       assert (builtins.isAttrs target);
+      assert (builtins.isAttrs hostTarget);
+      assert (builtins.isBool splitHost);
+      assert (builtins.isBool forHost);
       assert (builtins.isBool runTests);
       let
+        kind = if forHost then "host" else "target";
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
-        expandedFeatures = expandFeatures (crateConfig.features or { }) features;
-        enabledFeatures = enableFeatures (crateConfig.dependencies or [ ]) expandedFeatures;
-        depWithResolvedFeatures =
-          dependency:
-          let
-            inherit (dependency) packageId;
-            features = dependencyFeatures enabledFeatures dependency;
-          in
-          {
-            inherit packageId features;
-          };
+        enabledFeatures = expandAndEnableFeatures (crateConfig.features or { }) (crateConfig.dependencies or [ ]) features;
+        isHostDependency =
+          dependency: forHost || (splitHost && (crateConfigs.${dependency.packageId}.procMacro or false));
         resolveDependencies =
-          cache: path: dependencies:
+          cache: dependencyTarget: isHost: dependencies:
             assert (builtins.isAttrs cache);
             assert (builtins.isList dependencies);
             let
               enabledDependencies = filterEnabledDependencies {
-                inherit dependencies target;
+                inherit dependencies;
+                target = dependencyTarget;
                 features = enabledFeatures;
               };
-              directDependencies = map depWithResolvedFeatures enabledDependencies;
-              foldOverCache = op: lib.foldl op cache directDependencies;
+              foldOverCache = op: lib.foldl op cache enabledDependencies;
             in
             foldOverCache (
-              cache:
-              { packageId, features }:
+              cache: dependency:
               let
-                cacheFeatures = cache.${packageId} or { };
-                # `features` is the (small) incoming list; merge it into the set.
-                combinedFeatures = cacheFeatures // listToSet features;
+                inherit (dependency) packageId;
+                forHost = isHost dependency;
+                dependencyKind = if forHost then "host" else "target";
+                cacheFeatures = cache.${dependencyKind}.${packageId} or { };
+                # The incoming feature list is small; merge it into the set.
+                combinedFeatures = cacheFeatures // listToSet (dependencyFeatures enabledFeatures dependency);
               in
-              if cache ? ${packageId} && cacheFeatures == combinedFeatures then
+              if cache.${dependencyKind} ? ${packageId} && cacheFeatures == combinedFeatures then
                 cache
               else
                 mergePackageFeaturesImpl {
@@ -3923,6 +4050,9 @@ rec {
                     crateConfigs
                     packageId
                     target
+                    hostTarget
+                    splitHost
+                    forHost
                     runTests
                     rootPackageId
                     ;
@@ -3930,18 +4060,20 @@ rec {
             );
         cacheWithSelf =
           let
-            cacheFeatures = featuresByPackageId.${packageId} or { };
+            cacheFeatures = featuresByPackageId.${kind}.${packageId} or { };
             combinedFeatures = cacheFeatures // listToSet enabledFeatures;
           in
           featuresByPackageId
           // {
-            "${packageId}" = combinedFeatures;
+            ${kind} = featuresByPackageId.${kind} // {
+              "${packageId}" = combinedFeatures;
+            };
           };
-        cacheWithDependencies = resolveDependencies cacheWithSelf "dep" (
+        cacheWithDependencies = resolveDependencies cacheWithSelf (if forHost then hostTarget else target) isHostDependency (
           crateConfig.dependencies or [ ]
-          ++ lib.optionals (runTests && packageId == rootPackageId) (crateConfig.devDependencies or [ ])
+          ++ lib.optionals (runTests && !forHost && packageId == rootPackageId) (crateConfig.devDependencies or [ ])
         );
-        cacheWithAll = resolveDependencies cacheWithDependencies "build" (
+        cacheWithAll = resolveDependencies cacheWithDependencies hostTarget (_: splitHost) (
           crateConfig.buildDependencies or [ ]
         );
       in
@@ -4014,6 +4146,38 @@ rec {
         seen = expandFeaturesNoCycle { } inputFeatures;
       in
       sortedUnique (builtins.attrNames seen);
+
+  /*
+    Returns `inputFeatures` expanded by `featureMap` together with the optional
+    dependencies they enable. Like Cargo, `dep/feature` on an optional
+    dependency also enables a feature named `dep` if the crate defines one
+    (`dep:dep` and `dep?/feature` do not), which can enable more features.
+  */
+  expandAndEnableFeatures =
+    featureMap: dependencies: inputFeatures:
+    let
+      expanded = expandFeatures featureMap inputFeatures;
+      sameNamedFeatures = lib.concatMap
+        (
+          dependency:
+          let
+            name = dependency.rename or dependency.name;
+          in
+          lib.optional
+            (
+              (dependency.optional or false)
+              && featureMap ? ${name}
+              && builtins.any (lib.hasPrefix "${name}/") expanded
+            )
+            name
+        )
+        dependencies;
+      withSameNamedFeatures = expandFeatures featureMap (expanded ++ sameNamedFeatures);
+    in
+    if withSameNamedFeatures == expanded then
+      enableFeatures dependencies expanded
+    else
+      expandAndEnableFeatures featureMap dependencies withSameNamedFeatures;
 
   /*
     This function adds optional dependencies as features if they are enabled

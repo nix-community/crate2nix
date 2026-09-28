@@ -37,4 +37,57 @@ in
     expr = crate2nix.expandFeatures featureMap [ "default" "resolvable" ];
     expected = [ "default" "feature1" "resolvable" "tls" "tls/extra_feature" ];
   };
+  testOptionalDependencyFeatureEnablesSameNamedFeature = {
+    expr = crate2nix.expandAndEnableFeatures
+      {
+        default = [ "serde/std" ];
+        serde = [ "dep:serde" "serde_json" ];
+      }
+      [
+        {
+          name = "serde";
+          packageId = "pkgid_serde";
+          optional = true;
+        }
+        {
+          name = "serde_json";
+          packageId = "pkgid_serde_json";
+          optional = true;
+        }
+      ]
+      [ "default" ];
+    expected = [ "default" "dep:serde" "serde" "serde/std" "serde_json" ];
+  };
+  testWeakDependencyFeatureDoesNotEnableDependency = {
+    expr = crate2nix.expandAndEnableFeatures
+      {
+        default = [ "serde?/std" ];
+        serde = [ "dep:serde" ];
+      }
+      [
+        {
+          name = "serde";
+          packageId = "pkgid_serde";
+          optional = true;
+        }
+      ]
+      [ "default" ];
+    expected = [ "default" "serde?/std" ];
+  };
+  testExplicitDependencyDoesNotEnableSameNamedFeature = {
+    expr = crate2nix.expandAndEnableFeatures
+      {
+        default = [ "dep:serde" ];
+        serde = [ "serde_json" ];
+      }
+      [
+        {
+          name = "serde";
+          packageId = "pkgid_serde";
+          optional = true;
+        }
+      ]
+      [ "default" ];
+    expected = [ "default" "dep:serde" "serde" ];
+  };
 }

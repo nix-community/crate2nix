@@ -36,6 +36,8 @@ pub struct CrateDerivation {
     pub version: Version,
     /// The name of a native library the package is linking to.
     pub links: Option<String>,
+    /// The `readme` field, relative to the crate root.
+    pub readme: Option<String>,
     pub source: ResolvedSource,
     /// The crate types of the lib targets of this crate, e.g. "lib", "dylib", "rlib", ...
     pub lib_crate_types: Vec<String>,
@@ -164,6 +166,7 @@ impl CrateDerivation {
             package_id: package.id.clone(),
             version: package.version.clone(),
             links: package.links.clone(),
+            readme: package.readme.as_ref().map(|readme| readme.to_string()),
             source,
             features: package
                 .features
