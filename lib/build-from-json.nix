@@ -40,7 +40,11 @@ let
       relPath = if source == null then "." else source.path or ".";
     in
     if sourceType == "local" then
-      if relPath == "." then src else src + "/${relPath}"
+      builtins.path
+        {
+          name = "${crateInfo.crateName}-src";
+          path = if relPath == "." then src else src + "/${relPath}";
+        }
     else if sourceType == "crates-io" then
       pkgs.fetchurl
         {
