@@ -219,6 +219,62 @@ in
     };
   };
 
+  # Regression test for feature-resolution memoization. When a dependency is
+  # already in the cache with converged features, a further edge to it must be
+  # a cache hit, even though the edge requests "default" (default-features on)
+  # and the crate declares no `default` feature. The callee strips "default"
+  # for such a crate, so the cache can never contain it; comparing the *raw*
+  # request against the cache would miss on every edge and re-walk the crate's
+  # whole subtree each time (cost proportional to the number of paths through
+  # the graph, not the number of crates).
+  #
+  # The crates are pre-seeded in the cache with their converged features, and
+  # their `dependencies` throw, so any re-walk fails the test deterministically.
+  testMemoHitForRequestedDefault = {
+    expr = crate2nix.mergePackageFeatures {
+      target = crate2nix.makeDefaultTarget stdenv.hostPlatform;
+      packageId = "memo_root";
+      features = [ ];
+      featuresByPackageId = {
+        memo_no_default = crate2nix.listToSet [ ];
+        memo_empty_default = crate2nix.listToSet [ "default" ];
+      };
+      crateConfigs = {
+        "memo_root" = {
+          crateName = "memo_root";
+          dependencies = [
+            # default-features on: requests "default", which is a no-op here.
+            {
+              name = "memo_no_default";
+              packageId = "memo_no_default";
+            }
+            # default-features off: "default" is still forced on (empty default).
+            {
+              name = "memo_empty_default";
+              packageId = "memo_empty_default";
+              usesDefaultFeatures = false;
+            }
+          ];
+        };
+        "memo_no_default" = {
+          crateName = "memo_no_default";
+          dependencies = throw "memo_no_default was re-resolved despite a cache hit";
+        };
+        "memo_empty_default" = {
+          crateName = "memo_empty_default";
+          features = { };
+          resolvedDefaultFeatures = [ "default" ];
+          dependencies = throw "memo_empty_default was re-resolved despite a cache hit";
+        };
+      };
+    };
+    expected = {
+      "memo_root" = [ ];
+      "memo_no_default" = [ ];
+      "memo_empty_default" = [ "default" ];
+    };
+  };
+
   testPackageWithFeatureClash = {
     expr = packageFeatures "pkg_with_feature_clash" [ ];
     expected = {

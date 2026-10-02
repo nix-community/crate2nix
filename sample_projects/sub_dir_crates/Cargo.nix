@@ -696,6 +696,52 @@ rec {
       };
 
   /*
+    Reconciles a requested feature list with how Cargo treats "default" for
+    the crate described by `crateConfig`.
+
+    crate2nix requests "default" for a crate whenever it is reached with
+    default features on — from a default-features-on dependency edge or from
+    the root's default `rootFeatures = [ "default" ]` — and stamps a
+    `--cfg feature="default"` that changes the crate's `-C metadata` hash.
+    When the crate is *also* reached without "default", it would fork into two
+    derivations and the fork propagates to everything downstream. What Cargo
+    actually resolves depends on whether — and how — the crate declares
+    `default`:
+
+      1. Declares a non-empty `default = [ ... ]`
+         (`crateConfig.features ? "default"`): Cargo resolves it normally —
+         pass `features` through untouched.
+
+      2. Declares an *empty* `default = []`: crate2nix omits an empty default
+         from `crateConfig.features` (so case 1's test misses it), but records
+         it in `crateConfig.resolvedDefaultFeatures`. "default" enables no
+         extra features, yet the crate's source may still gate on
+         `cfg(feature = "default")` (e.g. document-features carries
+         `#[cfg(not(feature = "default"))] compile_error!(...)`), so it must
+         NOT be stripped. `resolvedDefaultFeatures` is Cargo's single global
+         resolution, so "default" is forced on in every closure that reaches
+         the crate: the cfg stays satisfied and the derivation stays unique
+         (consistently-on dedups exactly as consistently-off would).
+
+      3. Declares no `default` at all (absent from both `features` and
+         `resolvedDefaultFeatures`): Cargo never sets
+         `cfg(feature = "default")`, so a requested "default" is a phantom —
+         strip it. `default-features = true` on such a crate is a Cargo no-op.
+
+    Applied both where a crate's features are resolved (callee side of
+    `mergePackageFeaturesImpl`) and in the "already resolved?" memo test on
+    each dependency edge (caller side), so the two always agree.
+  */
+  normalizeDefaultFeature =
+    crateConfig: features:
+    if (crateConfig.features or { }) ? "default" then
+      features
+    else if builtins.elem "default" (crateConfig.resolvedDefaultFeatures or [ ]) then
+      features ++ [ "default" ]
+    else
+      lib.filter (f: f != "default") features;
+
+  /*
     Returns an attrset mapping packageId to the list of enabled features.
 
     If multiple paths to a dependency enable different features, the
@@ -734,7 +780,9 @@ rec {
       assert (builtins.isBool runTests);
       let
         crateConfig = crateConfigs."${packageId}" or (builtins.throw "Package not found: ${packageId}");
-        expandedFeatures = expandFeatures (crateConfig.features or { }) features;
+        expandedFeatures = expandFeatures (crateConfig.features or { }) (
+          normalizeDefaultFeature crateConfig features
+        );
         enabledFeatures = enableFeatures (crateConfig.dependencies or [ ]) expandedFeatures;
         depWithResolvedFeatures =
           dependency:
@@ -762,8 +810,15 @@ rec {
               { packageId, features }:
               let
                 cacheFeatures = cache.${packageId} or { };
-                # `features` is the (small) incoming list; merge it into the set.
-                combinedFeatures = cacheFeatures // listToSet features;
+                # Normalise "default" exactly as the callee will (see
+                # `normalizeDefaultFeature`). The cache holds normalised features
+                # but almost every edge requests "default", so comparing the raw
+                # request would never converge for a crate without a `default`
+                # feature and its whole subtree would be re-walked on every
+                # incoming edge (cost proportional to paths, not crates).
+                requested = normalizeDefaultFeature (crateConfigs.${packageId} or { }) features;
+                # `requested` is the (small) incoming list; merge it into the set.
+                combinedFeatures = cacheFeatures // listToSet requested;
               in
               if cache ? ${packageId} && cacheFeatures == combinedFeatures then
                 cache
