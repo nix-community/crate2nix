@@ -761,6 +761,85 @@ in
       crate2nixTools = tools;
     };
 
+    # `workspaceMembersShared` / `internal.builtRustCratesForRoots` evaluate
+    # all workspace members over one shared crate derivation table. Check that
+    # this yields exactly the derivations of the per-member path, for every
+    # multi-member sample workspace, natively and cross-compiled, with and
+    # without tests. Only drvPaths are compared; nothing is built.
+    sharedCrateTable =
+      let
+        workspaces = {
+          sample_workspace = ./sample_workspace;
+          workspace_with_nondefault_lib = ./sample_projects/workspace_with_nondefault_lib;
+          many_members = pkgs.callPackage ./sample_projects/many_members { };
+        };
+        pkgsVariants = {
+          native = buildTestPkgs;
+          cross-aarch64 = buildTestPkgs.pkgsCross.aarch64-multiplatform;
+        };
+        drvPath = drv: builtins.unsafeDiscardStringContext drv.drvPath;
+        compare =
+          wsName: src: pkgsName: testPkgs:
+          let
+            generated = tools.generatedCargoNix {
+              name = "shared_crate_table_${wsName}";
+              inherit src;
+            };
+            cargoNix = testPkgs.callPackage generated { };
+            inherit (cargoNix) internal workspaceMembers;
+            packageIds = lib.mapAttrsToList (_: m: m.packageId) workspaceMembers;
+            buildRustCrateForPkgsFunc =
+              internal.buildRustCrateForPkgsWithOverrides testPkgs.defaultCrateOverrides;
+            withTests = internal.builtRustCratesForRoots {
+              inherit packageIds buildRustCrateForPkgsFunc;
+              features = [ "default" ];
+              runTests = true;
+            };
+            perMemberWithTests =
+              packageId:
+              (internal.builtRustCratesWithFeatures {
+                inherit packageId buildRustCrateForPkgsFunc;
+                features = [ "default" ];
+                runTests = true;
+              }).crates.${packageId};
+            line = member: kind: drv: "${wsName} ${pkgsName} ${member} ${kind} ${drvPath drv}";
+          in
+          assert lib.assertMsg (builtins.length packageIds > 1) "${wsName}: expected several members";
+          {
+            expected = lib.concatLists (
+              lib.mapAttrsToList
+                (name: m: [
+                  (line name "build" m.build)
+                  (line name "tests" (perMemberWithTests m.packageId))
+                ])
+                workspaceMembers
+            );
+            actual = lib.concatLists (
+              lib.mapAttrsToList
+                (name: m: [
+                  (line name "build" cargoNix.workspaceMembersShared.${name})
+                  (line name "tests" withTests.${m.packageId})
+                ])
+                workspaceMembers
+            );
+          };
+        results = lib.concatLists (
+          lib.mapAttrsToList
+            (wsName: src: lib.mapAttrsToList (compare wsName src) pkgsVariants)
+            workspaces
+        );
+        listFile =
+          name: lines: pkgs.writeText name (lib.concatMapStrings (l: l + "\n") lines);
+      in
+      pkgs.runCommand "shared_crate_table"
+        {
+          expected = listFile "expected" (lib.concatMap (r: r.expected) results);
+          actual = listFile "actual" (lib.concatMap (r: r.actual) results);
+        } ''
+        diff -u $expected $actual
+        cp $actual $out
+      '';
+
     # PR #453: verify JSON-mode buildTests wires dev-dependencies.
     # Without the fix, rustc fails with "unresolved import cli_test_dir".
     json_build_tests =

@@ -386,6 +386,193 @@ rec {
       builtByPackageIdByPkgs;
 
   /*
+    Like `builtRustCratesWithFeatures`, but for several root crates at once:
+    returns an attr set mapping each of `packageIds` to the derivation of that
+    root crate.
+
+    `builtRustCratesWithFeatures` memoizes per root, so building N roots that
+    share most of their dependency graph instantiates each shared crate N
+    times. Here every root still gets its own feature resolution, exactly as
+    `builtRustCratesWithFeatures` computes it; what is shared between the
+    roots is the instantiation of the crate derivations.
+
+    Within one call, a crate's derivation is determined by
+      * its packageId (crate config and source),
+      * the package set it is built for (host graph, or the build graph of
+        proc-macros and build dependencies when cross-compiling),
+      * its resolved features and whether dev-dependencies are wired in,
+      * the derivations of its enabled dependencies.
+    (`buildRustCrateForPkgsFunc`, `crateConfigs`, `release` and
+    `targetFeatures` are the same for every root.) Each crate of each root is
+    keyed by a hash of exactly these inputs, using the keys of its
+    dependencies for the last one. `builtins.genericClosure` collects the
+    union of all roots' closures, deduplicating on the key, and each distinct
+    key is instantiated once. A crate whose features differ between two roots
+    gets two keys and two derivations, as it does with per-root memoization,
+    so every root derivation is identical to the one
+    `builtRustCratesWithFeatures` returns for that root.
+
+    Trade-off: forcing any one root evaluates the closures of all roots. Use
+    this when all of them are needed anyway. The generated Cargo.nix exposes
+    it for all workspace members as `workspaceMembersShared`.
+  */
+  builtRustCratesForRoots =
+    { packageIds
+    , features
+    , crateConfigs ? crates
+    , buildRustCrateForPkgsFunc
+    , runTests
+    , makeTarget ? makeDefaultTarget
+    ,
+    }:
+      assert (builtins.isAttrs crateConfigs);
+      assert (builtins.isList packageIds);
+      assert (builtins.isList features);
+      assert (builtins.isAttrs (makeTarget stdenv.hostPlatform));
+      assert (builtins.isBool runTests);
+      let
+        # The per-root counterpart of `builtByPackageIdByPkgs` in
+        # `builtRustCratesWithFeatures`, with crate keys in place of crate
+        # derivations. `depth` counts `buildPackages` steps from `pkgs`; as
+        # every root starts from the same `pkgs`, it identifies the package
+        # set across roots.
+        keyedGraphForRoot =
+          rootPackageId:
+          let
+            mergedFeatures = mergePackageFeatures {
+              inherit
+                crateConfigs
+                features
+                runTests
+                rootPackageId
+                ;
+              packageId = rootPackageId;
+              target = makeTarget stdenv.hostPlatform // {
+                test = runTests;
+              };
+            };
+            mkKeyedGraph =
+              depth: pkgs:
+              let
+                self = {
+                  inherit pkgs rootPackageId;
+                  target = makeTarget pkgs.stdenv.hostPlatform;
+                  build =
+                    if pkgs.stdenv.buildPlatform.config == pkgs.stdenv.hostPlatform.config then
+                      self
+                    else
+                      mkKeyedGraph (depth + 1) pkgs.buildPackages;
+                  features = packageId: mergedFeatures.${packageId} or [ ];
+                  withDevDependencies = packageId: runTests && packageId == rootPackageId;
+                  enabled = lib.mapAttrs
+                    (
+                      packageId: _:
+                        enabledCrateDependencies {
+                          inherit crateConfigs packageId;
+                          graph = self;
+                          features = self.features packageId;
+                          withDevDependencies = self.withDevDependencies packageId;
+                        }
+                    )
+                    crateConfigs;
+                  # The enabled dependencies of a crate as `{ graph; packageId; }`,
+                  # routed to graphs as in `buildCrateDerivation`.
+                  edges =
+                    packageId:
+                    let
+                      enabled = self.enabled.${packageId};
+                    in
+                    {
+                      dependencies = map
+                        (dependency: {
+                          graph = if isProcMacroDependency crateConfigs dependency then self.build else self;
+                          inherit (dependency) packageId;
+                        })
+                        enabled.dependencies;
+                      buildDependencies = map
+                        (dependency: {
+                          graph = self.build;
+                          inherit (dependency) packageId;
+                        })
+                        enabled.buildDependencies;
+                    };
+                  keys = lib.mapAttrs
+                    (
+                      packageId: _:
+                        let
+                          edges = self.edges packageId;
+                          keysOf = map ({ graph, packageId }: graph.keys.${packageId});
+                        in
+                        builtins.hashString "sha256" (
+                          builtins.toJSON [
+                            depth
+                            packageId
+                            (self.features packageId)
+                            (self.withDevDependencies packageId)
+                            (keysOf edges.dependencies)
+                            (keysOf edges.buildDependencies)
+                          ]
+                        )
+                    )
+                    crateConfigs;
+                };
+              in
+              self;
+          in
+          mkKeyedGraph 0 pkgs;
+
+        graphs = map keyedGraphForRoot packageIds;
+
+        closureItem =
+          graph: packageId: {
+            key = graph.keys.${packageId};
+            inherit graph packageId;
+          };
+        # One item per distinct key, reached from any root. `graph` is the
+        # graph of the first root that reached it; every root reaching the key
+        # instantiates the same derivation.
+        closure = builtins.genericClosure {
+          startSet = map (graph: closureItem graph graph.rootPackageId) graphs;
+          operator =
+            { graph, packageId, ... }:
+            let
+              edges = graph.edges packageId;
+            in
+            map ({ graph, packageId }: closureItem graph packageId) (
+              edges.dependencies ++ edges.buildDependencies
+            );
+        };
+
+        derivationsByKey = builtins.listToAttrs (
+          map
+            (
+              { key, graph, packageId }:
+              {
+                name = key;
+                value = buildCrateDerivation {
+                  inherit crateConfigs buildRustCrateForPkgsFunc packageId;
+                  inherit (graph) pkgs;
+                  features = graph.features packageId;
+                  enabled = graph.enabled.${packageId};
+                  dependencyDerivation =
+                    forBuild: dependency:
+                    derivationsByKey.${(if forBuild then graph.build else graph).keys.${dependency.packageId}};
+                };
+              }
+            )
+            closure
+        );
+      in
+      builtins.listToAttrs (
+        map
+          (graph: {
+            name = graph.rootPackageId;
+            value = derivationsByKey.${graph.keys.${graph.rootPackageId}};
+          })
+          graphs
+      );
+
+  /*
     The dependencies of the crate `packageId` that are enabled for `features`,
     as `{ dependencies; buildDependencies; }` lists of dependency configs.
 
@@ -430,11 +617,12 @@ rec {
     Calls `buildRustCrateForPkgsFunc pkgs` for the crate `packageId`.
 
     This is the one place that turns a crate config into a `buildRustCrate`
-    call. Callers decide how the derivations of dependencies are looked up:
-    `dependencyDerivation forBuild dependency` returns the derivation of the
-    dependency config `dependency` in the build-time crate graph
-    (`forBuild = true`, for build dependencies and proc-macros) or in the
-    host graph.
+    call. `builtRustCratesWithFeatures` and `builtRustCratesForRoots` both
+    use it and differ only in how they look up the derivations of
+    dependencies: `dependencyDerivation forBuild dependency` returns the
+    derivation of the dependency config `dependency` in the build-time crate
+    graph (`forBuild = true`, for build dependencies and proc-macros) or in
+    the host graph.
 
     `enabled` is `enabledCrateDependencies` for this crate and `features`.
   */

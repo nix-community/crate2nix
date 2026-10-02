@@ -4,6 +4,7 @@
 let
   crate2nix = pkgs.callPackage ../default.nix { };
   testFiles = [
+    "builtRustCratesForRoots"
     "dependencyDerivations"
     "dependencyFeatures"
     "enableFeatures"
