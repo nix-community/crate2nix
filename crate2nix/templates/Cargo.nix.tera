@@ -73,6 +73,24 @@ rec {
     };
   {%- endfor %}
   };
+
+  # The derivations of all workspace members by name, identical to
+  # workspaceMembers."${crateName}".build but evaluated over one crate
+  # derivation table shared by all members (see
+  # `internal.builtRustCratesForRoots`), instead of one table per member.
+  # This makes evaluating many members much cheaper when they share
+  # dependencies, but forcing any one member evaluates all of them.
+  # Uses `rootFeatures`; there is no per-member `.override`.
+  workspaceMembersShared =
+    let
+      builtByPackageId = internal.builtRustCratesForRoots {
+        packageIds = builtins.map (m: m.packageId) (builtins.attrValues workspaceMembers);
+        features = rootFeatures;
+        buildRustCrateForPkgsFunc = internal.buildRustCrateForPkgsWithOverrides defaultCrateOverrides;
+        runTests = false;
+      };
+    in
+    builtins.mapAttrs (_: m: builtByPackageId.${m.packageId}) workspaceMembers;
   {%- endif %}
 
   {% if registries %}

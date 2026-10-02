@@ -46,3 +46,25 @@ derivation like this:
 let cargo_nix = callPackage ./Cargo.nix {};
 in cargo_nix.workspaceMembers."${your_crate_name}".build
 ```
+
+### Evaluating many workspace members at once
+
+Each `workspaceMembers.<name>.build` instantiates the derivations of its own
+dependency closure, so evaluating all members of a large workspace instantiates
+dependencies they share once per member. If you need all members anyway (for
+example to build or check the whole workspace), use `workspaceMembersShared`
+instead:
+
+```nix
+let cargo_nix = callPackage ./Cargo.nix {};
+in cargo_nix.workspaceMembersShared."${your_crate_name}"
+```
+
+Each member's derivation is identical to its `workspaceMembers.<name>.build`,
+but all members are instantiated over one shared table of crate derivations.
+This makes evaluating many members that share dependencies much cheaper.
+The trade-offs:
+
+* Forcing any one member evaluates all of them, so for a single member or a
+  small workspace, `workspaceMembers.<name>.build` is cheaper.
+* All members use `rootFeatures`; there is no per-member `.override`.
