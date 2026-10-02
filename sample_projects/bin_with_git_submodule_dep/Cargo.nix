@@ -1625,6 +1625,18 @@ rec {
           ''
         );
 
+  # `buildRustCrateForPkgs`, with `crateOverrides` in place of the default
+  # crate overrides when they differ from nixpkgs' `defaultCrateOverrides`.
+  buildRustCrateForPkgsWithOverrides =
+    crateOverrides:
+    if crateOverrides == pkgs.defaultCrateOverrides then
+      buildRustCrateForPkgs
+    else
+      pkgs:
+      (buildRustCrateForPkgs pkgs).override {
+        defaultCrateOverrides = crateOverrides;
+      };
+
   # A restricted overridable version of builtRustCratesWithFeatures.
   buildRustCrateWithFeatures =
     { packageId
@@ -1656,15 +1668,7 @@ rec {
             if buildRustCrateForPkgsFunc != null then
               buildRustCrateForPkgsFunc
             else
-              (
-                if crateOverrides == pkgs.defaultCrateOverrides then
-                  buildRustCrateForPkgs
-                else
-                  pkgs:
-                  (buildRustCrateForPkgs pkgs).override {
-                    defaultCrateOverrides = crateOverrides;
-                  }
-              );
+              buildRustCrateForPkgsWithOverrides crateOverrides;
           builtRustCrates = builtRustCratesWithFeatures {
             inherit packageId features;
             buildRustCrateForPkgsFunc = buildRustCrateForPkgsFuncOverriden;
@@ -1764,93 +1768,158 @@ rec {
           self: pkgs: packageId:
           let
             features = mergedFeatures."${packageId}" or [ ];
-            crateConfig' = crateConfigs."${packageId}";
-            crateConfig = builtins.removeAttrs crateConfig' [
-              "resolvedDefaultFeatures"
-              "devDependencies"
-            ];
-            devDependencies = lib.optionals (runTests && packageId == rootPackageId) (
-              crateConfig'.devDependencies or [ ]
-            );
-            # Enabled (platform- and feature-filtered) dependency lists, reused
-            # for both derivation wiring and the crate renames below.
-            enabledDependencies = filterEnabledDependencies {
-              inherit features;
-              inherit (self) target;
-              dependencies = (crateConfig.dependencies or [ ]) ++ devDependencies;
-            };
-            enabledBuildDependencies = filterEnabledDependencies {
-              inherit features;
-              inherit (self.build) target;
-              dependencies = crateConfig.buildDependencies or [ ];
-            };
-            dependencies = map
-              (
-                dependency:
-                # proc_macro crates must be compiled for the build architecture
-                if crateConfigs.${dependency.packageId}.procMacro or false then
-                  self.build.crates.${dependency.packageId}
-                else
-                  self.crates.${dependency.packageId}
-              )
-              enabledDependencies;
-            buildDependencies = map
-              (dependency: self.build.crates.${dependency.packageId})
-              enabledBuildDependencies;
-            # Order (build dependencies, then normal dependencies) feeds the
-            # crateRenames grouping below.
-            dependenciesWithRenames =
-              lib.filter (d: d ? "rename") (enabledBuildDependencies ++ enabledDependencies);
-            # Crate renames have the form:
-            #
-            # {
-            #    crate_name = [
-            #       { version = "1.2.3"; rename = "crate_name01"; }
-            #    ];
-            #    # ...
-            # }
-            crateRenames =
-              let
-                grouped = lib.groupBy (dependency: dependency.name) dependenciesWithRenames;
-                versionAndRename =
-                  dep:
-                  let
-                    package = crateConfigs."${dep.packageId}";
-                  in
-                  {
-                    inherit (dep) rename;
-                    inherit (package) version;
-                  };
-              in
-              lib.mapAttrs (name: builtins.map versionAndRename) grouped;
           in
-          buildRustCrateForPkgsFunc pkgs (
-            crateConfig
-            // {
-              src =
-                crateConfig.src or (fetchurl rec {
-                  name = "${crateConfig.crateName}-${crateConfig.version}.tar.gz";
-                  # https://www.pietroalbini.org/blog/downloading-crates-io/
-                  # Not rate-limited, CDN URL.
-                  url = "https://static.crates.io/crates/${crateConfig.crateName}/${crateConfig.crateName}-${crateConfig.version}.crate";
-                  sha256 =
-                    assert (lib.assertMsg (crateConfig ? sha256) "Missing sha256 for ${name}");
-                    crateConfig.sha256;
-                });
-              extraRustcOpts =
-                lib.lists.optional (targetFeatures != [ ])
-                  "-C target-feature=${lib.concatMapStringsSep "," (x: "+${x}") targetFeatures}";
-              inherit
-                features
-                dependencies
-                buildDependencies
-                crateRenames
-                release
-                ;
-            }
-          );
+          buildCrateDerivation {
+            inherit
+              crateConfigs
+              buildRustCrateForPkgsFunc
+              pkgs
+              packageId
+              features
+              ;
+            enabled = enabledCrateDependencies {
+              inherit crateConfigs packageId features;
+              graph = self;
+              withDevDependencies = runTests && packageId == rootPackageId;
+            };
+            dependencyDerivation =
+              forBuild: dependency:
+              (if forBuild then self.build else self).crates.${dependency.packageId};
+          };
       in
       builtByPackageIdByPkgs;
+
+  /*
+    The dependencies of the crate `packageId` that are enabled for `features`,
+    as `{ dependencies; buildDependencies; }` lists of dependency configs.
+
+    Normal dependencies are filtered for `graph.target` and build
+    dependencies for `graph.build.target`, where `graph` is the crate graph
+    the crate is built in. With `withDevDependencies`, the crate's
+    dev-dependencies are appended to its normal dependencies (crate2nix does
+    this for the root crate when building tests).
+  */
+  enabledCrateDependencies =
+    { crateConfigs
+    , packageId
+    , features
+    , graph
+    , withDevDependencies
+    ,
+    }:
+    let
+      crateConfig = crateConfigs.${packageId};
+    in
+    {
+      dependencies = filterEnabledDependencies {
+        inherit features;
+        inherit (graph) target;
+        dependencies =
+          (crateConfig.dependencies or [ ])
+          ++ lib.optionals withDevDependencies (crateConfig.devDependencies or [ ]);
+      };
+      buildDependencies = filterEnabledDependencies {
+        inherit features;
+        inherit (graph.build) target;
+        dependencies = crateConfig.buildDependencies or [ ];
+      };
+    };
+
+  # Whether `dependency` is a proc_macro crate, which must be compiled for the
+  # build architecture, i.e. taken from the build-time crate graph.
+  isProcMacroDependency =
+    crateConfigs: dependency: crateConfigs.${dependency.packageId}.procMacro or false;
+
+  /*
+    Calls `buildRustCrateForPkgsFunc pkgs` for the crate `packageId`.
+
+    This is the one place that turns a crate config into a `buildRustCrate`
+    call. Callers decide how the derivations of dependencies are looked up:
+    `dependencyDerivation forBuild dependency` returns the derivation of the
+    dependency config `dependency` in the build-time crate graph
+    (`forBuild = true`, for build dependencies and proc-macros) or in the
+    host graph.
+
+    `enabled` is `enabledCrateDependencies` for this crate and `features`.
+  */
+  buildCrateDerivation =
+    { crateConfigs
+    , buildRustCrateForPkgsFunc
+    , pkgs
+    , packageId
+    , features
+    , enabled
+    , dependencyDerivation
+    ,
+    }:
+    let
+      crateConfig' = crateConfigs."${packageId}";
+      crateConfig = builtins.removeAttrs crateConfig' [
+        "resolvedDefaultFeatures"
+        "devDependencies"
+      ];
+      dependencies = map
+        (
+          dependency:
+          if isProcMacroDependency crateConfigs dependency then
+            dependencyDerivation true dependency
+          else
+            dependencyDerivation false dependency
+        )
+        enabled.dependencies;
+      buildDependencies = map (dependency: dependencyDerivation true dependency) enabled.buildDependencies;
+      # Order (build dependencies, then normal dependencies) feeds the
+      # crateRenames grouping below.
+      dependenciesWithRenames =
+        lib.filter (d: d ? "rename") (enabled.buildDependencies ++ enabled.dependencies);
+      # Crate renames have the form:
+      #
+      # {
+      #    crate_name = [
+      #       { version = "1.2.3"; rename = "crate_name01"; }
+      #    ];
+      #    # ...
+      # }
+      crateRenames =
+        let
+          grouped = lib.groupBy (dependency: dependency.name) dependenciesWithRenames;
+          versionAndRename =
+            dep:
+            let
+              package = crateConfigs."${dep.packageId}";
+            in
+            {
+              inherit (dep) rename;
+              inherit (package) version;
+            };
+        in
+        lib.mapAttrs (name: builtins.map versionAndRename) grouped;
+    in
+    buildRustCrateForPkgsFunc pkgs (
+      crateConfig
+      // {
+        src =
+          crateConfig.src or (fetchurl rec {
+            name = "${crateConfig.crateName}-${crateConfig.version}.tar.gz";
+            # https://www.pietroalbini.org/blog/downloading-crates-io/
+            # Not rate-limited, CDN URL.
+            url = "https://static.crates.io/crates/${crateConfig.crateName}/${crateConfig.crateName}-${crateConfig.version}.crate";
+            sha256 =
+              assert (lib.assertMsg (crateConfig ? sha256) "Missing sha256 for ${name}");
+              crateConfig.sha256;
+          });
+        extraRustcOpts =
+          lib.lists.optional (targetFeatures != [ ])
+            "-C target-feature=${lib.concatMapStringsSep "," (x: "+${x}") targetFeatures}";
+        inherit
+          features
+          dependencies
+          buildDependencies
+          crateRenames
+          release
+          ;
+      }
+    );
 
   # Returns the actual derivations for the given dependencies.
   dependencyDerivations =
