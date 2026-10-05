@@ -178,6 +178,10 @@ rec {
 
             buildInputs = testInputs;
 
+            passthru = {
+              testCrate = drv;
+            };
+
             buildPhase = ''
               set -e
               export RUST_BACKTRACE=1
