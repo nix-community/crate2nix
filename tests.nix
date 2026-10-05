@@ -387,6 +387,21 @@ let
     }
 
     {
+      name = "cfg_test-with-tests-nextest";
+      src = ./sample_projects/cfg-test;
+      cargoToml = "Cargo.toml";
+      customBuild = "sample_projects/cfg-test/test-nextest.nix";
+      expectedOutput = "Hello, cfg-test!";
+      expectedTestOutputs = [
+        "echo_foo_test"
+        "lib_test"
+        "in_source_dir"
+        "exec_cowsay"
+        "4 passed"
+      ];
+    }
+
+    {
       name = "cross_compile_build_dependencies";
       src = ./sample_projects/cross_compile_build_dependencies;
       customBuild = "sample_projects/cross_compile_build_dependencies/default.nix";
