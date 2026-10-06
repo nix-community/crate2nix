@@ -310,6 +310,8 @@ rec {
 
             inherit testCrateFlags;
 
+            dontInstall = true;
+
             buildInputs = testInputs;
 
             buildPhase = ''
