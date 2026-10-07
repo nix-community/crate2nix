@@ -789,6 +789,32 @@ in
           grep 'write_output_file' $out/test-list.log
         '';
       };
+
+    # Verify `memberSrcs` overrides a local crate's resolved `src` and
+    # that omitting it (or naming a different crate) keeps the existing
+    # `src + "/<member dir>"` behaviour. Eval-only: never builds a crate.
+    json_member_srcs =
+      let
+        workspaceSrc = ./sample_projects/integration_test;
+        overrideSrc = pkgs.runCommandNoCCLocal "json-member-srcs-override" { } "mkdir $out";
+        mkCargoNix = args: import ./lib/build-from-json.nix ({
+          inherit pkgs;
+          src = workspaceSrc;
+          resolvedJson = workspaceSrc + "/Cargo.json";
+        } // args);
+        defaultSrc = (mkCargoNix { }).rootCrate.build.src;
+        overriddenSrc = (mkCargoNix { memberSrcs.integration_test = overrideSrc; }).rootCrate.build.src;
+        missSrc = (mkCargoNix { memberSrcs.some_other_crate = overrideSrc; }).rootCrate.build.src;
+      in
+      pkgs.runCommandNoCCLocal "json_member_srcs" { } ''
+        echo === default omits memberSrcs: src is the workspace root
+        [ "${defaultSrc}" = "${workspaceSrc}" ]
+        echo === matching key replaces src
+        [ "${overriddenSrc}" = "${overrideSrc}" ]
+        echo === non-matching key falls back to default
+        [ "${missSrc}" = "${defaultSrc}" ]
+        touch $out
+      '';
   }
   // rec {
     #

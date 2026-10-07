@@ -120,12 +120,16 @@ in {
 }
 ```
 
-The consumer accepts two optional arguments for customisation:
+The consumer accepts three optional arguments for customisation:
 
 - `buildRustCrateForPkgs` — override the `buildRustCrate` used (e.g. for a
   custom toolchain)
 - `defaultCrateOverrides` — per-crate build fixups, same as the existing
   `Cargo.nix` workflow
+- `memberSrcs` — attrset from crate name to a per-crate `src` store path,
+  used instead of `src + "/<member dir>"` for local path crates. Build the
+  values with `lib.fileset.toSource` so editing one member only rehashes
+  that member's derivation instead of the whole workspace.
 
 ## Documentation
 

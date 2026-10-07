@@ -12,6 +12,14 @@
 #       resolvedJson = ./Cargo.json;
 #     };
 #   in cargoNix.workspaceMembers.my-crate.build
+#
+# To keep workspace-member derivations hash-isolated from each other (so
+# editing one crate does not rebuild all of them), pass `memberSrcs`: an
+# attrset from crate name to a per-crate store path whose contents match
+# what `src + "/<member dir>"` would contain. Local path crates not in the
+# map fall back to `src + "/<member dir>"`. Build per-crate sources with
+# `lib.fileset.toSource` so a change in one crate only rehashes that
+# crate's source.
 
 { pkgs ? import <nixpkgs> { }
 , lib ? pkgs.lib
@@ -20,6 +28,12 @@
   src
 , # Path to the pre-resolved JSON file
   resolvedJson
+, # Optional: per-member src overrides, keyed by crate name. When a local
+  # crate's name is present here, that store path is used as its `src`
+  # instead of `src + "/<source.path>"`. Pass content-identical sources
+  # (e.g. `lib.fileset.toSource` rooted at the member dir) so editing one
+  # member rehashes only that member's derivation, not the whole workspace.
+  memberSrcs ? { }
 , # Optional: function to create buildRustCrate for a given pkgs
   buildRustCrateForPkgs ? pkgs: pkgs.buildRustCrate
 , # Optional: default crate overrides
@@ -40,7 +54,8 @@ let
       relPath = if source == null then "." else source.path or ".";
     in
     if sourceType == "local" then
-      if relPath == "." then src else src + "/${relPath}"
+      memberSrcs.${crateInfo.crateName}
+        or (if relPath == "." then src else src + "/${relPath}")
     else if sourceType == "crates-io" then
       pkgs.fetchurl
         {
