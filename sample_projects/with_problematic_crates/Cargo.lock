@@ -1489,9 +1489,9 @@ dependencies = [
 
 [[package]]
 name = "rand"
-version = "0.8.5"
+version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
+checksum = "5ca0ecfa931c29007047d1bc58e623ab12e5590e8c7cc53200d5202b69266d8a"
 dependencies = [
  "libc",
  "rand_chacha",
@@ -2359,7 +2359,7 @@ version = "0.1.0"
 dependencies = [
  "actix-web",
  "bitflags 2.4.1",
- "cfg-if 0.1.10",
+ "cfg-if 1.0.0",
  "crossbeam-channel",
  "crossbeam-deque 0.8.4",
  "crossbeam-epoch 0.9.17",
@@ -2377,7 +2377,7 @@ dependencies = [
  "quote",
  "rand",
  "serde",
- "syn 1.0.109",
+ "syn 2.0.48",
  "tera",
  "tokio",
  "tokio-executor",
