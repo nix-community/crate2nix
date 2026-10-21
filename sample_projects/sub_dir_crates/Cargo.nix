@@ -323,7 +323,7 @@ rec {
               # executables of the crate
               # we copy to prevent std::env::current_exe() to resolve to a store location
               for i in ${crate}/bin/*; do
-                cp "$i" "$testRoot"
+                cp -r "$i" "$testRoot"
               done
               chmod +w -R .
 
